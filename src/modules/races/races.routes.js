@@ -1,30 +1,28 @@
 import { racesService } from './races.service.js';
 
 export async function racesRoutes(fastify) {
+  // Listar com filtros
   fastify.get('/races', async (request) => {
-    const { state, city, status } = request.query;
-    return await racesService.findAll({ state, city, status });
+    const { state, city, status, distance, month } = request.query;
+    return await racesService.findAll({ state, city, status, distance, month });
   });
 
-  fastify.get('/races/:id', async (request) => {
-    const { id } = request.params;
-    const race = await racesService.findById(id);
-    if (!race) return { error: 'Corrida não encontrada' };
-    return race;
+  // Buscar por texto
+  fastify.get('/races/search', async (request) => {
+    const { q } = request.query;
+    return await racesService.search(q);
+  });
+
+  // Estatísticas
+  fastify.get('/races/stats', async () => {
+    return await racesService.getStats();
   });
 
   fastify.post('/races', async (request) => {
     return await racesService.create(request.body);
   });
 
-  fastify.put('/races/:id', async (request) => {
-    const { id } = request.params;
-    return await racesService.update(id, request.body);
-  });
-
-  fastify.delete('/races/:id', async (request) => {
-    const { id } = request.params;
-    await racesService.delete(id);
-    return { message: 'Corrida deletada' };
+  fastify.get('/races/:id', async (request) => {
+    return await racesService.findById(request.params.id);
   });
 }
