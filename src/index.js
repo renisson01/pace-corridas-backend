@@ -27,3 +27,5 @@ await app.listen({ port: PORT, host: '0.0.0.0' });
 console.log(`🚀 Servidor rodando na porta ${PORT}`);
 import { matchRoutes } from './modules/match/match.routes.js';
 await app.register(matchRoutes);
+// Iniciar cronjob
+import './scripts/run-scraper.js';
