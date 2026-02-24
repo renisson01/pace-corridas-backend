@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Race {
+  id          String   @id @default(uuid())
+  name        String
+  date        DateTime
+  city        String
+  state       String
+  distances   String
+  description String?
+  location    String?
+  startTime   String?
+  registrationUrl String?
+  websiteUrl      String?
+  organizer       String
+  organizerEmail  String?
+  organizerPhone  String?
+  status      String   @default("upcoming")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  results     Result[]
+}
+
+model Athlete {
+  id        String   @id @default(uuid())
+  name      String
+  age       Int
+  gender    String
+  city      String?
+  state     String?
+  bio       String?
+  pace      String?
+  photo     String?
+  interests String?
+  createdAt DateTime @default(now())
+  results   Result[]
+  matches   Match[]  @relation("AthleteMatches")
+  matchedBy Match[]  @relation("MatchedAthletes")
+  @@unique([name, age])
+}
+
+model Result {
+  id          String   @id @default(uuid())
+  raceId      String
+  athleteId   String
+  distance    String
+  time        String
+  pace        String
+  overallRank Int
+  genderRank  Int
+  ageGroupRank Int
+  ageGroup    String
+  createdAt   DateTime @default(now())
+  race        Race     @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  athlete     Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  @@unique([raceId, athleteId, distance])
+}
+
+model Match {
+  id          String   @id @default(uuid())
+  athleteId   String
+  matchedId   String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  athlete     Athlete  @relation("AthleteMatches", fields: [athleteId], references: [id], onDelete: Cascade)
+  matched     Athlete  @relation("MatchedAthletes", fields: [matchedId], references: [id], onDelete: Cascade)
+  @@unique([athleteId, matchedId])
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  category    String
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+}

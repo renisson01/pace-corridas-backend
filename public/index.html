@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PACE - Agregador de Corridas do Brasil</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-6">
+      <h1 class="text-4xl font-bold">🏃 PACE</h1>
+      <p class="text-orange-100 mt-1">Agregador de Corridas do Brasil</p>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <div class="container mx-auto px-4 py-6">
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Filtrar Corridas</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <select id="stateFilter" class="border rounded px-4 py-2">
+          <option value="">Todos os Estados</option>
+          <option value="SE">Sergipe</option>
+          <option value="BA">Bahia</option>
+          <option value="SP">São Paulo</option>
+          <option value="RJ">Rio de Janeiro</option>
+        </select>
+        <input id="cityFilter" type="text" placeholder="Cidade..." class="border rounded px-4 py-2">
+        <button onclick="loadRaces()" class="bg-orange-500 text-white rounded px-6 py-2 hover:bg-orange-600">
+          Buscar
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista de Corridas -->
+    <div id="racesList" class="space-y-4"></div>
+  </div>
+
+  <!-- Modal de Resultados -->
+  <div id="resultsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <div class="flex justify-between items-start mb-4">
+          <h2 id="modalTitle" class="text-2xl font-bold text-gray-800"></h2>
+          <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+        </div>
+        <div id="resultsContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+
+    async function loadRaces() {
+      const state = document.getElementById('stateFilter').value;
+      const city = document.getElementById('cityFilter').value;
+      
+      let url = `${API_URL}/races`;
+      const params = new URLSearchParams();
+      if (state) params.append('state', state);
+      if (city) params.append('city', city);
+      if (params.toString()) url += '?' + params.toString();
+
+      const response = await fetch(url);
+      const races = await response.json();
+      
+      const racesList = document.getElementById('racesList');
+      racesList.innerHTML = races.map(race => `
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800">${race.name}</h3>
+              <p class="text-gray-600 mt-1">
+                📍 ${race.city}, ${race.state} | 
+                📅 ${new Date(race.date).toLocaleDateString('pt-BR')} |
+                🏃 ${race.distances.join(', ')}
+              </p>
+              <p class="text-gray-500 text-sm mt-2">
+                👥 Organizador: ${race.organizer} | 
+                📊 ${race._count?.results || 0} resultados
+              </p>
+            </div>
+            <button 
+              onclick="viewResults('${race.id}', '${race.name}')"
+              class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 ml-4">
+              Ver Resultados
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function viewResults(raceId, raceName) {
+      const response = await fetch(`${API_URL}/results/race/${raceId}`);
+      const results = await response.json();
+      
+      document.getElementById('modalTitle').textContent = raceName;
+      
+      const groupedByDistance = {};
+      results.forEach(r => {
+        if (!groupedByDistance[r.distance]) groupedByDistance[r.distance] = [];
+        groupedByDistance[r.distance].push(r);
+      });
+
+      const content = Object.entries(groupedByDistance).map(([distance, distResults]) => `
+        <div class="mb-8">
+          <h3 class="text-lg font-bold text-gray-700 mb-3 bg-gray-100 px-4 py-2 rounded">
+            ${distance} - ${distResults.length} atletas
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-orange-500 text-white">
+                <tr>
+                  <th class="px-3 py-2 text-left">Geral</th>
+                  <th class="px-3 py-2 text-left">Nome</th>
+                  <th class="px-3 py-2 text-left">Cidade</th>
+                  <th class="px-3 py-2 text-left">Faixa</th>
+                  <th class="px-3 py-2 text-left">Rank Faixa</th>
+                  <th class="px-3 py-2 text-left">Tempo</th>
+                  <th class="px-3 py-2 text-left">Pace</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${distResults.map(r => `
+                  <tr class="border-b hover:bg-gray-50">
+                    <td class="px-3 py-2 font-bold">${r.overallRank}º</td>
+                    <td class="px-3 py-2">${r.athlete.name}</td>
+                    <td class="px-3 py-2">${r.athlete.city || '-'}</td>
+                    <td class="px-3 py-2">${r.ageGroup}</td>
+                    <td class="px-3 py-2">${r.ageGroupRank}º</td>
+                    <td class="px-3 py-2 font-semibold">${r.time}</td>
+                    <td class="px-3 py-2 text-gray-600">${r.pace}/km</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('resultsContent').innerHTML = content;
+      document.getElementById('resultsModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('resultsModal').classList.add('hidden');
+    }
+
+    // Carregar corridas ao abrir
+    loadRaces();
+  </script>
+</body>
+</html>
