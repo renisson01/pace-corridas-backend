@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PACE - Estatísticas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50">
+  <header class="bg-gradient-to-r from-orange-600 to-red-700 text-white py-6 shadow-lg">
+    <div class="container mx-auto px-4">
+      <h1 class="text-3xl font-black">📊 PACE - Estatísticas</h1>
+      <p class="text-orange-100 text-sm">Dados em tempo real do maior agregador do Brasil</p>
+    </div>
+  </header>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
+        <div class="text-4xl font-black" id="totalRaces">-</div>
+        <div class="text-sm mt-1">Total de Corridas</div>
+      </div>
+      <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+        <div class="text-4xl font-black" id="totalAthletes">-</div>
+        <div class="text-sm mt-1">Atletas Cadastrados</div>
+      </div>
+      <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+        <div class="text-4xl font-black" id="totalResults">-</div>
+        <div class="text-sm mt-1">Resultados</div>
+      </div>
+      <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-6 text-white shadow-lg">
+        <div class="text-4xl font-black" id="growth">-</div>
+        <div class="text-sm mt-1">Corridas (30 dias)</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl p-6 shadow-lg">
+        <h2 class="text-xl font-bold mb-4">Corridas por Estado</h2>
+        <canvas id="stateChart"></canvas>
+      </div>
+      <div class="bg-white rounded-xl p-6 shadow-lg">
+        <h2 class="text-xl font-bold mb-4">Top 10 Cidades</h2>
+        <canvas id="cityChart"></canvas>
+      </div>
+    </div>
+
+    <div class="mt-6 text-center">
+      <a href="/" class="text-orange-600 font-bold hover:underline">← Voltar para o início</a>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://web-production-990e7.up.railway.app';
+
+    async function loadStats() {
+      const [overview, growth] = await Promise.all([
+        fetch(`${API}/analytics/overview`).then(r => r.json()),
+        fetch(`${API}/analytics/growth`).then(r => r.json())
+      ]);
+
+      document.getElementById('totalRaces').textContent = overview.totalRaces;
+      document.getElementById('totalAthletes').textContent = overview.totalAthletes;
+      document.getElementById('totalResults').textContent = overview.totalResults;
+      document.getElementById('growth').textContent = growth.racesLast30Days;
+
+      // Gráfico de Estados
+      new Chart(document.getElementById('stateChart'), {
+        type: 'bar',
+        data: {
+          labels: overview.stateDistribution.map(s => s.state),
+          datasets: [{
+            label: 'Corridas',
+            data: overview.stateDistribution.map(s => s._count.state),
+            backgroundColor: 'rgba(249, 115, 22, 0.8)'
+          }]
+        }
+      });
+
+      // Gráfico de Cidades
+      new Chart(document.getElementById('cityChart'), {
+        type: 'doughnut',
+        data: {
+          labels: overview.topCities.map(c => c.city),
+          datasets: [{
+            data: overview.topCities.map(c => c._count.city),
+            backgroundColor: [
+              '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+              '#ec4899', '#14b8a6', '#f97316', '#06b6d4', '#84cc16'
+            ]
+          }]
+        }
+      });
+    }
+
+    loadStats();
+  </script>
+</body>
+</html>
