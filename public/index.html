@@ -3,24 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PACE - Maior Agregador de Corridas do Brasil</title>
+  <meta name="description" content="PACE - O maior agregador de corridas de rua do Brasil. Encontre sua próxima corrida!">
+  <meta name="theme-color" content="#ea580c">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <title>PACE - Corridas do Brasil</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50">
-  <header class="bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 text-white shadow-2xl">
-    <div class="container mx-auto px-4 py-8">
-      <h1 class="text-5xl font-black">🏃 PACE</h1>
-      <p class="text-xl mt-2 text-orange-100">O Maior Agregador de Corridas de Rua do Brasil</p>
-      <p class="text-sm mt-1 text-orange-200">Todas as corridas do Brasil em um só lugar</p>
+  <header class="bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 text-white shadow-2xl sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-6">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-4xl font-black">🏃 PACE</h1>
+          <p class="text-sm text-orange-100">Todas as corridas do Brasil</p>
+        </div>
+        <button onclick="installPWA()" id="installBtn" class="bg-white text-orange-600 px-4 py-2 rounded-lg font-bold text-sm hidden">
+          📱 Instalar App
+        </button>
+      </div>
     </div>
   </header>
 
-  <div class="container mx-auto px-4 py-8">
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">🔍 Encontre sua próxima corrida</h2>
+  <div class="container mx-auto px-4 py-6">
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 Buscar Corridas</h2>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <select id="stateFilter" class="border-2 border-orange-300 rounded-lg px-4 py-3 focus:border-orange-500 focus:outline-none">
+        <select id="stateFilter" class="border-2 border-orange-300 rounded-lg px-4 py-3">
           <option value="">Todos os Estados</option>
           <option value="SE">Sergipe</option>
           <option value="BA">Bahia</option>
@@ -29,33 +39,38 @@
         </select>
 
         <input type="text" id="cityFilter" placeholder="Cidade..." 
-          class="border-2 border-orange-300 rounded-lg px-4 py-3 focus:border-orange-500 focus:outline-none">
+          class="border-2 border-orange-300 rounded-lg px-4 py-3">
 
         <button onclick="loadRaces()" 
-          class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-red-700 transition-all shadow-lg">
-          🔎 Buscar Corridas
+          class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3 px-6 rounded-lg">
+          🔎 Buscar
         </button>
       </div>
     </div>
 
-    <div id="stats" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"></div>
+    <div id="stats" class="grid grid-cols-3 gap-4 mb-6"></div>
     <div id="races" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-  </div>
-
-  <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-      <div class="p-6">
-        <div class="flex justify-between items-start mb-4">
-          <h2 id="modalTitle" class="text-3xl font-bold text-gray-800"></h2>
-          <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-3xl">&times;</button>
-        </div>
-        <div id="modalContent"></div>
-      </div>
-    </div>
   </div>
 
   <script>
     const API_URL = 'https://web-production-990e7.up.railway.app';
+    let deferredPrompt;
+
+    // PWA Install
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBtn').classList.remove('hidden');
+    });
+
+    async function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        document.getElementById('installBtn').classList.add('hidden');
+      }
+    }
 
     async function loadRaces() {
       const state = document.getElementById('stateFilter').value;
@@ -75,121 +90,45 @@
     function showStats(races) {
       const total = races.length;
       const upcoming = races.filter(r => r.status === 'upcoming').length;
-      const finished = races.filter(r => r.status === 'finished').length;
 
       document.getElementById('stats').innerHTML = `
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
-          <div class="text-4xl font-black">${total}</div>
-          <div class="text-sm opacity-90 mt-1">Total de Corridas</div>
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white">
+          <div class="text-3xl font-black">${total}</div>
+          <div class="text-xs mt-1">Total</div>
         </div>
-        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
-          <div class="text-4xl font-black">${upcoming}</div>
-          <div class="text-sm opacity-90 mt-1">Próximas Corridas</div>
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
+          <div class="text-3xl font-black">${upcoming}</div>
+          <div class="text-xs mt-1">Abertas</div>
         </div>
-        <div class="bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl p-6 text-white shadow-lg">
-          <div class="text-4xl font-black">${finished}</div>
-          <div class="text-sm opacity-90 mt-1">Corridas Realizadas</div>
+        <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 text-white">
+          <div class="text-3xl font-black">${races.filter(r => r.state === 'SE').length}</div>
+          <div class="text-xs mt-1">Sergipe</div>
         </div>
       `;
     }
 
     function displayRaces(races) {
-      const container = document.getElementById('races');
-      
       if (races.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Nenhuma corrida encontrada</p>';
+        document.getElementById('races').innerHTML = '<p class="text-gray-500 text-center col-span-full">Nenhuma corrida</p>';
         return;
       }
 
-      container.innerHTML = races.map(race => {
+      document.getElementById('races').innerHTML = races.map(race => {
         const date = new Date(race.date).toLocaleDateString('pt-BR');
-        const statusColor = race.status === 'upcoming' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
-        const statusText = race.status === 'upcoming' ? '🟢 Inscrições Abertas' : '✅ Finalizada';
+        const status = race.status === 'upcoming' ? '🟢 Aberta' : '✅ Finalizada';
         
         return `
-          <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all p-6 border-l-4 border-orange-500">
-            <div class="flex justify-between items-start mb-3">
-              <h3 class="text-xl font-bold text-gray-800 flex-1">${race.name}</h3>
-              <span class="text-2xl">🏃</span>
-            </div>
-            
-            <div class="space-y-2 text-sm text-gray-600 mb-4">
+          <div class="bg-white rounded-xl shadow-lg p-5 border-l-4 border-orange-500">
+            <h3 class="text-lg font-bold text-gray-800 mb-2">${race.name}</h3>
+            <div class="space-y-1 text-sm text-gray-600 mb-3">
               <p>📍 ${race.city}, ${race.state}</p>
               <p>📅 ${date}</p>
               <p>🏃 ${race.distances}</p>
-              <p>👥 ${race.organizer}</p>
             </div>
-
-            <div class="flex justify-between items-center">
-              <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColor}">${statusText}</span>
-              <button onclick="viewResults('${race.id}', '${race.name}')" 
-                class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all font-semibold text-sm">
-                Ver Detalhes
-              </button>
-            </div>
+            <span class="text-xs px-3 py-1 rounded-full ${race.status === 'upcoming' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">${status}</span>
           </div>
         `;
       }).join('');
-    }
-
-    async function viewResults(raceId, raceName) {
-      document.getElementById('modalTitle').textContent = raceName;
-      document.getElementById('modal').classList.remove('hidden');
-      document.getElementById('modalContent').innerHTML = '<p class="text-center py-8">Carregando resultados...</p>';
-      
-      const response = await fetch(`${API_URL}/results/race/${raceId}`);
-      const data = await response.json();
-      
-      if (!data.results || data.results.length === 0) {
-        document.getElementById('modalContent').innerHTML = '<p class="text-gray-500 text-center py-8">Nenhum resultado disponível ainda</p>';
-        return;
-      }
-
-      const grouped = data.results.reduce((acc, r) => {
-        if (!acc[r.distance]) acc[r.distance] = [];
-        acc[r.distance].push(r);
-        return acc;
-      }, {});
-
-      const html = Object.entries(grouped).map(([distance, results]) => `
-        <div class="mb-6">
-          <h3 class="text-xl font-bold text-orange-600 mb-3">${distance} - ${results.length} atletas</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-orange-500 text-white">
-                <tr>
-                  <th class="px-4 py-2 text-left">Geral</th>
-                  <th class="px-4 py-2 text-left">Nome</th>
-                  <th class="px-4 py-2 text-left">Cidade</th>
-                  <th class="px-4 py-2 text-left">Faixa</th>
-                  <th class="px-4 py-2 text-left">Rank Faixa</th>
-                  <th class="px-4 py-2 text-left">Tempo</th>
-                  <th class="px-4 py-2 text-left">Pace</th>
-                </tr>
-              </thead>
-              <tbody class="text-sm">
-                ${results.map((r, i) => `
-                  <tr class="${i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
-                    <td class="px-4 py-2 font-bold">${r.overallRank}°</td>
-                    <td class="px-4 py-2">${r.athlete.name}</td>
-                    <td class="px-4 py-2">${r.athlete.city || '-'}</td>
-                    <td class="px-4 py-2">${r.ageGroup}</td>
-                    <td class="px-4 py-2">${r.ageGroupRank}°</td>
-                    <td class="px-4 py-2 font-semibold">${r.time}</td>
-                    <td class="px-4 py-2 text-orange-600">${r.pace}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `).join('');
-
-      document.getElementById('modalContent').innerHTML = html;
-    }
-
-    function closeModal() {
-      document.getElementById('modal').classList.add('hidden');
     }
 
     loadRaces();
