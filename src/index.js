@@ -30,3 +30,5 @@ app.get('/index.html', async (request, reply) => {
 const PORT = process.env.PORT || 3000;
 await app.listen({ port: PORT, host: '0.0.0.0' });
 console.log(`🚀 Servidor rodando na porta ${PORT}`);
+import { analyticsRoutes } from './modules/analytics/analytics.routes.js';
+await app.register(analyticsRoutes);
