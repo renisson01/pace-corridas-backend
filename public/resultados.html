@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACE - Resultados & Ranking Brasil</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+<div class="max-w-5xl mx-auto p-4">
+  <div class="text-center py-6">
+    <h1 class="text-3xl font-bold">🏆 PACE — Resultados & Ranking Brasil</h1>
+    <div class="flex justify-center gap-4 mt-3 flex-wrap">
+      <a href="/" class="text-blue-400 text-sm underline">← Início</a>
+      <a href="/faixas.html" class="text-blue-400 text-sm underline">Faixas Etárias</a>
+    </div>
+  </div>
+  <div id="status" class="grid grid-cols-3 gap-3 mb-6"></div>
+  <div class="flex gap-2 mb-6 border-b border-slate-700 flex-wrap">
+    <button onclick="showTab('top5')" id="tab-top5" class="tab px-4 py-2 text-sm font-bold border-b-2 border-blue-500 text-blue-400">🥇 Top 5</button>
+    <button onclick="showTab('importar')" id="tab-importar" class="tab px-4 py-2 text-sm font-bold border-b-2 border-transparent text-slate-400">📥 Importar</button>
+    <button onclick="showTab('ranking')" id="tab-ranking" class="tab px-4 py-2 text-sm font-bold border-b-2 border-transparent text-slate-400">🇧🇷 Ranking BR</button>
+    <button onclick="showTab('pontos')" id="tab-pontos" class="tab px-4 py-2 text-sm font-bold border-b-2 border-transparent text-slate-400">⭐ Pontuação</button>
+  </div>
+
+  <!-- TOP 5 -->
+  <div id="tab-top5-c">
+    <div class="bg-slate-800 rounded-xl p-4 mb-4 flex gap-3 flex-wrap">
+      <select id="t5race" class="flex-1 bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600"></select>
+      <select id="t5dist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="">Todas dist.</option>
+        <option value="5km">5km</option><option value="10km">10km</option>
+        <option value="21km">21km</option><option value="42km">42km</option>
+      </select>
+      <button onclick="buscarTop5()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-bold">Ver Top 5</button>
+    </div>
+    <div id="top5res"></div>
+  </div>
+
+  <!-- IMPORTAR -->
+  <div id="tab-importar-c" class="hidden">
+    <div class="bg-slate-800 rounded-xl p-6">
+      <h2 class="font-bold text-lg mb-4">📥 Importar CSV</h2>
+      <select id="irace" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 mb-3"></select>
+      <input id="idist" placeholder="Distância (ex: 10km)" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 mb-3">
+      <p class="text-xs text-slate-400 mb-2">Formato: pos,nome,genero(M/F),idade,cidade,estado,tempo(HH:MM:SS),pace,faixa_etaria,rank_genero,rank_faixa</p>
+      <textarea id="csv" rows="8" placeholder="1,João Silva,M,35,Aracaju,SE,00:45:23,4:32,30-39,1,1&#10;2,Maria Santos,F,28,Salvador,BA,00:47:15,4:44,25-29,1,1" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 font-mono mb-3"></textarea>
+      <div class="flex gap-3">
+        <button onclick="preview()" class="bg-slate-600 px-4 py-2 rounded-lg text-sm font-bold">👁️ Preview</button>
+        <button onclick="importar()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-bold">✅ Importar</button>
+      </div>
+      <div id="prev" class="mt-4"></div>
+    </div>
+  </div>
+
+  <!-- RANKING BR -->
+  <div id="tab-ranking-c" class="hidden">
+    <div class="bg-slate-800 rounded-xl p-4 mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <select id="rdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="5">5km</option><option value="10" selected>10km</option>
+        <option value="21">21km</option><option value="42">42km</option>
+      </select>
+      <select id="rgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="">Todos</option><option value="M">Masc</option><option value="F">Fem</option>
+      </select>
+      <select id="rage" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="">Todas faixas</option><option value="Geral">Geral</option>
+        <option value="20-29">20-29</option><option value="30-39">30-39</option>
+        <option value="40-49">40-49</option><option value="50-59">50-59</option><option value="60+">60+</option>
+      </select>
+      <button onclick="buscarRanking()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-bold">Buscar</button>
+    </div>
+    <div id="rankres"></div>
+  </div>
+
+  <!-- PONTUAÇÃO -->
+  <div id="tab-pontos-c" class="hidden">
+    <div class="bg-slate-800 rounded-xl p-4 mb-4 flex gap-3 flex-wrap">
+      <select id="pgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="">Todos</option><option value="M">Masculino</option><option value="F">Feminino</option>
+      </select>
+      <select id="pest" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="">Todos estados</option>
+        <option value="SE">Sergipe</option><option value="BA">Bahia</option><option value="SP">São Paulo</option>
+        <option value="RJ">Rio de Janeiro</option><option value="MG">Minas Gerais</option>
+        <option value="PE">Pernambuco</option><option value="CE">Ceará</option>
+      </select>
+      <button onclick="buscarPontos()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-bold">⭐ Ver Ranking</button>
+    </div>
+    <div class="bg-slate-800 rounded-xl p-4 mb-4 text-sm">
+      <p class="text-yellow-400 font-bold mb-2">Sistema de Pontuação PACE:</p>
+      <p class="text-slate-300">🥇 Pódio Geral: 1º=100pts | 2º=85pts | 3º=75pts | 4º=65pts | 5º=55pts</p>
+      <p class="text-slate-300">🏅 Faixa Etária: 1º=40pts | 2º=30pts | 3º=20pts (top 3 por faixa/gênero)</p>
+      <p class="text-slate-400 text-xs mt-1">Pontos acumulam em todas as corridas do ano</p>
+    </div>
+    <div id="pontosres"></div>
+  </div>
+</div>
+
+<script>
+const M=['🥇','🥈','🥉'];
+let races=[];
+
+async function init(){
+  try{
+    const s=await fetch('/scraper/status').then(r=>r.json());
+    document.getElementById('status').innerHTML=
+      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-blue-400">'+s.totalRaces+'</div><div class="text-xs text-slate-400">Corridas</div></div>'+
+      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-green-400">'+s.totalResults+'</div><div class="text-xs text-slate-400">Resultados</div></div>'+
+      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-yellow-400">'+s.athletes+'</div><div class="text-xs text-slate-400">Atletas</div></div>';
+  }catch(e){}
+  try{
+    races=await fetch('/races').then(r=>r.json());
+    races.sort((a,b)=>new Date(a.date)-new Date(b.date));
+    const opts=races.map(r=>{const d=new Date(r.date);return '<option value="'+r.id+'">'+d.getDate()+'/'+(d.getMonth()+1)+' - '+r.name+' ('+r.city+')</option>';}).join('');
+    ['t5race','irace'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<option value="">Selecione...</option>'+opts;});
+  }catch(e){}
+}
+
+function showTab(t){
+  ['top5','importar','ranking','pontos'].forEach(x=>{
+    document.getElementById('tab-'+x+'-c').classList.add('hidden');
+    document.getElementById('tab-'+x).className='tab px-4 py-2 text-sm font-bold border-b-2 border-transparent text-slate-400';
+  });
+  document.getElementById('tab-'+t+'-c').classList.remove('hidden');
+  document.getElementById('tab-'+t).className='tab px-4 py-2 text-sm font-bold border-b-2 border-blue-500 text-blue-400';
+}
+
+async function buscarTop5(){
+  const id=document.getElementById('t5race').value;
+  if(!id){alert('Selecione a corrida!');return;}
+  const dist=document.getElementById('t5dist').value;
+  let url='/races/'+id+'/top5';if(dist)url+='?distance='+dist;
+  const d=await fetch(url).then(r=>r.json());
+  const el=document.getElementById('top5res');
+  const tbl=(arr,gen)=>'<div class="bg-slate-800 rounded-xl overflow-hidden mb-4"><div class="p-3 bg-'+(gen==='M'?'blue':'pink')+'-900 font-bold">'+(gen==='M'?'👨 Top 5 Masculino':'👩 Top 5 Feminino')+'</div><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2 text-left">Cidade</th><th class="px-3 py-2 text-left">Tempo</th><th class="px-3 py-2 text-left">Pace</th><th class="px-3 py-2 text-left">Faixa</th></tr></thead><tbody>'+arr.map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.pos<=3?'text-yellow-400':'text-slate-400')+'">'+(M[r.pos-1]||r.pos)+'</td><td class="px-3 py-2">'+r.nome+'</td><td class="px-3 py-2 text-slate-400 text-xs">'+r.cidade+'</td><td class="px-3 py-2 font-mono font-bold text-green-400">'+r.tempo+'</td><td class="px-3 py-2 text-slate-400">'+r.pace+'/km</td><td class="px-3 py-2 text-xs">'+r.faixa+'</td></tr>').join('')+'</tbody></table></div>';
+  if(d.masculino?.length===0&&d.feminino?.length===0){el.innerHTML='<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem resultados. Importe dados primeiro!</div>';return;}
+  el.innerHTML='<h3 class="font-bold text-lg mb-3">'+d.race+(dist?' — '+dist:'')+'</h3>'+tbl(d.masculino||[],'M')+tbl(d.feminino||[],'F');
+}
+
+function parseCSV(csv){
+  return csv.trim().split('\n').filter(l=>l.trim()).map(l=>{
+    const[pos,nome,genero,idade,cidade,estado,tempo,pace,faixa,rankGen,rankFaixa]=l.split(',').map(s=>s?.trim());
+    if(!nome||!tempo)return null;
+    return{overallRank:parseInt(pos)||0,name:nome,gender:genero||'M',age:parseInt(idade)||0,city:cidade||'',state:estado||'',time:tempo,pace:pace||'',ageGroup:faixa||'Geral',genderRank:parseInt(rankGen)||0,ageGroupRank:parseInt(rankFaixa)||0};
+  }).filter(Boolean);
+}
+
+function preview(){
+  const r=parseCSV(document.getElementById('csv').value);
+  document.getElementById('prev').innerHTML=r.length===0?'<p class="text-red-400 text-sm">Nenhum dado válido.</p>':'<div class="bg-slate-700 rounded-lg p-3 text-xs"><p class="text-green-400 font-bold mb-2">✅ '+r.length+' resultados</p><div class="overflow-x-auto max-h-40 overflow-y-auto"><table class="w-full"><thead class="text-slate-400"><tr><th class="px-2 py-1 text-left">#</th><th class="px-2 py-1 text-left">Nome</th><th class="px-2">G</th><th class="px-2">Tempo</th><th class="px-2">Faixa</th></tr></thead><tbody>'+r.slice(0,8).map(x=>'<tr><td class="px-2 py-1">'+x.overallRank+'</td><td class="px-2 py-1">'+x.name+'</td><td class="px-2 '+(x.gender==='F'?'text-pink-400':'text-blue-400')+'">'+x.gender+'</td><td class="px-2 font-mono">'+x.time+'</td><td class="px-2">'+x.ageGroup+'</td></tr>').join('')+'</tbody></table></div></div>';
+}
+
+async function importar(){
+  const raceId=document.getElementById('irace').value;
+  const dist=document.getElementById('idist').value;
+  const csv=document.getElementById('csv').value;
+  if(!raceId){alert('Selecione a corrida!');return;}
+  if(!dist){alert('Informe a distância!');return;}
+  const results=parseCSV(csv);
+  if(!results.length){alert('CSV inválido!');return;}
+  if(!confirm('Importar '+results.length+' resultados?'))return;
+  const d=await fetch('/scraper/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({raceId,distance:dist,results})}).then(r=>r.json());
+  if(d.success){alert('✅ '+d.inseridos+' importados!\n❌ '+d.erros+' erros');document.getElementById('csv').value='';init();}
+  else alert('❌ Erro: '+(d.error||'Tente novamente'));
+}
+
+async function buscarRanking(){
+  const dist=document.getElementById('rdist').value;
+  const gen=document.getElementById('rgen').value;
+  const age=document.getElementById('rage').value;
+  let url='/rankings/brazil?limit=100';
+  if(dist)url+='&distance='+dist;if(gen)url+='&gender='+gen;if(age)url+='&ageGroup='+age;
+  const d=await fetch(url).then(r=>r.json());
+  const el=document.getElementById('rankres');
+  if(!d.total){el.innerHTML='<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem resultados. Importe dados primeiro!</div>';return;}
+  el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking '+dist+'km '+(gen?gen==='M'?'Masc':'Fem':'Geral')+(age?' '+age:'')+'</h3><p class="text-slate-400 text-sm">'+d.total+' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Cidade</th><th class="px-3 py-2 text-left">Tempo</th><th class="px-3 py-2 text-left">Corrida</th></tr></thead><tbody>'+d.ranking.map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.rank<=3?'text-yellow-400':'text-slate-400')+'">'+(M[r.rank-1]||r.rank)+'</td><td class="px-3 py-2 font-medium">'+r.athlete+'</td><td class="px-3 py-2 text-center"><span class="'+(r.gender==='F'?'text-pink-400':'text-blue-400')+'">'+r.gender+'</span></td><td class="px-3 py-2 text-slate-400 text-xs">'+(r.city||'')+'</td><td class="px-3 py-2 font-mono font-bold text-green-400">'+r.time+'</td><td class="px-3 py-2 text-xs text-slate-400">'+(r.race||'-')+'</td></tr>').join('')+'</tbody></table></div></div>';
+}
+
+async function buscarPontos(){
+  const gen=document.getElementById('pgen').value;
+  const est=document.getElementById('pest').value;
+  let url='/rankings/points?limit=50';if(gen)url+='&gender='+gen;if(est)url+='&state='+est;
+  const d=await fetch(url).then(r=>r.json());
+  const el=document.getElementById('pontosres');
+  if(!d.total){el.innerHTML='<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem pontuação. Importe resultados primeiro!</div>';return;}
+  el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">⭐ Ranking de Pontuação PACE</h3><p class="text-slate-400 text-sm">'+d.total+' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Estado</th><th class="px-3 py-2 text-right font-bold text-yellow-400">Pontos</th><th class="px-3 py-2 text-center">Corridas</th><th class="px-3 py-2 text-center">Pódios</th><th class="px-3 py-2 text-center">Faixas</th></tr></thead><tbody>'+d.ranking.map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.rank<=3?'text-yellow-400':'text-slate-400')+'">'+(M[r.rank-1]||r.rank)+'</td><td class="px-3 py-2 font-medium">'+r.athlete?.name+'</td><td class="px-3 py-2 text-center"><span class="'+(r.athlete?.gender==='F'?'text-pink-400':'text-blue-400')+'">'+r.athlete?.gender+'</span></td><td class="px-3 py-2 text-slate-400 text-xs">'+(r.athlete?.state||'-')+'</td><td class="px-3 py-2 text-right font-bold text-yellow-400">'+r.pontos+'</td><td class="px-3 py-2 text-center">'+r.corridas+'</td><td class="px-3 py-2 text-center">'+(r.podios>0?'🏆 '+r.podios:'-')+'</td><td class="px-3 py-2 text-center">'+(r.faixas>0?'🏅 '+r.faixas:'-')+'</td></tr>').join('')+'</tbody></table></div></div>';
+}
+
+init();
+</script>
+</body>
+</html>

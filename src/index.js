@@ -4,6 +4,7 @@ import { racesRoutes } from './modules/races/races.routes.js';
 import { resultsRoutes } from './modules/results/results.routes.js';
 import { scraperRoutes } from './modules/scraper/scraper.routes.js';
 import { analyticsRoutes } from './modules/analytics/analytics.routes.js';
+import scraperBrasilRoutes from './modules/agegroups/scraper-brasil.routes.js';
 import agegroupRoutes from './modules/agegroups/agegroups.routes.js';
 import fs from 'fs';
 import path from 'path';
@@ -21,6 +22,7 @@ app.register(resultsRoutes);
 app.register(scraperRoutes);
 app.register(analyticsRoutes);
 app.register(agegroupRoutes);
+app.register(scraperBrasilRoutes);
 
 // Rotas HTML
 app.get('/', async (request, reply) => {
@@ -33,6 +35,7 @@ app.get('/faixas.html', async (request, reply) => {
   reply.type('text/html').send(html);
 });
 
+app.get('/resultados.html', async(req,reply)=>{const html=fs.readFileSync(path.join(__dirname,'../public/resultados.html'),'utf-8');reply.type('text/html').send(html);});
 app.get('/stats.html', async (request, reply) => {
   const html = fs.readFileSync(path.join(__dirname, '../public/stats.html'), 'utf-8');
   reply.type('text/html').send(html);
