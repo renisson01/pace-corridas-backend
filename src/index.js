@@ -4,6 +4,7 @@ import { racesRoutes } from './modules/races/races.routes.js';
 import { resultsRoutes } from './modules/results/results.routes.js';
 import { scraperRoutes } from './modules/scraper/scraper.routes.js';
 import { analyticsRoutes } from './modules/analytics/analytics.routes.js';
+import agegroupRoutes from './modules/agegroups/agegroups.routes.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
