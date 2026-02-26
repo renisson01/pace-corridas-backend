@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACE - Scraper Brasil</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+<div class="max-w-4xl mx-auto p-4">
+  <div class="text-center py-6">
+    <h1 class="text-3xl font-bold">🤖 PACE Scraper Brasil</h1>
+    <p class="text-slate-400">Coleta automática de resultados 2024/2025</p>
+    <div class="flex justify-center gap-4 mt-2 text-sm">
+      <a href="/" class="text-blue-400 underline">Início</a>
+      <a href="/resultados.html" class="text-blue-400 underline">Resultados</a>
+      <a href="/social.html" class="text-blue-400 underline">Social</a>
+    </div>
+  </div>
+  <div id="stats" class="grid grid-cols-3 gap-3 mb-6"></div>
+  <div class="bg-slate-800 rounded-xl p-4 mb-4">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-bold">Status do Scraper</h2>
+      <span id="badge" class="text-xs px-3 py-1 rounded-full bg-slate-600">Carregando...</span>
+    </div>
+    <div class="flex gap-3 flex-wrap">
+      <button onclick="runAll()" id="btnRun" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-bold">🚀 Iniciar Scraper Completo</button>
+      <button onclick="load()" class="bg-slate-600 px-4 py-2 rounded-lg text-sm font-bold">🔄 Atualizar</button>
+    </div>
+  </div>
+  <div class="bg-slate-800 rounded-xl p-4 mb-4">
+    <h2 class="font-bold mb-3">🌐 Importar de URL direta</h2>
+    <input id="urlI" placeholder="https://www.chronorun.com.br/resultados/..." class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 mb-3">
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <select id="urlR" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600"></select>
+      <input id="urlD" placeholder="Distância (ex: 10km)" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+    </div>
+    <button onclick="fromURL()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-bold">📥 Importar</button>
+    <div id="urlRes" class="mt-3 text-sm"></div>
+  </div>
+  <div class="bg-slate-800 rounded-xl p-4 mb-4">
+    <h2 class="font-bold mb-3">🎯 Buscar corrida específica</h2>
+    <input id="rName" placeholder="Ex: Maratona de Curitiba" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 mb-3">
+    <div class="grid grid-cols-3 gap-3 mb-3">
+      <input id="rCity" placeholder="Cidade" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+      <input id="rState" placeholder="UF" maxlength="2" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+      <input id="rYear" type="number" value="2025" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+    </div>
+    <button onclick="scraceRace()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-bold">🔍 Buscar</button>
+  </div>
+  <div class="bg-slate-800 rounded-xl p-4">
+    <h2 class="font-bold mb-3">📋 Logs</h2>
+    <div id="logs" class="bg-slate-900 rounded-lg p-3 h-56 overflow-y-auto font-mono text-xs text-green-400">Aguardando...</div>
+  </div>
+</div>
+<script>
+const KEY='pace-admin-2026';
+let timer=null;
+async function load(){
+  const d=await fetch('/scraper/auto/status').then(r=>r.json());
+  document.getElementById('stats').innerHTML='<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-blue-400">'+d.stats.races+'</div><div class="text-xs text-slate-400">Corridas</div></div><div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-green-400">'+d.stats.results+'</div><div class="text-xs text-slate-400">Resultados</div></div><div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-yellow-400">'+d.stats.athletes+'</div><div class="text-xs text-slate-400">Atletas</div></div>';
+  const b=document.getElementById('badge'),btn=document.getElementById('btnRun');
+  if(d.scraperRunning){b.className='text-xs px-3 py-1 rounded-full bg-green-600 animate-pulse';b.textContent='🔄 RODANDO...';btn.disabled=true;btn.className='bg-slate-600 px-4 py-2 rounded-lg text-sm font-bold cursor-not-allowed';if(!timer)timer=setInterval(load,3000);}
+  else{b.className='text-xs px-3 py-1 rounded-full bg-slate-600';b.textContent='⏸ Parado';btn.disabled=false;btn.className='bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-bold';if(timer){clearInterval(timer);timer=null;}}
+  if(d.lastLogs?.length){document.getElementById('logs').innerHTML=d.lastLogs.map(l=>'<div class="mb-1"><span class="text-slate-500">'+new Date(l.time).toLocaleTimeString('pt-BR')+'</span> '+l.msg+'</div>').join('');document.getElementById('logs').scrollTop=9999;}
+  const races=await fetch('/races').then(r=>r.json()).catch(()=>[]);
+  document.getElementById('urlR').innerHTML='<option value="">Corrida...</option>'+races.map(r=>'<option value="'+r.id+'">'+r.name+'</option>').join('');
+}
+async function runAll(){if(!confirm('Iniciar scraper completo?\nPode demorar alguns minutos.'))return;const d=await fetch('/scraper/auto/run',{method:'POST',headers:{'x-api-key':KEY}}).then(r=>r.json());alert(d.message||d.error);if(d.success){timer=setInterval(load,3000);load();}}
+async function scraceRace(){const name=document.getElementById('rName').value;if(!name){alert('Digite o nome!');return;}const d=await fetch('/scraper/auto/race',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':KEY},body:JSON.stringify({name,city:document.getElementById('rCity').value,state:document.getElementById('rState').value.toUpperCase(),year:parseInt(document.getElementById('rYear').value)})}).then(r=>r.json());alert(d.message||d.error);if(d.success){timer=setInterval(load,3000);load();}}
+async function fromURL(){const url=document.getElementById('urlI').value,raceId=document.getElementById('urlR').value,dist=document.getElementById('urlD').value;if(!url||!raceId){alert('Cole URL e selecione corrida!');return;}document.getElementById('urlRes').innerHTML='<p class="text-yellow-400">⏳ Importando...</p>';const d=await fetch('/scraper/auto/url',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':KEY},body:JSON.stringify({url,raceId,distance:dist})}).then(r=>r.json());document.getElementById('urlRes').innerHTML=d.success?'<p class="text-green-400">✅ '+d.inserted+' importados de '+d.found+' encontrados!</p>':'<p class="text-red-400">❌ '+d.message+'</p>';}
+load();
+</script>
+</body>
+</html>
