@@ -1,3 +1,6 @@
+import { authRoutes } from './modules/auth/auth.routes.js';
+import { scraperAutoRoutes } from './modules/scraper/scraper-auto.routes.js';
+import { rankingRoutes } from './modules/ranking/ranking.routes.js';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { racesRoutes } from './modules/races/races.routes.js';
@@ -21,6 +24,9 @@ app.register(resultsRoutes);
 app.register(scraperRoutes);
 app.register(analyticsRoutes);
 app.register(agegroupRoutes);
+app.register(authRoutes);
+app.register(scraperAutoRoutes);
+app.register(rankingRoutes);
 
 // Rotas HTML
 app.get('/', async (request, reply) => {
@@ -34,6 +40,8 @@ app.get('/faixas.html', async (request, reply) => {
 });
 
 app.get('/resultados.html', async(req,reply)=>{const html=fs.readFileSync(path.join(__dirname,'../public/resultados.html'),'utf-8');reply.type('text/html').send(html);});
+app.get('/scraper.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/scraper.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
+app.get('/social.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/social.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
 app.get('/stats.html', async (request, reply) => {
   const html = fs.readFileSync(path.join(__dirname, '../public/stats.html'), 'utf-8');
   reply.type('text/html').send(html);
