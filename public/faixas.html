@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACE - Faixas Etárias</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background: #0f172a; font-family: 'Segoe UI', sans-serif; }
+  .card { background: #1e293b; border-radius: 16px; border: 1px solid #334155; }
+  .badge-5 { background: #0ea5e9; }
+  .badge-10 { background: #8b5cf6; }
+  .badge-none { background: #475569; }
+</style>
+</head>
+<body class="min-h-screen p-4">
+
+<div class="max-w-4xl mx-auto">
+
+  <!-- HEADER -->
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-white mb-1">🏃 PACE — Faixas Etárias</h1>
+    <p class="text-slate-400">Consulte as faixas etárias de cada corrida</p>
+    <a href="/" class="text-blue-400 text-sm underline">← Voltar ao início</a>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card p-4 mb-6 flex flex-wrap gap-3 items-center">
+    <input id="search" placeholder="Buscar corrida..." 
+      class="flex-1 bg-slate-700 text-white rounded-lg px-4 py-2 text-sm border border-slate-600 focus:outline-none focus:border-blue-500"
+      oninput="filtrar()">
+    <select id="filterType" onchange="filtrar()"
+      class="bg-slate-700 text-white rounded-lg px-4 py-2 text-sm border border-slate-600 focus:outline-none">
+      <option value="">Todas</option>
+      <option value="5">De 5 em 5 anos</option>
+      <option value="10">De 10 em 10 anos</option>
+      <option value="none">Sem faixa etária</option>
+    </select>
+    <select id="filterMonth" onchange="filtrar()"
+      class="bg-slate-700 text-white rounded-lg px-4 py-2 text-sm border border-slate-600 focus:outline-none">
+      <option value="">Todos os meses</option>
+      <option value="3">Março</option>
+      <option value="4">Abril</option>
+      <option value="5">Maio</option>
+      <option value="6">Junho</option>
+      <option value="7">Julho</option>
+      <option value="8">Agosto</option>
+      <option value="9">Setembro</option>
+      <option value="10">Outubro</option>
+      <option value="11">Novembro</option>
+      <option value="12">Dezembro</option>
+    </select>
+  </div>
+
+  <!-- LEGENDA -->
+  <div class="flex gap-3 mb-6 flex-wrap">
+    <span class="badge-5 text-white text-xs px-3 py-1 rounded-full font-bold">🔵 De 5 em 5 anos</span>
+    <span class="badge-10 text-white text-xs px-3 py-1 rounded-full font-bold">🟣 De 10 em 10 anos</span>
+    <span class="badge-none text-white text-xs px-3 py-1 rounded-full font-bold">⚫ A definir</span>
+    <span class="text-slate-400 text-xs flex items-center">Total: <strong id="total" class="text-white ml-1">0</strong> corridas</span>
+  </div>
+
+  <!-- LISTA DE CORRIDAS -->
+  <div id="lista" class="space-y-3"></div>
+
+  <!-- MODAL FAIXAS -->
+  <div id="modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+    <div class="card p-6 max-w-md w-full relative">
+      <button onclick="fecharModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
+      <h2 id="modalTitle" class="text-white font-bold text-lg mb-1"></h2>
+      <p id="modalDistances" class="text-blue-400 text-sm mb-4"></p>
+      <div id="modalBadge" class="text-xs px-3 py-1 rounded-full inline-block font-bold text-white mb-4"></div>
+      <div id="modalGroups" class="grid grid-cols-2 gap-2"></div>
+      <div class="mt-6 pt-4 border-t border-slate-600">
+        <p class="text-slate-400 text-xs mb-2">Atualizar faixa etária:</p>
+        <div class="flex gap-2">
+          <select id="modalSelect" class="flex-1 bg-slate-700 text-white rounded-lg px-3 py-2 text-sm border border-slate-600">
+            <option value="none">A definir / Sem faixa</option>
+            <option value="5">De 5 em 5 anos</option>
+            <option value="10">De 10 em 10 anos</option>
+          </select>
+          <button onclick="salvarFaixa()" 
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold">
+            Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = '';
+let todasCorridas = [];
+let corridaSelecionada = null;
+
+const MESES = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+async function carregar() {
+  const res = await fetch(`${API}/races`);
+  todasCorridas = await res.json();
+  filtrar();
+}
+
+function filtrar() {
+  const busca = document.getElementById('search').value.toLowerCase();
+  const tipo = document.getElementById('filterType').value;
+  const mes = document.getElementById('filterMonth').value;
+
+  let lista = todasCorridas.filter(r => {
+    const matchBusca = r.name.toLowerCase().includes(busca) || r.city.toLowerCase().includes(busca);
+    const matchTipo = !tipo || (r.ageGroupType || 'none') === tipo;
+    const matchMes = !mes || new Date(r.date).getMonth() + 1 === parseInt(mes);
+    return matchBusca && matchTipo && matchMes;
+  });
+
+  // Ordenar por data
+  lista.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  document.getElementById('total').textContent = lista.length;
+  renderLista(lista);
+}
+
+function renderLista(lista) {
+  const el = document.getElementById('lista');
+  if (lista.length === 0) {
+    el.innerHTML = '<p class="text-slate-400 text-center py-8">Nenhuma corrida encontrada</p>';
+    return;
+  }
+
+  el.innerHTML = lista.map(r => {
+    const tipo = r.ageGroupType || 'none';
+    const data = new Date(r.date);
+    const dataStr = `${data.getDate()} ${MESES[data.getMonth()+1]}`;
+    
+    const badgeClass = tipo === '5' ? 'badge-5' : tipo === '10' ? 'badge-10' : 'badge-none';
+    const badgeLabel = tipo === '5' ? '5 em 5 anos' : tipo === '10' ? '10 em 10 anos' : 'A definir';
+    
+    // Detectar se tem distância longa
+    const temLonga = r.distances && (r.distances.includes('10km') || r.distances.includes('21km') || r.distances.includes('42km'));
+
+    return `
+    <div class="card p-4 hover:border-blue-500 transition-all cursor-pointer" onclick="abrirModal('${r.id}')">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-slate-400 text-xs">${dataStr}</span>
+            <span class="text-slate-600">•</span>
+            <span class="text-slate-400 text-xs">${r.city}</span>
+            ${temLonga ? '<span class="bg-green-900 text-green-400 text-xs px-2 py-0.5 rounded-full">Distância longa</span>' : ''}
+          </div>
+          <h3 class="text-white font-semibold text-sm leading-tight">${r.name}</h3>
+          <p class="text-blue-400 text-xs mt-1">${r.distances || 'A definir'}</p>
+        </div>
+        <div class="flex flex-col items-end gap-2">
+          <span class="${badgeClass} text-white text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap">
+            ${badgeLabel}
+          </span>
+          <span class="text-slate-500 text-xs">Editar →</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function abrirModal(id) {
+  corridaSelecionada = todasCorridas.find(r => r.id === id);
+  if (!corridaSelecionada) return;
+
+  const tipo = corridaSelecionada.ageGroupType || 'none';
+  
+  document.getElementById('modalTitle').textContent = corridaSelecionada.name;
+  document.getElementById('modalDistances').textContent = '📍 ' + corridaSelecionada.city + ' | 🏃 ' + (corridaSelecionada.distances || 'A definir');
+  document.getElementById('modalSelect').value = tipo;
+
+  const badge = document.getElementById('modalBadge');
+  if (tipo === '5') { badge.className = 'badge-5 text-xs px-3 py-1 rounded-full inline-block font-bold text-white mb-4'; badge.textContent = '🔵 De 5 em 5 anos'; }
+  else if (tipo === '10') { badge.className = 'badge-10 text-xs px-3 py-1 rounded-full inline-block font-bold text-white mb-4'; badge.textContent = '🟣 De 10 em 10 anos'; }
+  else { badge.className = 'badge-none text-xs px-3 py-1 rounded-full inline-block font-bold text-white mb-4'; badge.textContent = '⚫ A definir'; }
+
+  const grupos = getAgeGroups(tipo);
+  const el = document.getElementById('modalGroups');
+  if (grupos.length === 0) {
+    el.innerHTML = '<p class="text-slate-400 text-sm col-span-2">Nenhuma faixa etária definida para esta corrida.</p>';
+  } else {
+    el.innerHTML = grupos.map(g => `
+      <div class="bg-slate-700 rounded-lg p-2 text-center">
+        <span class="text-white text-sm font-bold">${g.group}</span>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').classList.add('flex');
+}
+
+function fecharModal() {
+  document.getElementById('modal').classList.add('hidden');
+  document.getElementById('modal').classList.remove('flex');
+  corridaSelecionada = null;
+}
+
+async function salvarFaixa() {
+  if (!corridaSelecionada) return;
+  const tipo = document.getElementById('modalSelect').value;
+
+  const res = await fetch(`${API}/races/${corridaSelecionada.id}/agegroups`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ageGroupType: tipo })
+  });
+
+  if (res.ok) {
+    // Atualizar localmente
+    const idx = todasCorridas.findIndex(r => r.id === corridaSelecionada.id);
+    if (idx !== -1) todasCorridas[idx].ageGroupType = tipo;
+    fecharModal();
+    filtrar();
+    alert('✅ Faixa etária salva!');
+  } else {
+    alert('❌ Erro ao salvar. Tente novamente.');
+  }
+}
+
+function getAgeGroups(tipo) {
+  if (tipo === '5') return [
+    {group:'Geral'},{group:'15-19'},{group:'20-24'},{group:'25-29'},
+    {group:'30-34'},{group:'35-39'},{group:'40-44'},{group:'45-49'},
+    {group:'50-54'},{group:'55-59'},{group:'60-64'},{group:'65+'}
+  ];
+  if (tipo === '10') return [
+    {group:'Geral'},{group:'Sub-20'},{group:'20-29'},{group:'30-39'},
+    {group:'40-49'},{group:'50-59'},{group:'60-69'},{group:'70+'}
+  ];
+  return [];
+}
+
+// Fechar modal clicando fora
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+
+carregar();
+</script>
+</body>
+</html>

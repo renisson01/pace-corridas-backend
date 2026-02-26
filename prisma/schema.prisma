@@ -26,6 +26,8 @@ model Race {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   results     Result[]
+ageGroups     String?
+  ageGroupType  String?
 }
 
 model Athlete {
