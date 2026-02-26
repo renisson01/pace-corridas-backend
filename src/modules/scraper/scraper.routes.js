@@ -123,47 +123,18 @@ export async function scraperRoutes(fastify){
     }
     return {success:true,inseridos:ok,erros:err,raceName:race.name};
   });
-
-  fastify.get('/races/:id/results', async(req)=>{
-    const {id}=req.params;
-    const {distance,gender,ageGroup,limit=100}=req.query;
-    const where={raceId:id};
-    if(distance) where.distance=distance;
-    if(ageGroup) where.ageGroup=ageGroup;
-    const results=await prisma.result.findMany({where,include:{athlete:{select:{name:true,gender:true,city:true,state:true,age:true}}},orderBy:{overallRank:'asc'},take:parseInt(limit)});
     const filtered=gender?results.filter(r=>r.athlete?.gender===gender):results;
     const race=await prisma.race.findUnique({where:{id}});
     return {race:race?{id:race.id,name:race.name,date:race.date,city:race.city}:null,total:filtered.length,results:filtered};
   });
-
-  fastify.get('/races/:id/top5', async(req)=>{
-    const {id}=req.params;
-    const {distance}=req.query;
-    const where={raceId:id};
-    if(distance) where.distance=distance;
-    const all=await prisma.result.findMany({where,include:{athlete:{select:{name:true,gender:true,city:true,state:true}}},orderBy:{overallRank:'asc'}});
     const masc=all.filter(r=>r.athlete?.gender==='M').slice(0,5);
     const fem=all.filter(r=>r.athlete?.gender==='F').slice(0,5);
     const race=await prisma.race.findUnique({where:{id}});
     const fmt=r=>({pos:r.overallRank,nome:r.athlete?.name,cidade:r.athlete?.city,tempo:r.time,pace:r.pace,faixa:r.ageGroup});
     return {race:race?.name,distance,masculino:masc.map(fmt),feminino:fem.map(fmt)};
   });
-
-  fastify.get('/rankings/brazil', async(req)=>{
-    const {distance,gender,ageGroup,state,limit=100}=req.query;
-    const where={};
-    if(distance) where.distance={contains:distance};
-    if(ageGroup) where.ageGroup=ageGroup;
-    if(gender||state){where.athlete={};if(gender)where.athlete.gender=gender;if(state)where.athlete.state=state;}
-    const results=await prisma.result.findMany({where,include:{athlete:{select:{name:true,gender:true,city:true,state:true}},race:{select:{name:true,date:true}}},orderBy:{time:'asc'},take:parseInt(limit)});
     return {total:results.length,ranking:results.map((r,i)=>({rank:i+1,athlete:r.athlete?.name,gender:r.athlete?.gender,city:r.athlete?.city,state:r.athlete?.state,time:r.time,pace:r.pace,ageGroup:r.ageGroup,race:r.race?.name}))};
   });
-
-  fastify.get('/rankings/points', async(req)=>{
-    const {gender,state,limit=50}=req.query;
-    const where={};
-    if(gender||state){where.athlete={};if(gender)where.athlete.gender=gender;if(state)where.athlete.state=state;}
-    const results=await prisma.result.findMany({where,include:{athlete:{select:{id:true,name:true,gender:true,city:true,state:true}}}});
     const map={};
     for(const r of results){
       const aid=r.athleteId;
