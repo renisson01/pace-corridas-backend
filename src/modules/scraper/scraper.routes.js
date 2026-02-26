@@ -145,3 +145,13 @@ export async function scraperRoutes(fastify) {
     return {total:ranking.length,ranking};
   });
 }
+
+  // MERGE DUPLICATAS
+  fastify.post('/scraper/merge-athletes', async (req,reply) => {
+    const key = req.headers['x-api-key'];
+    if(key !== (process.env.ADMIN_API_KEY||'pace-admin-2026'))
+      return reply.code(401).send({error:'Não autorizado'});
+    const { mergeDuplicates } = await import('./athlete-matcher.js');
+    const result = await mergeDuplicates();
+    return {success:true,...result};
+  });
