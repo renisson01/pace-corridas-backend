@@ -19,10 +19,16 @@ app.register(racesRoutes);
 app.register(resultsRoutes);
 app.register(scraperRoutes);
 app.register(analyticsRoutes);
+app.register(agegroupRoutes);
 
 // Rotas HTML
 app.get('/', async (request, reply) => {
   const html = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf-8');
+  reply.type('text/html').send(html);
+});
+
+app.get('/faixas.html', async (request, reply) => {
+  const html = fs.readFileSync(path.join(__dirname, '../public/faixas.html'), 'utf-8');
   reply.type('text/html').send(html);
 });
 
