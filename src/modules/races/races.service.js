@@ -1,79 +1,49 @@
-import { prisma } from '../../utils/prisma.js';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 export const racesService = {
-  async findAll(filters = {}) {
+  async findAll({ state, city, status, distance, month, limit } = {}) {
     const where = {};
-    
-    if (filters.state) where.state = filters.state;
-    if (filters.city) where.city = { contains: filters.city, mode: 'insensitive' };
-    if (filters.status) where.status = filters.status;
-    if (filters.distance) where.distances = { contains: filters.distance };
-    
-    if (filters.month) {
-      const year = new Date().getFullYear();
-      const startDate = new Date(year, parseInt(filters.month) - 1, 1);
-      const endDate = new Date(year, parseInt(filters.month), 0);
-      where.date = { gte: startDate, lte: endDate };
+    if (state) where.state = state;
+    if (city) where.city = { contains: city, mode: 'insensitive' };
+    if (status) where.status = status;
+    if (distance) where.distances = { contains: distance };
+    if (month) {
+      const ano = new Date().getFullYear();
+      const inicio = new Date(ano, parseInt(month)-1, 1);
+      const fim = new Date(ano, parseInt(month), 0);
+      where.date = { gte: inicio, lte: fim };
     }
-
-    const races = await prisma.race.findMany({
+    return prisma.race.findMany({
       where,
       orderBy: { date: 'asc' },
-      take: parseInt(limit)||500
-    });
-
-    return races.map(race => ({
-      ...race,
-      distances: race.distances.split(',')
-    }));
-  },
-
-  async search(query) {
-    const races = await prisma.race.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { city: { contains: query, mode: 'insensitive' } },
-          { organizer: { contains: query, mode: 'insensitive' } }
-        ]
-      },
-      take: parseInt(limit)||500
-    });
-
-    return races.map(race => ({
-      ...race,
-      distances: race.distances.split(',')
-    }));
-  },
-
-  async getStats() {
-    const total = await prisma.race.count();
-    const upcoming = await prisma.race.count({ where: { status: 'upcoming' } });
-    const byState = await prisma.race.groupBy({
-      by: ['state'],
-      _count: true
-    });
-
-    return { total, upcoming, byState };
-  },
-
-  async create(data) {
-    return await prisma.race.create({
-      data: {
-        ...data,
-        date: new Date(data.date),
-        distances: Array.isArray(data.distances) ? data.distances.join(',') : data.distances
-      }
+      take: parseInt(limit) || 500,
     });
   },
 
   async findById(id) {
-    const race = await prisma.race.findUnique({
-      where: { id },
-      include: { results: { include: { athlete: true } } }
+    return prisma.race.findUnique({ where: { id }, include: { results: { include: { athlete: true }, orderBy: { overallRank: 'asc' }, take: 50 } } });
+  },
+
+  async search(q) {
+    return prisma.race.findMany({
+      where: { OR: [
+        { name: { contains: q, mode: 'insensitive' } },
+        { city: { contains: q, mode: 'insensitive' } },
+        { organizer: { contains: q, mode: 'insensitive' } },
+      ]},
+      orderBy: { date: 'asc' },
+      take: 20,
     });
-    
-    if (race) race.distances = race.distances.split(',');
-    return race;
+  },
+
+  async stats() {
+    const [total, upcoming, comLink] = await Promise.all([
+      prisma.race.count(),
+      prisma.race.count({ where: { status: 'upcoming' } }),
+      prisma.race.count({ where: { registrationUrl: { not: null } } }),
+    ]);
+    const porEstado = await prisma.race.groupBy({ by: ['state'], _count: { id: true }, orderBy: { _count: { id: 'desc' } } });
+    return { total, upcoming, comLink, porEstado };
   }
 };
