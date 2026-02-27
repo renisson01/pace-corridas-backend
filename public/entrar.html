@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PACE - Criar conta</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+<div class="w-full max-w-md">
+
+  <div class="text-center mb-8">
+    <span class="text-4xl">🏃</span>
+    <h1 class="text-3xl font-black mt-2">PACE</h1>
+    <p class="text-slate-400">O app do corredor brasileiro</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="flex gap-1 mb-6 bg-slate-800 p-1 rounded-xl">
+    <button onclick="showTab('login')" id="tab-login" class="flex-1 py-2 rounded-lg text-sm font-bold bg-green-500 text-black">Entrar</button>
+    <button onclick="showTab('register')" id="tab-register" class="flex-1 py-2 rounded-lg text-sm font-bold text-slate-400">Criar conta</button>
+    <button onclick="showTab('recover')" id="tab-recover" class="flex-1 py-2 rounded-lg text-sm font-bold text-slate-400">Recuperar</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="section-login" class="bg-slate-800 rounded-2xl p-6 space-y-4">
+    <div>
+      <label class="text-xs text-slate-400 block mb-1">E-mail</label>
+      <input id="loginEmail" type="email" placeholder="seu@email.com"
+        class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 focus:border-green-500 outline-none">
+    </div>
+    <div>
+      <label class="text-xs text-slate-400 block mb-1">Senha</label>
+      <div class="relative">
+        <input id="loginSenha" type="password" placeholder="••••••••"
+          class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 focus:border-green-500 outline-none pr-12">
+        <button onclick="toggleSenha('loginSenha')" class="absolute right-3 top-3 text-slate-400 text-lg">👁</button>
+      </div>
+    </div>
+    <button onclick="doLogin()" class="w-full bg-green-500 hover:bg-green-400 text-black py-3 rounded-xl font-black text-lg">
+      Entrar
+    </button>
+    <div id="loginMsg" class="text-sm text-center"></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="section-register" class="hidden bg-slate-800 rounded-2xl p-6 space-y-3">
+    <div class="grid grid-cols-2 gap-3">
+      <div class="col-span-2">
+        <label class="text-xs text-slate-400 block mb-1">Nome completo</label>
+        <input id="regNome" placeholder="João Silva"
+          class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 focus:border-green-500 outline-none text-sm">
+      </div>
+      <div class="col-span-2">
+        <label class="text-xs text-slate-400 block mb-1">E-mail</label>
+        <input id="regEmail" type="email" placeholder="seu@email.com"
+          class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 focus:border-green-500 outline-none text-sm">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Senha</label>
+        <input id="regSenha" type="password" placeholder="Senha forte"
+          class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 focus:border-green-500 outline-none text-sm"
+          oninput="checkSenha()">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Confirmar senha</label>
+        <input id="regSenha2" type="password" placeholder="Repita"
+          class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 focus:border-green-500 outline-none text-sm">
+      </div>
+      <div id="senhaForce" class="col-span-2 text-xs space-y-1"></div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Gênero</label>
+        <select id="regGenero" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Idade</label>
+        <input id="regIdade" type="number" placeholder="30" min="10" max="99"
+          class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Cidade</label>
+        <input id="regCidade" placeholder="Aracaju"
+          class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Estado (UF)</label>
+        <input id="regEstado" placeholder="SE" maxlength="2"
+          class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm uppercase">
+      </div>
+    </div>
+
+    <button onclick="doRegister()" class="w-full bg-green-500 hover:bg-green-400 text-black py-3 rounded-xl font-black">
+      Criar minha conta
+    </button>
+    <div id="registerMsg" class="text-sm text-center"></div>
+  </div>
+
+  <!-- BIP39 MODAL (aparece após registro) -->
+  <div id="bip39Modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+    <div class="bg-slate-800 rounded-2xl p-6 max-w-sm w-full">
+      <div class="text-center mb-4">
+        <span class="text-4xl">🔑</span>
+        <h2 class="text-xl font-black mt-2">Suas 12 palavras de recuperação</h2>
+        <p class="text-red-400 text-sm mt-1">⚠️ ANOTE AGORA — não serão mostradas novamente!</p>
+      </div>
+      <div id="bip39Words" class="grid grid-cols-3 gap-2 mb-4"></div>
+      <p class="text-slate-400 text-xs text-center mb-4">
+        Guarde essas palavras em papel. Se perder sua senha, elas são a única forma de recuperar sua conta.
+      </p>
+      <div class="flex gap-3">
+        <button onclick="copiarBIP39()" class="flex-1 bg-slate-600 py-2 rounded-xl text-sm font-bold">📋 Copiar</button>
+        <button onclick="confirmarBIP39()" class="flex-1 bg-green-500 text-black py-2 rounded-xl text-sm font-bold">✅ Anotei!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOVER -->
+  <div id="section-recover" class="hidden bg-slate-800 rounded-2xl p-6 space-y-4">
+    <p class="text-slate-400 text-sm text-center">Use suas 12 palavras de recuperação para redefinir a senha</p>
+    <div>
+      <label class="text-xs text-slate-400 block mb-1">E-mail</label>
+      <input id="recEmail" type="email" placeholder="seu@email.com"
+        class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+    </div>
+    <div>
+      <label class="text-xs text-slate-400 block mb-1">12 palavras de recuperação</label>
+      <textarea id="recBIP39" rows="3" placeholder="palavra1 palavra2 palavra3 ..."
+        class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm font-mono resize-none"></textarea>
+    </div>
+    <div>
+      <label class="text-xs text-slate-400 block mb-1">Nova senha</label>
+      <input id="recSenha" type="password" placeholder="Nova senha forte"
+        class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+    </div>
+    <button onclick="doRecover()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-black">
+      Recuperar conta
+    </button>
+    <div id="recoverMsg" class="text-sm text-center"></div>
+  </div>
+
+</div>
+
+<script>
+let bip39Atual = '';
+
+function showTab(tab) {
+  ['login','register','recover'].forEach(t => {
+    document.getElementById('section-'+t).classList.add('hidden');
+    document.getElementById('tab-'+t).classList.remove('bg-green-500','text-black');
+    document.getElementById('tab-'+t).classList.add('text-slate-400');
+  });
+  document.getElementById('section-'+tab).classList.remove('hidden');
+  document.getElementById('tab-'+tab).classList.add('bg-green-500','text-black');
+  document.getElementById('tab-'+tab).classList.remove('text-slate-400');
+}
+
+function toggleSenha(id) {
+  const el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+function checkSenha() {
+  const s = document.getElementById('regSenha').value;
+  const checks = [
+    { ok: s.length >= 8, msg: '8+ caracteres' },
+    { ok: /[A-Z]/.test(s), msg: 'Maiúscula' },
+    { ok: /[a-z]/.test(s), msg: 'Minúscula' },
+    { ok: /[0-9]/.test(s), msg: 'Número' },
+    { ok: /[^A-Za-z0-9]/.test(s), msg: 'Especial (!@#...)' },
+  ];
+  document.getElementById('senhaForce').innerHTML =
+    '<div class="flex flex-wrap gap-1">' +
+    checks.map(c => `<span class="${c.ok?'text-green-400':'text-red-400'}">${c.ok?'✅':'❌'} ${c.msg}</span>`).join('') +
+    '</div>';
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const senha = document.getElementById('loginSenha').value;
+  const msg = document.getElementById('loginMsg');
+  msg.innerHTML = '⏳ Entrando...';
+  try {
+    const res = await fetch('/auth/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, senha })
+    }).then(r=>r.json());
+    if(res.success) {
+      localStorage.setItem('pace_token', res.token);
+      localStorage.setItem('pace_user', JSON.stringify(res.user));
+      msg.innerHTML = '<span class="text-green-400">✅ Bem-vindo, '+res.user.name+'!</span>';
+      setTimeout(() => window.location = '/', 1000);
+    } else {
+      msg.innerHTML = '<span class="text-red-400">❌ '+res.error+'</span>';
+    }
+  } catch(e) {
+    msg.innerHTML = '<span class="text-red-400">❌ Erro de conexão</span>';
+  }
+}
+
+async function doRegister() {
+  const nome = document.getElementById('regNome').value;
+  const email = document.getElementById('regEmail').value;
+  const senha = document.getElementById('regSenha').value;
+  const senha2 = document.getElementById('regSenha2').value;
+  const msg = document.getElementById('registerMsg');
+
+  if(senha !== senha2) { msg.innerHTML = '<span class="text-red-400">❌ Senhas não conferem</span>'; return; }
+
+  msg.innerHTML = '⏳ Criando conta...';
+  try {
+    const res = await fetch('/auth/register', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        nome, email, senha,
+        genero: document.getElementById('regGenero').value,
+        idade: document.getElementById('regIdade').value,
+        cidade: document.getElementById('regCidade').value,
+        estado: document.getElementById('regEstado').value.toUpperCase()
+      })
+    }).then(r=>r.json());
+
+    if(res.success) {
+      localStorage.setItem('pace_token', res.token);
+      localStorage.setItem('pace_user', JSON.stringify(res.user));
+      bip39Atual = res.bip39Words;
+      mostrarBIP39(res.bip39Words);
+    } else {
+      msg.innerHTML = '<span class="text-red-400">❌ '+res.error+'</span>';
+    }
+  } catch(e) {
+    msg.innerHTML = '<span class="text-red-400">❌ Erro de conexão</span>';
+  }
+}
+
+function mostrarBIP39(words) {
+  const lista = words.split(' ');
+  document.getElementById('bip39Words').innerHTML =
+    lista.map((w,i) => `
+      <div class="bg-slate-700 rounded-lg p-2 text-center">
+        <span class="text-slate-500 text-xs">${i+1}</span>
+        <p class="font-mono font-bold text-sm text-green-400">${w}</p>
+      </div>`).join('');
+  document.getElementById('bip39Modal').classList.remove('hidden');
+}
+
+function copiarBIP39() {
+  navigator.clipboard.writeText(bip39Atual);
+  alert('✅ Copiado! Cole em um lugar seguro.');
+}
+
+function confirmarBIP39() {
+  document.getElementById('bip39Modal').classList.add('hidden');
+  window.location = '/';
+}
+
+async function doRecover() {
+  const email = document.getElementById('recEmail').value;
+  const bip39Words = document.getElementById('recBIP39').value;
+  const novaSenha = document.getElementById('recSenha').value;
+  const msg = document.getElementById('recoverMsg');
+  msg.innerHTML = '⏳ Verificando...';
+  try {
+    const res = await fetch('/auth/recover', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, bip39Words, novaSenha })
+    }).then(r=>r.json());
+    msg.innerHTML = res.success
+      ? '<span class="text-green-400">✅ '+res.message+' Faça login!</span>'
+      : '<span class="text-red-400">❌ '+res.error+'</span>';
+    if(res.success) setTimeout(() => showTab('login'), 2000);
+  } catch(e) {
+    msg.innerHTML = '<span class="text-red-400">❌ Erro</span>';
+  }
+}
+</script>
+</body>
+</html>

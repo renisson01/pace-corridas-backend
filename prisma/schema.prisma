@@ -86,3 +86,38 @@ model Product {
   stock       Int      @default(0)
   createdAt   DateTime @default(now())
 }
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String
+  phone         String?
+  city          String?
+  state         String?
+  gender        String?
+  age           Int?
+  athleteId     String?  @unique
+  athlete       Athlete? @relation(fields:[athleteId], references:[id])
+  bip39Hash     String   // hash das 12 palavras
+  emailVerified Boolean  @default(false)
+  verifyToken   String?
+  resetToken    String?
+  resetExpires  DateTime?
+  isPremium     Boolean  @default(false)
+  isAdmin       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  likes         Like[]   @relation("UserLikes")
+  likedBy       Like[]   @relation("LikedBy")
+}
+
+model Like {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  createdAt  DateTime @default(now())
+  fromUser   User     @relation("UserLikes", fields:[fromUserId], references:[id])
+  toUser     User     @relation("LikedBy", fields:[toUserId], references:[id])
+  @@unique([fromUserId, toUserId])
+}

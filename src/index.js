@@ -26,6 +26,7 @@ app.register(analyticsRoutes);
 app.register(agegroupRoutes);
 app.register(authRoutes);
 app.register(scraperAutoRoutes);
+app.register(authRoutes);
 app.register(rankingRoutes);
 
 // Rotas HTML
@@ -47,6 +48,7 @@ app.get('/importar-resultado.html',async(req,reply)=>{try{const h=fs.readFileSyn
 app.get('/pacematch.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/pacematch.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
 app.get('/manifest.json',async(req,reply)=>{reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/manifest.json'),'utf-8'));});
 app.get('/sw.js',async(req,reply)=>{reply.type('application/javascript').send(fs.readFileSync(path.join(__dirname,'../public/sw.js'),'utf-8'));});
+app.get('/entrar.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/entrar.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
 app.get('/stats.html', async (request, reply) => {
   const html = fs.readFileSync(path.join(__dirname, '../public/stats.html'), 'utf-8');
   reply.type('text/html').send(html);
@@ -54,6 +56,17 @@ app.get('/stats.html', async (request, reply) => {
 
 // LISTEN POR ÚLTIMO!
 const PORT = process.env.PORT || 3000;
+// Scraper automático 24/7
+const SCRAPER_INTERVAL = 4 * 60 * 60 * 1000; // 4 horas
+setTimeout(async () => {
+  console.log('[CRON] Primeira execução do scraper...');
+  runScraperJob().catch(e => console.error('[CRON] Erro:', e.message));
+  setInterval(() => {
+    console.log('[CRON] Executando scraper automático...');
+    runScraperJob().catch(e => console.error('[CRON] Erro:', e.message));
+  }, SCRAPER_INTERVAL);
+}, 30000); // aguarda 30s após start
+
 app.listen({ port: PORT, host: '0.0.0.0' }).then(() => {
   console.log(`🚀 PACE rodando na porta ${PORT}`);
 });
