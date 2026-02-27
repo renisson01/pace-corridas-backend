@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PACE - Cadastrar Corrida</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+<div class="max-w-xl mx-auto p-4">
+  <div class="text-center py-6">
+    <span class="text-4xl">🏁</span>
+    <h1 class="text-2xl font-black mt-2">Cadastrar sua corrida</h1>
+    <p class="text-slate-400 text-sm mt-1">Apareça para milhares de corredores no Brasil</p>
+    <a href="/" class="text-blue-400 text-xs underline">← Voltar</a>
+  </div>
+
+  <!-- PLANOS -->
+  <div class="grid grid-cols-2 gap-3 mb-6">
+    <div id="planGratis" onclick="selectPlan('gratis')" class="bg-slate-700 border-2 border-green-500 rounded-xl p-4 cursor-pointer text-center">
+      <p class="font-black text-green-400">GRÁTIS</p>
+      <p class="text-xs text-slate-300 mt-1">Listagem básica</p>
+      <p class="text-xs text-slate-400">Nome, data, distâncias</p>
+    </div>
+    <div id="planPremium" onclick="selectPlan('premium')" class="bg-slate-700 border-2 border-transparent rounded-xl p-4 cursor-pointer text-center">
+      <p class="font-black text-yellow-400">PREMIUM ⭐</p>
+      <p class="text-xs text-slate-300 mt-1">R$49/mês</p>
+      <p class="text-xs text-slate-400">Destaque + notificações</p>
+    </div>
+  </div>
+
+  <div id="premiumFeatures" class="hidden bg-yellow-900/30 border border-yellow-500 rounded-xl p-3 mb-4 text-xs text-yellow-300">
+    ⭐ Premium inclui: destaque no topo, badge "Inscrições Abertas", notificação push para corredores da sua cidade, estatísticas de visualizações, suporte prioritário
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="bg-slate-800 rounded-2xl p-6 space-y-4">
+    <h2 class="font-bold">📋 Dados do organizador</h2>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="col-span-2">
+        <label class="text-xs text-slate-400 block mb-1">Seu nome completo *</label>
+        <input id="nome" placeholder="João Silva" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm focus:border-green-500">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Seu e-mail *</label>
+        <input id="email" type="email" placeholder="email@exemplo.com" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm focus:border-green-500">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">WhatsApp</label>
+        <input id="phone" placeholder="(79) 99999-9999" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+      </div>
+    </div>
+
+    <h2 class="font-bold pt-2">🏃 Dados do evento</h2>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="col-span-2">
+        <label class="text-xs text-slate-400 block mb-1">Nome da corrida *</label>
+        <input id="eventName" placeholder="Ex: 10a. Corrida da Amizade 2026" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm focus:border-green-500">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Cidade *</label>
+        <input id="eventCity" placeholder="Aracaju" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm focus:border-green-500">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Estado *</label>
+        <select id="eventState" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+          <option value="SE">Sergipe</option><option value="SP">São Paulo</option><option value="RJ">Rio de Janeiro</option>
+          <option value="BA">Bahia</option><option value="MG">Minas Gerais</option><option value="RS">Rio Grande do Sul</option>
+          <option value="PR">Paraná</option><option value="SC">Santa Catarina</option><option value="PE">Pernambuco</option>
+          <option value="CE">Ceará</option><option value="GO">Goiás</option><option value="DF">Brasília</option>
+          <option value="PA">Pará</option><option value="AM">Amazonas</option><option value="AL">Alagoas</option>
+          <option value="RN">Rio Grande do Norte</option><option value="PB">Paraíba</option><option value="MA">Maranhão</option>
+          <option value="PI">Piauí</option><option value="ES">Espírito Santo</option><option value="TO">Tocantins</option>
+          <option value="MS">Mato Grosso do Sul</option><option value="MT">Mato Grosso</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Data do evento</label>
+        <input id="eventDate" type="date" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Distâncias</label>
+        <input id="distances" placeholder="5km,10km,21km" class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm">
+      </div>
+      <div class="col-span-2">
+        <label class="text-xs text-slate-400 block mb-1">Link de inscrição</label>
+        <input id="registrationUrl" type="url" placeholder="https://leveyourun.com/..." class="w-full bg-slate-700 rounded-xl px-4 py-3 border border-slate-600 outline-none text-sm focus:border-green-500">
+      </div>
+    </div>
+
+    <button onclick="enviar()" class="w-full bg-green-500 hover:bg-green-400 text-black py-4 rounded-xl font-black text-lg">
+      📤 Cadastrar corrida
+    </button>
+    <div id="msg" class="text-sm text-center min-h-6"></div>
+  </div>
+</div>
+
+<script>
+let planoSelecionado = 'gratis';
+function selectPlan(p) {
+  planoSelecionado = p;
+  document.getElementById('planGratis').className = 'bg-slate-700 border-2 ' + (p==='gratis'?'border-green-500':'border-transparent') + ' rounded-xl p-4 cursor-pointer text-center';
+  document.getElementById('planPremium').className = 'bg-slate-700 border-2 ' + (p==='premium'?'border-yellow-500':'border-transparent') + ' rounded-xl p-4 cursor-pointer text-center';
+  document.getElementById('premiumFeatures').classList.toggle('hidden', p!=='premium');
+}
+
+async function enviar() {
+  const body = {
+    name: document.getElementById('nome').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    eventName: document.getElementById('eventName').value,
+    eventCity: document.getElementById('eventCity').value,
+    eventState: document.getElementById('eventState').value,
+    eventDate: document.getElementById('eventDate').value,
+    distances: document.getElementById('distances').value,
+    registrationUrl: document.getElementById('registrationUrl').value,
+    plan: planoSelecionado
+  };
+  if(!body.name||!body.email||!body.eventName||!body.eventCity) {
+    document.getElementById('msg').innerHTML = '<span class="text-red-400">❌ Preencha os campos obrigatórios (*)</span>';
+    return;
+  }
+  document.getElementById('msg').innerHTML = '⏳ Enviando...';
+  const res = await fetch('/organizer/submit', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+  }).then(r=>r.json()).catch(e=>({error:e.message}));
+
+  if(res.success) {
+    document.getElementById('msg').innerHTML = '<span class="text-green-400">✅ ' + res.message + '</span>';
+    if(planoSelecionado==='premium') {
+      setTimeout(() => { document.getElementById('msg').innerHTML += '<br><span class="text-yellow-400">💳 Em breve você receberá o link de pagamento no seu WhatsApp!</span>'; }, 500);
+    }
+  } else {
+    document.getElementById('msg').innerHTML = '<span class="text-red-400">❌ ' + res.error + '</span>';
+  }
+}
+</script>
+</body>
+</html>

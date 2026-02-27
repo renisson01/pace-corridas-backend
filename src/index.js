@@ -1,3 +1,4 @@
+import { organizerRoutes } from './modules/organizer/organizer.routes.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { scraperAutoRoutes } from './modules/scraper/scraper-auto.routes.js';
 import { rankingRoutes } from './modules/ranking/ranking.routes.js';
@@ -49,6 +50,8 @@ app.get('/pacematch.html',async(req,reply)=>{try{const h=fs.readFileSync(path.jo
 app.get('/manifest.json',async(req,reply)=>{reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/manifest.json'),'utf-8'));});
 app.get('/sw.js',async(req,reply)=>{reply.type('application/javascript').send(fs.readFileSync(path.join(__dirname,'../public/sw.js'),'utf-8'));});
 app.get('/entrar.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/entrar.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
+app.get('/organizador.html', async (req, reply) => { try { const h = fs.readFileSync(path.join(__dirname,'../public/organizador.html'),'utf-8'); reply.type('text/html').send(h); } catch { reply.code(404).send('Página não encontrada'); } });
+app.get('/perfil.html', async (req, reply) => { try { const h = fs.readFileSync(path.join(__dirname,'../public/perfil.html'),'utf-8'); reply.type('text/html').send(h); } catch { reply.code(404).send('Página não encontrada'); } });
 app.get('/stats.html', async (request, reply) => {
   const html = fs.readFileSync(path.join(__dirname, '../public/stats.html'), 'utf-8');
   reply.type('text/html').send(html);

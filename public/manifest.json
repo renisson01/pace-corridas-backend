@@ -1,20 +1,20 @@
 {
-  "name": "PACE - Corrida de Rua Brasil",
+  "name": "PACE - Corridas Brasil",
   "short_name": "PACE",
-  "description": "O maior banco de resultados de corrida do Brasil",
+  "description": "Ranking, calendário e parceiros de corrida no Brasil",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#22c55e",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>", "sizes": "any", "type": "image/svg+xml" }
   ],
   "shortcuts": [
-    { "name": "Ranking", "url": "/resultados.html", "description": "Ver ranking nacional" },
-    { "name": "Corridas", "url": "/calendario.html", "description": "Calendário 2025" },
-    { "name": "PaceMatch", "url": "/pacematch.html", "description": "Encontrar parceiro" }
+    { "name": "Calendário", "url": "/calendario.html", "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>", "sizes": "any"}] },
+    { "name": "PaceMatch", "url": "/pacematch.html", "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💚</text></svg>", "sizes": "any"}] },
+    { "name": "Meu Perfil", "url": "/perfil.html", "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>", "sizes": "any"}] }
   ],
-  "categories": ["sports", "health", "fitness"]
+  "categories": ["sports", "health", "fitness"],
+  "lang": "pt-BR"
 }

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PACE - Meu Perfil</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+<div class="max-w-xl mx-auto p-4">
+
+  <div id="loading" class="text-center py-12 text-slate-400">⏳ Carregando perfil...</div>
+
+  <div id="naoLogado" class="hidden text-center py-12">
+    <p class="text-5xl mb-4">👤</p>
+    <p class="text-xl font-bold mb-2">Faça login para ver seu perfil</p>
+    <a href="/entrar.html" class="bg-green-500 text-black px-6 py-3 rounded-full font-black inline-block mt-2">Entrar / Criar conta</a>
+  </div>
+
+  <div id="perfilContent" class="hidden">
+    <!-- HEADER -->
+    <div class="bg-gradient-to-br from-green-900 to-slate-800 rounded-2xl p-6 mb-4 text-center">
+      <div id="avatar" class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-4xl font-black mx-auto mb-3"></div>
+      <h1 id="userName" class="text-2xl font-black"></h1>
+      <p id="userInfo" class="text-slate-400 text-sm mt-1"></p>
+      <div class="flex justify-center gap-6 mt-4">
+        <div class="text-center"><p id="totalRaces" class="text-2xl font-black text-green-400">0</p><p class="text-xs text-slate-400">corridas</p></div>
+        <div class="text-center"><p id="totalPoints" class="text-2xl font-black text-blue-400">0</p><p class="text-xs text-slate-400">pontos</p></div>
+        <div class="text-center"><p id="nivel" class="text-2xl">🌱</p><p class="text-xs text-slate-400">nível</p></div>
+      </div>
+    </div>
+
+    <!-- AÇÕES -->
+    <div class="grid grid-cols-3 gap-2 mb-4">
+      <a href="/pacematch.html" class="bg-slate-800 rounded-xl p-3 text-center hover:bg-slate-700">
+        <p class="text-xl">💚</p><p class="text-xs mt-1">PaceMatch</p>
+      </a>
+      <a href="/calendario.html" class="bg-slate-800 rounded-xl p-3 text-center hover:bg-slate-700">
+        <p class="text-xl">📅</p><p class="text-xs mt-1">Corridas</p>
+      </a>
+      <a href="/resultados.html" class="bg-slate-800 rounded-xl p-3 text-center hover:bg-slate-700">
+        <p class="text-xl">🏆</p><p class="text-xs mt-1">Ranking</p>
+      </a>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div class="bg-slate-800 rounded-2xl p-5 mb-4">
+      <h2 class="font-bold mb-3">🏅 Histórico de corridas</h2>
+      <div id="historico" class="space-y-2 text-sm text-slate-400 text-center py-4">
+        <p>Nenhum resultado vinculado ainda</p>
+        <p class="text-xs">Seus resultados aparecerão aqui conforme forem importados</p>
+      </div>
+    </div>
+
+    <!-- EDITAR -->
+    <div class="bg-slate-800 rounded-2xl p-5 mb-4">
+      <h2 class="font-bold mb-3">⚙️ Editar perfil</h2>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Cidade</label>
+          <input id="editCidade" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Estado</label>
+          <input id="editEstado" maxlength="2" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 outline-none uppercase">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Idade</label>
+          <input id="editIdade" type="number" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">WhatsApp</label>
+          <input id="editPhone" placeholder="(79) 99999-9999" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 outline-none">
+        </div>
+      </div>
+      <button onclick="salvarPerfil()" class="mt-3 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-xl text-sm font-bold">Salvar</button>
+      <div id="editMsg" class="text-xs text-center mt-2"></div>
+    </div>
+
+    <!-- PREMIUM -->
+    <div id="premiumBanner" class="bg-gradient-to-r from-yellow-900 to-orange-900 border border-yellow-500 rounded-2xl p-5 mb-4">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="text-3xl">⭐</span>
+        <div><h3 class="font-black text-yellow-400">PACE Premium</h3><p class="text-xs text-slate-300">R$19/mês</p></div>
+      </div>
+      <ul class="text-xs text-slate-300 space-y-1 mb-3">
+        <li>✅ Perfil destacado no PaceMatch</li>
+        <li>✅ Histórico completo de todas as corridas</li>
+        <li>✅ Análise de performance (pace, evolução)</li>
+        <li>✅ Notificações de corridas na sua cidade</li>
+        <li>✅ Badge verificado</li>
+      </ul>
+      <button class="w-full bg-yellow-500 text-black py-2 rounded-xl font-black text-sm">Em breve - PIX R$19/mês</button>
+    </div>
+
+    <button onclick="logout()" class="w-full bg-red-900 text-red-400 py-3 rounded-xl text-sm font-bold mb-6">Sair da conta</button>
+  </div>
+</div>
+
+<script>
+const NIVEIS = [
+  { min:0, icon:'🌱', label:'Iniciante' },
+  { min:3, icon:'🏃', label:'Corredor' },
+  { min:10, icon:'⚡', label:'Avançado' },
+  { min:20, icon:'🔥', label:'Expert' },
+  { min:50, icon:'🏆', label:'Elite' }
+];
+function getNivel(races) {
+  return NIVEIS.filter(n => races >= n.min).pop();
+}
+
+async function loadPerfil() {
+  const token = localStorage.getItem('pace_token');
+  const userRaw = localStorage.getItem('pace_user');
+  document.getElementById('loading').classList.add('hidden');
+
+  if(!token || !userRaw) {
+    document.getElementById('naoLogado').classList.remove('hidden');
+    return;
+  }
+
+  let user = JSON.parse(userRaw);
+  document.getElementById('perfilContent').classList.remove('hidden');
+
+  // Buscar dados atualizados
+  try {
+    const res = await fetch('/auth/me', { headers: { 'Authorization': 'Bearer ' + token } }).then(r=>r.json());
+    if(res.success) {
+      user = res.user;
+      localStorage.setItem('pace_user', JSON.stringify(user));
+    }
+  } catch(e) {}
+
+  // Preencher
+  const initials = user.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('avatar').textContent = initials;
+  document.getElementById('userName').textContent = user.name;
+  document.getElementById('userInfo').textContent = [
+    user.gender==='F'?'👩 Feminino':'👨 Masculino',
+    user.age ? user.age + ' anos' : null,
+    user.city && user.state ? user.city + '/' + user.state : user.city||user.state||null
+  ].filter(Boolean).join(' · ');
+
+  const races = user.athlete?.totalRaces || 0;
+  const points = user.athlete?.totalPoints || 0;
+  const nivel = getNivel(races);
+
+  document.getElementById('totalRaces').textContent = races;
+  document.getElementById('totalPoints').textContent = points;
+  document.getElementById('nivel').textContent = nivel.icon;
+
+  // Histórico
+  const results = user.athlete?.results || [];
+  if(results.length > 0) {
+    document.getElementById('historico').innerHTML = results.map(r => `
+      <div class="flex items-center justify-between bg-slate-700 rounded-xl p-3">
+        <div>
+          <p class="font-bold text-xs">${r.race.name}</p>
+          <p class="text-slate-400 text-xs">📍 ${r.race.city} · ${new Date(r.race.date).toLocaleDateString('pt-BR')}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-green-400 font-black text-sm">${r.time}</p>
+          <p class="text-xs text-slate-400">#${r.overallRank||'?'}</p>
+        </div>
+      </div>`).join('');
+  }
+
+  // Preencher campos edit
+  document.getElementById('editCidade').value = user.city||'';
+  document.getElementById('editEstado').value = user.state||'';
+  document.getElementById('editIdade').value = user.age||'';
+
+  // Esconder banner premium se já é premium
+  if(user.isPremium) document.getElementById('premiumBanner').classList.add('hidden');
+}
+
+async function salvarPerfil() {
+  const token = localStorage.getItem('pace_token');
+  const body = {
+    city: document.getElementById('editCidade').value,
+    state: document.getElementById('editEstado').value.toUpperCase(),
+    age: parseInt(document.getElementById('editIdade').value)||null,
+    phone: document.getElementById('editPhone').value
+  };
+  const res = await fetch('/auth/me', {
+    method: 'PATCH', headers: { 'Authorization': 'Bearer '+token, 'Content-Type':'application/json' },
+    body: JSON.stringify(body)
+  }).then(r=>r.json()).catch(()=>({error:'Erro'}));
+  document.getElementById('editMsg').innerHTML = res.success ? '<span class="text-green-400">✅ Salvo!</span>' : '<span class="text-red-400">❌ '+res.error+'</span>';
+}
+
+function logout() {
+  localStorage.removeItem('pace_token');
+  localStorage.removeItem('pace_user');
+  window.location = '/entrar.html';
+}
+
+loadPerfil();
+</script>
+</body>
+</html>
