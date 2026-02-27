@@ -42,6 +42,8 @@ app.get('/faixas.html', async (request, reply) => {
 app.get('/resultados.html', async(req,reply)=>{const html=fs.readFileSync(path.join(__dirname,'../public/resultados.html'),'utf-8');reply.type('text/html').send(html);});
 app.get('/scraper.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/scraper.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
 app.get('/social.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/social.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
+app.get('/calendario.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/calendario.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
+app.get('/importar-resultado.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/importar-resultado.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
 app.get('/stats.html', async (request, reply) => {
   const html = fs.readFileSync(path.join(__dirname, '../public/stats.html'), 'utf-8');
   reply.type('text/html').send(html);
