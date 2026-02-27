@@ -19,7 +19,7 @@ export const racesService = {
     const races = await prisma.race.findMany({
       where,
       orderBy: { date: 'asc' },
-      take: 100
+      take: parseInt(limit)||500
     });
 
     return races.map(race => ({
@@ -37,7 +37,7 @@ export const racesService = {
           { organizer: { contains: query, mode: 'insensitive' } }
         ]
       },
-      take: 50
+      take: parseInt(limit)||500
     });
 
     return races.map(race => ({

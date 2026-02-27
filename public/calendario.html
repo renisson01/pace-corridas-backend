@@ -3,132 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PACE - Calendário de Corridas Brasil 2025</title>
+<title>PACE - Calendário de Corridas 2026</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#22c55e">
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background:#0f172a; }
+  .card-hover { transition: transform 0.2s, box-shadow 0.2s; }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(34,197,94,0.15); }
+  .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; }
+  ::-webkit-scrollbar { width:4px; } ::-webkit-scrollbar-thumb { background:#334155; border-radius:4px; }
+</style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen">
-<div class="max-w-5xl mx-auto p-4">
+<body class="text-white min-h-screen">
 
-  <div class="text-center py-6">
-    <h1 class="text-3xl font-black">📅 Calendário de Corridas 2025</h1>
-    <p class="text-slate-400 mt-1">Todas as corridas do Brasil com links de inscrição</p>
-    <div class="flex justify-center gap-4 mt-2 text-sm">
-      <a href="/" class="text-blue-400 underline">Início</a>
-      <a href="/resultados.html" class="text-blue-400 underline">Ranking</a>
-      <a href="/importar-resultado.html" class="text-blue-400 underline">Importar</a>
+<!-- HEADER -->
+<div class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40">
+  <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2">
+      <span class="text-green-400 font-black text-xl">PACE</span>
+      <span class="text-slate-400 text-xs">Brasil</span>
+    </a>
+    <h1 class="text-sm font-bold text-slate-200">📅 Calendário 2026</h1>
+    <a href="/organizador.html" class="bg-green-500 text-black text-xs font-black px-3 py-1.5 rounded-full">+ Evento</a>
+  </div>
+</div>
+
+<!-- BUSCA E FILTROS -->
+<div class="max-w-4xl mx-auto px-4 pt-4 pb-2">
+  <div class="bg-slate-800 rounded-2xl p-4 space-y-3">
+    
+    <!-- Barra de busca -->
+    <div class="relative">
+      <span class="absolute left-3 top-3 text-slate-400">🔍</span>
+      <input id="busca" placeholder="Buscar corrida, cidade..." 
+        class="w-full bg-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-sm border border-slate-600 outline-none focus:border-green-500 text-white placeholder-slate-400"
+        oninput="filtrar()">
+    </div>
+
+    <!-- Filtros em linha -->
+    <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+      <select id="filtroEstado" onchange="filtrar()" 
+        class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-xs text-white outline-none min-w-max">
+        <option value="">🗺️ Todos os estados</option>
+        <option value="SE">Sergipe</option>
+        <option value="SP">São Paulo</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="RS">Rio Grande do Sul</option>
+        <option value="PR">Paraná</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="BA">Bahia</option>
+        <option value="PE">Pernambuco</option>
+        <option value="CE">Ceará</option>
+        <option value="DF">Brasília</option>
+        <option value="GO">Goiás</option>
+        <option value="AM">Amazonas</option>
+        <option value="PA">Pará</option>
+      </select>
+
+      <select id="filtroStatus" onchange="filtrar()"
+        class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-xs text-white outline-none min-w-max">
+        <option value="upcoming">📅 Próximas</option>
+        <option value="">Todas</option>
+        <option value="completed">✅ Realizadas</option>
+      </select>
+
+      <select id="filtroDistancia" onchange="filtrar()"
+        class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-xs text-white outline-none min-w-max">
+        <option value="">🏃 Qualquer distância</option>
+        <option value="5km">5km</option>
+        <option value="10km">10km</option>
+        <option value="21km">Meia (21km)</option>
+        <option value="42km">Maratona (42km)</option>
+      </select>
+
+      <select id="filtroMes" onchange="filtrar()"
+        class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-xs text-white outline-none min-w-max">
+        <option value="">📆 Todos os meses</option>
+        <option value="3">Março</option>
+        <option value="4">Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
     </div>
   </div>
-
-  <!-- FILTROS -->
-  <div class="bg-slate-800 rounded-xl p-4 mb-6 flex flex-wrap gap-3">
-    <select id="filtroEstado" onchange="filtrar()" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-      <option value="">🇧🇷 Todos os estados</option>
-      <option value="SE">Sergipe</option>
-      <option value="SP">São Paulo</option>
-      <option value="RJ">Rio de Janeiro</option>
-      <option value="BA">Bahia</option>
-      <option value="PE">Pernambuco</option>
-      <option value="CE">Ceará</option>
-      <option value="MG">Minas Gerais</option>
-      <option value="RS">Rio Grande do Sul</option>
-      <option value="PR">Paraná</option>
-      <option value="SC">Santa Catarina</option>
-      <option value="DF">Brasília</option>
-      <option value="PA">Pará</option>
-      <option value="AM">Amazonas</option>
-    </select>
-    <select id="filtroStatus" onchange="filtrar()" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-      <option value="">Todas</option>
-      <option value="upcoming">Próximas</option>
-      <option value="completed">Realizadas</option>
-    </select>
-    <select id="filtroDist" onchange="filtrar()" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-      <option value="">Todas distâncias</option>
-      <option value="42km">Maratona 42km</option>
-      <option value="21km">Meia 21km</option>
-      <option value="10km">10km</option>
-      <option value="5km">5km</option>
-    </select>
-    <div id="totalFiltro" class="ml-auto text-sm text-slate-400 self-center"></div>
-  </div>
-
-  <div id="grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-  <div id="loading" class="text-center py-12 text-slate-400">⏳ Carregando...</div>
 </div>
+
+<!-- CONTADOR -->
+<div class="max-w-4xl mx-auto px-4 py-2">
+  <p id="contador" class="text-slate-400 text-xs"></p>
+</div>
+
+<!-- LISTA DE CORRIDAS -->
+<div class="max-w-4xl mx-auto px-4 pb-24">
+  <div id="loading" class="text-center py-12 text-slate-400">
+    <div class="text-4xl mb-3">⏳</div>
+    <p>Carregando corridas...</p>
+  </div>
+  <div id="lista" class="space-y-3 hidden"></div>
+  <div id="vazio" class="hidden text-center py-12 text-slate-400">
+    <div class="text-4xl mb-3">🔍</div>
+    <p class="font-bold">Nenhuma corrida encontrada</p>
+    <p class="text-sm mt-1">Tente outros filtros</p>
+    <a href="/organizador.html" class="inline-block mt-4 bg-green-500 text-black px-4 py-2 rounded-full text-sm font-bold">Cadastrar corrida</a>
+  </div>
+</div>
+
+<!-- NAV BOTTOM -->
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
+  <a href="/" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🏠</span><span>Início</span></a>
+  <a href="/calendario.html" class="flex flex-col items-center text-xs text-green-400 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
+  <a href="/pacematch.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">💚</span><span>Match</span></a>
+  <a href="/resultados.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🏆</span><span>Ranking</span></a>
+  <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">👤</span><span>Perfil</span></a>
+</nav>
 
 <script>
 let todasCorridas = [];
 
-const ESTADO_NOME = {SP:'São Paulo',RJ:'Rio de Janeiro',SE:'Sergipe',BA:'Bahia',MG:'Minas Gerais',RS:'Rio Grande do Sul',PR:'Paraná',SC:'Santa Catarina',PE:'Pernambuco',CE:'Ceará',DF:'Brasília',GO:'Goiás',MS:'Mato Grosso do Sul',PA:'Pará',AM:'Amazonas',AL:'Alagoas',RN:'Rio Grande do Norte'};
+const MESES = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MESES_FULL = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
-async function load() {
-  const races = await fetch('/races').then(r=>r.json()).catch(()=>[]);
-  todasCorridas = races.sort((a,b)=>new Date(a.date)-new Date(b.date));
-  document.getElementById('loading').classList.add('hidden');
-  filtrar();
+function diasAte(dateStr) {
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const data = new Date(dateStr); data.setHours(0,0,0,0);
+  return Math.ceil((data-hoje)/(1000*60*60*24));
+}
+
+function badgeDistancia(d) {
+  const cores = { '42km':'bg-red-500', '21km':'bg-orange-500', '15km':'bg-yellow-600', '10km':'bg-blue-500', '5km':'bg-green-500', '3km':'bg-teal-500' };
+  const dist = Array.isArray(d) ? d : String(d).split(/[,\/]/);
+  return dist.slice(0,4).map(x => {
+    x = x.trim();
+    const cor = Object.entries(cores).find(([k])=>x.includes(k))?.[1] || 'bg-slate-500';
+    return `<span class="badge ${cor} text-white">${x}</span>`;
+  }).join(' ');
+}
+
+function renderCard(r) {
+  const data = new Date(r.date);
+  const dias = diasAte(r.date);
+  const dia = data.getDate();
+  const mes = MESES[data.getMonth()+1];
+  const ano = data.getFullYear();
+  const concluida = r.status === 'completed' || dias < 0;
+  
+  let diasBadge = '';
+  if(!concluida) {
+    if(dias === 0) diasBadge = `<span class="badge bg-red-500 text-white">HOJE!</span>`;
+    else if(dias === 1) diasBadge = `<span class="badge bg-orange-500 text-white">AMANHÃ</span>`;
+    else if(dias <= 7) diasBadge = `<span class="badge bg-yellow-500 text-black">${dias} dias</span>`;
+    else if(dias <= 30) diasBadge = `<span class="badge bg-blue-600 text-white">${dias} dias</span>`;
+    else diasBadge = `<span class="badge bg-slate-600 text-slate-300">${dias} dias</span>`;
+  }
+
+  const linkBtn = r.registrationUrl 
+    ? `<a href="${r.registrationUrl}" target="_blank" class="bg-green-500 hover:bg-green-400 text-black font-black text-xs px-4 py-2 rounded-full whitespace-nowrap">Inscrever-se →</a>`
+    : concluida 
+      ? `<span class="text-slate-500 text-xs">Encerrada</span>`
+      : `<span class="text-slate-400 text-xs italic">Em breve</span>`;
+
+  return `
+  <div class="card-hover bg-slate-800 border border-slate-700 rounded-2xl p-4 flex gap-4">
+    <!-- Data -->
+    <div class="flex flex-col items-center justify-center bg-slate-700 rounded-xl px-3 py-2 min-w-[52px] text-center">
+      <span class="text-green-400 font-black text-xl leading-none">${dia}</span>
+      <span class="text-slate-300 text-xs font-bold">${mes}</span>
+      <span class="text-slate-500 text-xs">${ano}</span>
+    </div>
+    
+    <!-- Info -->
+    <div class="flex-1 min-w-0">
+      <div class="flex items-start justify-between gap-2 mb-1">
+        <h3 class="font-bold text-sm leading-tight">${r.name}</h3>
+        ${diasBadge}
+      </div>
+      <p class="text-slate-400 text-xs mb-2">📍 ${r.city}/${r.state} · ${r.organizer||''}</p>
+      <div class="flex items-center justify-between">
+        <div class="flex gap-1 flex-wrap">${badgeDistancia(r.distances)}</div>
+        ${linkBtn}
+      </div>
+    </div>
+  </div>`;
 }
 
 function filtrar() {
+  const busca = document.getElementById('busca').value.toLowerCase();
   const estado = document.getElementById('filtroEstado').value;
   const status = document.getElementById('filtroStatus').value;
-  const dist = document.getElementById('filtroDist').value;
+  const distancia = document.getElementById('filtroDistancia').value;
+  const mes = document.getElementById('filtroMes').value;
 
-  let filtradas = todasCorridas;
-  if(estado) filtradas = filtradas.filter(r=>r.state===estado);
-  if(status) filtradas = filtradas.filter(r=>r.status===status);
-  if(dist) filtradas = filtradas.filter(r=>r.distances?.includes(dist));
+  let filtradas = todasCorridas.filter(r => {
+    if(busca && !r.name.toLowerCase().includes(busca) && !r.city?.toLowerCase().includes(busca)) return false;
+    if(estado && r.state !== estado) return false;
+    if(status === 'upcoming' && (r.status === 'completed' || diasAte(r.date) < 0)) return false;
+    if(status === 'completed' && r.status !== 'completed' && diasAte(r.date) >= 0) return false;
+    if(distancia) {
+      const d = Array.isArray(r.distances) ? r.distances.join(',') : String(r.distances);
+      if(!d.includes(distancia)) return false;
+    }
+    if(mes) {
+      const m = new Date(r.date).getMonth()+1;
+      if(String(m) !== mes) return false;
+    }
+    return true;
+  });
 
-  document.getElementById('totalFiltro').textContent = filtradas.length + ' corridas';
-  renderGrid(filtradas);
+  // Ordenar por data
+  filtradas.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+  document.getElementById('contador').textContent = `${filtradas.length} corrida${filtradas.length!==1?'s':''} encontrada${filtradas.length!==1?'s':''}`;
+  
+  const lista = document.getElementById('lista');
+  if(filtradas.length === 0) {
+    lista.classList.add('hidden');
+    document.getElementById('vazio').classList.remove('hidden');
+  } else {
+    document.getElementById('vazio').classList.add('hidden');
+    lista.classList.remove('hidden');
+    lista.innerHTML = filtradas.map(renderCard).join('');
+  }
 }
 
-function renderGrid(corridas) {
-  const hoje = new Date();
-  document.getElementById('grid').innerHTML = corridas.map(r => {
-    const data = new Date(r.date);
-    const passada = data < hoje;
-    const diasFaltam = Math.ceil((data-hoje)/(1000*60*60*24));
-    const distancias = (r.distances||'').split(',').map(d=>d.trim()).filter(Boolean);
-
-    return `<div class="bg-slate-800 rounded-xl p-5 flex flex-col gap-3 hover:bg-slate-750 transition">
-      <div class="flex justify-between items-start">
-        <div>
-          <span class="text-xs font-bold px-2 py-0.5 rounded-full ${passada?'bg-slate-600 text-slate-300':'bg-green-500/20 text-green-400'}">
-            ${passada ? '✅ Realizada' : diasFaltam<=7?'🔥 Esta semana':diasFaltam<=30?'📌 Este mês':'📅 '+diasFaltam+' dias'}
-          </span>
-        </div>
-        <span class="text-xs text-slate-500 font-bold">${r.state}</span>
-      </div>
-
-      <div>
-        <h3 class="font-black text-sm leading-tight">${r.name}</h3>
-        <p class="text-slate-400 text-xs mt-1">📍 ${r.city} · ${data.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</p>
-      </div>
-
-      <div class="flex flex-wrap gap-1">
-        ${distancias.map(d=>`<span class="text-xs bg-blue-900/50 text-blue-300 px-2 py-0.5 rounded-full">${d}</span>`).join('')}
-      </div>
-
-      ${r.organizer?`<p class="text-xs text-slate-500">🏢 ${r.organizer}</p>`:''}
-
-      <div class="mt-auto pt-2 border-t border-slate-700">
-        ${r.registrationUrl && !passada
-          ? `<a href="${r.registrationUrl}" target="_blank"
-              class="block w-full text-center bg-green-500 hover:bg-green-400 text-black py-2 rounded-lg text-sm font-black transition">
-              🏃 Inscrever-se
-            </a>`
-          : passada
-            ? `<a href="/resultados.html" class="block w-full text-center bg-slate-600 hover:bg-slate-500 py-2 rounded-lg text-sm font-bold transition">
-                🏆 Ver resultados
-              </a>`
-            : `<span class="block w-full text-center text-slate-500 text-xs py-2">Link de inscrição em breve</span>`
-        }
-      </div>
-    </div>`;
-  }).join('') || '<div class="col-span-3 text-center py-12 text-slate-400">Nenhuma corrida encontrada</div>';
+async function carregar() {
+  try {
+    // Buscar todas as corridas
+    const res = await fetch('/races?limit=500');
+    const data = await res.json();
+    todasCorridas = Array.isArray(data) ? data : (data.races || data.data || []);
+    
+    document.getElementById('loading').classList.add('hidden');
+    
+    // Aplicar filtro inicial (próximas)
+    filtrar();
+    
+  } catch(e) {
+    document.getElementById('loading').innerHTML = '<p class="text-red-400">❌ Erro ao carregar. <button onclick="carregar()" class="underline">Tentar novamente</button></p>';
+  }
 }
 
-load();
+carregar();
 </script>
 </body>
 </html>
