@@ -38,10 +38,6 @@ await app.register(matchRoutes);
 await app.register(analyticsRoutes);
 await app.register(uploadRoutes);
 
-app.get('/scraper/status', async()=>{
-  const [races,results,athletes]=await Promise.all([prisma.race.count(),prisma.result.count(),prisma.athlete.count()]);
-  return{totalRaces:races,totalResults:results,athletes,status:'online'};
-});
 
 setTimeout(async()=>{
   try{ const{runScraperJob}=await import('./jobs/scraperJob.js'); runScraperJob(); setInterval(()=>runScraperJob(),4*60*60*1000); }
