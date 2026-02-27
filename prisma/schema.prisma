@@ -28,6 +28,7 @@ model Race {
   results     Result[]
 ageGroups     String?
   ageGroupType  String?
+  user      User?
 }
 
 model Athlete {
@@ -87,9 +88,11 @@ model Product {
   createdAt   DateTime @default(now())
 }
 
+
+
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
+  id            String    @id @default(cuid())
+  email         String    @unique
   passwordHash  String
   name          String
   phone         String?
@@ -97,19 +100,17 @@ model User {
   state         String?
   gender        String?
   age           Int?
-  athleteId     String?  @unique
-  athlete       Athlete? @relation(fields:[athleteId], references:[id])
-  bip39Hash     String   // hash das 12 palavras
-  emailVerified Boolean  @default(false)
+  athleteId     String?   @unique
+  athlete       Athlete?  @relation(fields: [athleteId], references: [id])
+  bip39Hash     String    @default("")
+  emailVerified Boolean   @default(false)
   verifyToken   String?
-  resetToken    String?
-  resetExpires  DateTime?
-  isPremium     Boolean  @default(false)
-  isAdmin       Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  likes         Like[]   @relation("UserLikes")
-  likedBy       Like[]   @relation("LikedBy")
+  isPremium     Boolean   @default(false)
+  isAdmin       Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  likes         Like[]    @relation("UserLikes")
+  likedBy       Like[]    @relation("LikedBy")
 }
 
 model Like {
@@ -117,7 +118,8 @@ model Like {
   fromUserId String
   toUserId   String
   createdAt  DateTime @default(now())
-  fromUser   User     @relation("UserLikes", fields:[fromUserId], references:[id])
-  toUser     User     @relation("LikedBy", fields:[toUserId], references:[id])
+  fromUser   User     @relation("UserLikes", fields: [fromUserId], references: [id])
+  toUser     User     @relation("LikedBy", fields: [toUserId], references: [id])
+
   @@unique([fromUserId, toUserId])
 }
