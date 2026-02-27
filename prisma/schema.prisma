@@ -1,12 +1,10 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model Race {
   id              String   @id @default(cuid())
   name            String
@@ -21,22 +19,20 @@ model Race {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
-
 model Athlete {
-  id         String   @id @default(cuid())
-  name       String
-  city       String?
-  state      String?
-  gender     String?
-  age        Int?
-  totalRaces Int      @default(0)
-  totalPoints Int     @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  results    Result[]
-  user       User?
+  id          String   @id @default(cuid())
+  name        String
+  city        String?
+  state       String?
+  gender      String?
+  age         Int?
+  totalRaces  Int      @default(0)
+  totalPoints Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  results     Result[]
+  user        User?
 }
-
 model Result {
   id          String   @id @default(cuid())
   athleteId   String
@@ -53,10 +49,9 @@ model Result {
   race        Race     @relation(fields: [raceId], references: [id])
   @@unique([athleteId, raceId])
 }
-
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
+  id            String    @id @default(cuid())
+  email         String    @unique
   passwordHash  String
   name          String
   phone         String?
@@ -64,19 +59,28 @@ model User {
   state         String?
   gender        String?
   age           Int?
-  athleteId     String?  @unique
-  athlete       Athlete? @relation(fields: [athleteId], references: [id])
-  bip39Hash     String   @default("")
-  emailVerified Boolean  @default(false)
+  bio           String?
+  photo         String?
+  athleteId     String?   @unique
+  athlete       Athlete?  @relation(fields: [athleteId], references: [id])
+  bip39Hash     String    @default("")
+  emailVerified Boolean   @default(false)
   verifyToken   String?
-  isPremium     Boolean  @default(false)
-  isAdmin       Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  likes         Like[]   @relation("UserLikes")
-  likedBy       Like[]   @relation("LikedBy")
+  isPremium     Boolean   @default(false)
+  premiumUntil  DateTime?
+  isAdmin       Boolean   @default(false)
+  isOrganizer   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  likes         Like[]    @relation("UserLikes")
+  likedBy       Like[]    @relation("LikedBy")
+  following     Follow[]  @relation("Following")
+  followers     Follow[]  @relation("Followers")
+  posts         Post[]
+  postLikes     PostLike[]
+  comments      Comment[]
+  medals        Medal[]
 }
-
 model Like {
   id         String   @id @default(cuid())
   fromUserId String
@@ -86,7 +90,58 @@ model Like {
   toUser     User     @relation("LikedBy", fields: [toUserId], references: [id])
   @@unique([fromUserId, toUserId])
 }
-
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("Following", fields: [followerId], references: [id])
+  following   User     @relation("Followers", fields: [followingId], references: [id])
+  @@unique([followerId, followingId])
+}
+model Post {
+  id        String     @id @default(cuid())
+  userId    String
+  content   String
+  photo     String?
+  type      String     @default("post")
+  distance  String?
+  time      String?
+  pace      String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id])
+  likes     PostLike[]
+  comments  Comment[]
+}
+model PostLike {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  @@unique([userId, postId])
+}
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+}
+model Medal {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  desc      String
+  icon      String
+  earnedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
 model OrganizerRequest {
   id              String   @id @default(cuid())
   name            String
