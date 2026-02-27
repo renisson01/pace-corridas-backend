@@ -8,91 +8,55 @@ datasource db {
 }
 
 model Race {
-  id          String   @id @default(uuid())
-  name        String
-  date        DateTime
-  city        String
-  state       String
-  distances   String
-  description String?
-  location    String?
-  startTime   String?
-  registrationUrl String?
-  websiteUrl      String?
+  id              String   @id @default(cuid())
+  name            String
+  date            DateTime
+  city            String
+  state           String
+  distances       String
   organizer       String
-  organizerEmail  String?
-  organizerPhone  String?
-  status      String   @default("upcoming")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  results     Result[]
-ageGroups     String?
-  ageGroupType  String?
-  user      User?
+  status          String   @default("upcoming")
+  registrationUrl String?
+  results         Result[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Athlete {
-  id        String   @id @default(uuid())
-  name      String
-  age       Int
-  gender    String
-  city      String?
-  state     String?
-  bio       String?
-  pace      String?
-  photo     String?
-  interests String?
-  createdAt DateTime @default(now())
-  results   Result[]
-  matches   Match[]  @relation("AthleteMatches")
-  matchedBy Match[]  @relation("MatchedAthletes")
-  @@unique([name, age])
+  id         String   @id @default(cuid())
+  name       String
+  city       String?
+  state      String?
+  gender     String?
+  age        Int?
+  totalRaces Int      @default(0)
+  totalPoints Int     @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  results    Result[]
+  user       User?
 }
 
 model Result {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
+  athleteId   String
   raceId      String
-  athleteId   String
-  distance    String
   time        String
-  pace        String
-  overallRank Int
-  genderRank  Int
-  ageGroupRank Int
-  ageGroup    String
+  pace        String?
+  overallRank Int?
+  genderRank  Int?
+  ageGroup    String?
+  distance    String?
+  points      Int      @default(0)
   createdAt   DateTime @default(now())
-  race        Race     @relation(fields: [raceId], references: [id], onDelete: Cascade)
-  athlete     Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
-  @@unique([raceId, athleteId, distance])
+  athlete     Athlete  @relation(fields: [athleteId], references: [id])
+  race        Race     @relation(fields: [raceId], references: [id])
+  @@unique([athleteId, raceId])
 }
-
-model Match {
-  id          String   @id @default(uuid())
-  athleteId   String
-  matchedId   String
-  status      String   @default("pending")
-  createdAt   DateTime @default(now())
-  athlete     Athlete  @relation("AthleteMatches", fields: [athleteId], references: [id], onDelete: Cascade)
-  matched     Athlete  @relation("MatchedAthletes", fields: [matchedId], references: [id], onDelete: Cascade)
-  @@unique([athleteId, matchedId])
-}
-
-model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  price       Float
-  image       String?
-  category    String
-  stock       Int      @default(0)
-  createdAt   DateTime @default(now())
-}
-
-
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String   @id @default(cuid())
+  email         String   @unique
   passwordHash  String
   name          String
   phone         String?
@@ -100,17 +64,17 @@ model User {
   state         String?
   gender        String?
   age           Int?
-  athleteId     String?   @unique
-  athlete       Athlete?  @relation(fields: [athleteId], references: [id])
-  bip39Hash     String    @default("")
-  emailVerified Boolean   @default(false)
+  athleteId     String?  @unique
+  athlete       Athlete? @relation(fields: [athleteId], references: [id])
+  bip39Hash     String   @default("")
+  emailVerified Boolean  @default(false)
   verifyToken   String?
-  isPremium     Boolean   @default(false)
-  isAdmin       Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  likes         Like[]    @relation("UserLikes")
-  likedBy       Like[]    @relation("LikedBy")
+  isPremium     Boolean  @default(false)
+  isAdmin       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  likes         Like[]   @relation("UserLikes")
+  likedBy       Like[]   @relation("LikedBy")
 }
 
 model Like {
@@ -120,6 +84,20 @@ model Like {
   createdAt  DateTime @default(now())
   fromUser   User     @relation("UserLikes", fields: [fromUserId], references: [id])
   toUser     User     @relation("LikedBy", fields: [toUserId], references: [id])
-
   @@unique([fromUserId, toUserId])
+}
+
+model OrganizerRequest {
+  id              String   @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  eventName       String
+  eventCity       String
+  eventState      String
+  eventDate       String
+  distances       String
+  registrationUrl String?
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
 }
