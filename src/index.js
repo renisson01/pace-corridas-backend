@@ -17,7 +17,22 @@ import { uploadRoutes } from './modules/upload/upload.routes.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const prisma = new PrismaClient();
 const app = Fastify({ logger: false });
+await app.register((await import('@fastify/helmet')).default, { global: true });
 await app.register(cors, { origin: '*' });
+
+// RATE LIMITING - máximo 100 requests por minuto por IP
+await app.register((await import('@fastify/rate-limit')).default, {
+  max: 100,
+  timeWindow: '1 minute',
+  errorResponseBuilder: () => ({ error: 'Muitas requisições. Tente em 1 minuto.' })
+});
+
+// Rate limit especial para auth - máximo 10 tentativas por 5 minutos
+app.addHook('onRequest', async (req, reply) => {
+  if(req.url?.startsWith('/auth/login') || req.url?.startsWith('/auth/register')) {
+    req.rateLimit = { max: 10, timeWindow: '5 minutes' };
+  }
+});
 
 const pages = ['index','entrar','perfil','pacematch','calendario','importar-resultado','organizador','resultados','stats','social','faixas'];
 for(const pg of pages) {
