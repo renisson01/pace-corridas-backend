@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
-import { racesRoutes } from './modules/races/races.routes.js';
+import { raceRoutes } from './modules/races/races.routes.js';
 import { resultsRoutes } from './modules/results/results.routes.js';
 import { rankingRoutes } from './modules/ranking/ranking.routes.js';
 import { scraperRoutes } from './modules/scraper/scraper.routes.js';
@@ -30,7 +30,7 @@ for(const pg of pages) {
 app.get('/manifest.json',async(req,reply)=>{ try{ reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/manifest.json'),'utf-8')); }catch{ reply.send('{}'); }});
 app.get('/sw.js',async(req,reply)=>{ try{ reply.type('application/javascript').send(fs.readFileSync(path.join(__dirname,'../public/sw.js'),'utf-8')); }catch{ reply.send(''); }});
 
-await app.register(racesRoutes);
+await app.register(raceRoutes);
 await app.register(resultsRoutes);
 await app.register(rankingRoutes);
 await app.register(scraperRoutes);
