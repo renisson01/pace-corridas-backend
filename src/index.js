@@ -44,6 +44,9 @@ app.get('/scraper.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join
 app.get('/social.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/social.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
 app.get('/calendario.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/calendario.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
 app.get('/importar-resultado.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/importar-resultado.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
+app.get('/pacematch.html',async(req,reply)=>{try{const h=fs.readFileSync(path.join(__dirname,'../public/pacematch.html'),'utf-8');reply.type('text/html').send(h);}catch{reply.code(404).send('Not found');}});
+app.get('/manifest.json',async(req,reply)=>{reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/manifest.json'),'utf-8'));});
+app.get('/sw.js',async(req,reply)=>{reply.type('application/javascript').send(fs.readFileSync(path.join(__dirname,'../public/sw.js'),'utf-8'));});
 app.get('/stats.html', async (request, reply) => {
   const html = fs.readFileSync(path.join(__dirname, '../public/stats.html'), 'utf-8');
   reply.type('text/html').send(html);
