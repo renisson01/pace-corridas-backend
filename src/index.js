@@ -61,7 +61,7 @@ await app.register(organizerRoutes);
 await app.register(matchRoutes);
 await app.register(analyticsRoutes);
 await app.register(uploadRoutes);
-await app.register(socialRoutes);
+await app.register(socialRoutes, { prefix: '/social' });
 await app.register(assessoriaRoutes);
 await app.register(lojaRoutes);
 await app.register(verifyRoutes);
