@@ -200,4 +200,34 @@ export async function adminRoutes(fastify) {
     });
     return { athletes, results, races, users, top5 };
   });
+
+  // DEBUG TEMPORÁRIO - ver variáveis de ambiente
+  fastify.get('/admin/debug-env', async (req, reply) => {
+    const key = req.headers['x-admin-key'];
+    if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Não autorizado' });
+    return {
+      ANTHROPIC_API_KEY_existe: !!process.env.ANTHROPIC_API_KEY,
+      ANTHROPIC_API_KEY_inicio: process.env.ANTHROPIC_API_KEY?.substring(0,15) || 'NÃO EXISTE',
+      JWT_SECRET_existe: !!process.env.JWT_SECRET,
+      DATABASE_URL_existe: !!process.env.DATABASE_URL,
+      NODE_ENV: process.env.NODE_ENV,
+      PORT: process.env.PORT,
+      todas_vars: Object.keys(process.env).filter(k => !k.includes('npm') && !k.includes('PATH')).sort()
+    };
+  });
+
+  // STATS via GET
+  fastify.get('/admin/stats', async (req, reply) => {
+    const key = req.headers['x-admin-key'];
+    if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Não autorizado' });
+    const [athletes, results, races, users] = await Promise.all([
+      prisma.athlete.count(), prisma.result.count(), prisma.race.count(), prisma.user.count()
+    ]);
+    const top5 = await prisma.athlete.findMany({
+      orderBy: { totalPoints: 'desc' }, take: 5,
+      select: { name: true, equipe: true, totalPoints: true }
+    });
+    return { athletes, results, races, users, top5 };
+  });
+
 }
