@@ -199,3 +199,4 @@ export async function adminRoutes(fastify) {
     } catch(e) { return reply.code(500).send({ error:e.message }); }
   });
 }
+// PATCH aplicado via append - ignorar, o array ELITE já tem os atletas

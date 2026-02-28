@@ -11,7 +11,7 @@ function getUser(req) {
 }
 
 export async function socialRoutes(fastify) {
-  fastify.get('/feed', async (req) => {
+  fastify.get('/posts', async (req) => {
     const u = getUser(req);
     try {
       const posts = await prisma.post.findMany({
