@@ -2,113 +2,238 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>PACE — Assessorias e Clubes</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>body{background:#0f172a;}</style>
+<style>
+body{background:#0a0f1a;}
+.grad{background:linear-gradient(135deg,#22c55e,#16a34a);}
+.grad-ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);}
+.card-glass{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);}
+::-webkit-scrollbar{display:none;}
+</style>
 </head>
 <body class="text-white min-h-screen pb-24">
 
-<header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 py-3 flex justify-between items-center">
-  <a href="/" class="text-green-400 font-black text-xl">PACE</a>
-  <h1 class="font-bold text-sm">🏃 Assessorias & Clubes</h1>
-  <div></div>
+<header class="sticky top-0 z-40 px-4 py-3 flex items-center gap-3" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.08);">
+  <a href="/" class="text-slate-400 text-xl">←</a>
+  <div class="flex-1">
+    <h1 class="font-black text-lg leading-none">🤝 Assessorias & Clubes</h1>
+    <p class="text-xs text-slate-400">Encontre seu grupo de corrida</p>
+  </div>
+  <button onclick="abrirCadastro()" class="text-xs grad text-black font-black px-3 py-2 rounded-xl">+ Cadastrar</button>
 </header>
 
-<!-- FILTRO ESTADO -->
-<div class="max-w-2xl mx-auto px-4 pt-4">
-  <div class="flex gap-2 mb-4">
-    <input id="busca" placeholder="🔍 Buscar assessoria..." oninput="filtrar()"
-      class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-green-500">
-    <select id="filtroEstado" onchange="filtrar()"
-      class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-      <option value="">Todos</option>
-      <option value="SE">SE</option><option value="SP">SP</option><option value="RJ">RJ</option>
-      <option value="MG">MG</option><option value="BA">BA</option><option value="PE">PE</option>
-      <option value="CE">CE</option><option value="PR">PR</option><option value="SC">SC</option>
-      <option value="RS">RS</option><option value="DF">DF</option>
-    </select>
+<!-- BUSCA E FILTRO -->
+<div class="px-4 mt-4 space-y-3">
+  <div class="relative">
+    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">🔍</span>
+    <input id="busca" oninput="filtrar()" placeholder="Buscar assessoria ou cidade..." 
+      class="w-full bg-slate-800 border border-slate-700 rounded-2xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500">
   </div>
-
-  <div id="loading" class="text-center py-12 text-slate-400">⏳ Carregando...</div>
-  <div id="lista" class="grid grid-cols-1 gap-4 hidden"></div>
-  
-  <div id="vazio" class="hidden text-center py-12 text-slate-400">
-    <div class="text-5xl mb-3">🏃</div>
-    <p class="font-bold">Nenhuma assessoria encontrada</p>
-    <p class="text-sm mt-2">Em breve mais assessorias serão cadastradas!</p>
+  <div class="flex gap-2 overflow-x-auto pb-1">
+    <button onclick="setEstado('')"   id="e-"   class="estado-btn whitespace-nowrap text-xs font-black bg-green-500 text-black px-4 py-2 rounded-full">Todos</button>
+    <button onclick="setEstado('SE')" id="e-SE" class="estado-btn whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full">📍 Sergipe</button>
+    <button onclick="setEstado('PE')" id="e-PE" class="estado-btn whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full">📍 Pernambuco</button>
+    <button onclick="setEstado('SP')" id="e-SP" class="estado-btn whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full">📍 São Paulo</button>
+    <button onclick="setEstado('RJ')" id="e-RJ" class="estado-btn whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full">📍 Rio de Janeiro</button>
   </div>
 </div>
 
-<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
-  <a href="/" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏠</span><span>Início</span></a>
-  <a href="/calendario.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">📅</span><span>Corridas</span></a>
-  <a href="/elite.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏆</span><span>Ranking</span></a>
-  <a href="/loja.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👕</span><span>Loja</span></a>
-  <a href="/ia.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏃</span><span>PACE IA</span></a>
-  <a href="/perfil.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👤</span><span>Perfil</span></a>
+<!-- LISTA -->
+<div class="px-4 mt-4 space-y-3" id="lista">
+  <div class="card-glass rounded-2xl p-4 animate-pulse h-28"></div>
+  <div class="card-glass rounded-2xl p-4 animate-pulse h-28"></div>
+</div>
+<div id="vazio" class="hidden text-center py-12 px-4">
+  <p class="text-5xl mb-3">🤝</p>
+  <p class="font-black text-lg mb-1">Nenhuma encontrada</p>
+  <p class="text-slate-400 text-sm mb-4">Sua assessoria ainda não está aqui?</p>
+  <button onclick="abrirCadastro()" class="grad text-black font-black px-6 py-3 rounded-2xl text-sm">Cadastrar agora — é grátis!</button>
+</div>
+
+<!-- MODAL CADASTRO -->
+<div id="modal-cad" class="fixed inset-0 z-50 hidden items-end justify-center" style="background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);">
+  <div class="w-full max-w-lg rounded-t-3xl p-5 space-y-3" style="background:#111827;border-top:1px solid rgba(255,255,255,0.1);max-height:90vh;overflow-y:auto;">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-black text-lg">Cadastrar assessoria</h2>
+      <button onclick="fecharCadastro()" class="text-slate-400 text-2xl">×</button>
+    </div>
+    <p class="text-xs text-slate-400">Grátis! Em breve você poderá gerenciar sua página.</p>
+    <input id="cad-nome" placeholder="Nome da assessoria *" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+    <input id="cad-ig" placeholder="Instagram (sem @) *" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+    <input id="cad-cidade" placeholder="Cidade *" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+    <select id="cad-estado" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+      <option value="">Estado *</option>
+      <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+      <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+      <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+      <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+      <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+      <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+      <option>SE</option><option>SP</option><option>TO</option>
+    </select>
+    <textarea id="cad-desc" placeholder="Descrição (opcional)" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500 resize-none"></textarea>
+    <input id="cad-whats" placeholder="WhatsApp (opcional)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+    <button onclick="cadastrar()" id="btn-cad" class="w-full grad text-black font-black py-3 rounded-2xl text-sm active:scale-95">Enviar cadastro</button>
+  </div>
+</div>
+
+<nav class="fixed bottom-0 left-0 right-0 z-50" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);">
+  <div class="flex justify-around py-2">
+    <a href="/" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏠</span><span>Início</span></a>
+    <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
+    <a href="/elite.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏆</span><span>Ranking</span></a>
+    <a href="/loja.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">👕</span><span>Loja</span></a>
+    <a href="/ia.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏃</span><span>IA</span></a>
+    <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">👤</span><span>Perfil</span></a>
+  </div>
 </nav>
 
 <script>
-let todos = [];
+let todos = [], estadoAtual = '';
 
-function renderCard(a) {
-  const camisa = a.produtos?.[0];
-  return `
-  <a href="/assessoria.html?slug=${a.slug}" class="block bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden hover:border-green-500/50 transition-all">
-    <div class="flex gap-4 p-4">
-      <div class="w-16 h-16 rounded-2xl bg-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0">
-        ${a.logo ? `<img src="${a.logo}" class="w-full h-full object-cover">` : `<span class="text-3xl">🏃</span>`}
-      </div>
-      <div class="flex-1 min-w-0">
-        <h3 class="font-black text-base">${a.nome}</h3>
-        <p class="text-xs text-slate-400 mt-0.5">📍 ${a.cidade}/${a.estado}</p>
-        ${a.fundacao ? `<p class="text-xs text-slate-500 mt-0.5">Desde ${a.fundacao}</p>` : ''}
-        <div class="flex gap-3 mt-2">
-          ${a.instagram ? `<a href="https://instagram.com/${a.instagram.replace('@','')}" target="_blank" class="text-pink-400 text-xs">📱 Instagram</a>` : ''}
-          ${a.whatsapp ? `<a href="https://wa.me/${a.whatsapp.replace(/\D/g,'')}" target="_blank" class="text-green-400 text-xs">💬 WhatsApp</a>` : ''}
-        </div>
-      </div>
-      ${camisa ? `
-      <div class="flex flex-col items-center text-center">
-        <div class="w-12 h-12 bg-slate-700 rounded-xl overflow-hidden">
-          <img src="${camisa.fotos.split(',')[0]}" class="w-full h-full object-cover" onerror="this.style.display='none'">
-        </div>
-        <p class="text-xs text-green-400 font-bold mt-1">👕 Camisa</p>
-      </div>` : ''}
-    </div>
-    ${a.descricao ? `<p class="px-4 pb-4 text-xs text-slate-400 line-clamp-2">${a.descricao}</p>` : ''}
-  </a>`;
+async function carregar() {
+  try {
+    const r = await fetch('/assessorias');
+    todos = await r.json() || [];
+    renderizar();
+  } catch { document.getElementById('lista').innerHTML='<p class="text-red-400 text-center py-8">Erro ao carregar</p>'; }
 }
 
 function filtrar() {
-  const q = document.getElementById('busca').value.toLowerCase();
-  const estado = document.getElementById('filtroEstado').value;
-  const filtrado = todos.filter(a =>
-    (!q || a.nome.toLowerCase().includes(q) || a.cidade.toLowerCase().includes(q)) &&
-    (!estado || a.estado === estado)
-  );
-  if (!filtrado.length) {
-    document.getElementById('lista').classList.add('hidden');
-    document.getElementById('vazio').classList.remove('hidden');
-  } else {
-    document.getElementById('vazio').classList.add('hidden');
-    document.getElementById('lista').classList.remove('hidden');
-    document.getElementById('lista').innerHTML = filtrado.map(renderCard).join('');
-  }
+  renderizar();
 }
 
-async function load() {
-  try {
-    const r = await fetch('/assessorias');
-    todos = await r.json();
-    document.getElementById('loading').classList.add('hidden');
-    if (!todos.length) { document.getElementById('vazio').classList.remove('hidden'); return; }
-    document.getElementById('lista').classList.remove('hidden');
-    document.getElementById('lista').innerHTML = todos.map(renderCard).join('');
-  } catch(e) { document.getElementById('loading').innerHTML = '❌ Erro ao carregar'; }
+function setEstado(e) {
+  estadoAtual = e;
+  document.querySelectorAll('.estado-btn').forEach(b => {
+    b.className = 'estado-btn whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full';
+  });
+  document.getElementById('e-'+e).className = 'estado-btn whitespace-nowrap text-xs font-black bg-green-500 text-black px-4 py-2 rounded-full';
+  renderizar();
 }
-load();
+
+function renderizar() {
+  const busca = document.getElementById('busca').value.toLowerCase();
+  let lista = todos;
+  if (estadoAtual) lista = lista.filter(a => a.estado === estadoAtual);
+  if (busca) lista = lista.filter(a =>
+    a.nome?.toLowerCase().includes(busca) ||
+    a.cidade?.toLowerCase().includes(busca) ||
+    a.instagram?.toLowerCase().includes(busca)
+  );
+
+  const el = document.getElementById('lista');
+  if (!lista.length) {
+    el.innerHTML = '';
+    document.getElementById('vazio').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('vazio').classList.add('hidden');
+
+  // Agrupar por cidade
+  const porCidade = {};
+  lista.forEach(a => {
+    const key = `${a.cidade}/${a.estado}`;
+    if (!porCidade[key]) porCidade[key] = [];
+    porCidade[key].push(a);
+  });
+
+  el.innerHTML = Object.entries(porCidade).map(([cidade, assessorias]) => `
+    <div class="mb-4">
+      <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2 px-1">📍 ${cidade}</p>
+      <div class="space-y-3">
+        ${assessorias.map(a => cardAssessoria(a)).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function cardAssessoria(a) {
+  const ig = a.instagram;
+  const igUrl = `https://www.instagram.com/${ig}`;
+  const wpp = a.whatsapp ? `https://wa.me/55${a.whatsapp.replace(/\D/g,'')}` : null;
+  const iniciais = a.nome.split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
+
+  return `<div class="card-glass rounded-2xl p-4">
+    <div class="flex items-start gap-3">
+      <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-black font-black text-lg flex-shrink-0 overflow-hidden"
+        style="background:linear-gradient(135deg,#22c55e,#16a34a);">
+        <img src="https://unavatar.io/instagram/${ig}" 
+          class="w-full h-full object-cover rounded-2xl"
+          onerror="this.parentElement.textContent='${iniciais}'">
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-black text-sm leading-tight">${a.nome}</p>
+        <p class="text-xs text-slate-400 mt-0.5">📍 ${a.cidade}, ${a.estado}</p>
+        ${a.descricao ? `<p class="text-xs text-slate-500 mt-1 leading-relaxed">${a.descricao}</p>` : ''}
+      </div>
+    </div>
+    <div class="flex gap-2 mt-3">
+      ${ig ? `<a href="${igUrl}" target="_blank" 
+        class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-white"
+        style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);">
+        📸 @${ig}
+      </a>` : ''}
+      ${wpp ? `<a href="${wpp}" target="_blank"
+        class="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white"
+        style="background:linear-gradient(135deg,#25d366,#128c7e);">
+        💬 WhatsApp
+      </a>` : ''}
+    </div>
+  </div>`;
+}
+
+function abrirCadastro() {
+  const token = localStorage.getItem('pace_token');
+  if (!token) { window.location.href='/entrar.html'; return; }
+  document.getElementById('modal-cad').classList.remove('hidden');
+  document.getElementById('modal-cad').classList.add('flex');
+}
+function fecharCadastro() {
+  document.getElementById('modal-cad').classList.add('hidden');
+  document.getElementById('modal-cad').classList.remove('flex');
+}
+
+async function cadastrar() {
+  const nome = document.getElementById('cad-nome').value.trim();
+  const ig = document.getElementById('cad-ig').value.trim().replace('@','');
+  const cidade = document.getElementById('cad-cidade').value.trim();
+  const estado = document.getElementById('cad-estado').value;
+  if (!nome || !ig || !cidade || !estado) { alert('Preencha os campos obrigatórios!'); return; }
+
+  const btn = document.getElementById('btn-cad');
+  btn.textContent = '⏳ Enviando...';
+  btn.disabled = true;
+
+  try {
+    const r = await fetch('/assessorias', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+localStorage.getItem('pace_token') },
+      body: JSON.stringify({
+        nome, instagram: ig, cidade, estado,
+        descricao: document.getElementById('cad-desc').value.trim(),
+        whatsapp: document.getElementById('cad-whats').value.trim()
+      })
+    });
+    if (r.ok) {
+      fecharCadastro();
+      alert('✅ Cadastro enviado! Em breve sua assessoria aparece aqui.');
+      carregar();
+    } else {
+      const d = await r.json();
+      alert('Erro: ' + (d.error || 'Tente novamente'));
+    }
+  } catch { alert('Erro de conexão'); }
+  finally { btn.textContent = 'Enviar cadastro'; btn.disabled = false; }
+}
+
+document.getElementById('modal-cad').addEventListener('click', function(e) {
+  if (e.target === this) fecharCadastro();
+});
+
+carregar();
 </script>
 </body>
 </html>
