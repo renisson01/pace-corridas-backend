@@ -2,248 +2,251 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PACE - Corridas de Rua Brasil</title>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#22c55e">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PACE — Corridas do Brasil</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body{background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
-  .hero-gradient{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f2a1a 100%);}
-  .glow{box-shadow:0 0 30px rgba(34,197,94,0.3);}
-  .card-hover{transition:all 0.2s;} .card-hover:hover{transform:translateY(-2px);}
-  .pulse-dot{animation:pulse 2s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+*{box-sizing:border-box;}
+body{background:#0a0f1a;font-family:system-ui,sans-serif;overflow-x:hidden;}
+.hero-bg{background:linear-gradient(135deg,#0a0f1a 0%,#0d2818 40%,#0a1628 100%);}
+.card-glass{background:rgba(255,255,255,0.04);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);}
+.grad-green{background:linear-gradient(135deg,#22c55e,#16a34a);}
+.grad-blue{background:linear-gradient(135deg,#3b82f6,#1d4ed8);}
+.grad-orange{background:linear-gradient(135deg,#f97316,#ea580c);}
+.grad-purple{background:linear-gradient(135deg,#a855f7,#7c3aed);}
+.pulse-dot{animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.slide-up{animation:slideUp .4s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.btn-primary{background:linear-gradient(135deg,#22c55e,#16a34a);transition:all .2s;box-shadow:0 4px 20px rgba(34,197,94,0.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(34,197,94,0.4);}
+.stat-card{background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(22,163,74,0.05));border:1px solid rgba(34,197,94,0.2);}
+::-webkit-scrollbar{display:none;}
 </style>
 </head>
-<body class="text-white">
+<body class="text-white pb-20">
 
 <!-- HEADER -->
-<header class="bg-slate-800/80 backdrop-blur border-b border-slate-700 sticky top-0 z-40">
-  <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+<header class="hero-bg px-4 pt-safe">
+  <div class="flex items-center justify-between py-4">
     <div class="flex items-center gap-2">
-      <span class="text-green-400 font-black text-2xl tracking-tight">PACE</span>
-      <span class="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full font-bold">BETA</span>
+      <div class="w-9 h-9 grad-green rounded-xl flex items-center justify-center text-black font-black text-lg shadow-lg">P</div>
+      <span class="font-black text-xl tracking-tight">PACE</span>
     </div>
-    <div class="flex items-center gap-2">
-      <a href="/organizador.html" class="text-slate-400 text-xs hidden sm:block">Para organizadores</a>
-      <a href="/entrar.html" id="btnLogin" class="bg-green-500 text-black text-sm font-black px-4 py-2 rounded-full">Entrar</a>
+    <div class="flex gap-2" id="header-btns">
+      <a href="/entrar.html" id="btn-entrar" class="hidden text-xs bg-slate-800 border border-slate-700 px-3 py-2 rounded-xl font-bold">Entrar</a>
+      <a href="/perfil.html" id="btn-perfil" class="hidden text-xs btn-primary text-black px-3 py-2 rounded-xl font-black">Meu Perfil</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="py-6 slide-up">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></div>
+      <span class="text-xs text-green-400 font-bold uppercase tracking-widest">Plataforma Online</span>
+    </div>
+    <h1 class="text-3xl font-black leading-tight mb-2">
+      Corridas do Brasil<br>
+      <span class="text-transparent bg-clip-text" style="background:linear-gradient(90deg,#22c55e,#4ade80);-webkit-background-clip:text;">num só lugar</span>
+    </h1>
+    <p class="text-slate-400 text-sm mb-6">Provas, ranking de atletas, PACE IA e muito mais para o corredor brasileiro.</p>
+    <div class="flex gap-3">
+      <a href="/calendario.html" class="btn-primary text-black font-black px-5 py-3 rounded-2xl text-sm flex-1 text-center">🏃 Ver corridas</a>
+      <a href="/elite.html" class="bg-slate-800 border border-slate-700 font-bold px-5 py-3 rounded-2xl text-sm text-center">🏆 Ranking</a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="grid grid-cols-3 gap-3 pb-6 mt-2">
+    <div class="stat-card rounded-2xl p-3 text-center">
+      <p class="text-2xl font-black text-green-400" id="stat-corridas">—</p>
+      <p class="text-xs text-slate-400 mt-0.5">Corridas</p>
+    </div>
+    <div class="stat-card rounded-2xl p-3 text-center">
+      <p class="text-2xl font-black text-green-400" id="stat-atletas">—</p>
+      <p class="text-xs text-slate-400 mt-0.5">Atletas</p>
+    </div>
+    <div class="stat-card rounded-2xl p-3 text-center">
+      <p class="text-2xl font-black text-green-400" id="stat-estados">27</p>
+      <p class="text-xs text-slate-400 mt-0.5">Estados</p>
     </div>
   </div>
 </header>
 
-<!-- HERO -->
-<div class="hero-gradient px-4 py-10 text-center">
-  <div class="max-w-2xl mx-auto">
-    <div class="text-6xl mb-4">🏃</div>
-    <h1 class="text-3xl sm:text-4xl font-black mb-3 leading-tight">
-      O app dos <span class="text-green-400">corredores</span><br>brasileiros
-    </h1>
-    <p class="text-slate-400 text-sm sm:text-base mb-6">Calendário de corridas, ranking nacional e encontre seu parceiro de treino</p>
-    
-    <!-- STATS AO VIVO -->
-    <div class="flex justify-center gap-6 mb-8">
-      <div class="text-center">
-        <p id="statRaces" class="text-2xl font-black text-green-400">--</p>
-        <p class="text-xs text-slate-400">corridas</p>
-      </div>
-      <div class="text-center">
-        <p id="statAthletes" class="text-2xl font-black text-blue-400">--</p>
-        <p class="text-xs text-slate-400">atletas</p>
-      </div>
-      <div class="text-center">
-        <p id="statResults" class="text-2xl font-black text-purple-400">--</p>
-        <p class="text-xs text-slate-400">resultados</p>
-      </div>
-    </div>
-
-    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a href="/calendario.html" class="bg-green-500 text-black font-black py-3 px-8 rounded-full text-lg glow">Ver corridas 2026</a>
-      <a href="/entrar.html" class="bg-slate-700 text-white font-bold py-3 px-8 rounded-full border border-slate-600">Criar conta grátis</a>
+<!-- BUSCAR PROVAS COM INSCRIÇÕES -->
+<section class="px-4 mt-6">
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="font-black text-base">🔥 Inscrições Abertas</h2>
+    <a href="/calendario.html?status=open" class="text-xs text-green-400 font-bold">Ver todas →</a>
+  </div>
+  <div id="inscricoes" class="space-y-3">
+    <div class="card-glass rounded-2xl p-4 animate-pulse">
+      <div class="h-4 bg-slate-700 rounded w-3/4 mb-2"></div>
+      <div class="h-3 bg-slate-700 rounded w-1/2"></div>
     </div>
   </div>
-</div>
+</section>
+
+<!-- MENU RÁPIDO -->
+<section class="px-4 mt-6">
+  <h2 class="font-black text-base mb-3">⚡ Acesso rápido</h2>
+  <div class="grid grid-cols-2 gap-3">
+    <a href="/calendario.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform">
+      <div class="w-11 h-11 grad-green rounded-xl flex items-center justify-center text-xl flex-shrink-0">📅</div>
+      <div>
+        <p class="font-black text-sm">Corridas</p>
+        <p class="text-xs text-slate-400">Calendário 2025</p>
+      </div>
+    </a>
+    <a href="/elite.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform">
+      <div class="w-11 h-11 grad-orange rounded-xl flex items-center justify-center text-xl flex-shrink-0">🏆</div>
+      <div>
+        <p class="font-black text-sm">Ranking</p>
+        <p class="text-xs text-slate-400">Elite Brasil</p>
+      </div>
+    </a>
+    <a href="/ia.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform">
+      <div class="w-11 h-11 grad-blue rounded-xl flex items-center justify-center text-xl flex-shrink-0">🏃</div>
+      <div>
+        <p class="font-black text-sm">PACE IA</p>
+        <p class="text-xs text-slate-400">Seu coach pessoal</p>
+      </div>
+    </a>
+    <a href="/pacematch.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform">
+      <div class="w-11 h-11 grad-purple rounded-xl flex items-center justify-center text-xl flex-shrink-0">💜</div>
+      <div>
+        <p class="font-black text-sm">PACE Match</p>
+        <p class="text-xs text-slate-400">Parceiros de treino</p>
+      </div>
+    </a>
+    <a href="/calculadoras.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">⚡</div>
+      <div>
+        <p class="font-black text-sm">Calculadoras</p>
+        <p class="text-xs text-slate-400">Pace, tempo, ritmo</p>
+      </div>
+    </a>
+    <a href="/loja.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background:linear-gradient(135deg,#f59e0b,#d97706);">👕</div>
+      <div>
+        <p class="font-black text-sm">Loja PACE</p>
+        <p class="text-xs text-slate-400">Camisas oficiais</p>
+      </div>
+    </a>
+    <a href="/social.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background:linear-gradient(135deg,#ec4899,#db2777);">📸</div>
+      <div>
+        <p class="font-black text-sm">Feed Social</p>
+        <p class="text-xs text-slate-400">Compartilhe corridas</p>
+      </div>
+    </a>
+    <a href="/assessorias.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background:linear-gradient(135deg,#10b981,#059669);">🤝</div>
+      <div>
+        <p class="font-black text-sm">Assessorias</p>
+        <p class="text-xs text-slate-400">Clubes de corrida</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- TOP ATLETAS -->
+<section class="px-4 mt-6">
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="font-black text-base">⭐ Top Atletas</h2>
+    <a href="/elite.html" class="text-xs text-green-400 font-bold">Ver ranking →</a>
+  </div>
+  <div id="top-atletas" class="space-y-2"></div>
+</section>
 
 <!-- PRÓXIMAS CORRIDAS -->
-<div class="max-w-4xl mx-auto px-4 py-6">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="font-black text-lg">📅 Próximas corridas</h2>
-    <a href="/calendario.html" class="text-green-400 text-sm font-bold">Ver todas →</a>
+<section class="px-4 mt-6 mb-4">
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="font-black text-base">📅 Próximas corridas</h2>
+    <a href="/calendario.html" class="text-xs text-green-400 font-bold">Ver todas →</a>
   </div>
-  <div id="proximasCorridas" class="space-y-3">
-    <div class="text-center py-8 text-slate-400">⏳ Carregando...</div>
-  </div>
-</div>
+  <div id="proximas" class="space-y-3"></div>
+</section>
 
-<!-- FEATURES -->
-<div class="max-w-4xl mx-auto px-4 py-6">
-  <h2 class="font-black text-lg mb-4 text-center">Tudo que você precisa</h2>
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-    <a href="/calendario.html" class="card-hover bg-slate-800 border border-slate-700 rounded-2xl p-4 text-center">
-      <div class="text-3xl mb-2">📅</div>
-      <p class="font-bold text-sm">Calendário</p>
-      <p class="text-xs text-slate-400 mt-1">Corridas em todo Brasil</p>
-    </a>
-    <a href="/resultados.html" class="card-hover bg-slate-800 border border-slate-700 rounded-2xl p-4 text-center">
-      <div class="text-3xl mb-2">🏆</div>
-      <p class="font-bold text-sm">Ranking</p>
-      <p class="text-xs text-slate-400 mt-1">Nacional e por estado</p>
-    </a>
-    <a href="/pacematch.html" class="card-hover bg-slate-800 border border-green-500/30 rounded-2xl p-4 text-center bg-gradient-to-b from-green-900/20 to-transparent">
-      <div class="text-3xl mb-2">💚</div>
-      <p class="font-bold text-sm text-green-400">PaceMatch</p>
-      <p class="text-xs text-slate-400 mt-1">Parceiro de treino</p>
-    </a>
-    <a href="/organizador.html" class="card-hover bg-slate-800 border border-slate-700 rounded-2xl p-4 text-center">
-      <div class="text-3xl mb-2">🏁</div>
-      <p class="font-bold text-sm">Organize</p>
-      <p class="text-xs text-slate-400 mt-1">Cadastre seu evento</p>
-    </a>
+<!-- NAV -->
+<nav class="fixed bottom-0 left-0 right-0 z-50" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);">
+  <div class="flex justify-around py-2">
+    <a href="/" class="flex flex-col items-center text-xs text-green-400 py-1 px-3"><span class="text-xl">🏠</span><span class="font-bold">Início</span></a>
+    <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
+    <a href="/elite.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏆</span><span>Ranking</span></a>
+    <a href="/loja.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">👕</span><span>Loja</span></a>
+    <a href="/ia.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏃</span><span>IA</span></a>
+    <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">👤</span><span>Perfil</span></a>
   </div>
-</div>
-
-<!-- RANKING PREVIEW -->
-<div class="max-w-4xl mx-auto px-4 py-6">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="font-black text-lg">🏆 Top atletas</h2>
-    <a href="/resultados.html" class="text-green-400 text-sm font-bold">Ranking completo →</a>
-  </div>
-  <div id="topAtletas" class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
-    <div class="text-center py-8 text-slate-400">⏳ Carregando...</div>
-  </div>
-</div>
-
-<!-- PACEMATCH BANNER -->
-<div class="max-w-4xl mx-auto px-4 py-6">
-  <div class="bg-gradient-to-r from-green-900/50 to-slate-800 border border-green-500/30 rounded-2xl p-6">
-    <div class="flex items-center gap-4">
-      <div class="text-5xl">💚</div>
-      <div class="flex-1">
-        <h3 class="font-black text-lg text-green-400">PaceMatch</h3>
-        <p class="text-slate-300 text-sm">Encontre corredores no seu ritmo e na sua cidade</p>
-        <a href="/pacematch.html" class="inline-block mt-3 bg-green-500 text-black font-black px-6 py-2 rounded-full text-sm">Descobrir agora</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PARA ORGANIZADORES -->
-<div class="max-w-4xl mx-auto px-4 py-6 mb-20">
-  <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 text-center">
-    <div class="text-4xl mb-3">🏁</div>
-    <h3 class="font-black text-lg mb-2">Você organiza corridas?</h3>
-    <p class="text-slate-400 text-sm mb-4">Cadastre seu evento gratuitamente e alcance milhares de corredores</p>
-    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a href="/organizador.html" class="bg-green-500 text-black font-black px-6 py-3 rounded-full">Cadastrar evento grátis</a>
-      <a href="/organizador.html" class="bg-yellow-500 text-black font-black px-6 py-3 rounded-full">⭐ Plano Premium</a>
-    </div>
-  </div>
-</div>
-
-<!-- NAV BOTTOM -->
-<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
-  <a href="/" class="flex flex-col items-center text-xs py-1 px-2 text-green-400"><span class="text-xl">🏠</span><span>Início</span></a>
-  <a href="/calendario.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">📅</span><span>Corridas</span></a>
-  <a href="/elite.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏆</span><span>Ranking</span></a>
-  <a href="/loja.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👕</span><span>Loja</span></a>
-  <a href="/ia.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏃</span><span>PACE IA</span></a>
-  <a href="/perfil.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👤</span><span>Perfil</span></a>
 </nav>
 
 <script>
-// Carregar stats
-async function loadStats() {
-  try {
-    const s = await fetch('/scraper/status').then(r=>r.json());
-    document.getElementById('statRaces').textContent = s.totalRaces || '--';
-    document.getElementById('statAthletes').textContent = s.athletes || '--';
-    document.getElementById('statResults').textContent = s.totalResults || '--';
-  } catch{}
+const token = localStorage.getItem('pace_token');
+const user = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
+
+// Header
+if (token && user) {
+  document.getElementById('btn-perfil').classList.remove('hidden');
+  document.getElementById('btn-perfil').textContent = '👤 ' + user.name?.split(' ')[0];
+} else {
+  document.getElementById('btn-entrar').classList.remove('hidden');
 }
 
-// Próximas corridas
-async function loadProximas() {
-  try {
-    const data = await fetch('/races?status=upcoming&limit=6').then(r=>r.json());
-    const races = Array.isArray(data) ? data : (data.races||data.data||[]);
-    const hoje = new Date(); hoje.setHours(0,0,0,0);
-    const proximas = races
-      .filter(r => new Date(r.date) >= hoje)
-      .sort((a,b) => new Date(a.date)-new Date(b.date))
-      .slice(0,5);
+// Stats
+fetch('/ranking/stats').then(r=>r.json()).then(d=>{
+  document.getElementById('stat-corridas').textContent = d.totalCorridas?.toLocaleString('pt-BR') || '—';
+  document.getElementById('stat-atletas').textContent = d.totalAtletas?.toLocaleString('pt-BR') || '—';
+}).catch(()=>{});
 
-    if(!proximas.length) { document.getElementById('proximasCorridas').innerHTML='<p class="text-center text-slate-400 py-4">Nenhuma corrida próxima</p>'; return; }
-
-    const MESES=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    document.getElementById('proximasCorridas').innerHTML = proximas.map(r => {
-      const d = new Date(r.date);
-      const dias = Math.ceil((d-hoje)/(1000*60*60*24));
-      const diasTxt = dias===0?'Hoje!':dias===1?'Amanhã':`${dias} dias`;
-      const diasCor = dias<=7?'text-orange-400':dias<=30?'text-yellow-400':'text-slate-400';
-      return `
-      <a href="/calendario.html" class="card-hover flex items-center gap-3 bg-slate-800 border border-slate-700 rounded-xl p-3">
-        <div class="bg-slate-700 rounded-xl px-3 py-2 text-center min-w-[48px]">
-          <p class="text-green-400 font-black text-lg leading-none">${d.getDate()}</p>
-          <p class="text-xs text-slate-300">${MESES[d.getMonth()+1]}</p>
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="font-bold text-sm truncate">${r.name}</p>
-          <p class="text-xs text-slate-400">📍 ${r.city}/${r.state}</p>
-        </div>
-        <div class="text-right">
-          <p class="text-xs font-bold ${diasCor}">${diasTxt}</p>
-          ${r.registrationUrl ? '<span class="text-xs text-green-400">Inscrições abertas</span>' : ''}
-        </div>
-      </a>`;
-    }).join('');
-  } catch(e) { console.error(e); }
-}
+// Inscrições abertas
+fetch('/races?status=open&limit=3').then(r=>r.json()).then(races=>{
+  const el = document.getElementById('inscricoes');
+  if (!races?.length) { el.innerHTML='<p class="text-slate-500 text-sm text-center py-4">Buscando provas...</p>'; return; }
+  el.innerHTML = races.map(r => {
+    const data = r.date ? new Date(r.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '';
+    return `<a href="${r.registrationLink || '/calendario.html'}" ${r.registrationLink?'target="_blank"':''} class="card-glass rounded-2xl p-4 flex items-center gap-4 active:scale-95 transition-transform block">
+      <div class="w-12 h-12 grad-green rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+        <span class="text-black font-black text-xs leading-none">${data.split(' ')[0]}</span>
+        <span class="text-black text-xs leading-none uppercase">${data.split(' ')[1]||''}</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-black text-sm leading-tight">${r.name}</p>
+        <p class="text-xs text-slate-400 mt-0.5">📍 ${r.city||''}, ${r.state||''} · ${r.distances||''}</p>
+      </div>
+      ${r.registrationLink ? '<span class="text-green-400 text-xs font-bold flex-shrink-0">Inscrever →</span>' : ''}
+    </a>`;
+  }).join('');
+}).catch(()=>{ document.getElementById('inscricoes').innerHTML=''; });
 
 // Top atletas
-async function loadAtletas() {
-  try {
-    const data = await fetch('/ranking?limit=5').then(r=>r.json());
-    const atletas = Array.isArray(data) ? data : (data.athletes||data.ranking||data.data||[]);
-    if(!atletas.length) { document.getElementById('topAtletas').innerHTML='<p class="text-center text-slate-400 py-4 text-sm">Sem dados de ranking ainda</p>'; return; }
-    const medalhas = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-    document.getElementById('topAtletas').innerHTML = atletas.slice(0,5).map((a,i) => `
-      <div class="flex items-center gap-3 px-4 py-3 ${i<atletas.length-1?'border-b border-slate-700':''}">
-        <span class="text-xl w-8 text-center">${medalhas[i]}</span>
-        <div class="flex-1">
-          <p class="font-bold text-sm">${a.name||a.athleteName||'Atleta'}</p>
-          <p class="text-xs text-slate-400">${a.city||''}${a.state?'/'+a.state:''}</p>
-        </div>
-        <div class="text-right">
-          <p class="text-green-400 font-black text-sm">${a.totalPoints||a.points||0} pts</p>
-          <p class="text-xs text-slate-400">${a.totalRaces||a.races||0} corridas</p>
-        </div>
-      </div>`).join('');
-  } catch(e) { document.getElementById('topAtletas').innerHTML='<p class="text-center text-slate-400 py-4 text-sm">Em breve</p>'; }
-}
+fetch('/ranking?limit=3').then(r=>r.json()).then(atletas=>{
+  const ICONE = ['🥇','🥈','🥉'];
+  document.getElementById('top-atletas').innerHTML = atletas.slice(0,3).map((a,i)=>`
+    <div class="card-glass rounded-2xl p-3 flex items-center gap-3">
+      <span class="text-2xl">${ICONE[i]}</span>
+      <div class="flex-1">
+        <p class="font-black text-sm">${a.name}</p>
+        <p class="text-xs text-slate-400">${a.equipe||''} · ${a.nivel||''}</p>
+      </div>
+      <p class="text-green-400 font-black text-sm">${(a.totalPoints||0).toLocaleString('pt-BR')}pts</p>
+    </div>`).join('');
+}).catch(()=>{});
 
-// Atualizar botão login
-const token = localStorage.getItem('pace_token');
-const user = localStorage.getItem('pace_user');
-if(token && user) {
-  const u = JSON.parse(user);
-  document.getElementById('btnLogin').textContent = u.name.split(' ')[0];
-  document.getElementById('btnLogin').href = '/perfil.html';
-}
-
-// Instalar PWA
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => { deferredPrompt = e; });
-
-loadStats();
-loadProximas();
-loadAtletas();
-
-// Service worker
-if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(()=>{});
-}
+// Próximas corridas
+fetch('/races?limit=4&sort=date').then(r=>r.json()).then(races=>{
+  const el = document.getElementById('proximas');
+  if(!races?.length){el.innerHTML='<p class="text-slate-500 text-sm text-center py-2">Nenhuma corrida encontrada</p>';return;}
+  el.innerHTML = races.map(r=>{
+    const data = r.date ? new Date(r.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'2-digit'}) : 'A confirmar';
+    return `<a href="/calendario.html" class="card-glass rounded-2xl p-4 flex items-center gap-3 active:scale-95 transition-transform block">
+      <div class="w-10 h-10 rounded-xl bg-slate-700 flex items-center justify-center text-lg flex-shrink-0">🏅</div>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-sm truncate">${r.name}</p>
+        <p class="text-xs text-slate-400">📍 ${r.city||r.state||''} · 📅 ${data}</p>
+      </div>
+    </a>`;
+  }).join('');
+}).catch(()=>{});
 </script>
 </body>
 </html>
