@@ -57,6 +57,7 @@ model User {
   name          String
   phone         String?
   city          String?
+  equipe        String?
   state         String?
   gender        String?
   age           Int?

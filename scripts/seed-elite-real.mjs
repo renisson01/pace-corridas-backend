@@ -284,18 +284,20 @@ async function run() {
   console.log('🗑️  Limpando atletas fictícios antigos...');
 
   // Deletar resultados e atletas antigos (manter só os que têm userId = atletas reais)
-  // Buscar IDs de atletas sem usuário vinculado
+  // Remover atletas sem usuário (seed fictício antigo)
   const atletasSemUser = await prisma.athlete.findMany({
     where: { user: null },
     select: { id: true }
   });
   const ids = atletasSemUser.map(a => a.id);
   if (ids.length) {
+    // Deletar results PRIMEIRO (FK constraint)
     await prisma.result.deleteMany({ where: { athleteId: { in: ids } } });
+    // Depois deletar athletes
     await prisma.athlete.deleteMany({ where: { id: { in: ids } } });
-    console.log('🗑️  Removidos:', ids.length, 'atletas fictícios');
+    console.log('🗑️  Removidos:', ids.length, 'atletas fictícios + seus resultados');
   } else {
-    console.log('✅ Nenhum atleta fictício para remover');
+    console.log('✅ Banco limpo, sem fictícios');
   }
 
   console.log('✅ Limpo! Criando atletas reais...\n');
@@ -312,8 +314,7 @@ async function run() {
       atleta = await prisma.athlete.create({
         data: {
           name: a.nome,
-          // SEM cidade nem estado - só nome e equipe como tag
-          city: a.equipe,  // usamos city para guardar equipe
+          equipe: a.equipe,
           state: null,
           gender: a.genero,
           totalRaces: 0,

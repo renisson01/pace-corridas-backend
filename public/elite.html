@@ -3,123 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PACE — Atletas de Elite</title>
+<title>PACE — Ranking Elite Brasil</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>body{background:#0f172a;}</style>
+<style>
+body{background:#0f172a;}
+.card{transition:all .2s;}
+.card:hover{transform:translateY(-2px);}
+</style>
 </head>
 <body class="text-white min-h-screen pb-24">
 
 <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 py-3 flex justify-between items-center">
   <a href="/" class="text-green-400 font-black text-xl">PACE</a>
-  <h1 class="font-bold text-sm">🏆 Atletas de Elite</h1>
+  <h1 class="font-bold text-sm">🏆 Ranking Elite</h1>
   <div></div>
 </header>
 
-<!-- CRITÉRIOS DE ELITE -->
-<div class="max-w-2xl mx-auto px-4 py-4">
-  <div class="bg-gradient-to-r from-yellow-900/30 to-slate-800 border border-yellow-500/30 rounded-2xl p-4 mb-4">
-    <h2 class="font-black text-yellow-400 mb-3">📋 Critérios de Elite PACE</h2>
-    <div class="space-y-2 text-xs">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2"><span>⭐</span><span class="font-bold text-yellow-400">Elite Mundial</span></div>
-        <div class="text-slate-300">Maratona: H&lt;2:10 / F&lt;2:25</div>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2"><span>🔥</span><span class="font-bold text-orange-400">Elite Nacional</span></div>
-        <div class="text-slate-300">Maratona: H&lt;2:20 / F&lt;2:40</div>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2"><span>💪</span><span class="font-bold text-blue-400">Elite Regional</span></div>
-        <div class="text-slate-300">Maratona: H&lt;2:35 / F&lt;2:55</div>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2"><span>📈</span><span class="font-bold text-green-400">Sub-Elite</span></div>
-        <div class="text-slate-300">Maratona: H&lt;2:55 / F&lt;3:15</div>
-      </div>
-    </div>
-    <p class="text-xs text-slate-400 mt-3">* Classificação baseada no melhor resultado histórico</p>
+<!-- CRITÉRIOS -->
+<div class="bg-gradient-to-r from-slate-800 to-slate-900 border-b border-slate-700 px-4 py-3">
+  <div class="flex gap-4 overflow-x-auto text-xs">
+    <div class="flex items-center gap-1.5 whitespace-nowrap"><span class="text-yellow-400 text-base">⭐</span><div><p class="font-bold text-yellow-400">Elite Mundial</p><p class="text-slate-400">42km H&lt;2:12 / F&lt;2:28</p></div></div>
+    <div class="flex items-center gap-1.5 whitespace-nowrap"><span class="text-orange-400 text-base">🔥</span><div><p class="font-bold text-orange-400">Elite Nacional</p><p class="text-slate-400">42km H&lt;2:22 / F&lt;2:42</p></div></div>
+    <div class="flex items-center gap-1.5 whitespace-nowrap"><span class="text-blue-400 text-base">💪</span><div><p class="font-bold text-blue-400">Elite Regional</p><p class="text-slate-400">42km H&lt;2:35 / F&lt;2:58</p></div></div>
+    <div class="flex items-center gap-1.5 whitespace-nowrap"><span class="text-green-400 text-base">📈</span><div><p class="font-bold text-green-400">Sub-Elite</p><p class="text-slate-400">42km H&lt;3:00 / F&lt;3:20</p></div></div>
   </div>
+</div>
 
-  <!-- FILTROS -->
+<!-- FILTROS -->
+<div class="max-w-2xl mx-auto px-4 pt-4">
   <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
-    <button onclick="filtrar('todos')" class="filtro-btn active whitespace-nowrap bg-green-500 text-black font-black text-xs px-4 py-2 rounded-full">Todos</button>
-    <button onclick="filtrar('M')" class="filtro-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full">👨 Masculino</button>
-    <button onclick="filtrar('F')" class="filtro-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full">👩 Feminino</button>
+    <button onclick="mudarAba('geral')" id="btn-geral" class="aba-btn whitespace-nowrap bg-green-500 text-black font-black text-xs px-4 py-2 rounded-full">🏆 Geral</button>
+    <button onclick="mudarAba('maratona')" id="btn-maratona" class="aba-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full">42km</button>
+    <button onclick="mudarAba('10km')" id="btn-10km" class="aba-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full">10km</button>
+    <div class="ml-auto flex gap-2">
+      <button onclick="filtrarGenero('M')" id="btn-M" class="gen-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded-full">👨</button>
+      <button onclick="filtrarGenero('F')" id="btn-F" class="gen-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded-full">👩</button>
+      <button onclick="filtrarGenero('')" id="btn-todos" class="gen-btn whitespace-nowrap bg-slate-600 text-white text-xs px-3 py-2 rounded-full">Todos</button>
+    </div>
   </div>
 
-  <!-- RANKING -->
-  <div id="loading" class="text-center py-12 text-slate-400">⏳ Carregando...</div>
-  <div id="lista" class="space-y-3 hidden"></div>
+  <div id="loading" class="text-center py-12 text-slate-400"><div class="text-4xl mb-2">⏳</div><p>Carregando ranking...</p></div>
+  <div id="lista" class="space-y-2 hidden"></div>
 </div>
 
 <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
   <a href="/" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🏠</span><span>Início</span></a>
   <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
-  <a href="/social.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📸</span><span>Feed</span></a>
   <a href="/resultados.html" class="flex flex-col items-center text-xs text-green-400 py-1 px-3"><span class="text-xl">🏆</span><span>Ranking</span></a>
+  <a href="/social.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📸</span><span>Feed</span></a>
   <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">👤</span><span>Perfil</span></a>
 </nav>
 
 <script>
-let todos = [];
+let todos = [], abaAtual = 'geral', generoAtual = '';
+const MEDALHAS = ['🥇','🥈','🥉'];
 
-function nivel(pts) {
-  if (pts >= 8000) return { label:'⭐ Elite Mundial',    cor:'text-yellow-400', bg:'bg-yellow-900/30 border-yellow-500/30' };
-  if (pts >= 5000) return { label:'🔥 Elite Nacional',   cor:'text-orange-400', bg:'bg-orange-900/30 border-orange-500/30' };
-  if (pts >= 3000) return { label:'💪 Elite Regional',   cor:'text-blue-400',   bg:'bg-blue-900/30 border-blue-500/30' };
-  if (pts >= 1500) return { label:'📈 Sub-Elite',        cor:'text-green-400',  bg:'bg-green-900/30 border-green-500/30' };
-  return                   { label:'🌱 Avançado',        cor:'text-slate-400',  bg:'bg-slate-700/30 border-slate-600/30' };
+function nivel(pontos) {
+  if (pontos >= 12000) return { label:'⭐ Elite Mundial',   bg:'bg-yellow-900/30 border-yellow-500/50',  txt:'text-yellow-400' };
+  if (pontos >= 7000)  return { label:'🔥 Elite Nacional',  bg:'bg-orange-900/30 border-orange-500/50',  txt:'text-orange-400' };
+  if (pontos >= 3000)  return { label:'💪 Elite Regional',  bg:'bg-blue-900/30 border-blue-500/50',      txt:'text-blue-400' };
+  if (pontos >= 1000)  return { label:'📈 Sub-Elite',       bg:'bg-green-900/30 border-green-500/50',    txt:'text-green-400' };
+  return                      { label:'🌱 Avançado',        bg:'bg-slate-700/50 border-slate-600',       txt:'text-slate-400' };
 }
 
 function renderCard(a, i) {
   const n = nivel(a.totalPoints || 0);
-  const medalhas = ['🥇','🥈','🥉'];
+  const pos = i < 3 ? MEDALHAS[i] : `<span class="text-slate-400 text-sm font-black">${i+1}</span>`;
+  const tempo = a.melhorTempo || a.tempo || null;
+  const prova = a.melhorProva || a.prova || null;
+  const equipe = a.city || ''; // city está sendo usado como equipe nos atletas elite
+
   return `
-  <div class="border ${n.bg} rounded-2xl p-4 ${n.bg.split(' ')[0]}">
+  <div class="card border ${n.bg} rounded-2xl p-4">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center font-black text-lg flex-shrink-0">
-        ${i < 3 ? medalhas[i] : `<span class="text-sm text-slate-400">${i+1}</span>`}
-      </div>
+      <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0 text-xl">${pos}</div>
       <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2">
-          <p class="font-black text-sm truncate">${a.name}</p>
-          <span class="text-xs ${n.cor} font-bold whitespace-nowrap">${n.label}</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <p class="font-black text-sm">${a.name}</p>
+          <span class="text-xs ${n.txt} font-bold">${n.label}</span>
         </div>
-        <p class="text-xs text-slate-400">📍 ${a.city||''}/${a.state||''} · ${a.gender==='M'?'👨':'👩'}</p>
+        <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+          ${equipe ? `<span class="text-xs text-slate-400">🏃 ${equipe}</span>` : ''}
+          ${a.gender ? `<span class="text-xs text-slate-500">${a.gender === 'M' ? '👨' : '👩'}</span>` : ''}
+        </div>
+        ${tempo ? `<p class="text-xs text-slate-500 mt-0.5 truncate">⏱ ${tempo}${prova ? ' — ' + prova.substring(0,35) : ''}</p>` : ''}
       </div>
-      <div class="text-right">
-        <p class="font-black ${n.cor}">${(a.totalPoints||0).toLocaleString()}</p>
-        <p class="text-xs text-slate-400">${a.totalRaces||0} provas</p>
+      <div class="text-right flex-shrink-0">
+        <p class="font-black ${n.txt} text-sm">${(a.totalPoints || 0).toLocaleString('pt-BR')}</p>
+        <p class="text-xs text-slate-500">${a.totalRaces || 0} provas</p>
       </div>
     </div>
   </div>`;
 }
 
-async function load() {
-  const r = await fetch('/ranking?limit=100');
-  const data = await r.json();
-  todos = Array.isArray(data) ? data : (data.athletes || data.ranking || data.data || []);
+async function load(endpoint) {
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('lista').classList.add('hidden');
+  try {
+    let url = endpoint;
+    if (generoAtual && abaAtual === 'geral') url += `?genero=${generoAtual}`;
+    if (generoAtual && abaAtual !== 'geral') url += `?genero=${generoAtual}`;
+    const r = await fetch(url);
+    todos = await r.json();
+    if (!Array.isArray(todos)) todos = [];
+    render();
+  } catch(e) {
+    document.getElementById('loading').innerHTML = `<p class="text-red-400">❌ Erro: ${e.message}</p>`;
+  }
+}
+
+function render() {
   document.getElementById('loading').classList.add('hidden');
-  renderLista(todos);
-}
-
-function renderLista(lista) {
   document.getElementById('lista').classList.remove('hidden');
-  document.getElementById('lista').innerHTML = lista.length
-    ? lista.map((a,i) => renderCard(a,i)).join('')
-    : '<p class="text-center text-slate-400 py-8">Nenhum atleta encontrado</p>';
+  if (!todos.length) {
+    document.getElementById('lista').innerHTML = '<p class="text-center text-slate-400 py-8">Nenhum atleta encontrado</p>';
+    return;
+  }
+  document.getElementById('lista').innerHTML = todos.map((a,i) => renderCard(a,i)).join('');
 }
 
-function filtrar(genero) {
-  document.querySelectorAll('.filtro-btn').forEach(b => {
-    b.className = 'filtro-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full';
+function mudarAba(aba) {
+  abaAtual = aba;
+  document.querySelectorAll('.aba-btn').forEach(b => {
+    b.className = 'aba-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full';
   });
-  event.target.className = 'filtro-btn active whitespace-nowrap bg-green-500 text-black font-black text-xs px-4 py-2 rounded-full';
-  const filtrado = genero === 'todos' ? todos : todos.filter(a => a.gender === genero);
-  renderLista(filtrado);
+  document.getElementById(`btn-${aba}`).className = 'aba-btn whitespace-nowrap bg-green-500 text-black font-black text-xs px-4 py-2 rounded-full';
+  
+  if (aba === 'geral') load('/ranking');
+  else if (aba === 'maratona') load('/ranking/maratona');
+  else if (aba === '10km') load('/ranking/10km');
 }
 
-load();
+function filtrarGenero(g) {
+  generoAtual = g;
+  document.querySelectorAll('.gen-btn').forEach(b => {
+    b.className = 'gen-btn whitespace-nowrap bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded-full';
+  });
+  const id = g === '' ? 'btn-todos' : `btn-${g}`;
+  document.getElementById(id).className = 'gen-btn whitespace-nowrap bg-green-500 text-black font-black text-xs px-3 py-2 rounded-full';
+  mudarAba(abaAtual);
+}
+
+load('/ranking');
 </script>
 </body>
 </html>
