@@ -33,7 +33,7 @@ export async function rankingRoutes(fastify) {
       take: parseInt(limit),
       select: {
         id:true, name:true, equipe:true, state:true, gender:true,
-        totalRaces:true, totalPoints:true,
+        totalRaces:true, totalPoints:true, age:true,
         results: {
           orderBy: { points: 'desc' },
           take: 1,
