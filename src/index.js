@@ -12,6 +12,8 @@ import { authRoutes } from './modules/auth/auth.routes.js';
 import { organizerRoutes } from './modules/organizer/organizer.routes.js';
 import { matchRoutes } from './modules/match/match.routes.js';
 import { analyticsRoutes } from './modules/analytics/analytics.routes.js';
+import { assessoriaRoutes } from './modules/assessoria/assessoria.routes.js';
+import { lojaRoutes } from './modules/loja/loja.routes.js';
 import { socialRoutes } from './modules/social/social.routes.js';
 import { verifyRoutes } from './modules/results/verify.routes.js';
 import { uploadRoutes } from './modules/upload/upload.routes.js';
@@ -23,7 +25,7 @@ await app.register(cors, { origin: '*' });
 
 
 
-const pages = ['elite','meu-resultado','calculadoras','usuario','index','entrar','perfil','pacematch','calendario','importar-resultado','organizador','resultados','stats','social','faixas'];
+const pages = ['loja-admin','loja','assessoria','assessorias','elite','meu-resultado','calculadoras','usuario','index','entrar','perfil','pacematch','calendario','importar-resultado','organizador','resultados','stats','social','faixas'];
 for(const pg of pages) {
   const route = pg==='index' ? '/' : `/${pg}.html`;
   const file = pg==='index' ? 'index.html' : `${pg}.html`;
@@ -42,6 +44,8 @@ await app.register(matchRoutes);
 await app.register(analyticsRoutes);
 await app.register(uploadRoutes);
 await app.register(socialRoutes);
+await app.register(assessoriaRoutes);
+await app.register(lojaRoutes);
 await app.register(verifyRoutes);
 
 

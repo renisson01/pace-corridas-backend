@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PACE Loja — Camisas de Corrida</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#0f172a;}</style>
+</head>
+<body class="text-white min-h-screen pb-24">
+
+<header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 py-3 flex justify-between items-center">
+  <a href="/" class="text-green-400 font-black text-xl">PACE</a>
+  <h1 class="font-bold text-sm">🛍️ Loja PACE</h1>
+  <a href="/loja-admin.html" id="btnAdmin" class="hidden text-xs text-slate-400">⚙️ Admin</a>
+</header>
+
+<!-- BANNER -->
+<div class="bg-gradient-to-r from-green-900/40 to-slate-800 border-b border-slate-700 px-4 py-4">
+  <p class="font-black text-lg">👕 Camisas Oficiais</p>
+  <p class="text-slate-400 text-xs mt-1">Modelos exclusivos para assessorias e clubes • Feitas por Renisson</p>
+</div>
+
+<!-- FILTROS -->
+<div class="max-w-2xl mx-auto px-4 pt-4">
+  <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+    <button onclick="filtrar('')" class="filtro whitespace-nowrap bg-green-500 text-black font-black text-xs px-4 py-2 rounded-full">Todos</button>
+    <button onclick="filtrar('assessoria')" class="filtro whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full">🏃 Assessorias</button>
+    <button onclick="filtrar('clube')" class="filtro whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full">🏆 Clubes</button>
+    <button onclick="filtrar('avulso')" class="filtro whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full">👕 Modelos Avulsos</button>
+  </div>
+
+  <div id="loading" class="text-center py-12 text-slate-400">⏳ Carregando produtos...</div>
+  <div id="grid" class="grid grid-cols-2 gap-3 hidden"></div>
+  <div id="vazio" class="hidden text-center py-12 text-slate-400">
+    <div class="text-5xl mb-3">👕</div>
+    <p class="font-black text-lg">Em breve!</p>
+    <p class="text-sm mt-2 text-slate-500">Novos modelos chegando</p>
+    <p class="text-xs text-slate-600 mt-4">Contato: WhatsApp do Renisson</p>
+  </div>
+</div>
+
+<!-- MODAL PRODUTO -->
+<div id="modalProduto" class="hidden fixed inset-0 bg-black/80 z-50 flex items-end">
+  <div class="bg-slate-800 w-full rounded-t-3xl max-h-[90vh] overflow-y-auto">
+    <div class="p-4">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="mpNome" class="font-black text-lg"></h2>
+        <button onclick="fecharModal()" class="text-slate-400 text-2xl">✕</button>
+      </div>
+      <div id="mpFotos" class="flex gap-2 overflow-x-auto mb-4"></div>
+      <p id="mpDesc" class="text-slate-300 text-sm mb-3"></p>
+      <p id="mpPreco" class="text-green-400 font-black text-2xl mb-4"></p>
+      
+      <div class="mb-4">
+        <p class="text-xs text-slate-400 font-bold mb-2">TAMANHO</p>
+        <div id="mpTamanhos" class="flex gap-2 flex-wrap"></div>
+      </div>
+      
+      <div class="mb-4">
+        <p class="text-xs text-slate-400 font-bold mb-2">QUANTIDADE</p>
+        <div class="flex items-center gap-3">
+          <button onclick="ajustarQtd(-1)" class="bg-slate-700 w-10 h-10 rounded-xl font-black text-xl">−</button>
+          <span id="qtd" class="font-black text-xl w-8 text-center">1</span>
+          <button onclick="ajustarQtd(1)" class="bg-slate-700 w-10 h-10 rounded-xl font-black text-xl">+</button>
+        </div>
+      </div>
+
+      <input id="mpObs" placeholder="Observações (opcional)..." class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none mb-4">
+
+      <button onclick="comprar()" class="w-full bg-green-500 text-black font-black py-4 rounded-2xl text-lg">
+        💬 Comprar via WhatsApp
+      </button>
+      <p class="text-center text-xs text-slate-500 mt-2">Você será redirecionado para o WhatsApp para confirmar o pedido</p>
+    </div>
+  </div>
+</div>
+
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
+  <a href="/" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🏠</span><span>Início</span></a>
+  <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
+  <a href="/social.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📸</span><span>Feed</span></a>
+  <a href="/assessorias.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">👟</span><span>Grupos</span></a>
+  <a href="/loja.html" class="flex flex-col items-center text-xs text-green-400 py-1 px-3"><span class="text-xl">🛍️</span><span>Loja</span></a>
+</nav>
+
+<script>
+const token = localStorage.getItem('pace_token');
+const me = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
+let produtos = [], produtoAtual = null, tamanhoSelecionado = null, quantidade = 1;
+
+// Mostrar botão admin se for admin
+if (me?.isAdmin) document.getElementById('btnAdmin').classList.remove('hidden');
+
+// Redirecionar de assessoria
+const params = new URLSearchParams(location.search);
+const assessoriaId = params.get('assessoria');
+
+function renderProduto(p) {
+  const fotos = p.fotos?.split(',') || [];
+  const foto = fotos[0] || '';
+  return `
+  <div onclick="abrirProduto('${p.id}')" class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden cursor-pointer hover:border-green-500/50 transition-all">
+    <div class="aspect-square bg-slate-700 relative overflow-hidden">
+      ${foto ? `<img src="${foto}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-full text-5xl\'>👕</div>'">` : '<div class="flex items-center justify-center h-full text-5xl">👕</div>'}
+    </div>
+    <div class="p-3">
+      <p class="font-bold text-sm leading-tight">${p.nome}</p>
+      ${p.assessoria ? `<p class="text-xs text-slate-400 mt-0.5">🏃 ${p.assessoria.nome}</p>` : ''}
+      <p class="text-green-400 font-black text-lg mt-1">R$ ${p.preco.toFixed(2)}</p>
+      <p class="text-xs text-slate-500 mt-0.5">${p.tamanhos}</p>
+    </div>
+  </div>`;
+}
+
+async function abrirProduto(id) {
+  produtoAtual = produtos.find(p => p.id === id);
+  if (!produtoAtual) return;
+  tamanhoSelecionado = null;
+  quantidade = 1;
+  document.getElementById('qtd').textContent = '1';
+
+  document.getElementById('mpNome').textContent = produtoAtual.nome;
+  document.getElementById('mpDesc').textContent = produtoAtual.descricao || '';
+  document.getElementById('mpPreco').textContent = `R$ ${produtoAtual.preco.toFixed(2)}`;
+
+  // Fotos
+  const fotos = produtoAtual.fotos?.split(',') || [];
+  document.getElementById('mpFotos').innerHTML = fotos.map(f =>
+    `<img src="${f}" class="h-40 rounded-xl object-cover flex-shrink-0" onerror="this.remove()">`
+  ).join('') || '<div class="w-full h-40 bg-slate-700 rounded-xl flex items-center justify-center text-5xl">👕</div>';
+
+  // Tamanhos
+  const tamanhos = produtoAtual.tamanhos?.split(',') || [];
+  document.getElementById('mpTamanhos').innerHTML = tamanhos.map(t =>
+    `<button onclick="selecionarTam('${t.trim()}')" id="tam-${t.trim()}" class="bg-slate-700 border border-slate-600 px-4 py-2 rounded-xl font-bold text-sm hover:border-green-500">${t.trim()}</button>`
+  ).join('');
+
+  document.getElementById('modalProduto').classList.remove('hidden');
+}
+
+function selecionarTam(t) {
+  tamanhoSelecionado = t;
+  document.querySelectorAll('[id^="tam-"]').forEach(b => {
+    b.className = 'bg-slate-700 border border-slate-600 px-4 py-2 rounded-xl font-bold text-sm hover:border-green-500';
+  });
+  document.getElementById(`tam-${t}`).className = 'bg-green-500 border border-green-500 text-black px-4 py-2 rounded-xl font-bold text-sm';
+}
+
+function ajustarQtd(delta) {
+  quantidade = Math.max(1, Math.min(10, quantidade + delta));
+  document.getElementById('qtd').textContent = quantidade;
+}
+
+async function comprar() {
+  if (!token) { window.location.href='/entrar.html'; return; }
+  if (!tamanhoSelecionado) { alert('Selecione um tamanho!'); return; }
+
+  try {
+    const r = await fetch('/loja/pedidos', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+      body: JSON.stringify({
+        produtoId: produtoAtual.id,
+        tamanho: tamanhoSelecionado,
+        quantidade,
+        obs: document.getElementById('mpObs').value
+      })
+    });
+    const data = await r.json();
+    if (data.waLink) {
+      fecharModal();
+      window.open(data.waLink, '_blank');
+    } else alert(data.error || 'Erro ao processar pedido');
+  } catch(e) { alert('Erro: ' + e.message); }
+}
+
+function fecharModal() { document.getElementById('modalProduto').classList.add('hidden'); }
+
+async function filtrar(cat) {
+  document.querySelectorAll('.filtro').forEach(b => {
+    b.className = 'filtro whitespace-nowrap bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-full';
+  });
+  event?.target?.classList.remove('bg-slate-700','text-slate-300');
+  event?.target?.classList.add('bg-green-500','text-black','font-black');
+
+  let url = '/loja/produtos';
+  if (cat) url += `?categoria=${cat}`;
+  if (assessoriaId) url += `${cat?'&':'?'}assessoriaId=${assessoriaId}`;
+
+  const r = await fetch(url);
+  produtos = await r.json();
+  document.getElementById('loading').classList.add('hidden');
+  if (!produtos.length) {
+    document.getElementById('grid').classList.add('hidden');
+    document.getElementById('vazio').classList.remove('hidden');
+  } else {
+    document.getElementById('vazio').classList.add('hidden');
+    document.getElementById('grid').classList.remove('hidden');
+    document.getElementById('grid').innerHTML = produtos.map(renderProduto).join('');
+  }
+}
+
+filtrar('');
+</script>
+</body>
+</html>

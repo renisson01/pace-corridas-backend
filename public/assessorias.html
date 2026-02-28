@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PACE — Assessorias e Clubes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#0f172a;}</style>
+</head>
+<body class="text-white min-h-screen pb-24">
+
+<header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 py-3 flex justify-between items-center">
+  <a href="/" class="text-green-400 font-black text-xl">PACE</a>
+  <h1 class="font-bold text-sm">🏃 Assessorias & Clubes</h1>
+  <div></div>
+</header>
+
+<!-- FILTRO ESTADO -->
+<div class="max-w-2xl mx-auto px-4 pt-4">
+  <div class="flex gap-2 mb-4">
+    <input id="busca" placeholder="🔍 Buscar assessoria..." oninput="filtrar()"
+      class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-green-500">
+    <select id="filtroEstado" onchange="filtrar()"
+      class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+      <option value="">Todos</option>
+      <option value="SE">SE</option><option value="SP">SP</option><option value="RJ">RJ</option>
+      <option value="MG">MG</option><option value="BA">BA</option><option value="PE">PE</option>
+      <option value="CE">CE</option><option value="PR">PR</option><option value="SC">SC</option>
+      <option value="RS">RS</option><option value="DF">DF</option>
+    </select>
+  </div>
+
+  <div id="loading" class="text-center py-12 text-slate-400">⏳ Carregando...</div>
+  <div id="lista" class="grid grid-cols-1 gap-4 hidden"></div>
+  
+  <div id="vazio" class="hidden text-center py-12 text-slate-400">
+    <div class="text-5xl mb-3">🏃</div>
+    <p class="font-bold">Nenhuma assessoria encontrada</p>
+    <p class="text-sm mt-2">Em breve mais assessorias serão cadastradas!</p>
+  </div>
+</div>
+
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
+  <a href="/" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🏠</span><span>Início</span></a>
+  <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
+  <a href="/social.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📸</span><span>Feed</span></a>
+  <a href="/assessorias.html" class="flex flex-col items-center text-xs text-green-400 py-1 px-3"><span class="text-xl">👟</span><span>Grupos</span></a>
+  <a href="/loja.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🛍️</span><span>Loja</span></a>
+</nav>
+
+<script>
+let todos = [];
+
+function renderCard(a) {
+  const camisa = a.produtos?.[0];
+  return `
+  <a href="/assessoria.html?slug=${a.slug}" class="block bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden hover:border-green-500/50 transition-all">
+    <div class="flex gap-4 p-4">
+      <div class="w-16 h-16 rounded-2xl bg-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0">
+        ${a.logo ? `<img src="${a.logo}" class="w-full h-full object-cover">` : `<span class="text-3xl">🏃</span>`}
+      </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-black text-base">${a.nome}</h3>
+        <p class="text-xs text-slate-400 mt-0.5">📍 ${a.cidade}/${a.estado}</p>
+        ${a.fundacao ? `<p class="text-xs text-slate-500 mt-0.5">Desde ${a.fundacao}</p>` : ''}
+        <div class="flex gap-3 mt-2">
+          ${a.instagram ? `<a href="https://instagram.com/${a.instagram.replace('@','')}" target="_blank" class="text-pink-400 text-xs">📱 Instagram</a>` : ''}
+          ${a.whatsapp ? `<a href="https://wa.me/${a.whatsapp.replace(/\D/g,'')}" target="_blank" class="text-green-400 text-xs">💬 WhatsApp</a>` : ''}
+        </div>
+      </div>
+      ${camisa ? `
+      <div class="flex flex-col items-center text-center">
+        <div class="w-12 h-12 bg-slate-700 rounded-xl overflow-hidden">
+          <img src="${camisa.fotos.split(',')[0]}" class="w-full h-full object-cover" onerror="this.style.display='none'">
+        </div>
+        <p class="text-xs text-green-400 font-bold mt-1">👕 Camisa</p>
+      </div>` : ''}
+    </div>
+    ${a.descricao ? `<p class="px-4 pb-4 text-xs text-slate-400 line-clamp-2">${a.descricao}</p>` : ''}
+  </a>`;
+}
+
+function filtrar() {
+  const q = document.getElementById('busca').value.toLowerCase();
+  const estado = document.getElementById('filtroEstado').value;
+  const filtrado = todos.filter(a =>
+    (!q || a.nome.toLowerCase().includes(q) || a.cidade.toLowerCase().includes(q)) &&
+    (!estado || a.estado === estado)
+  );
+  if (!filtrado.length) {
+    document.getElementById('lista').classList.add('hidden');
+    document.getElementById('vazio').classList.remove('hidden');
+  } else {
+    document.getElementById('vazio').classList.add('hidden');
+    document.getElementById('lista').classList.remove('hidden');
+    document.getElementById('lista').innerHTML = filtrado.map(renderCard).join('');
+  }
+}
+
+async function load() {
+  try {
+    const r = await fetch('/assessorias');
+    todos = await r.json();
+    document.getElementById('loading').classList.add('hidden');
+    if (!todos.length) { document.getElementById('vazio').classList.remove('hidden'); return; }
+    document.getElementById('lista').classList.remove('hidden');
+    document.getElementById('lista').innerHTML = todos.map(renderCard).join('');
+  } catch(e) { document.getElementById('loading').innerHTML = '❌ Erro ao carregar'; }
+}
+load();
+</script>
+</body>
+</html>

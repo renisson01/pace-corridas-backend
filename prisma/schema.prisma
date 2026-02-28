@@ -158,3 +158,51 @@ model OrganizerRequest {
   status          String   @default("pending")
   createdAt       DateTime @default(now())
 }
+
+model Assessoria {
+  id          String   @id @default(cuid())
+  nome        String
+  cidade      String
+  estado      String
+  descricao   String?
+  logo        String?
+  instagram   String?
+  whatsapp    String?
+  site        String?
+  fundacao    String?
+  membros     Int      @default(0)
+  slug        String   @unique
+  ativo       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  produtos    Produto[]
+}
+
+model Produto {
+  id            String    @id @default(cuid())
+  nome          String
+  descricao     String?
+  preco         Float
+  fotos         String
+  tamanhos      String
+  categoria     String    @default("camisa")
+  assessoriaId  String?
+  ativo         Boolean   @default(true)
+  estoque       Int       @default(0)
+  createdAt     DateTime  @default(now())
+  assessoria    Assessoria? @relation(fields: [assessoriaId], references: [id])
+  pedidos       Pedido[]
+}
+
+model Pedido {
+  id          String   @id @default(cuid())
+  userId      String
+  produtoId   String
+  tamanho     String
+  quantidade  Int      @default(1)
+  total       Float
+  status      String   @default("pendente")
+  whatsapp    String?
+  obs         String?
+  createdAt   DateTime @default(now())
+  produto     Produto  @relation(fields: [produtoId], references: [id])
+}
