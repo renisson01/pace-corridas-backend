@@ -111,7 +111,7 @@ body{background:#0a0f1a;font-family:system-ui,sans-serif;}
   <div class="rounded-3xl overflow-hidden" style="background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(255,69,0,0.1));border:1px solid rgba(255,255,255,0.1);">
     <div class="p-5">
       <h2 class="font-black text-lg mb-1">💰 Apoie o atleta</h2>
-      <p class="text-xs text-slate-400 mb-4">100% da sua doação vai para o vencedor. A plataforma PACE cobra uma taxa de serviço de 50% sobre cada doação para manter a operação.</p>
+      <p class="text-xs text-slate-400 mb-4">100% da sua doação vai para o vencedor. A plataforma PACE cobra uma taxa de serviço de 15% sobre cada doação para manter a operação.</p>
 
       <!-- Valores rápidos -->
       <p class="text-xs text-slate-500 font-bold mb-2">Escolha um valor:</p>
@@ -128,7 +128,7 @@ body{background:#0a0f1a;font-family:system-ui,sans-serif;}
       <!-- Resumo -->
       <div id="resumo-doacao" class="hidden bg-slate-900 rounded-2xl p-3 mb-3 text-xs space-y-1.5">
         <div class="flex justify-between text-slate-400"><span>Sua doação</span><span id="r-total">R$ 0,00</span></div>
-        <div class="flex justify-between text-slate-500"><span>Taxa plataforma PACE (50%)</span><span id="r-taxa" class="text-slate-500">- R$ 0,00</span></div>
+        <div class="flex justify-between text-slate-500"><span>Taxa plataforma PACE (15%)</span><span id="r-taxa" class="text-slate-500">- R$ 0,00</span></div>
         <div class="flex justify-between font-black text-green-400 pt-1 border-t border-slate-800"><span>Vai para o vencedor</span><span id="r-atleta">R$ 0,00</span></div>
       </div>
 
@@ -191,7 +191,7 @@ body{background:#0a0f1a;font-family:system-ui,sans-serif;}
 
 <script>
 const CHAVE_PIX = '42912886000190'; // CNPJ ESTAMPACE LTDA
-const TAXA = 0.50; // 50% taxa plataforma
+const TAXA = 0.15; // 50% taxa plataforma
 let valorSel = 0, apoioSel = '';
 
 // Votos

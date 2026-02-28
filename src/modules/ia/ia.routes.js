@@ -56,7 +56,7 @@ export async function iaRoutes(fastify) {
       // Verificar chave
       const apiKey = process.env.ANTHROPIC_API_KEY;
       if (!apiKey) {
-        return { resposta: 'ERRO: ANTHROPIC_API_KEY não configurada no servidor!' };
+        return { resposta: 'Estou descansando um momento! Em breve volto para te ajudar nos seus treinos. 🏃‍♂️💚' };
       }
 
       // Chamar Claude

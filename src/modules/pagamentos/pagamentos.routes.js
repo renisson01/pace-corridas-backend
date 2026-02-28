@@ -75,7 +75,7 @@ export async function pagamentosRoutes(fastify) {
       const { valor, atletaApoio, doadorNome, doadorEmail } = req.body || {};
       if (!valor || valor < 5) return reply.code(400).send({ error: 'Valor mínimo R$ 5,00' });
 
-      const TAXA = 0.50; // 50% taxa de serviço da plataforma
+      const TAXA = 0.15; // 50% taxa de serviço da plataforma
       const valorTotal = parseFloat(valor);
       const valorAtleta = valorTotal * (1 - TAXA);
 
