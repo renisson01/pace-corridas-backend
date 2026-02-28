@@ -284,8 +284,19 @@ async function run() {
   console.log('🗑️  Limpando atletas fictícios antigos...');
 
   // Deletar resultados e atletas antigos (manter só os que têm userId = atletas reais)
-  await prisma.result.deleteMany({ where: { athlete: { userId: null } } });
-  await prisma.athlete.deleteMany({ where: { userId: null } });
+  // Buscar IDs de atletas sem usuário vinculado
+  const atletasSemUser = await prisma.athlete.findMany({
+    where: { user: null },
+    select: { id: true }
+  });
+  const ids = atletasSemUser.map(a => a.id);
+  if (ids.length) {
+    await prisma.result.deleteMany({ where: { athleteId: { in: ids } } });
+    await prisma.athlete.deleteMany({ where: { id: { in: ids } } });
+    console.log('🗑️  Removidos:', ids.length, 'atletas fictícios');
+  } else {
+    console.log('✅ Nenhum atleta fictício para remover');
+  }
 
   console.log('✅ Limpo! Criando atletas reais...\n');
 
