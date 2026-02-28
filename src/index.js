@@ -18,6 +18,7 @@ import { socialRoutes }     from './modules/social/social.routes.js';
 import { assessoriaRoutes } from './modules/assessoria/assessoria.routes.js';
 import { lojaRoutes }       from './modules/loja/loja.routes.js';
 import { verifyRoutes }     from './modules/results/verify.routes.js';
+import { pagamentosRoutes } from './modules/pagamentos/pagamentos.routes.js';
 import { adminRoutes }      from './modules/admin/admin.routes.js';
 import { iaRoutes }         from './modules/ia/ia.routes.js';
 
@@ -67,6 +68,7 @@ await app.register(lojaRoutes);
 await app.register(verifyRoutes);
 await app.register(iaRoutes);
 await app.register(adminRoutes);
+await app.register(pagamentosRoutes);
 
 // Job de scraping (após 1 min)
 setTimeout(async () => {

@@ -259,6 +259,47 @@ function setApoio(a) {
 }
 
 async function gerarPix() {
+  // Redireciona para link MP sem valor fixo (usuário digita)
+  if (valorSel < 5) { alert('Valor mínimo: R$ 5,00'); return; }
+  if (!apoioSel) { alert('Escolha quem você torce!'); return; }
+
+  const btn = document.getElementById('btn-pix');
+  btn.textContent = '⏳ Gerando link...';
+  btn.disabled = true;
+
+  try {
+    // Tentar gerar preferência MP com valor específico
+    const r = await fetch('/pagamentos/doacao-x1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        valor: valorSel,
+        atletaApoio: apoioSel,
+        doadorNome: localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')).name : 'Torcedor'
+      })
+    });
+    const d = await r.json();
+    if (d.url) {
+      window.open(d.url, '_blank');
+      btn.textContent = '📲 Gerar QR Code Pix';
+      btn.disabled = false;
+      return;
+    }
+  } catch(e) { console.warn('MP erro, mostrando Pix manual'); }
+
+  // Fallback: link MP sem valor fixo
+  window.open('https://link.mercadopago.com.br/rnestampace', '_blank');
+  btn.textContent = '📲 Gerar QR Code Pix';
+  btn.disabled = false;
+
+  // Mostrar resumo
+  document.getElementById('pix-area').classList.remove('hidden');
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent('42912886000190') + '&format=png';
+  document.getElementById('qr-img').src = qrUrl;
+  document.getElementById('valor-pix-texto').textContent = 'R$ ' + valorSel.toFixed(2);
+}
+// Dummy para não duplicar
+function _gerarPix_old() {
   if (valorSel < 5) { alert('Valor mínimo: R$ 5,00'); return; }
   if (!apoioSel) { alert('Escolha quem você torce!'); return; }
 

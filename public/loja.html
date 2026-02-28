@@ -160,7 +160,7 @@ function abrirProduto(id) {
         ${tamanhos.map((t,i) => `<button onclick="selecionarTam('${t}')" id="tam-${t}" class="tam-btn w-12 h-12 rounded-xl border text-sm font-bold ${i===0?'bg-green-500 text-black border-green-500':'bg-slate-800 border-slate-700 text-slate-300'}">${t}</button>`).join('')}
       </div>
     </div>` : ''}
-    <button onclick="comprarWhatsApp('${p.nome}', ${p.preco})" class="w-full py-4 rounded-2xl font-black text-black text-base mb-3 active:scale-95 transition-all" style="background:linear-gradient(135deg,#25d366,#128c7e);">
+    <button onclick="comprarWhatsApp('${p.id}','${p.nome}', ${p.preco})" class="w-full py-4 rounded-2xl font-black text-black text-base mb-3 active:scale-95 transition-all" style="background:linear-gradient(135deg,#25d366,#128c7e);">
       💬 Comprar pelo WhatsApp
     </button>
     <a href="https://www.instagram.com/estampacecamisetas" target="_blank" class="block w-full py-3 rounded-2xl font-bold text-white text-sm text-center" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);">
@@ -185,9 +185,29 @@ function selecionarCor(c) {
   if (el) el.className = 'cor-btn text-xs px-3 py-2 rounded-xl border bg-green-500 text-black border-green-500';
 }
 
-function comprarWhatsApp(nome, preco) {
+async function comprarWhatsApp(produtoId, nome, preco) {
   const tam = tamSel || 'M';
   const cor = corSel || '';
+
+  // Tentar MP Checkout Pro primeiro
+  try {
+    const btn = event?.target;
+    if (btn) { btn.textContent = '⏳ Gerando pagamento...'; btn.disabled = true; }
+
+    const r = await fetch('/pagamentos/loja', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ produtoId, tamanho: tam, cor, quantidade: 1 })
+    });
+    const d = await r.json();
+    if (d.url) {
+      window.open(d.url, '_blank');
+      if (btn) { btn.textContent = '💬 Comprar'; btn.disabled = false; }
+      return;
+    }
+  } catch(e) { console.warn('MP indisponível, usando WhatsApp'); }
+
+  // Fallback: WhatsApp
   const msg = `Olá! Quero comprar pelo app PACE:\n\n👕 *${nome}*\n📏 Tamanho: ${tam}${cor ? '\n🎨 Cor: '+cor : ''}\n💰 R$ ${parseFloat(preco).toFixed(2)}\n\nPode me ajudar?`;
   window.open(`https://wa.me/${WPP}?text=${encodeURIComponent(msg)}`, '_blank');
 }
