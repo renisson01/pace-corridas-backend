@@ -29,7 +29,7 @@ await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
 
 // Páginas HTML
 const pages = [
-  'index','entrar','perfil','calendario','resultados','social','elite',
+  'index','entrar','perfil','calendario','resultados','social','elite','x1',
   'pacematch','organizador','stats','faixas','calculadoras','usuario',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
   'ia','ia-avatar','admin-pedidos','scraper','importar-resultado'

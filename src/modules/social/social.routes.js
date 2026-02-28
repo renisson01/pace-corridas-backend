@@ -27,7 +27,7 @@ export async function socialRoutes(fastify) {
     } catch(e) { return []; }
   });
 
-  fastify.post('/posts', async (req, reply) => {
+  fastify.post('/social/posts', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
     const { content, photo, type, distance, time, pace } = req.body;
@@ -40,7 +40,7 @@ export async function socialRoutes(fastify) {
     return post;
   });
 
-  fastify.post('/posts/:id/like', async (req, reply) => {
+  fastify.post('/social/posts/:id/like', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
     const existing = await prisma.postLike.findUnique({ where: { userId_postId: { userId: u.userId, postId: req.params.id } } });
@@ -49,7 +49,7 @@ export async function socialRoutes(fastify) {
     return { liked: true };
   });
 
-  fastify.post('/posts/:id/comment', async (req, reply) => {
+  fastify.post('/social/posts/:id/comment', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
     const { content } = req.body;
@@ -67,7 +67,7 @@ export async function socialRoutes(fastify) {
     return { following: true };
   });
 
-  fastify.get('/users/:id/profile', async (req) => {
+  fastify.get('/social/users/:id/profile', async (req) => {
     const u = getUser(req);
     const user = await prisma.user.findUnique({
       where: { id: req.params.id },
