@@ -5,183 +5,213 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PACE — Admin Loja</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>body{background:#0f172a;}</style>
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+<style>body{background:#0a0f1a;}</style>
 </head>
-<body class="text-white min-h-screen pb-24">
-<header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center gap-3">
-  <a href="/loja.html" class="text-slate-400">←</a>
-  <h1 class="font-black">⚙️ Admin Loja</h1>
+<body class="text-white min-h-screen pb-20">
+
+<header class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center gap-3">
+  <a href="/" class="text-slate-400">←</a>
+  <h1 class="font-black">Admin Loja PACE</h1>
+  <a href="/admin-pedidos.html" class="ml-auto text-xs bg-slate-800 border border-slate-700 px-3 py-2 rounded-xl">📦 Pedidos</a>
 </header>
 
-<div class="max-w-lg mx-auto px-4 py-4">
-  <!-- TABS -->
-  <div class="flex gap-2 mb-4">
-    <button onclick="showTab('produtos')" class="tab-btn bg-green-500 text-black font-black text-sm px-4 py-2 rounded-full">👕 Produtos</button>
-    <button onclick="showTab('assessorias')" class="tab-btn bg-slate-700 text-slate-300 text-sm font-bold px-4 py-2 rounded-full">🏃 Assessorias</button>
-  </div>
-
-  <!-- PRODUTOS -->
-  <div id="tab-produtos">
-    <button onclick="showForm('produto')" class="w-full bg-green-500 text-black font-black py-3 rounded-xl mb-4">+ Novo Produto</button>
-    <div id="formProduto" class="hidden bg-slate-800 border border-slate-700 rounded-2xl p-4 mb-4">
-      <h3 class="font-black mb-3">Novo Produto</h3>
-      <div class="space-y-3">
-        <input id="pNome" placeholder="Nome do produto" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-        <textarea id="pDesc" placeholder="Descrição" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none resize-none" rows="2"></textarea>
-        <div class="grid grid-cols-2 gap-3">
-          <input id="pPreco" type="number" step="0.01" placeholder="Preço R$" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-          <input id="pEstoque" type="number" placeholder="Estoque" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-        </div>
-        <input id="pTamanhos" placeholder="Tamanhos: PP,P,M,G,GG,XG" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-        <select id="pCategoria" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-          <option value="camisa">👕 Camisa Assessoria</option>
-          <option value="clube">🏆 Camisa Clube</option>
-          <option value="avulso">👟 Modelo Avulso</option>
-        </select>
-        <select id="pAssessoria" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-          <option value="">Sem assessoria (modelo avulso)</option>
-        </select>
-        <div>
-          <p class="text-xs text-slate-400 mb-2">Fotos (URLs separadas por vírgula)</p>
-          <input id="pFotos" placeholder="https://... , https://..." class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-          <p class="text-xs text-slate-500 mt-1">Em breve: upload direto de foto</p>
-        </div>
-        <button onclick="criarProduto()" class="w-full bg-green-500 text-black font-black py-3 rounded-xl">Salvar Produto</button>
-      </div>
-    </div>
-    <div id="listaProdutos" class="space-y-2"></div>
-  </div>
-
-  <!-- ASSESSORIAS -->
-  <div id="tab-assessorias" class="hidden">
-    <button onclick="showForm('assessoria')" class="w-full bg-green-500 text-black font-black py-3 rounded-xl mb-4">+ Nova Assessoria/Clube</button>
-    <div id="formAssessoria" class="hidden bg-slate-800 border border-slate-700 rounded-2xl p-4 mb-4">
-      <h3 class="font-black mb-3">Nova Assessoria</h3>
-      <div class="space-y-3">
-        <input id="aNome" placeholder="Nome da assessoria" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-        <div class="grid grid-cols-2 gap-3">
-          <input id="aCidade" placeholder="Cidade" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-          <select id="aEstado" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-            <option value="SE">SE</option><option value="SP">SP</option><option value="RJ">RJ</option>
-            <option value="MG">MG</option><option value="BA">BA</option><option value="PE">PE</option>
-            <option value="CE">CE</option><option value="PR">PR</option>
-          </select>
-        </div>
-        <textarea id="aDesc" placeholder="Descrição" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none resize-none" rows="2"></textarea>
-        <input id="aInsta" placeholder="Instagram @" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-        <input id="aWhats" placeholder="WhatsApp (só números)" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-        <input id="aFundacao" placeholder="Ano de fundação" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-        <input id="aLogo" placeholder="URL do logo" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
-        <button onclick="criarAssessoria()" class="w-full bg-green-500 text-black font-black py-3 rounded-xl">Salvar Assessoria</button>
-      </div>
-    </div>
-    <div id="listaAssessorias" class="space-y-2"></div>
+<!-- AVISO CLOUDINARY -->
+<div id="aviso-cloud" class="mx-4 mt-4 bg-blue-900/30 border border-blue-500/40 rounded-2xl p-4 text-sm hidden">
+  <p class="font-black text-blue-400 mb-1">📸 Configure o upload de fotos</p>
+  <p class="text-slate-300 text-xs">Para enviar fotos, crie uma conta gratuita em <a href="https://cloudinary.com" target="_blank" class="text-blue-400 underline">cloudinary.com</a> e cole seu Cloud Name abaixo:</p>
+  <div class="flex gap-2 mt-2">
+    <input id="cloud-name-input" type="text" placeholder="Seu Cloud Name (ex: meu-app)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+    <button onclick="salvarCloud()" class="bg-blue-500 text-white font-bold text-xs px-3 py-2 rounded-xl">Salvar</button>
   </div>
 </div>
 
+<!-- FORM NOVO PRODUTO -->
+<section class="px-4 mt-4">
+  <h2 class="font-black text-base mb-3">➕ Adicionar produto</h2>
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+    <input id="p-nome" placeholder="Nome do produto *" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500">
+    <textarea id="p-desc" placeholder="Descrição" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500 resize-none"></textarea>
+
+    <div class="grid grid-cols-2 gap-3">
+      <input id="p-preco" type="number" placeholder="Preço (R$) *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500">
+      <select id="p-cat" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+        <option value="camisa">Camisa</option>
+        <option value="shorts">Shorts</option>
+        <option value="bone">Boné</option>
+        <option value="acessorio">Acessório</option>
+      </select>
+    </div>
+
+    <!-- FOTO -->
+    <div>
+      <p class="text-xs text-slate-400 mb-2">Foto do produto</p>
+      <div class="flex gap-2">
+        <button onclick="uploadFoto()" id="btn-upload" class="flex-1 bg-slate-800 border border-dashed border-slate-600 rounded-xl py-4 text-sm text-slate-400 hover:border-green-500 hover:text-green-400 transition-colors">
+          📸 Enviar foto
+        </button>
+        <input id="p-foto-url" placeholder="ou cole URL da foto" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-green-500">
+      </div>
+      <div id="preview-foto" class="mt-2 hidden">
+        <img id="foto-preview-img" class="w-full h-40 object-cover rounded-xl">
+        <p class="text-xs text-green-400 mt-1">✅ Foto carregada</p>
+      </div>
+    </div>
+
+    <!-- TAMANHOS/ESTOQUE -->
+    <div>
+      <p class="text-xs text-slate-400 mb-2">Estoque por tamanho</p>
+      <div class="grid grid-cols-5 gap-2">
+        <div v-for="t in tamanhos">
+          <label class="text-xs text-slate-400 block text-center mb-1">PP</label>
+          <input id="est-PP" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500">
+        </div>
+        <div><label class="text-xs text-slate-400 block text-center mb-1">P</label><input id="est-P" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500"></div>
+        <div><label class="text-xs text-slate-400 block text-center mb-1">M</label><input id="est-M" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500"></div>
+        <div><label class="text-xs text-slate-400 block text-center mb-1">G</label><input id="est-G" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500"></div>
+        <div><label class="text-xs text-slate-400 block text-center mb-1">GG</label><input id="est-GG" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500"></div>
+      </div>
+    </div>
+
+    <button onclick="salvarProduto()" id="btn-salvar" class="w-full py-3 rounded-2xl font-black text-black text-sm active:scale-95 transition-all" style="background:linear-gradient(135deg,#22c55e,#16a34a);">
+      Salvar produto
+    </button>
+  </div>
+</section>
+
+<!-- LISTA DE PRODUTOS -->
+<section class="px-4 mt-6">
+  <h2 class="font-black text-base mb-3">📦 Produtos cadastrados</h2>
+  <div id="lista-produtos" class="space-y-3">
+    <p class="text-slate-500 text-sm text-center py-4">Carregando...</p>
+  </div>
+</section>
+
 <script>
 const token = localStorage.getItem('pace_token');
-const me = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
-if (!token || !me?.isAdmin) { alert('Acesso negado!'); window.location.href='/'; }
+if (!token) window.location.href = '/entrar.html';
 
-function showTab(tab) {
-  ['produtos','assessorias'].forEach(t => {
-    document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
+let cloudName = localStorage.getItem('pace_cloud_name') || '';
+let fotoUrl = '';
+
+// Verificar se tem cloud name configurado
+if (!cloudName) {
+  document.getElementById('aviso-cloud').classList.remove('hidden');
+}
+
+function salvarCloud() {
+  cloudName = document.getElementById('cloud-name-input').value.trim();
+  if (cloudName) {
+    localStorage.setItem('pace_cloud_name', cloudName);
+    document.getElementById('aviso-cloud').classList.add('hidden');
+    alert('✅ Cloud Name salvo!');
+  }
+}
+
+function uploadFoto() {
+  if (!cloudName) {
+    document.getElementById('aviso-cloud').classList.remove('hidden');
+    alert('Configure seu Cloud Name primeiro!');
+    return;
+  }
+  const widget = cloudinary.createUploadWidget({
+    cloudName: cloudName,
+    uploadPreset: 'pace_produtos',
+    sources: ['local', 'camera'],
+    multiple: false,
+    cropping: true,
+    croppingAspectRatio: 1,
+    language: 'pt',
+    text: { pt: { or: 'ou', menu: { files: 'Meus arquivos', camera: 'Câmera' } } }
+  }, (error, result) => {
+    if (result?.event === 'success') {
+      fotoUrl = result.info.secure_url;
+      document.getElementById('p-foto-url').value = fotoUrl;
+      document.getElementById('foto-preview-img').src = fotoUrl;
+      document.getElementById('preview-foto').classList.remove('hidden');
+    }
   });
-  document.querySelectorAll('.tab-btn').forEach(b => {
-    b.className = 'tab-btn bg-slate-700 text-slate-300 text-sm font-bold px-4 py-2 rounded-full';
-  });
-  event.target.className = 'tab-btn bg-green-500 text-black font-black text-sm px-4 py-2 rounded-full';
-  if (tab === 'produtos') loadProdutos();
-  if (tab === 'assessorias') loadAssessorias();
+  widget.open();
 }
 
-function showForm(tipo) {
-  document.getElementById(`form${tipo.charAt(0).toUpperCase()+tipo.slice(1)}`).classList.toggle('hidden');
+// Monitorar URL manual
+document.getElementById('p-foto-url').addEventListener('input', function() {
+  const url = this.value.trim();
+  if (url) {
+    fotoUrl = url;
+    document.getElementById('foto-preview-img').src = url;
+    document.getElementById('preview-foto').classList.remove('hidden');
+  }
+});
+
+async function salvarProduto() {
+  const nome = document.getElementById('p-nome').value.trim();
+  const preco = parseFloat(document.getElementById('p-preco').value);
+  if (!nome || !preco) { alert('Preencha nome e preço!'); return; }
+
+  const btn = document.getElementById('btn-salvar');
+  btn.textContent = 'Salvando... ⏳';
+  btn.disabled = true;
+
+  const foto = fotoUrl || document.getElementById('p-foto-url').value.trim();
+
+  try {
+    const r = await fetch('/loja/produtos', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+      body: JSON.stringify({
+        nome, preco,
+        descricao: document.getElementById('p-desc').value.trim(),
+        categoria: document.getElementById('p-cat').value,
+        imagem: foto || null,
+        variantes: ['PP','P','M','G','GG'].map(t => ({
+          tamanho: t,
+          cor: 'Verde',
+          estoque: parseInt(document.getElementById('est-'+t).value) || 0
+        }))
+      })
+    });
+    const d = await r.json();
+    if (r.ok) {
+      alert('✅ Produto salvo!');
+      document.getElementById('p-nome').value = '';
+      document.getElementById('p-preco').value = '';
+      document.getElementById('p-desc').value = '';
+      document.getElementById('p-foto-url').value = '';
+      document.getElementById('preview-foto').classList.add('hidden');
+      fotoUrl = '';
+      carregarProdutos();
+    } else { alert('Erro: ' + (d.error || d.message || 'Desconhecido')); }
+  } catch(e) { alert('Erro de conexão'); }
+  finally { btn.textContent = 'Salvar produto'; btn.disabled = false; }
 }
 
-async function loadAssessorias() {
-  const r = await fetch('/assessorias');
-  const lista = await r.json();
-  
-  // Preencher select de assessorias no form de produto
-  const sel = document.getElementById('pAssessoria');
-  sel.innerHTML = '<option value="">Sem assessoria (modelo avulso)</option>' +
-    lista.map(a => `<option value="${a.id}">${a.nome}</option>`).join('');
-  
-  document.getElementById('listaAssessorias').innerHTML = lista.map(a => `
-    <div class="bg-slate-800 border border-slate-700 rounded-xl p-3 flex justify-between items-center">
-      <div>
-        <p class="font-bold text-sm">${a.nome}</p>
-        <p class="text-xs text-slate-400">${a.cidade}/${a.estado}</p>
-      </div>
-      <a href="/assessoria.html?slug=${a.slug}" class="text-green-400 text-xs">Ver →</a>
-    </div>`).join('');
+async function carregarProdutos() {
+  try {
+    const r = await fetch('/loja/produtos', { headers: {'Authorization':'Bearer '+token} });
+    const produtos = await r.json();
+    const el = document.getElementById('lista-produtos');
+    if (!produtos?.length) { el.innerHTML='<p class="text-slate-500 text-sm text-center py-4">Nenhum produto ainda</p>'; return; }
+    el.innerHTML = produtos.map(p => `
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex">
+        ${p.imagem ? `<img src="${p.imagem}" class="w-24 h-24 object-cover flex-shrink-0">` : '<div class="w-24 h-24 bg-slate-800 flex items-center justify-center text-3xl flex-shrink-0">👕</div>'}
+        <div class="flex-1 p-3">
+          <p class="font-black text-sm">${p.nome}</p>
+          <p class="text-green-400 font-bold text-sm">R$ ${(p.preco||0).toFixed(2)}</p>
+          <p class="text-xs text-slate-400">${p.categoria||''}</p>
+          <button onclick="deletar('${p.id}')" class="mt-2 text-xs text-red-400">🗑️ Remover</button>
+        </div>
+      </div>`).join('');
+  } catch { document.getElementById('lista-produtos').innerHTML='<p class="text-red-400 text-sm text-center py-4">Erro ao carregar</p>'; }
 }
 
-async function loadProdutos() {
-  const r = await fetch('/loja/produtos');
-  const lista = await r.json();
-  document.getElementById('listaProdutos').innerHTML = lista.map(p => `
-    <div class="bg-slate-800 border border-slate-700 rounded-xl p-3 flex justify-between items-center">
-      <div>
-        <p class="font-bold text-sm">${p.nome}</p>
-        <p class="text-xs text-green-400">R$ ${p.preco.toFixed(2)}</p>
-        <p class="text-xs text-slate-400">${p.tamanhos}</p>
-      </div>
-      <div class="text-right">
-        ${p.assessoria ? `<p class="text-xs text-blue-400">${p.assessoria.nome}</p>` : ''}
-        <p class="text-xs text-slate-500">Estoque: ${p.estoque}</p>
-      </div>
-    </div>`).join('') || '<p class="text-slate-400 text-sm text-center py-4">Nenhum produto cadastrado</p>';
+async function deletar(id) {
+  if (!confirm('Remover produto?')) return;
+  await fetch('/loja/produtos/'+id, { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
+  carregarProdutos();
 }
 
-async function criarAssessoria() {
-  const data = {
-    nome: document.getElementById('aNome').value,
-    cidade: document.getElementById('aCidade').value,
-    estado: document.getElementById('aEstado').value,
-    descricao: document.getElementById('aDesc').value,
-    instagram: document.getElementById('aInsta').value,
-    whatsapp: document.getElementById('aWhats').value,
-    fundacao: document.getElementById('aFundacao').value,
-    logo: document.getElementById('aLogo').value,
-  };
-  if (!data.nome || !data.cidade) return alert('Nome e cidade obrigatórios!');
-  const r = await fetch('/assessorias', {
-    method: 'POST',
-    headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
-    body: JSON.stringify(data)
-  });
-  const d = await r.json();
-  if (d.id) { alert('✅ Assessoria criada!'); loadAssessorias(); showForm('assessoria'); }
-  else alert(d.error || 'Erro');
-}
-
-async function criarProduto() {
-  const data = {
-    nome: document.getElementById('pNome').value,
-    descricao: document.getElementById('pDesc').value,
-    preco: document.getElementById('pPreco').value,
-    estoque: document.getElementById('pEstoque').value,
-    tamanhos: document.getElementById('pTamanhos').value,
-    categoria: document.getElementById('pCategoria').value,
-    assessoriaId: document.getElementById('pAssessoria').value || null,
-    fotos: document.getElementById('pFotos').value,
-  };
-  if (!data.nome || !data.preco) return alert('Nome e preço obrigatórios!');
-  const r = await fetch('/loja/produtos', {
-    method: 'POST',
-    headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
-    body: JSON.stringify(data)
-  });
-  const d = await r.json();
-  if (d.id) { alert('✅ Produto criado!'); loadProdutos(); showForm('produto'); }
-  else alert(d.error || 'Erro');
-}
-
-loadProdutos();
-loadAssessorias();
+carregarProdutos();
 </script>
 </body>
 </html>
