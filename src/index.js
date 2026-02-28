@@ -17,6 +17,7 @@ import { socialRoutes }     from './modules/social/social.routes.js';
 import { assessoriaRoutes } from './modules/assessoria/assessoria.routes.js';
 import { lojaRoutes }       from './modules/loja/loja.routes.js';
 import { verifyRoutes }     from './modules/results/verify.routes.js';
+import { adminRoutes }      from './modules/admin/admin.routes.js';
 import { iaRoutes }         from './modules/ia/ia.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -63,6 +64,7 @@ await app.register(assessoriaRoutes);
 await app.register(lojaRoutes);
 await app.register(verifyRoutes);
 await app.register(iaRoutes);
+await app.register(adminRoutes);
 
 // Job de scraping (após 1 min)
 setTimeout(async () => {

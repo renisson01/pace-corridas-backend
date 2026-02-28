@@ -1,131 +1,141 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+// Converte "2:14:30" ou "0:46:59" em segundos para comparação
+function tempoParaSegundos(t) {
+  if (!t) return 999999;
+  const parts = t.split(':').map(Number);
+  if (parts.length === 3) return parts[0]*3600 + parts[1]*60 + parts[2];
+  if (parts.length === 2) return parts[0]*60 + parts[1];
+  return 999999;
+}
+
+function nivelAtleta(pts) {
+  if (pts >= 12000) return { label:'⭐ Elite Mundial',  cor:'yellow' };
+  if (pts >= 7000)  return { label:'🔥 Elite Nacional', cor:'orange' };
+  if (pts >= 3000)  return { label:'💪 Elite Regional', cor:'blue'   };
+  if (pts >= 1000)  return { label:'📈 Sub-Elite',      cor:'green'  };
+  return                   { label:'🌱 Avançado',       cor:'gray'   };
+}
+
 export async function rankingRoutes(fastify) {
 
-  // RANKING GERAL - ordenado por pontos
+  // RANKING GERAL - por pontos acumulados
   fastify.get('/ranking', async (req) => {
-    const { estado, genero, limit = 100 } = req.query;
+    const { genero, estado, limit = 100 } = req.query;
     const where = {};
-    if (estado) where.state = estado;
     if (genero) where.gender = genero;
+    if (estado) where.state = estado;
 
     const atletas = await prisma.athlete.findMany({
       where,
       orderBy: { totalPoints: 'desc' },
       take: parseInt(limit),
       select: {
-        id: true,
-        name: true,
-        city: true,   // usamos city para equipe nos atletas elite
-        state: true,
-        gender: true,
-        age: true,
-        totalRaces: true,
-        totalPoints: true,
+        id:true, name:true, equipe:true, state:true, gender:true,
+        totalRaces:true, totalPoints:true,
         results: {
           orderBy: { points: 'desc' },
-          take: 3,
-          include: { race: { select: { name: true, date: true } } }
+          take: 1,
+          include: { race: { select: { name:true } } }
         }
       }
     });
 
-    // Calcular nível de cada atleta pelo melhor tempo de maratona
     return atletas.map((a, i) => {
-      const melhorMaratona = a.results.find(r => r.distance?.includes('42'));
-      const nivel = calcularNivel(a.totalPoints, melhorMaratona?.time);
+      const n = nivelAtleta(a.totalPoints);
       return {
-        ...a,
         posicao: i + 1,
-        nivel: nivel.label,
-        nivelCor: nivel.cor,
+        id: a.id,
+        name: a.name,
+        equipe: a.equipe || null,
+        state: a.state || null,
+        gender: a.gender,
+        totalRaces: a.totalRaces,
+        totalPoints: a.totalPoints,
+        nivel: n.label,
+        nivelCor: n.cor,
         melhorProva: a.results[0]?.race?.name || null,
-        melhorTempo: a.results[0]?.time || null,
       };
     });
   });
 
-  // RANKING POR ESTADO
-  fastify.get('/ranking/estado/:estado', async (req) => {
-    const { estado } = req.params;
-    const atletas = await prisma.athlete.findMany({
-      where: { state: estado },
-      orderBy: { totalPoints: 'desc' },
-      take: 50,
-      select: { id:true, name:true, city:true, state:true, gender:true, totalRaces:true, totalPoints:true }
-    });
-    return atletas.map((a, i) => ({ ...a, posicao: i + 1 }));
-  });
-
-  // TOP MARATONISTAS - pelo melhor tempo de 42km
-  fastify.get('/ranking/maratona', async (req) => {
+  // RANKING 42KM - melhor tempo por atleta (não por corrida)
+  fastify.get('/ranking/42km', async (req) => {
     const { genero } = req.query;
-    
-    const where = { distance: { contains: '42' } };
-    
-    const resultados = await prisma.result.findMany({
-      where,
-      orderBy: { time: 'asc' },
-      take: 100,
-      include: {
-        athlete: { select: { id:true, name:true, city:true, state:true, gender:true } },
-        race: { select: { name:true, date:true } }
-      }
-    });
-
-    // Deduplica - pega só melhor tempo por atleta
-    const seen = new Set();
-    const top = [];
-    for (const r of resultados) {
-      if (!seen.has(r.athleteId)) {
-        seen.add(r.athleteId);
-        if (!genero || r.athlete.gender === genero) {
-          top.push({ ...r.athlete, tempo: r.time, prova: r.race.name, posicao: top.length + 1 });
-        }
-      }
-    }
-    return top.slice(0, 50);
+    return await rankingPorDistancia('42', genero);
   });
 
-  // TOP 10KM
+  // RANKING 21KM
+  fastify.get('/ranking/21km', async (req) => {
+    const { genero } = req.query;
+    return await rankingPorDistancia('21', genero);
+  });
+
+  // RANKING 15KM
+  fastify.get('/ranking/15km', async (req) => {
+    const { genero } = req.query;
+    return await rankingPorDistancia('15', genero);
+  });
+
+  // RANKING 10KM
   fastify.get('/ranking/10km', async (req) => {
-    const resultados = await prisma.result.findMany({
-      where: { distance: { contains: '10' } },
-      orderBy: { time: 'asc' },
-      take: 200,
-      include: {
-        athlete: { select: { id:true, name:true, city:true, gender:true } },
-        race: { select: { name:true } }
-      }
-    });
-    const seen = new Set();
-    const top = [];
-    for (const r of resultados) {
-      if (!seen.has(r.athleteId)) {
-        seen.add(r.athleteId);
-        top.push({ ...r.athlete, tempo: r.time, prova: r.race.name, posicao: top.length + 1 });
-      }
-    }
-    return top.slice(0, 50);
+    const { genero } = req.query;
+    return await rankingPorDistancia('10', genero);
   });
 
-  // STATS GERAIS
-  fastify.get('/ranking/stats', async (req) => {
+  // RANKING 5KM
+  fastify.get('/ranking/5km', async (req) => {
+    const { genero } = req.query;
+    return await rankingPorDistancia('5', genero);
+  });
+
+  // STATS
+  fastify.get('/ranking/stats', async () => {
     const [totalAtletas, totalResultados, totalCorridas] = await Promise.all([
-      prisma.athlete.count(),
-      prisma.result.count(),
-      prisma.race.count(),
+      prisma.athlete.count(), prisma.result.count(), prisma.race.count()
     ]);
     return { totalAtletas, totalResultados, totalCorridas };
   });
 }
 
-function calcularNivel(pontos, tempoMaratona) {
-  // Por pontos acumulados
-  if (pontos >= 12000) return { label: '⭐ Elite Mundial',   cor: '#FFD700' };
-  if (pontos >= 7000)  return { label: '🔥 Elite Nacional',  cor: '#FF6B35' };
-  if (pontos >= 3000)  return { label: '💪 Elite Regional',  cor: '#4A90D9' };
-  if (pontos >= 1000)  return { label: '📈 Sub-Elite',       cor: '#22c55e' };
-  return                      { label: '🌱 Avançado',        cor: '#94a3b8' };
+async function rankingPorDistancia(distKm, genero) {
+  const atletaWhere = {};
+  if (genero) atletaWhere.gender = genero;
+
+  const atletas = await prisma.athlete.findMany({
+    where: atletaWhere,
+    select: {
+      id:true, name:true, equipe:true, state:true, gender:true, totalPoints:true,
+      results: {
+        where: { distance: { contains: distKm } },
+        select: { time:true, overallRank:true }
+      }
+    }
+  });
+
+  // Filtrar só quem tem resultado nessa distância
+  const comResultado = atletas
+    .filter(a => a.results.length > 0)
+    .map(a => {
+      // Pegar MELHOR TEMPO (menor em segundos)
+      const melhor = a.results.reduce((best, r) => {
+        const s = tempoParaSegundos(r.time);
+        return s < tempoParaSegundos(best.time) ? r : best;
+      });
+      return {
+        id: a.id,
+        name: a.name,
+        equipe: a.equipe || null,
+        state: a.state || null,
+        gender: a.gender,
+        totalPoints: a.totalPoints,
+        nivel: nivelAtleta(a.totalPoints).label,
+        melhorTempo: melhor.time,
+      };
+    })
+    .sort((a, b) => tempoParaSegundos(a.melhorTempo) - tempoParaSegundos(b.melhorTempo))
+    .map((a, i) => ({ ...a, posicao: i + 1 }));
+
+  return comResultado;
 }

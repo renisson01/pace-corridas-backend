@@ -23,7 +23,6 @@ model Race {
 model Athlete {
   id          String   @id @default(cuid())
   name        String
-  city        String?
   state       String?
   gender      String?
   age         Int?
