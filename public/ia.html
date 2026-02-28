@@ -2,15 +2,15 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PACE IA — Sua Amiga de Corrida</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PACE IA</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{background:#0f172a;}
-#mensagens{scroll-behavior:smooth;}
+body{background:#0f172a;font-family:system-ui,sans-serif;}
+#chat{scroll-behavior:smooth;}
 .msg-ia{animation:slideIn .2s ease;}
 @keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#22c55e;margin:0 2px;animation:bounce 1s infinite;}
+.typing span{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin:0 2px;animation:bounce 1s infinite;}
 .typing span:nth-child(2){animation-delay:.2s;}
 .typing span:nth-child(3){animation-delay:.4s;}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}}
@@ -18,148 +18,156 @@ body{background:#0f172a;}
 </head>
 <body class="text-white min-h-screen flex flex-col">
 
+<!-- HEADER -->
 <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center gap-3 sticky top-0 z-40">
   <a href="/" class="text-slate-400 text-xl">←</a>
-  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center font-black text-black text-lg">🏃</div>
+  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-700 flex items-center justify-center text-2xl flex-shrink-0">🏃</div>
   <div>
     <p class="font-black text-sm leading-none">PACE IA</p>
-    <p class="text-xs text-green-400 leading-none mt-0.5">Sua amiga de corrida</p>
+    <p class="text-xs text-green-400 leading-none mt-0.5">● Sua amiga de corrida</p>
   </div>
-  <a href="/ia-avatar.html" class="ml-auto text-xs text-slate-400 border border-slate-600 px-3 py-1.5 rounded-full">👤 Meu perfil</a>
+  <a href="/ia-avatar.html" class="ml-auto text-xs text-slate-400 border border-slate-600 rounded-full px-3 py-1.5">👤 Meu perfil</a>
 </header>
 
-<!-- ATALHOS RÁPIDOS -->
-<div id="atalhos" class="px-4 py-3 flex gap-2 overflow-x-auto border-b border-slate-800">
-  <button onclick="enviarRapido('Preciso de ajuda para escolher uma camisa')" class="whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full hover:border-green-500">👕 Quero uma camisa</button>
-  <button onclick="enviarRapido('Como melhorar meu pace?')" class="whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full hover:border-green-500">⚡ Melhorar pace</button>
-  <button onclick="enviarRapido('Tive uma lesão, o que faço?')" class="whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full hover:border-green-500">🏥 Tive lesão</button>
-  <button onclick="enviarRapido('Como me preparar para uma maratona?')" class="whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full hover:border-green-500">🏆 Maratona</button>
-  <button onclick="enviarRapido('Estou desmotivado para treinar')" class="whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full hover:border-green-500">💪 Motivação</button>
-  <button onclick="enviarRapido('Me conta sobre nutrição para corredores')" class="whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full hover:border-green-500">🥗 Nutrição</button>
+<!-- ATALHOS -->
+<div class="px-3 py-2 flex gap-2 overflow-x-auto border-b border-slate-800 flex-shrink-0" id="atalhos">
+  <button onclick="rapido('Preciso escolher uma camisa, pode me ajudar?')"    class="chip whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full">👕 Quero uma camisa</button>
+  <button onclick="rapido('Como melhorar meu pace nos 10km?')"                class="chip whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full">⚡ Melhorar pace</button>
+  <button onclick="rapido('Tive uma lesão no joelho, o que faço?')"           class="chip whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full">🏥 Tive lesão</button>
+  <button onclick="rapido('Como me preparar para minha primeira maratona?')"  class="chip whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full">🏆 Maratona</button>
+  <button onclick="rapido('Estou sem motivação para treinar hoje')"            class="chip whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full">💪 Motivação</button>
+  <button onclick="rapido('Dicas de nutrição para corredores')"               class="chip whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full">🥗 Nutrição</button>
+  <button onclick="rapido('Como dormir melhor para recuperar dos treinos?')"  class="chip whitespace-nowrap bg-slate-800 border border-slate-700 text-xs px-3 py-2 rounded-full">😴 Recuperação</button>
 </div>
 
 <!-- MENSAGENS -->
-<div id="mensagens" class="flex-1 overflow-y-auto px-4 py-4 pb-32 space-y-4">
-  <!-- Mensagem de boas vindas -->
+<div id="chat" class="flex-1 overflow-y-auto px-4 py-4 space-y-4" style="padding-bottom:80px;">
   <div class="flex gap-3">
-    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🏃</div>
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none p-3 max-w-xs">
-      <p class="text-sm">Olá! 👋 Sou a PACE IA, sua amiga pessoal de corrida!</p>
-      <p class="text-sm mt-2">Estou aqui para te ajudar com treinos, saúde, motivação, e também com nossas camisas exclusivas. 👕</p>
-      <p class="text-sm mt-2 text-green-400">Como posso te ajudar hoje?</p>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-700 flex items-center justify-center flex-shrink-0 text-base">🏃</div>
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none px-4 py-3 max-w-xs">
+      <p class="text-sm" id="boas-vindas">Olá! 👋 Sou a PACE IA, sua amiga pessoal de corrida!</p>
+      <p class="text-sm mt-2">Estou aqui para te ajudar com treinos, saúde, motivação e até na escolha da sua camisa. 👕</p>
+      <p class="text-sm mt-2 text-green-400 font-bold">Como posso te ajudar hoje?</p>
     </div>
   </div>
 </div>
 
-<!-- INPUT -->
-<div class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 px-4 py-3 pb-safe">
+<!-- INPUT FIXO NO FUNDO -->
+<div class="fixed left-0 right-0 bg-slate-900 border-t border-slate-700 px-3 py-3" style="bottom:56px;z-index:50;">
   <div class="flex gap-2 max-w-2xl mx-auto">
-    <input id="input" type="text" placeholder="Fale comigo..." maxlength="500"
-      class="flex-1 bg-slate-800 border border-slate-600 rounded-2xl px-4 py-3 text-sm text-white outline-none focus:border-green-500 transition-colors"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviar()}">
+    <input id="input"
+      type="text"
+      placeholder="Digite sua mensagem..."
+      maxlength="500"
+      autocomplete="off"
+      class="flex-1 bg-slate-800 border border-slate-600 rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500 transition-colors"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviar()}"
+    >
     <button onclick="enviar()" id="btnEnviar"
-      class="bg-green-500 text-black font-black w-12 h-12 rounded-2xl flex items-center justify-center text-xl transition-transform active:scale-95">
+      class="bg-green-500 hover:bg-green-400 text-black font-black w-12 h-12 rounded-2xl flex items-center justify-center text-xl transition-all active:scale-95 flex-shrink-0">
       ↑
     </button>
   </div>
 </div>
 
+<!-- NAV -->
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
+  <a href="/" class="flex flex-col items-center text-xs text-slate-400 py-1 px-2"><span class="text-xl">🏠</span><span>Início</span></a>
+  <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-2"><span class="text-xl">📅</span><span>Corridas</span></a>
+  <a href="/elite.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-2"><span class="text-xl">🏆</span><span>Ranking</span></a>
+  <a href="/loja.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-2"><span class="text-xl">👕</span><span>Loja</span></a>
+  <a href="/ia.html" class="flex flex-col items-center text-xs text-green-400 py-1 px-2"><span class="text-xl">🏃</span><span>PACE IA</span></a>
+  <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-2"><span class="text-xl">👤</span><span>Perfil</span></a>
+</nav>
+
 <script>
 const token = localStorage.getItem('pace_token');
 const me = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
-if (!token) window.location.href = '/entrar.html';
+if (!token) { window.location.href = '/entrar.html'; }
 
-const msgs = document.getElementById('mensagens');
+// Personalizar boas vindas
+if (me?.name) {
+  const nome = me.name.split(' ')[0];
+  document.getElementById('boas-vindas').textContent = `Olá, ${nome}! 👋 Sou a PACE IA, sua amiga pessoal de corrida!`;
+}
+
+const chat = document.getElementById('chat');
 const input = document.getElementById('input');
 let enviando = false;
 
-// Carregar histórico
-async function carregarHistorico() {
-  try {
-    const r = await fetch('/ia/historico', { headers: { Authorization:`Bearer ${token}` } });
-    const d = await r.json();
-    if (d.mensagens && d.mensagens.length > 0) {
-      // Mostrar últimas 10 mensagens do histórico
-      const ultimas = d.mensagens.slice(-10);
-      ultimas.forEach(m => {
-        if (m.role === 'user') adicionarMsgUser(m.content, false);
-        else if (m.role === 'assistant') adicionarMsgIA(m.content, false);
-      });
-      msgs.scrollTop = msgs.scrollHeight;
-    }
-  } catch {}
+function addMsgUser(txt) {
+  const d = document.createElement('div');
+  d.className = 'flex justify-end';
+  d.innerHTML = `<div class="bg-green-500 text-black rounded-2xl rounded-tr-none px-4 py-3 max-w-xs"><p class="text-sm font-medium">${txt.replace(/</g,'&lt;')}</p></div>`;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function adicionarMsgUser(texto, scroll=true) {
-  const div = document.createElement('div');
-  div.className = 'flex justify-end';
-  div.innerHTML = `
-    <div class="bg-green-500 text-black rounded-2xl rounded-tr-none px-4 py-3 max-w-xs">
-      <p class="text-sm font-medium">${texto.replace(/</g,'&lt;')}</p>
-    </div>`;
-  msgs.appendChild(div);
-  if (scroll) msgs.scrollTop = msgs.scrollHeight;
-}
-
-function adicionarMsgIA(texto, scroll=true) {
-  const div = document.createElement('div');
-  div.className = 'flex gap-3 msg-ia';
-  div.innerHTML = `
-    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🏃</div>
+function addMsgIA(txt) {
+  const d = document.createElement('div');
+  d.className = 'flex gap-3 msg-ia';
+  // Converter quebras de linha
+  const html = txt.replace(/</g,'&lt;').replace(/\n/g,'<br>');
+  d.innerHTML = `
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-700 flex items-center justify-center flex-shrink-0 text-base">🏃</div>
     <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none px-4 py-3 max-w-xs">
-      <p class="text-sm leading-relaxed">${texto.replace(/\n/g,'<br>').replace(/</g,'&lt;').replace(/&lt;br>/g,'<br>')}</p>
+      <p class="text-sm leading-relaxed">${html}</p>
     </div>`;
-  msgs.appendChild(div);
-  if (scroll) msgs.scrollTop = msgs.scrollHeight;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function mostrarTyping() {
-  const div = document.createElement('div');
-  div.id = 'typing';
-  div.className = 'flex gap-3';
-  div.innerHTML = `
-    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🏃</div>
+function addTyping() {
+  const d = document.createElement('div');
+  d.id = 'typing';
+  d.className = 'flex gap-3';
+  d.innerHTML = `
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-700 flex items-center justify-center flex-shrink-0 text-base">🏃</div>
     <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none px-4 py-3">
       <div class="typing"><span></span><span></span><span></span></div>
     </div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function removerTyping() {
-  document.getElementById('typing')?.remove();
-}
-
-// Verificar se mensagem é sobre loja
-function isContextoLoja(msg) {
-  const lower = msg.toLowerCase();
-  return lower.includes('camisa') || lower.includes('camiseta') || lower.includes('loja') || lower.includes('comprar') || lower.includes('tamanho') || lower.includes('roupa');
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
 }
 
 async function enviar() {
-  const texto = input.value.trim();
-  if (!texto || enviando) return;
+  const txt = input.value.trim();
+  if (!txt || enviando) return;
   enviando = true;
-
   input.value = '';
   document.getElementById('btnEnviar').textContent = '⏳';
   document.getElementById('atalhos').style.display = 'none';
 
-  adicionarMsgUser(texto);
-  mostrarTyping();
+  addMsgUser(txt);
+  addTyping();
 
   try {
     const r = await fetch('/ia/chat', {
       method: 'POST',
-      headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
-      body: JSON.stringify({ mensagem: texto, contextoLoja: isContextoLoja(texto) })
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        mensagem: txt,
+        contextoLoja: /camisa|camiseta|loja|comprar|tamanho|roupa/i.test(txt)
+      })
     });
+
     const d = await r.json();
-    removerTyping();
-    adicionarMsgIA(d.resposta || 'Ops, erro ao responder.');
+    document.getElementById('typing')?.remove();
+
+    if (r.status === 401) {
+      localStorage.removeItem('pace_token');
+      window.location.href = '/entrar.html';
+      return;
+    }
+
+    addMsgIA(d.resposta || 'Não consegui responder agora, tenta de novo!');
+
   } catch(e) {
-    removerTyping();
-    adicionarMsgIA('Tive um problema de conexão! Tenta de novo 😅');
+    document.getElementById('typing')?.remove();
+    addMsgIA('Perdi a conexão por um segundo! Tenta de novo. 😅');
   } finally {
     enviando = false;
     document.getElementById('btnEnviar').textContent = '↑';
@@ -167,20 +175,27 @@ async function enviar() {
   }
 }
 
-function enviarRapido(texto) {
-  input.value = texto;
+function rapido(txt) {
+  input.value = txt;
   enviar();
 }
 
+// Carregar histórico
+async function carregarHistorico() {
+  try {
+    const r = await fetch('/ia/historico', { headers: { Authorization:`Bearer ${token}` } });
+    const d = await r.json();
+    if (d.mensagens?.length) {
+      d.mensagens.slice(-10).forEach(m => {
+        if (m.role === 'user') addMsgUser(m.content);
+        else if (m.role === 'assistant') addMsgIA(m.content);
+      });
+    }
+  } catch {}
+}
+
 carregarHistorico();
+input.focus();
 </script>
-<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
-  <a href="/" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏠</span><span>Início</span></a>
-  <a href="/calendario.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">📅</span><span>Corridas</span></a>
-  <a href="/elite.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏆</span><span>Ranking</span></a>
-  <a href="/loja.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👕</span><span>Loja</span></a>
-  <a href="/ia.html" class="flex flex-col items-center text-xs py-1 px-2 text-green-400"><span class="text-xl">🏃</span><span>PACE IA</span></a>
-  <a href="/perfil.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👤</span><span>Perfil</span></a>
-</nav>
 </body>
 </html>

@@ -99,8 +99,8 @@ export async function iaRoutes(fastify) {
       return { resposta };
 
     } catch(e) {
-      console.error('[IA]', e.message);
-      return { resposta: 'Opa, erro técnico! Tenta de novo 😅' };
+      console.error('[IA ERRO COMPLETO]', e.message, e.stack?.substring(0,300));
+      return { resposta: `Ops! Erro: ${e.message.substring(0,50)}` };
     }
   });
 
