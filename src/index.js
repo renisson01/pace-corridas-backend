@@ -1,5 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import multipart from '@fastify/multipart';
+import staticFiles from '@fastify/static';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

@@ -2,147 +2,154 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PACE — Admin Loja</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PACE Admin — Loja</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-<style>body{background:#0a0f1a;}</style>
+<style>
+body{background:#0a0f1a;}
+.grad{background:linear-gradient(135deg,#22c55e,#16a34a);}
+::-webkit-scrollbar{display:none;}
+</style>
 </head>
 <body class="text-white min-h-screen pb-20">
 
-<header class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center gap-3">
-  <a href="/" class="text-slate-400">←</a>
-  <h1 class="font-black">Admin Loja PACE</h1>
-  <a href="/admin-pedidos.html" class="ml-auto text-xs bg-slate-800 border border-slate-700 px-3 py-2 rounded-xl">📦 Pedidos</a>
+<header class="sticky top-0 z-40 px-4 py-3 flex items-center gap-3 bg-slate-900 border-b border-slate-800">
+  <a href="/" class="text-slate-400 text-xl">←</a>
+  <h1 class="font-black text-lg">Admin Loja</h1>
+  <a href="/admin-pedidos.html" class="ml-auto text-xs bg-orange-500/20 border border-orange-500/50 text-orange-400 px-3 py-2 rounded-xl font-bold">📦 Pedidos</a>
 </header>
 
-<!-- AVISO CLOUDINARY -->
-<div id="aviso-cloud" class="mx-4 mt-4 bg-blue-900/30 border border-blue-500/40 rounded-2xl p-4 text-sm hidden">
-  <p class="font-black text-blue-400 mb-1">📸 Configure o upload de fotos</p>
-  <p class="text-slate-300 text-xs">Para enviar fotos, crie uma conta gratuita em <a href="https://cloudinary.com" target="_blank" class="text-blue-400 underline">cloudinary.com</a> e cole seu Cloud Name abaixo:</p>
-  <div class="flex gap-2 mt-2">
-    <input id="cloud-name-input" type="text" placeholder="Seu Cloud Name (ex: meu-app)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-    <button onclick="salvarCloud()" class="bg-blue-500 text-white font-bold text-xs px-3 py-2 rounded-xl">Salvar</button>
-  </div>
-</div>
-
-<!-- FORM NOVO PRODUTO -->
+<!-- FORM PRODUTO -->
 <section class="px-4 mt-4">
-  <h2 class="font-black text-base mb-3">➕ Adicionar produto</h2>
+  <h2 class="font-black mb-3">➕ Novo produto</h2>
   <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-    <input id="p-nome" placeholder="Nome do produto *" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500">
+
+    <input id="p-nome" placeholder="Nome *" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500">
     <textarea id="p-desc" placeholder="Descrição" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500 resize-none"></textarea>
 
     <div class="grid grid-cols-2 gap-3">
-      <input id="p-preco" type="number" placeholder="Preço (R$) *" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500">
-      <select id="p-cat" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
-        <option value="camisa">Camisa</option>
-        <option value="shorts">Shorts</option>
-        <option value="bone">Boné</option>
-        <option value="acessorio">Acessório</option>
-      </select>
-    </div>
-
-    <!-- FOTO -->
-    <div>
-      <p class="text-xs text-slate-400 mb-2">Foto do produto</p>
-      <div class="flex gap-2">
-        <button onclick="uploadFoto()" id="btn-upload" class="flex-1 bg-slate-800 border border-dashed border-slate-600 rounded-xl py-4 text-sm text-slate-400 hover:border-green-500 hover:text-green-400 transition-colors">
-          📸 Enviar foto
-        </button>
-        <input id="p-foto-url" placeholder="ou cole URL da foto" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-green-500">
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Preço (R$) *</label>
+        <input id="p-preco" type="number" step="0.01" placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
       </div>
-      <div id="preview-foto" class="mt-2 hidden">
-        <img id="foto-preview-img" class="w-full h-40 object-cover rounded-xl">
-        <p class="text-xs text-green-400 mt-1">✅ Foto carregada</p>
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">Categoria</label>
+        <select id="p-cat" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+          <option value="camisa">👕 Camisa</option>
+          <option value="shorts">🩳 Shorts</option>
+          <option value="bone">🧢 Boné</option>
+          <option value="acessorio">⌚ Acessório</option>
+        </select>
       </div>
     </div>
 
-    <!-- TAMANHOS/ESTOQUE -->
+    <!-- UPLOAD DE FOTO -->
     <div>
-      <p class="text-xs text-slate-400 mb-2">Estoque por tamanho</p>
-      <div class="grid grid-cols-5 gap-2">
-        <div v-for="t in tamanhos">
-          <label class="text-xs text-slate-400 block text-center mb-1">PP</label>
-          <input id="est-PP" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500">
+      <label class="text-xs text-slate-400 block mb-2">📸 Foto do produto</label>
+      <input type="file" id="file-input" accept="image/*" class="hidden" onchange="previewFoto(this)">
+      <div onclick="document.getElementById('file-input').click()"
+        class="border-2 border-dashed border-slate-600 rounded-xl p-6 text-center cursor-pointer hover:border-green-500 transition-colors" id="drop-area">
+        <div id="preview-container" class="hidden">
+          <img id="preview-img" class="w-full max-h-48 object-cover rounded-xl mb-2">
+          <p class="text-xs text-green-400">✅ Foto selecionada — clique para trocar</p>
         </div>
-        <div><label class="text-xs text-slate-400 block text-center mb-1">P</label><input id="est-P" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500"></div>
-        <div><label class="text-xs text-slate-400 block text-center mb-1">M</label><input id="est-M" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500"></div>
-        <div><label class="text-xs text-slate-400 block text-center mb-1">G</label><input id="est-G" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500"></div>
-        <div><label class="text-xs text-slate-400 block text-center mb-1">GG</label><input id="est-GG" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-white text-center outline-none focus:border-green-500"></div>
+        <div id="upload-placeholder">
+          <p class="text-3xl mb-2">📸</p>
+          <p class="text-sm text-slate-400 font-bold">Toque para escolher foto</p>
+          <p class="text-xs text-slate-500 mt-1">JPG, PNG ou WebP até 10MB</p>
+        </div>
+      </div>
+      <div id="upload-progress" class="hidden mt-2">
+        <div class="bg-slate-800 rounded-full h-2">
+          <div id="progress-bar" class="bg-green-500 h-2 rounded-full transition-all" style="width:0%"></div>
+        </div>
+        <p class="text-xs text-slate-400 mt-1 text-center" id="progress-text">Enviando...</p>
       </div>
     </div>
 
-    <button onclick="salvarProduto()" id="btn-salvar" class="w-full py-3 rounded-2xl font-black text-black text-sm active:scale-95 transition-all" style="background:linear-gradient(135deg,#22c55e,#16a34a);">
-      Salvar produto
+    <!-- CORES -->
+    <div>
+      <label class="text-xs text-slate-400 block mb-2">Cores disponíveis</label>
+      <div class="flex gap-2 flex-wrap" id="cores-container">
+        <label class="flex items-center gap-1.5 text-xs cursor-pointer"><input type="checkbox" value="Verde" checked class="accent-green-500"> Verde</label>
+        <label class="flex items-center gap-1.5 text-xs cursor-pointer"><input type="checkbox" value="Preto" class="accent-green-500"> Preto</label>
+        <label class="flex items-center gap-1.5 text-xs cursor-pointer"><input type="checkbox" value="Branco" class="accent-green-500"> Branco</label>
+        <label class="flex items-center gap-1.5 text-xs cursor-pointer"><input type="checkbox" value="Azul" class="accent-green-500"> Azul</label>
+        <label class="flex items-center gap-1.5 text-xs cursor-pointer"><input type="checkbox" value="Cinza" class="accent-green-500"> Cinza</label>
+      </div>
+    </div>
+
+    <!-- ESTOQUE POR TAMANHO -->
+    <div>
+      <label class="text-xs text-slate-400 block mb-2">Estoque por tamanho</label>
+      <div class="grid grid-cols-5 gap-2">
+        <div class="text-center"><p class="text-xs text-slate-400 mb-1">PP</p><input id="e-PP" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500"></div>
+        <div class="text-center"><p class="text-xs text-slate-400 mb-1">P</p><input id="e-P" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500"></div>
+        <div class="text-center"><p class="text-xs text-slate-400 mb-1">M</p><input id="e-M" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500"></div>
+        <div class="text-center"><p class="text-xs text-slate-400 mb-1">G</p><input id="e-G" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500"></div>
+        <div class="text-center"><p class="text-xs text-slate-400 mb-1">GG</p><input id="e-GG" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500"></div>
+      </div>
+    </div>
+
+    <button onclick="salvarProduto()" id="btn-salvar" class="w-full grad text-black font-black py-3 rounded-2xl text-sm active:scale-95 transition-all shadow-lg">
+      💾 Salvar produto
     </button>
   </div>
 </section>
 
-<!-- LISTA DE PRODUTOS -->
+<!-- LISTA -->
 <section class="px-4 mt-6">
-  <h2 class="font-black text-base mb-3">📦 Produtos cadastrados</h2>
-  <div id="lista-produtos" class="space-y-3">
-    <p class="text-slate-500 text-sm text-center py-4">Carregando...</p>
-  </div>
+  <h2 class="font-black mb-3">📦 Produtos (<span id="total-produtos">0</span>)</h2>
+  <div id="lista" class="space-y-3"></div>
 </section>
 
 <script>
 const token = localStorage.getItem('pace_token');
 if (!token) window.location.href = '/entrar.html';
 
-let cloudName = localStorage.getItem('pace_cloud_name') || '';
-let fotoUrl = '';
+let fotoUploadada = null;
+const TAMANHOS = ['PP','P','M','G','GG'];
 
-// Verificar se tem cloud name configurado
-if (!cloudName) {
-  document.getElementById('aviso-cloud').classList.remove('hidden');
+function previewFoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('preview-img').src = e.target.result;
+    document.getElementById('preview-container').classList.remove('hidden');
+    document.getElementById('upload-placeholder').classList.add('hidden');
+  };
+  reader.readAsDataURL(file);
+  fotoUploadada = file;
 }
 
-function salvarCloud() {
-  cloudName = document.getElementById('cloud-name-input').value.trim();
-  if (cloudName) {
-    localStorage.setItem('pace_cloud_name', cloudName);
-    document.getElementById('aviso-cloud').classList.add('hidden');
-    alert('✅ Cloud Name salvo!');
+async function enviarFoto() {
+  if (!fotoUploadada) return null;
+  
+  document.getElementById('upload-progress').classList.remove('hidden');
+  document.getElementById('progress-bar').style.width = '30%';
+  document.getElementById('progress-text').textContent = 'Enviando foto...';
+
+  const form = new FormData();
+  form.append('file', fotoUploadada);
+
+  try {
+    document.getElementById('progress-bar').style.width = '70%';
+    const r = await fetch('/upload/imagem', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: form
+    });
+    const d = await r.json();
+    document.getElementById('progress-bar').style.width = '100%';
+    document.getElementById('progress-text').textContent = '✅ Foto enviada!';
+    setTimeout(() => document.getElementById('upload-progress').classList.add('hidden'), 2000);
+    return d.url;
+  } catch(e) {
+    document.getElementById('progress-text').textContent = '❌ Erro no upload';
+    return null;
   }
 }
-
-function uploadFoto() {
-  if (!cloudName) {
-    document.getElementById('aviso-cloud').classList.remove('hidden');
-    alert('Configure seu Cloud Name primeiro!');
-    return;
-  }
-  const widget = cloudinary.createUploadWidget({
-    cloudName: cloudName,
-    uploadPreset: 'pace_produtos',
-    sources: ['local', 'camera'],
-    multiple: false,
-    cropping: true,
-    croppingAspectRatio: 1,
-    language: 'pt',
-    text: { pt: { or: 'ou', menu: { files: 'Meus arquivos', camera: 'Câmera' } } }
-  }, (error, result) => {
-    if (result?.event === 'success') {
-      fotoUrl = result.info.secure_url;
-      document.getElementById('p-foto-url').value = fotoUrl;
-      document.getElementById('foto-preview-img').src = fotoUrl;
-      document.getElementById('preview-foto').classList.remove('hidden');
-    }
-  });
-  widget.open();
-}
-
-// Monitorar URL manual
-document.getElementById('p-foto-url').addEventListener('input', function() {
-  const url = this.value.trim();
-  if (url) {
-    fotoUrl = url;
-    document.getElementById('foto-preview-img').src = url;
-    document.getElementById('preview-foto').classList.remove('hidden');
-  }
-});
 
 async function salvarProduto() {
   const nome = document.getElementById('p-nome').value.trim();
@@ -150,12 +157,25 @@ async function salvarProduto() {
   if (!nome || !preco) { alert('Preencha nome e preço!'); return; }
 
   const btn = document.getElementById('btn-salvar');
-  btn.textContent = 'Salvando... ⏳';
+  btn.textContent = '⏳ Salvando...';
   btn.disabled = true;
 
-  const foto = fotoUrl || document.getElementById('p-foto-url').value.trim();
-
   try {
+    // Upload da foto primeiro
+    const imgUrl = await enviarFoto();
+
+    // Pegar cores selecionadas
+    const cores = [...document.querySelectorAll('#cores-container input:checked')].map(c => c.value);
+    if (!cores.length) cores.push('Padrão');
+
+    // Montar variantes (cor x tamanho)
+    const variantes = [];
+    for (const cor of cores) {
+      for (const tam of TAMANHOS) {
+        variantes.push({ cor, tamanho: tam, estoque: parseInt(document.getElementById('e-'+tam).value) || 0 });
+      }
+    }
+
     const r = await fetch('/loja/produtos', {
       method: 'POST',
       headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
@@ -163,51 +183,69 @@ async function salvarProduto() {
         nome, preco,
         descricao: document.getElementById('p-desc').value.trim(),
         categoria: document.getElementById('p-cat').value,
-        imagem: foto || null,
-        variantes: ['PP','P','M','G','GG'].map(t => ({
-          tamanho: t,
-          cor: 'Verde',
-          estoque: parseInt(document.getElementById('est-'+t).value) || 0
-        }))
+        imagem: imgUrl || null,
+        variantes
       })
     });
+
     const d = await r.json();
     if (r.ok) {
-      alert('✅ Produto salvo!');
-      document.getElementById('p-nome').value = '';
-      document.getElementById('p-preco').value = '';
-      document.getElementById('p-desc').value = '';
-      document.getElementById('p-foto-url').value = '';
-      document.getElementById('preview-foto').classList.add('hidden');
-      fotoUrl = '';
+      alert('✅ Produto salvo com sucesso!');
+      // Limpar form
+      ['p-nome','p-desc','p-preco'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('preview-container').classList.add('hidden');
+      document.getElementById('upload-placeholder').classList.remove('hidden');
+      document.getElementById('file-input').value = '';
+      fotoUploadada = null;
       carregarProdutos();
-    } else { alert('Erro: ' + (d.error || d.message || 'Desconhecido')); }
-  } catch(e) { alert('Erro de conexão'); }
-  finally { btn.textContent = 'Salvar produto'; btn.disabled = false; }
+    } else {
+      alert('Erro: ' + (d.error || d.message || 'Verifique os dados'));
+    }
+  } catch(e) {
+    alert('Erro de conexão: ' + e.message);
+  } finally {
+    btn.textContent = '💾 Salvar produto';
+    btn.disabled = false;
+  }
 }
 
 async function carregarProdutos() {
   try {
     const r = await fetch('/loja/produtos', { headers: {'Authorization':'Bearer '+token} });
     const produtos = await r.json();
-    const el = document.getElementById('lista-produtos');
-    if (!produtos?.length) { el.innerHTML='<p class="text-slate-500 text-sm text-center py-4">Nenhum produto ainda</p>'; return; }
+    document.getElementById('total-produtos').textContent = produtos?.length || 0;
+    const el = document.getElementById('lista');
+    if (!produtos?.length) { el.innerHTML='<p class="text-slate-500 text-sm text-center py-6">Nenhum produto ainda. Cadastre o primeiro! 👆</p>'; return; }
     el.innerHTML = produtos.map(p => `
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex">
-        ${p.imagem ? `<img src="${p.imagem}" class="w-24 h-24 object-cover flex-shrink-0">` : '<div class="w-24 h-24 bg-slate-800 flex items-center justify-center text-3xl flex-shrink-0">👕</div>'}
-        <div class="flex-1 p-3">
-          <p class="font-black text-sm">${p.nome}</p>
-          <p class="text-green-400 font-bold text-sm">R$ ${(p.preco||0).toFixed(2)}</p>
-          <p class="text-xs text-slate-400">${p.categoria||''}</p>
-          <button onclick="deletar('${p.id}')" class="mt-2 text-xs text-red-400">🗑️ Remover</button>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex gap-0">
+        <div class="w-24 h-24 flex-shrink-0 bg-slate-800 flex items-center justify-center overflow-hidden">
+          ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover" onerror="this.style.display='none'">` : '<span class="text-4xl">👕</span>'}
+        </div>
+        <div class="flex-1 p-3 min-w-0">
+          <p class="font-black text-sm truncate">${p.nome}</p>
+          <p class="text-green-400 font-bold">R$ ${parseFloat(p.preco||0).toFixed(2)}</p>
+          <p class="text-xs text-slate-400">${p.categoria||''} · ${p.variantes?.length||0} variantes</p>
+          <div class="flex gap-2 mt-2">
+            <button onclick="toggleAtivo('${p.id}', ${p.ativo})" class="text-xs ${p.ativo?'text-green-400':'text-slate-500'} border ${p.ativo?'border-green-500/40':'border-slate-700'} px-2 py-1 rounded-lg">${p.ativo?'✅ Ativo':'⏸️ Inativo'}</button>
+            <button onclick="deletar('${p.id}')" class="text-xs text-red-400 border border-red-500/30 px-2 py-1 rounded-lg">🗑️</button>
+          </div>
         </div>
       </div>`).join('');
-  } catch { document.getElementById('lista-produtos').innerHTML='<p class="text-red-400 text-sm text-center py-4">Erro ao carregar</p>'; }
+  } catch(e) { document.getElementById('lista').innerHTML='<p class="text-red-400 text-sm text-center py-4">Erro ao carregar</p>'; }
 }
 
 async function deletar(id) {
-  if (!confirm('Remover produto?')) return;
+  if (!confirm('Remover este produto?')) return;
   await fetch('/loja/produtos/'+id, { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
+  carregarProdutos();
+}
+
+async function toggleAtivo(id, ativo) {
+  await fetch('/loja/produtos/'+id, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({ ativo: !ativo })
+  });
   carregarProdutos();
 }
 
