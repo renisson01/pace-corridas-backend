@@ -53,13 +53,19 @@ export async function iaRoutes(fastify) {
         contextoLoja ? 'CONTEXTO: atleta está na loja querendo comprar camisa' : '',
       ].filter(Boolean).join('\n');
 
+      // Verificar chave
+      const apiKey = process.env.ANTHROPIC_API_KEY;
+      if (!apiKey) {
+        return { resposta: 'ERRO: ANTHROPIC_API_KEY não configurada no servidor!' };
+      }
+
       // Chamar Claude
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01',
-          'x-api-key': process.env.ANTHROPIC_API_KEY || '',
+          'x-api-key': apiKey,
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
@@ -74,8 +80,8 @@ export async function iaRoutes(fastify) {
 
       const data = await resp.json();
       if (data.error) {
-        console.error('[IA API]', data.error);
-        return { resposta: 'Tive um probleminha técnico! Tenta de novo em instantes 😅' };
+        console.error('[IA API ERROR]', JSON.stringify(data.error));
+        return { resposta: `Erro API: ${data.error.type} - ${data.error.message}` };
       }
       const resposta = data.content?.[0]?.text || 'Desculpe, erro ao processar!';
 
@@ -99,8 +105,8 @@ export async function iaRoutes(fastify) {
       return { resposta };
 
     } catch(e) {
-      console.error('[IA ERRO COMPLETO]', e.message, e.stack?.substring(0,300));
-      return { resposta: `Ops! Erro: ${e.message.substring(0,50)}` };
+      console.error('[IA CATCH]', e.message);
+      return { resposta: `Erro: ${e.message}` };
     }
   });
 
