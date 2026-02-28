@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PACE — Adicionar Resultado</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#0f172a;} .animate-pulse{animation:pulse 2s infinite;} @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}</style>
+</head>
+<body class="text-white min-h-screen pb-24">
+
+<header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 py-3 flex items-center gap-3">
+  <a href="/perfil.html" class="text-slate-400 text-xl">←</a>
+  <h1 class="font-bold">🔍 Adicionar Resultado</h1>
+</header>
+
+<div class="max-w-lg mx-auto px-4 py-6">
+
+  <!-- PASSO 1 -->
+  <div id="passo1">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-4">
+      <h2 class="font-black text-lg mb-1">Como funciona</h2>
+      <div class="space-y-3 mt-3">
+        <div class="flex gap-3 items-start">
+          <span class="bg-green-500 text-black font-black w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0">1</span>
+          <p class="text-sm text-slate-300">Cole o link da página de resultados da corrida</p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <span class="bg-green-500 text-black font-black w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0">2</span>
+          <p class="text-sm text-slate-300">Nossa IA busca seu nome e confirma o resultado</p>
+        </div>
+        <div class="flex gap-3 items-start">
+          <span class="bg-green-500 text-black font-black w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0">3</span>
+          <p class="text-sm text-slate-300">Confirme os dados e salve no seu histórico</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-4">
+      <p class="text-xs text-slate-400 mb-3 font-bold">SITES SUPORTADOS</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">sportschrono.com.br</span>
+        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">leveyourun.com</span>
+        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">chipower.com.br</span>
+        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">centraldacorrida.com.br</span>
+        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">ticketsports.com.br</span>
+        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">+ outros</span>
+      </div>
+    </div>
+
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5">
+      <label class="text-xs text-slate-400 font-bold block mb-2">LINK DA PÁGINA DE RESULTADOS</label>
+      <input id="urlInput" type="url" placeholder="https://sportschrono.com.br/resultado/..."
+        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500 mb-3">
+      
+      <label class="text-xs text-slate-400 font-bold block mb-2">SEU NOME NA CORRIDA (como aparece no resultado)</label>
+      <input id="nomeInput" type="text" placeholder="Ex: João Silva"
+        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500 mb-4">
+      
+      <button onclick="verificar()" class="w-full bg-green-500 text-black font-black py-3 rounded-xl text-lg">
+        🔍 Verificar resultado
+      </button>
+    </div>
+  </div>
+
+  <!-- VERIFICANDO -->
+  <div id="verificando" class="hidden text-center py-12">
+    <div class="text-6xl mb-4 animate-pulse">🤖</div>
+    <p class="font-black text-xl text-green-400">Verificando resultado...</p>
+    <p class="text-slate-400 text-sm mt-2">Nossa IA está buscando seus dados</p>
+    <div class="mt-6 space-y-2 text-left max-w-xs mx-auto">
+      <div id="step1" class="flex items-center gap-2 text-sm text-slate-400">
+        <span class="animate-pulse">⏳</span> Acessando página de resultados...
+      </div>
+      <div id="step2" class="flex items-center gap-2 text-sm text-slate-400 opacity-40">
+        <span>🔍</span> Buscando seu nome...
+      </div>
+      <div id="step3" class="flex items-center gap-2 text-sm text-slate-400 opacity-40">
+        <span>✅</span> Confirmando dados...
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADO ENCONTRADO -->
+  <div id="resultadoEncontrado" class="hidden">
+    <div class="bg-green-900/30 border border-green-500/50 rounded-2xl p-5 mb-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-2xl">✅</span>
+        <h2 class="font-black text-green-400">Resultado encontrado!</h2>
+      </div>
+      <p id="tituloProva" class="font-bold text-lg mb-4"></p>
+      
+      <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="bg-slate-800 rounded-xl p-3 text-center">
+          <p id="resDistancia" class="font-black text-green-400 text-xl">--</p>
+          <p class="text-xs text-slate-400">distância</p>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-3 text-center">
+          <p id="resTempo" class="font-black text-blue-400 text-xl">--</p>
+          <p class="text-xs text-slate-400">tempo</p>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-3 text-center">
+          <p id="resPosicao" class="font-black text-yellow-400 text-xl">--</p>
+          <p class="text-xs text-slate-400">posição</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-4">
+      <p class="text-xs text-slate-400 font-bold mb-3">CONFIRME OU CORRIJA OS DADOS</p>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Nome da prova</label>
+          <input id="confProva" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-green-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Distância</label>
+            <select id="confDistancia" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+              <option value="5km">5km</option>
+              <option value="10km">10km</option>
+              <option value="21km">21km - Meia</option>
+              <option value="42km">42km - Maratona</option>
+              <option value="3km">3km</option>
+              <option value="6km">6km</option>
+              <option value="15km">15km</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Posição geral</label>
+            <input id="confPosicao" type="number" min="1" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-green-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Tempo</label>
+            <input id="confTempo" placeholder="1:05:30" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-green-500">
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Estado</label>
+            <select id="confEstado" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+              <option value="SE">SE</option><option value="SP">SP</option><option value="RJ">RJ</option>
+              <option value="MG">MG</option><option value="BA">BA</option><option value="PR">PR</option>
+              <option value="SC">SC</option><option value="RS">RS</option><option value="CE">CE</option>
+              <option value="PE">PE</option><option value="DF">DF</option><option value="GO">GO</option>
+              <option value="AM">AM</option><option value="PA">PA</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="confirmar()" class="w-full bg-green-500 text-black font-black py-4 rounded-2xl text-lg">
+      ✅ Confirmar e salvar no meu histórico
+    </button>
+    <button onclick="voltarInicio()" class="w-full mt-2 text-slate-400 text-sm py-2">Cancelar</button>
+  </div>
+
+  <!-- ERRO -->
+  <div id="resultadoErro" class="hidden">
+    <div class="bg-red-900/30 border border-red-500/50 rounded-2xl p-5 mb-4">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-2xl">❌</span>
+        <h2 class="font-black text-red-400">Não encontrado</h2>
+      </div>
+      <p id="erroMsg" class="text-sm text-slate-300 mb-2"></p>
+      <p id="erroSugestao" class="text-xs text-slate-400"></p>
+    </div>
+    
+    <!-- CADASTRO MANUAL -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5">
+      <h3 class="font-black mb-3">✍️ Cadastrar manualmente</h3>
+      <div class="space-y-3">
+        <input id="manualProva" placeholder="Nome da prova" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-green-500">
+        <div class="grid grid-cols-2 gap-3">
+          <select id="manualDistancia" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+            <option value="5km">5km</option><option value="10km">10km</option>
+            <option value="21km">Meia 21km</option><option value="42km">Maratona</option>
+          </select>
+          <input id="manualTempo" placeholder="Tempo ex: 1:05:30" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-green-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <input id="manualPosicao" type="number" placeholder="Posição geral" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-green-500">
+          <select id="manualEstado" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+            <option value="SE">SE</option><option value="SP">SP</option><option value="RJ">RJ</option>
+            <option value="MG">MG</option><option value="BA">BA</option><option value="PR">PR</option>
+            <option value="SC">SC</option><option value="RS">RS</option><option value="CE">CE</option>
+            <option value="PE">PE</option><option value="DF">DF</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="salvarManual()" class="w-full mt-4 bg-blue-500 text-white font-black py-3 rounded-xl">
+        💾 Salvar resultado manual
+      </button>
+    </div>
+    <button onclick="voltarInicio()" class="w-full mt-3 text-slate-400 text-sm py-2">Tentar outro link</button>
+  </div>
+
+  <!-- SUCESSO FINAL -->
+  <div id="sucesso" class="hidden text-center py-12">
+    <div class="text-7xl mb-4">🏅</div>
+    <h2 class="font-black text-2xl text-green-400 mb-2">Resultado salvo!</h2>
+    <p id="sucessoMsg" class="text-slate-300 mb-6"></p>
+    <div class="flex flex-col gap-3">
+      <a href="/perfil.html" class="bg-green-500 text-black font-black py-3 px-8 rounded-full">Ver meu perfil</a>
+      <button onclick="voltarInicio()" class="text-slate-400 text-sm">Adicionar outro resultado</button>
+    </div>
+  </div>
+
+</div>
+
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
+  <a href="/" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🏠</span><span>Início</span></a>
+  <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
+  <a href="/social.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">📸</span><span>Feed</span></a>
+  <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">👤</span><span>Perfil</span></a>
+</nav>
+
+<script>
+const token = localStorage.getItem('pace_token');
+if (!token) window.location.href = '/entrar.html';
+
+let dadosVerificados = null;
+
+function show(id) {
+  ['passo1','verificando','resultadoEncontrado','resultadoErro','sucesso'].forEach(i => {
+    document.getElementById(i).classList.add('hidden');
+  });
+  document.getElementById(id).classList.remove('hidden');
+}
+
+async function verificar() {
+  const url = document.getElementById('urlInput').value.trim();
+  const nome = document.getElementById('nomeInput').value.trim();
+  if (!url) return alert('Cole o link do resultado!');
+  if (!nome) return alert('Digite seu nome como aparece no resultado!');
+
+  show('verificando');
+
+  // Animar passos
+  setTimeout(() => {
+    document.getElementById('step1').innerHTML = '<span>✅</span> <span class="text-green-400">Página acessada!</span>';
+    document.getElementById('step2').classList.remove('opacity-40');
+    document.getElementById('step2').innerHTML = '<span class="animate-pulse">⏳</span> Buscando seu nome...';
+  }, 1500);
+  setTimeout(() => {
+    document.getElementById('step2').innerHTML = '<span>✅</span> <span class="text-green-400">Nome encontrado!</span>';
+    document.getElementById('step3').classList.remove('opacity-40');
+    document.getElementById('step3').innerHTML = '<span class="animate-pulse">⏳</span> Confirmando dados...';
+  }, 3000);
+
+  try {
+    const r = await fetch('/results/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ url, nomeNoResultado: nome })
+    });
+    const data = await r.json();
+
+    if (data.success && data.resultados?.length) {
+      const res = data.resultados[0];
+      dadosVerificados = { ...data, resultado: res };
+
+      document.getElementById('tituloProva').textContent = data.tituloProva || 'Corrida';
+      document.getElementById('resDistancia').textContent = data.distancia || '--';
+      document.getElementById('resTempo').textContent = res.tempo || '--';
+      document.getElementById('resPosicao').textContent = res.posicao ? `${res.posicao}°` : '--';
+
+      document.getElementById('confProva').value = data.tituloProva || '';
+      document.getElementById('confTempo').value = res.tempo || '';
+      document.getElementById('confPosicao').value = res.posicao || '';
+      if (data.distancia) {
+        const sel = document.getElementById('confDistancia');
+        [...sel.options].forEach(o => { if (data.distancia.includes(o.value.replace('km',''))) o.selected = true; });
+      }
+
+      show('resultadoEncontrado');
+    } else {
+      document.getElementById('erroMsg').textContent = data.message || 'Resultado não encontrado';
+      document.getElementById('erroSugestao').textContent = data.sugestao || '';
+      show('resultadoErro');
+    }
+  } catch(e) {
+    document.getElementById('erroMsg').textContent = 'Erro de conexão. Tente novamente.';
+    document.getElementById('erroSugestao').textContent = '';
+    show('resultadoErro');
+  }
+}
+
+async function confirmar() {
+  const body = {
+    url: dadosVerificados?.url,
+    tituloProva: document.getElementById('confProva').value,
+    distancia: document.getElementById('confDistancia').value,
+    tempo: document.getElementById('confTempo').value,
+    posicao: document.getElementById('confPosicao').value,
+    estado: document.getElementById('confEstado').value,
+  };
+
+  if (!body.tempo || !body.tituloProva) return alert('Preencha tempo e nome da prova!');
+
+  const r = await fetch('/results/confirm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body)
+  });
+  const data = await r.json();
+
+  if (data.success) {
+    document.getElementById('sucessoMsg').textContent = `+${data.pontos} pontos! Resultado de ${body.tituloProva} confirmado.`;
+    show('sucesso');
+  } else {
+    alert(data.message || 'Erro ao salvar');
+  }
+}
+
+async function salvarManual() {
+  const body = {
+    tituloProva: document.getElementById('manualProva').value,
+    distancia: document.getElementById('manualDistancia').value,
+    tempo: document.getElementById('manualTempo').value,
+    posicao: document.getElementById('manualPosicao').value,
+    estado: document.getElementById('manualEstado').value,
+    url: document.getElementById('urlInput').value || null,
+  };
+  if (!body.tituloProva || !body.tempo) return alert('Preencha nome da prova e tempo!');
+
+  const r = await fetch('/results/confirm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body)
+  });
+  const data = await r.json();
+  if (data.success) {
+    document.getElementById('sucessoMsg').textContent = `Resultado salvo! +${data.pontos} pontos`;
+    show('sucesso');
+  } else alert(data.message || 'Erro');
+}
+
+function voltarInicio() { show('passo1'); }
+</script>
+</body>
+</html>
