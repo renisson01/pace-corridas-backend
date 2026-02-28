@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PACE X1 — Desafio das Ruas</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{box-sizing:border-box;}
+body{background:#0a0f1a;font-family:system-ui,sans-serif;}
+.grad-fire{background:linear-gradient(135deg,#ff4500,#ff8c00,#ffd700);}
+.grad-green{background:linear-gradient(135deg,#22c55e,#16a34a);}
+.card-glass{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);}
+.pulse{animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.slide-up{animation:slideUp .5s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body class="text-white min-h-screen pb-24">
+
+<!-- HEADER -->
+<div class="px-4 pt-4 pb-2 flex items-center justify-between">
+  <a href="/" class="text-slate-400">← PACE</a>
+  <div class="flex items-center gap-2">
+    <div class="w-2 h-2 rounded-full bg-red-500 pulse"></div>
+    <span class="text-xs text-red-400 font-bold uppercase tracking-widest">AO VIVO EM BREVE</span>
+  </div>
+</div>
+
+<!-- BANNER X1 -->
+<div class="mx-4 mt-2 rounded-3xl overflow-hidden relative" style="background:linear-gradient(135deg,#0f0f1a,#1a0a0a,#0f0f1a);border:1px solid rgba(255,69,0,0.3);">
+  <!-- Cartaz placeholder — trocar por imagem real -->
+  <div class="relative p-6 text-center">
+    <div class="absolute inset-0 opacity-10" style="background:radial-gradient(circle at 50% 50%,#ff4500,transparent 70%);"></div>
+    <p class="text-xs text-orange-400 font-bold uppercase tracking-widest mb-2">⚡ DESAFIO X1 DAS RUAS</p>
+    <h1 class="text-3xl font-black leading-tight mb-1" style="text-shadow:0 0 30px rgba(255,69,0,0.5);">
+      TIAGO<br>
+      <span class="text-slate-500 text-xl">vs</span><br>
+      PEDRO
+    </h1>
+    <p class="text-sm text-slate-400 mt-2">17km <span class="text-slate-600 mx-2">×</span> 19km</p>
+    <div class="mt-3 inline-block px-4 py-1.5 rounded-full text-xs font-black" style="background:rgba(255,69,0,0.2);border:1px solid rgba(255,69,0,0.4);color:#ff6b35;">
+      📅 Em breve — fique atento!
+    </div>
+  </div>
+</div>
+
+<!-- ATLETAS -->
+<div class="px-4 mt-4 grid grid-cols-2 gap-3 slide-up">
+
+  <!-- Tiago -->
+  <div class="card-glass rounded-3xl p-4 text-center" style="border-color:rgba(255,69,0,0.3);">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-3 overflow-hidden" style="background:linear-gradient(135deg,#ff4500,#ff8c00);">
+      <img src="https://unavatar.io/instagram/tiagolimadosportoes" class="w-full h-full object-cover" onerror="this.style.display='none'">
+    </div>
+    <p class="font-black text-sm leading-tight">Tiago Lima</p>
+    <p class="text-orange-400 font-bold text-xs mt-0.5">17km</p>
+    <a href="https://www.instagram.com/tiagolimadosportoes" target="_blank"
+      class="block mt-2 text-xs text-slate-400 hover:text-orange-400">@tiagolimadosportoes</a>
+    <div class="mt-3 bg-slate-800 rounded-full h-2">
+      <div id="bar-tiago" class="h-2 rounded-full transition-all duration-700" style="background:linear-gradient(90deg,#ff4500,#ff8c00);width:50%;"></div>
+    </div>
+    <p id="pct-tiago" class="text-orange-400 font-black text-lg mt-1">50%</p>
+    <p class="text-xs text-slate-500">dos palpites</p>
+  </div>
+
+  <!-- Pedro -->
+  <div class="card-glass rounded-3xl p-4 text-center" style="border-color:rgba(34,197,94,0.3);">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-3 overflow-hidden" style="background:linear-gradient(135deg,#22c55e,#16a34a);">
+      <img src="https://unavatar.io/instagram/pedromacierb" class="w-full h-full object-cover" onerror="this.style.display='none'">
+    </div>
+    <p class="font-black text-sm leading-tight">Pedro Maciel</p>
+    <p class="text-green-400 font-bold text-xs mt-0.5">19km</p>
+    <a href="https://www.instagram.com/pedromacierb" target="_blank"
+      class="block mt-2 text-xs text-slate-400 hover:text-green-400">@pedromacierb</a>
+    <div class="mt-3 bg-slate-800 rounded-full h-2">
+      <div id="bar-pedro" class="h-2 rounded-full transition-all duration-700" style="background:linear-gradient(90deg,#22c55e,#4ade80);width:50%;"></div>
+    </div>
+    <p id="pct-pedro" class="text-green-400 font-black text-lg mt-1">50%</p>
+    <p class="text-xs text-slate-500">dos palpites</p>
+  </div>
+</div>
+
+<!-- TOTAL DE VOTOS -->
+<div class="mx-4 mt-3 card-glass rounded-2xl px-4 py-3 flex items-center justify-between">
+  <p class="text-sm text-slate-400">Total de palpites</p>
+  <p id="total-votos" class="font-black text-white">0</p>
+</div>
+
+<!-- BOTÃO VOTAR -->
+<div class="px-4 mt-4">
+  <p class="text-xs text-slate-500 text-center mb-3">Em quem você acredita? Vote e torça!</p>
+  <div id="area-voto" class="grid grid-cols-2 gap-3">
+    <button onclick="votar('tiago')" class="py-4 rounded-2xl font-black text-sm active:scale-95 transition-all" style="background:linear-gradient(135deg,#ff4500,#ff8c00);color:black;">
+      🔥 Tiago vence!
+    </button>
+    <button onclick="votar('pedro')" class="grad-green py-4 rounded-2xl font-black text-sm text-black active:scale-95 transition-all">
+      💪 Pedro vence!
+    </button>
+  </div>
+  <div id="ja-votou" class="hidden text-center py-3">
+    <p class="text-sm text-slate-400">✅ Você já votou! Compartilhe com seus amigos.</p>
+    <button onclick="compartilhar()" class="mt-2 text-xs grad-green text-black font-black px-6 py-2.5 rounded-xl">📤 Compartilhar</button>
+  </div>
+</div>
+
+<!-- DOAÇÃO / APOIO -->
+<div class="mx-4 mt-6">
+  <div class="rounded-3xl overflow-hidden" style="background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(255,69,0,0.1));border:1px solid rgba(255,255,255,0.1);">
+    <div class="p-5">
+      <h2 class="font-black text-lg mb-1">💰 Apoie o atleta</h2>
+      <p class="text-xs text-slate-400 mb-4">100% da sua doação vai para o vencedor. A plataforma PACE cobra uma taxa de serviço de 50% sobre cada doação para manter a operação.</p>
+
+      <!-- Valores rápidos -->
+      <p class="text-xs text-slate-500 font-bold mb-2">Escolha um valor:</p>
+      <div class="grid grid-cols-4 gap-2 mb-3">
+        <button onclick="setValor(10)"  class="valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95">R$10</button>
+        <button onclick="setValor(20)"  class="valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95">R$20</button>
+        <button onclick="setValor(50)"  class="valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95">R$50</button>
+        <button onclick="setValor(100)" class="valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95">R$100</button>
+      </div>
+      <input id="valor-custom" type="number" placeholder="Ou digite outro valor (R$)" min="5"
+        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500 mb-3"
+        oninput="atualizarResumo()">
+
+      <!-- Resumo -->
+      <div id="resumo-doacao" class="hidden bg-slate-900 rounded-2xl p-3 mb-3 text-xs space-y-1.5">
+        <div class="flex justify-between text-slate-400"><span>Sua doação</span><span id="r-total">R$ 0,00</span></div>
+        <div class="flex justify-between text-slate-500"><span>Taxa plataforma PACE (50%)</span><span id="r-taxa" class="text-slate-500">- R$ 0,00</span></div>
+        <div class="flex justify-between font-black text-green-400 pt-1 border-t border-slate-800"><span>Vai para o vencedor</span><span id="r-atleta">R$ 0,00</span></div>
+      </div>
+
+      <!-- Para quem -->
+      <p class="text-xs text-slate-500 font-bold mb-2">Você torce por:</p>
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <button onclick="setApoio('tiago')" id="apoio-tiago" class="apoio-btn py-3 rounded-xl text-sm font-bold border border-slate-700 text-slate-400 bg-slate-800">🔥 Tiago</button>
+        <button onclick="setApoio('pedro')" id="apoio-pedro" class="apoio-btn py-3 rounded-xl text-sm font-bold border border-slate-700 text-slate-400 bg-slate-800">💪 Pedro</button>
+      </div>
+
+      <button onclick="gerarPix()" id="btn-pix" class="w-full py-4 rounded-2xl font-black text-black text-sm active:scale-95 transition-all grad-green">
+        📲 Gerar QR Code Pix
+      </button>
+    </div>
+
+    <!-- PIX QR -->
+    <div id="pix-area" class="hidden px-5 pb-5">
+      <div class="bg-slate-900 rounded-2xl p-4 text-center">
+        <p class="text-xs text-slate-400 mb-3">Escaneie o QR Code ou copie a chave</p>
+        <div class="w-40 h-40 bg-white rounded-2xl mx-auto flex items-center justify-center mb-3">
+          <img id="qr-img" src="" class="w-36 h-36 rounded-xl">
+        </div>
+        <p class="text-xs text-slate-500 mb-2">Chave Pix (CNPJ):</p>
+        <div class="flex gap-2">
+          <input id="chave-pix" value="42912886000190" readonly
+            class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white text-center">
+          <button onclick="copiarPix()" class="grad-green text-black font-black text-xs px-3 py-2 rounded-xl">Copiar</button>
+        </div>
+        <p id="valor-pix-texto" class="text-green-400 font-black text-lg mt-3"></p>
+        <p class="text-xs text-slate-500">Após o pagamento, o vencedor recebe automaticamente</p>
+        <button onclick="confirmarPagamento()" class="mt-3 w-full py-3 rounded-xl font-black text-xs text-white" style="background:linear-gradient(135deg,#25d366,#128c7e);">
+          ✅ Já paguei — confirmar doação
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLACAR AO VIVO -->
+<div class="mx-4 mt-4 mb-6 card-glass rounded-2xl p-4">
+  <div class="flex items-center justify-between mb-3">
+    <h3 class="font-black text-sm">💸 Doações recebidas</h3>
+    <span class="text-xs text-slate-500" id="total-arrecadado">R$ 0,00</span>
+  </div>
+  <div id="lista-doacoes" class="space-y-2 text-xs text-slate-400 text-center py-2">
+    Seja o primeiro a apoiar! 🏃
+  </div>
+</div>
+
+<nav class="fixed bottom-0 left-0 right-0 z-50" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);">
+  <div class="flex justify-around py-2">
+    <a href="/" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">🏠</span><span>Início</span></a>
+    <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">📅</span><span>Corridas</span></a>
+    <a href="/elite.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">🏆</span><span>Ranking</span></a>
+    <a href="/x1.html" class="flex flex-col items-center text-xs text-orange-400 py-1 px-2"><span class="text-xl">⚡</span><span class="font-bold">X1</span></a>
+    <a href="/ia.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">🏃</span><span>IA</span></a>
+    <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">👤</span><span>Perfil</span></a>
+  </div>
+</nav>
+
+<script>
+const CHAVE_PIX = '42912886000190'; // CNPJ ESTAMPACE LTDA
+const TAXA = 0.50; // 50% taxa plataforma
+let valorSel = 0, apoioSel = '';
+
+// Votos
+const votos = JSON.parse(localStorage.getItem('x1_votos') || '{"tiago":0,"pedro":0}');
+const meuVoto = localStorage.getItem('x1_meu_voto');
+if (meuVoto) {
+  document.getElementById('area-voto').classList.add('hidden');
+  document.getElementById('ja-votou').classList.remove('hidden');
+}
+atualizarVotos();
+
+function votar(atleta) {
+  if (localStorage.getItem('x1_meu_voto')) return;
+  votos[atleta]++;
+  localStorage.setItem('x1_votos', JSON.stringify(votos));
+  localStorage.setItem('x1_meu_voto', atleta);
+  document.getElementById('area-voto').classList.add('hidden');
+  document.getElementById('ja-votou').classList.remove('hidden');
+  atualizarVotos();
+}
+
+function atualizarVotos() {
+  const total = votos.tiago + votos.pedro;
+  document.getElementById('total-votos').textContent = total;
+  const pT = total ? Math.round((votos.tiago/total)*100) : 50;
+  const pP = total ? Math.round((votos.pedro/total)*100) : 50;
+  document.getElementById('pct-tiago').textContent = pT+'%';
+  document.getElementById('pct-pedro').textContent = pP+'%';
+  document.getElementById('bar-tiago').style.width = pT+'%';
+  document.getElementById('bar-pedro').style.width = pP+'%';
+}
+
+function setValor(v) {
+  valorSel = v;
+  document.getElementById('valor-custom').value = v;
+  document.querySelectorAll('.valor-btn').forEach(b => {
+    b.className = 'valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95';
+  });
+  event.target.className = 'valor-btn rounded-xl py-3 text-sm font-bold text-black active:scale-95 grad-green';
+  atualizarResumo();
+}
+
+function atualizarResumo() {
+  const v = parseFloat(document.getElementById('valor-custom').value) || 0;
+  valorSel = v;
+  if (v < 5) { document.getElementById('resumo-doacao').classList.add('hidden'); return; }
+  document.getElementById('resumo-doacao').classList.remove('hidden');
+  const taxa = v * TAXA;
+  const atleta = v - taxa;
+  document.getElementById('r-total').textContent = 'R$ '+v.toFixed(2);
+  document.getElementById('r-taxa').textContent = '- R$ '+taxa.toFixed(2);
+  document.getElementById('r-atleta').textContent = 'R$ '+atleta.toFixed(2);
+}
+
+function setApoio(a) {
+  apoioSel = a;
+  document.querySelectorAll('.apoio-btn').forEach(b => {
+    b.className = 'apoio-btn py-3 rounded-xl text-sm font-bold border border-slate-700 text-slate-400 bg-slate-800';
+  });
+  const cores = a === 'tiago'
+    ? 'apoio-btn py-3 rounded-xl text-sm font-bold border text-black'
+    : 'apoio-btn py-3 rounded-xl text-sm font-bold border text-black grad-green';
+  document.getElementById('apoio-'+a).className = cores + (a==='tiago' ? ' border-orange-500' : ' border-green-500');
+  if (a==='tiago') document.getElementById('apoio-tiago').style.background='linear-gradient(135deg,#ff4500,#ff8c00)';
+}
+
+async function gerarPix() {
+  if (valorSel < 5) { alert('Valor mínimo: R$ 5,00'); return; }
+  if (!apoioSel) { alert('Escolha quem você torce!'); return; }
+
+  // Gerar QR Code via API gratuita
+  const chave = CHAVE_PIX;
+  const nome = 'ESTAMPACE LTDA';
+  const cidade = 'ITABAIANA';
+  const valor = valorSel.toFixed(2);
+
+  // QR Code simples via qrserver
+  const texto = `PIX:${chave} R$${valor}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(chave)}&format=png`;
+
+  document.getElementById('qr-img').src = qrUrl;
+  document.getElementById('valor-pix-texto').textContent = `R$ ${valorSel.toFixed(2)}`;
+  document.getElementById('pix-area').classList.remove('hidden');
+  document.getElementById('pix-area').scrollIntoView({ behavior:'smooth' });
+}
+
+function copiarPix() {
+  navigator.clipboard.writeText(CHAVE_PIX);
+  alert('✅ Chave Pix copiada!\n\nCNPJ: '+CHAVE_PIX+'\nNome: ESTAMPACE LTDA');
+}
+
+function confirmarPagamento() {
+  const atleta = apoioSel === 'tiago' ? 'Tiago Lima' : 'Pedro Maciel';
+  const taxa = (valorSel * TAXA).toFixed(2);
+  const paraAtleta = (valorSel * (1-TAXA)).toFixed(2);
+
+  // Salvar doação local
+  const doacoes = JSON.parse(localStorage.getItem('x1_doacoes')||'[]');
+  doacoes.push({ atleta: apoioSel, valor: valorSel, data: new Date().toISOString() });
+  localStorage.setItem('x1_doacoes', JSON.stringify(doacoes));
+
+  alert(`✅ Obrigado pelo apoio a ${atleta}!\n\nSua doação: R$ ${valorSel.toFixed(2)}\nTaxa plataforma: R$ ${taxa}\nVai para o vencedor: R$ ${paraAtleta}\n\nO vencedor será notificado após o X1! 🏃`);
+  renderizarDoacoes();
+}
+
+function renderizarDoacoes() {
+  const doacoes = JSON.parse(localStorage.getItem('x1_doacoes')||'[]');
+  if (!doacoes.length) return;
+  const total = doacoes.reduce((s,d)=>s+d.valor,0);
+  document.getElementById('total-arrecadado').textContent = 'R$ '+total.toFixed(2);
+  document.getElementById('lista-doacoes').innerHTML = doacoes.slice(-5).reverse().map(d=>
+    `<div class="flex justify-between items-center py-1.5 border-b border-slate-800">
+      <span>${d.atleta==='tiago'?'🔥 Tiago':'💪 Pedro'}</span>
+      <span class="text-green-400 font-bold">R$ ${d.valor.toFixed(2)}</span>
+    </div>`
+  ).join('');
+}
+
+function compartilhar() {
+  if (navigator.share) {
+    navigator.share({ title:'X1 das Ruas — PACE', text:'Vem dar seu palpite no X1! Tiago vs Pedro 🔥', url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link copiado! Compartilhe com seus amigos 🏃');
+  }
+}
+
+renderizarDoacoes();
+</script>
+</body>
+</html>
