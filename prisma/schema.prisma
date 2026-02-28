@@ -15,6 +15,7 @@ model Race {
   organizer       String
   status          String   @default("upcoming")
   registrationUrl String?
+  imageUrl        String?
   results         Result[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -153,6 +154,7 @@ model OrganizerRequest {
   eventDate       String
   distances       String
   registrationUrl String?
+  imageUrl        String?
   status          String   @default("pending")
   createdAt       DateTime @default(now())
 }
