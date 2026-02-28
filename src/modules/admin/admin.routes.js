@@ -41,9 +41,9 @@ const ELITE = [
     {prova:'Volta Internacional da Pampulha 2022',     dist:'18km', tempo:'0:54:45', pos:1},
   ]},
   { nome:'Fábio Jesus Correia',              equipe:'Kiatleta/SP',      genero:'M', rs:[
-    {prova:'Corrida Internacional São Silvestre 2022',     dist:'15km', tempo:'0:44:50', pos:4},
-    {prova:'Meia Maratona Internacional Rio 2023',         dist:'21km', tempo:'1:03:22', pos:2},
-    {prova:'Volta Internacional da Pampulha 2024',         dist:'18km', tempo:'0:54:30', pos:1},
+    {prova:'Corrida Internacional São Silvestre 2022',  dist:'15km', tempo:'0:44:50', pos:4},
+    {prova:'Meia Maratona Internacional Rio 2023',      dist:'21km', tempo:'1:03:22', pos:2},
+    {prova:'Volta Internacional da Pampulha 2024',      dist:'18km', tempo:'0:54:30', pos:1},
   ]},
   { nome:'Marílson Gomes dos Santos',        equipe:'Independente/SP',  genero:'M', rs:[
     {prova:'Corrida Internacional São Silvestre 2010', dist:'15km', tempo:'0:44:31', pos:1},
@@ -105,8 +105,8 @@ const ELITE = [
     {prova:'Meia Maratona de Porto Alegre 2024', dist:'21km', tempo:'1:16:30', pos:2},
   ]},
   { nome:'Nubia de Oliveira Silva',          equipe:'Independente',     genero:'F', rs:[
-    {prova:'Corrida Internacional São Silvestre 2024',    dist:'15km', tempo:'0:51:45', pos:3},
-    {prova:'Meia Maratona Internacional Rio 2024',        dist:'21km', tempo:'1:14:20', pos:2},
+    {prova:'Corrida Internacional São Silvestre 2024', dist:'15km', tempo:'0:51:45', pos:3},
+    {prova:'Meia Maratona Internacional Rio 2024',     dist:'21km', tempo:'1:14:20', pos:2},
   ]},
   { nome:'Valdilene dos Santos Silva',       equipe:'Independente',     genero:'F', rs:[
     {prova:'Corrida Internacional São Silvestre 2024',  dist:'15km', tempo:'0:52:10', pos:4},
@@ -124,110 +124,66 @@ function pts(pos, dist) {
 
 export async function adminRoutes(fastify) {
 
-  // SEED - limpa fictícios e insere reais
+  fastify.get('/admin/debug-env', async (req, reply) => {
+    const key = req.headers['x-admin-key'];
+    if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Não autorizado' });
+    return {
+      ANTHROPIC_KEY_existe: !!process.env.ANTHROPIC_API_KEY,
+      ANTHROPIC_KEY_inicio: process.env.ANTHROPIC_API_KEY?.substring(0, 15) || 'NÃO EXISTE',
+      JWT_SECRET_existe: !!process.env.JWT_SECRET,
+      DATABASE_URL_existe: !!process.env.DATABASE_URL,
+      PORT: process.env.PORT,
+      vars: Object.keys(process.env).filter(k => !k.includes('npm') && !k.includes('PATH') && !k.includes('_')).sort()
+    };
+  });
+
+  fastify.get('/admin/stats', async (req, reply) => {
+    const key = req.headers['x-admin-key'];
+    if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Não autorizado' });
+    const [athletes, results, races, users] = await Promise.all([
+      prisma.athlete.count(), prisma.result.count(), prisma.race.count(), prisma.user.count()
+    ]);
+    const top5 = await prisma.athlete.findMany({
+      orderBy: { totalPoints: 'desc' }, take: 5,
+      select: { name: true, equipe: true, totalPoints: true }
+    });
+    return { athletes, results, races, users, top5 };
+  });
+
   fastify.post('/admin/seed-elite', async (req, reply) => {
     const key = req.headers['x-admin-key'] || req.body?.key;
     if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Não autorizado' });
-
     try {
-      // Deletar só atletas sem userId (fictícios)
       const fictícios = await prisma.athlete.findMany({ where: { user: null }, select: { id: true } });
       const ids = fictícios.map(a => a.id);
       if (ids.length) {
         await prisma.result.deleteMany({ where: { athleteId: { in: ids } } });
         await prisma.athlete.deleteMany({ where: { id: { in: ids } } });
       }
-
       let criados = 0, resultados = 0;
-      const log = [];
-
       for (const a of ELITE) {
-        let atleta = await prisma.athlete.findFirst({
-          where: { name: { equals: a.nome, mode: 'insensitive' } }
-        });
+        let atleta = await prisma.athlete.findFirst({ where: { name: { equals: a.nome, mode: 'insensitive' } } });
         if (!atleta) {
-          atleta = await prisma.athlete.create({
-            data: { name: a.nome, equipe: a.equipe, gender: a.genero, totalRaces: 0, totalPoints: 0 }
-          });
+          atleta = await prisma.athlete.create({ data: { name: a.nome, equipe: a.equipe, gender: a.genero, totalRaces: 0, totalPoints: 0 } });
           criados++;
         }
-
         for (const r of a.rs) {
-          let corrida = await prisma.race.findFirst({
-            where: { name: { contains: r.prova.substring(0, 25), mode: 'insensitive' } }
-          });
+          let corrida = await prisma.race.findFirst({ where: { name: { contains: r.prova.substring(0, 25), mode: 'insensitive' } } });
           if (!corrida) {
             const ano = r.prova.match(/\d{4}/)?.[0] || '2024';
-            corrida = await prisma.race.create({
-              data: { name: r.prova, city: 'Brasil', state: 'BR', date: new Date(`${ano}-06-01`), distances: r.dist, organizer: 'Oficial', status: 'completed' }
-            });
+            corrida = await prisma.race.create({ data: { name: r.prova, city: 'Brasil', state: 'BR', date: new Date(`${ano}-06-01`), distances: r.dist, organizer: 'Oficial', status: 'completed' } });
           }
-          const existe = await prisma.result.findUnique({
-            where: { athleteId_raceId: { athleteId: atleta.id, raceId: corrida.id } }
-          });
+          const existe = await prisma.result.findUnique({ where: { athleteId_raceId: { athleteId: atleta.id, raceId: corrida.id } } });
           if (existe) continue;
-          await prisma.result.create({
-            data: { athleteId: atleta.id, raceId: corrida.id, time: r.tempo, overallRank: r.pos, distance: r.dist, points: pts(r.pos, r.dist) }
-          });
+          await prisma.result.create({ data: { athleteId: atleta.id, raceId: corrida.id, time: r.tempo, overallRank: r.pos, distance: r.dist, points: pts(r.pos, r.dist) } });
           resultados++;
         }
-
         const all = await prisma.result.findMany({ where: { athleteId: atleta.id } });
-        await prisma.athlete.update({
-          where: { id: atleta.id },
-          data: { totalRaces: all.length, totalPoints: all.reduce((s, x) => s + x.points, 0) }
-        });
-        log.push(`${a.nome} (${a.equipe})`);
+        await prisma.athlete.update({ where: { id: atleta.id }, data: { totalRaces: all.length, totalPoints: all.reduce((s, x) => s + x.points, 0) } });
       }
-
-      return { ok: true, removidos: ids.length, criados, resultados, atletas: log };
+      return { ok: true, removidos: ids.length, criados, resultados };
     } catch(e) {
-      console.error('[SEED]', e);
       return reply.code(500).send({ error: e.message });
     }
   });
-
-  // STATS
-  fastify.get('/admin/stats', async (req, reply) => {
-    const key = req.headers['x-admin-key'];
-    if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Não autorizado' });
-    const [athletes, results, races, users] = await Promise.all([
-      prisma.athlete.count(), prisma.result.count(), prisma.race.count(), prisma.user.count()
-    ]);
-    const top5 = await prisma.athlete.findMany({
-      orderBy: { totalPoints: 'desc' }, take: 5,
-      select: { name: true, equipe: true, totalPoints: true }
-    });
-    return { athletes, results, races, users, top5 };
-  });
-
-  // DEBUG TEMPORÁRIO - ver variáveis de ambiente
-  fastify.get('/admin/debug-env', async (req, reply) => {
-    const key = req.headers['x-admin-key'];
-    if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Não autorizado' });
-    return {
-      ANTHROPIC_API_KEY_existe: !!process.env.ANTHROPIC_API_KEY,
-      ANTHROPIC_API_KEY_inicio: process.env.ANTHROPIC_API_KEY?.substring(0,15) || 'NÃO EXISTE',
-      JWT_SECRET_existe: !!process.env.JWT_SECRET,
-      DATABASE_URL_existe: !!process.env.DATABASE_URL,
-      NODE_ENV: process.env.NODE_ENV,
-      PORT: process.env.PORT,
-      todas_vars: Object.keys(process.env).filter(k => !k.includes('npm') && !k.includes('PATH')).sort()
-    };
-  });
-
-  // STATS via GET
-  fastify.get('/admin/stats', async (req, reply) => {
-    const key = req.headers['x-admin-key'];
-    if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Não autorizado' });
-    const [athletes, results, races, users] = await Promise.all([
-      prisma.athlete.count(), prisma.result.count(), prisma.race.count(), prisma.user.count()
-    ]);
-    const top5 = await prisma.athlete.findMany({
-      orderBy: { totalPoints: 'desc' }, take: 5,
-      select: { name: true, equipe: true, totalPoints: true }
-    });
-    return { athletes, results, races, users, top5 };
-  });
-
 }
