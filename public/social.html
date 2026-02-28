@@ -5,46 +5,77 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PACE — Feed</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>body{background:#0f172a;}</style>
+<style>body{background:#0f172a;} .fade-in{animation:fadeIn .3s ease;} @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}</style>
 </head>
 <body class="text-white min-h-screen pb-20">
+
 <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 py-3 flex justify-between items-center">
   <a href="/" class="text-green-400 font-black text-xl">PACE</a>
   <h1 class="font-bold text-sm">📸 Feed</h1>
-  <button onclick="abrirNovoPost()" class="bg-green-500 text-black font-black text-xs px-3 py-1.5 rounded-full">+ Post</button>
+  <button onclick="abrirModal()" class="bg-green-500 text-black font-black text-xs px-3 py-1.5 rounded-full">+ Post</button>
 </header>
 
-<div id="modalPost" class="hidden fixed inset-0 bg-black/80 z-50 flex items-end">
-  <div class="bg-slate-800 w-full rounded-t-3xl p-5">
+<!-- MODAL NOVO POST -->
+<div id="modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-end">
+  <div class="bg-slate-800 w-full rounded-t-3xl p-5 max-h-[90vh] overflow-y-auto">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="font-black">Nova postagem</h2>
-      <button onclick="fecharModal()" class="text-slate-400 text-2xl">✕</button>
+      <h2 class="font-black text-lg">Nova postagem</h2>
+      <button onclick="fecharModal()" class="text-slate-400 text-2xl leading-none">✕</button>
     </div>
+
+    <!-- Preview foto -->
+    <div id="fotoPreview" class="hidden mb-3 relative">
+      <img id="fotoImg" class="w-full rounded-xl max-h-48 object-cover">
+      <button onclick="removerFoto()" class="absolute top-2 right-2 bg-black/60 text-white w-7 h-7 rounded-full text-sm">✕</button>
+    </div>
+
     <textarea id="postContent" placeholder="Compartilhe seu treino, corrida ou conquista... 🏃"
-      class="w-full bg-slate-700 rounded-xl p-3 text-sm border border-slate-600 outline-none focus:border-green-500 resize-none" rows="4"></textarea>
-    <select id="postType" class="w-full mt-2 bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white outline-none" onchange="toggleRunFields()">
+      class="w-full bg-slate-700 rounded-xl p-3 text-sm border border-slate-600 outline-none focus:border-green-500 resize-none mb-3" rows="4"></textarea>
+
+    <!-- Tipo de post -->
+    <select id="postType" onchange="toggleRunFields()" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none mb-3">
       <option value="post">💬 Atualização</option>
       <option value="run">🏃 Corrida</option>
       <option value="treino">💪 Treino</option>
       <option value="conquista">🏆 Conquista</option>
     </select>
-    <div id="runFields" class="hidden mt-2 grid grid-cols-3 gap-2">
-      <input id="postDistance" placeholder="Ex: 10km" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white outline-none">
-      <input id="postTime" placeholder="Ex: 50:00" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white outline-none">
-      <input id="postPace" placeholder="Ex: 5:00/km" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white outline-none">
+
+    <!-- Campos de corrida -->
+    <div id="runFields" class="hidden grid grid-cols-3 gap-2 mb-3">
+      <input id="postDistance" placeholder="Ex: 10km" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-green-500">
+      <input id="postTime" placeholder="Ex: 50:00" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-green-500">
+      <input id="postPace" placeholder="5:00/km" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-green-500">
     </div>
-    <button onclick="publicar()" class="w-full mt-4 bg-green-500 text-black font-black py-3 rounded-xl">Publicar</button>
+
+    <!-- Botões de mídia -->
+    <div class="flex gap-2 mb-4">
+      <label class="flex-1 flex items-center justify-center gap-2 bg-slate-700 border border-slate-600 rounded-xl py-2.5 text-sm cursor-pointer hover:bg-slate-600">
+        <span>📷</span><span>Câmera</span>
+        <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleFoto(this)">
+      </label>
+      <label class="flex-1 flex items-center justify-center gap-2 bg-slate-700 border border-slate-600 rounded-xl py-2.5 text-sm cursor-pointer hover:bg-slate-600">
+        <span>🖼️</span><span>Galeria</span>
+        <input type="file" accept="image/*" class="hidden" onchange="handleFoto(this)">
+      </label>
+    </div>
+
+    <button onclick="publicar()" id="btnPublicar" class="w-full bg-green-500 text-black font-black py-3 rounded-xl text-base">
+      Publicar
+    </button>
   </div>
 </div>
 
+<!-- FEED -->
 <div class="max-w-lg mx-auto px-4 pt-4">
-  <div id="loading" class="text-center py-12 text-slate-400"><div class="text-4xl mb-3">⏳</div><p>Carregando feed...</p></div>
+  <div id="loading" class="text-center py-16 text-slate-400">
+    <div class="text-5xl mb-3">⏳</div><p>Carregando feed...</p>
+  </div>
   <div id="feed" class="space-y-4 hidden"></div>
   <div id="vazio" class="hidden text-center py-16 text-slate-400">
     <div class="text-6xl mb-4">📸</div>
-    <p class="font-black text-lg">Nenhuma postagem ainda</p>
-    <p class="text-sm mt-2 text-slate-500">Seja o primeiro a compartilhar!</p>
-    <button onclick="abrirNovoPost()" class="mt-6 bg-green-500 text-black font-black px-8 py-3 rounded-full">Criar primeira postagem</button>
+    <p class="font-black text-xl">Feed vazio por enquanto</p>
+    <p class="text-sm mt-2 text-slate-500">Seja o primeiro a postar!</p>
+    <button onclick="abrirModal()" class="mt-6 bg-green-500 text-black font-black px-8 py-3 rounded-full text-base">Criar primeira postagem</button>
   </div>
 </div>
 
@@ -59,105 +90,165 @@
 <script>
 const token = localStorage.getItem('pace_token');
 const me = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
+let fotoBase64 = null;
 
+function abrirModal() {
+  if (!token) { window.location.href='/entrar.html'; return; }
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('postContent').focus();
+}
+function fecharModal() { document.getElementById('modal').classList.add('hidden'); }
 function toggleRunFields() {
   document.getElementById('runFields').classList.toggle('hidden', document.getElementById('postType').value !== 'run');
 }
-function abrirNovoPost() {
-  if (!token) { window.location.href='/entrar.html'; return; }
-  document.getElementById('modalPost').classList.remove('hidden');
+
+function handleFoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('Foto muito grande! Máximo 5MB'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    fotoBase64 = e.target.result;
+    document.getElementById('fotoImg').src = fotoBase64;
+    document.getElementById('fotoPreview').classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
 }
-function fecharModal() { document.getElementById('modalPost').classList.add('hidden'); }
+
+function removerFoto() {
+  fotoBase64 = null;
+  document.getElementById('fotoPreview').classList.add('hidden');
+}
 
 async function publicar() {
   const content = document.getElementById('postContent').value.trim();
-  if (!content) return alert('Escreva algo!');
+  if (!content) { alert('Escreva algo antes de publicar!'); return; }
+
+  const btn = document.getElementById('btnPublicar');
+  btn.textContent = '⏳ Publicando...';
+  btn.disabled = true;
+
+  const body = {
+    content,
+    type: document.getElementById('postType').value,
+    photo: fotoBase64 || null,
+    distance: document.getElementById('postDistance')?.value || null,
+    time: document.getElementById('postTime')?.value || null,
+    pace: document.getElementById('postPace')?.value || null,
+  };
+
   try {
-    const r = await fetch('/posts', { method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body: JSON.stringify({
-      content, type: document.getElementById('postType').value,
-      distance: document.getElementById('postDistance')?.value||null,
-      time: document.getElementById('postTime')?.value||null,
-      pace: document.getElementById('postPace')?.value||null,
-    })});
-    if (r.ok) { fecharModal(); document.getElementById('postContent').value=''; loadFeed(); }
-    else { const e = await r.json(); alert(e.error||'Erro ao publicar'); }
-  } catch { alert('Erro de conexão'); }
+    const r = await fetch('/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    const data = await r.json();
+
+    if (r.ok) {
+      fecharModal();
+      document.getElementById('postContent').value = '';
+      fotoBase64 = null;
+      document.getElementById('fotoPreview').classList.add('hidden');
+      await loadFeed();
+    } else {
+      alert(data.error || 'Erro ao publicar');
+    }
+  } catch(e) {
+    alert('Erro de conexão: ' + e.message);
+  } finally {
+    btn.textContent = 'Publicar';
+    btn.disabled = false;
+  }
 }
 
 function avatar(user) {
   if (user.photo) return `<img src="${user.photo}" class="w-10 h-10 rounded-full object-cover">`;
-  const ini = user.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
-  return `<div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center font-black text-black">${ini}</div>`;
+  const ini = (user.name||'?').split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+  return `<div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center font-black text-black text-sm">${ini}</div>`;
 }
 
 function renderPost(p) {
-  const icons = {run:'🏃',treino:'💪',conquista:'🏆',post:'💬'};
-  const tempo = new Date(p.createdAt).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+  const icons = { run:'🏃', treino:'💪', conquista:'🏆', post:'💬' };
+  const tempo = new Date(p.createdAt).toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
   const isMine = me && p.user.id === me.id;
 
   let runCard = '';
-  if (p.type==='run' && (p.distance||p.time)) {
-    runCard = `<div class="bg-slate-900 rounded-xl p-3 mb-3 flex gap-4 text-center">
-      ${p.distance?`<div class="flex-1"><p class="text-green-400 font-black text-lg">${p.distance}</p><p class="text-xs text-slate-400">distância</p></div>`:''}
-      ${p.time?`<div class="flex-1"><p class="text-blue-400 font-black text-lg">${p.time}</p><p class="text-xs text-slate-400">tempo</p></div>`:''}
-      ${p.pace?`<div class="flex-1"><p class="text-purple-400 font-black text-lg">${p.pace}</p><p class="text-xs text-slate-400">pace/km</p></div>`:''}
+  if (p.type === 'run' && (p.distance || p.time)) {
+    runCard = `<div class="bg-slate-900 rounded-xl p-3 mb-3 flex gap-3 text-center">
+      ${p.distance ? `<div class="flex-1"><p class="text-green-400 font-black">${p.distance}</p><p class="text-xs text-slate-400">distância</p></div>` : ''}
+      ${p.time ? `<div class="flex-1"><p class="text-blue-400 font-black">${p.time}</p><p class="text-xs text-slate-400">tempo</p></div>` : ''}
+      ${p.pace ? `<div class="flex-1"><p class="text-purple-400 font-black">${p.pace}</p><p class="text-xs text-slate-400">pace/km</p></div>` : ''}
     </div>`;
   }
 
-  const comentarios = (p.comments||[]).map(c=>`
-    <div class="flex gap-2 text-xs mt-1">
-      <span class="font-bold text-slate-300">${c.user.name.split(' ')[0]}</span>
+  const cmts = (p.comments||[]).slice(0,3).map(c =>
+    `<div class="flex gap-2 text-xs mt-1.5">
+      <span class="font-bold text-slate-200 shrink-0">${c.user.name.split(' ')[0]}</span>
       <span class="text-slate-400">${c.content}</span>
-    </div>`).join('');
+    </div>`
+  ).join('');
 
   return `
-  <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4">
-    <div class="flex items-center justify-between mb-3">
-      <div class="flex items-center gap-3">
-        <a href="/usuario.html?id=${p.user.id}">${avatar(p.user)}</a>
-        <div>
-          <p class="font-bold text-sm">${p.user.name}${p.user.isPremium?' ⭐':''}</p>
-          <p class="text-xs text-slate-400">${p.user.city||''}${p.user.state?'/'+p.user.state:''} · ${tempo}</p>
+  <div class="fade-in bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
+    <div class="p-4">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-3">
+          <a href="/usuario.html?id=${p.user.id}">${avatar(p.user)}</a>
+          <div>
+            <p class="font-bold text-sm">${p.user.name}${p.user.isPremium?' ⭐':''}</p>
+            <p class="text-xs text-slate-400">${p.user.city||''}${p.user.state?'/'+p.user.state:''} · ${tempo}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xl">${icons[p.type]||'💬'}</span>
+          ${!isMine ? `<button onclick="seguir('${p.user.id}',this)" class="text-xs font-bold text-green-400 border border-green-500 px-3 py-1 rounded-full">Seguir</button>` : ''}
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="text-xl">${icons[p.type]||'💬'}</span>
-        ${!isMine?`<button onclick="seguir('${p.user.id}',this)" class="text-xs font-bold text-green-400 border border-green-500 px-3 py-1 rounded-full">Seguir</button>`:''}
+
+      ${runCard}
+      <p class="text-sm leading-relaxed text-slate-200">${p.content}</p>
+    </div>
+
+    ${p.photo ? `<img src="${p.photo}" class="w-full object-cover max-h-80">` : ''}
+
+    <div class="px-4 py-3 border-t border-slate-700">
+      <div class="flex items-center gap-5">
+        <button onclick="curtir('${p.id}',this)" class="flex items-center gap-1.5 transition-transform active:scale-125">
+          <span class="text-lg">${p.likedByMe?'❤️':'🤍'}</span>
+          <span class="like-count text-xs text-slate-400">${p.likesCount||0}</span>
+        </button>
+        <button onclick="toggleCmt('${p.id}')" class="flex items-center gap-1.5 text-slate-400">
+          <span>💬</span><span class="text-xs">${p.commentsCount||0}</span>
+        </button>
+        <button onclick="compartilhar('${p.user.name}','${p.content.substring(0,60).replace(/'/g,'')}')" class="ml-auto text-slate-400 text-lg">↗️</button>
       </div>
-    </div>
-    ${runCard}
-    <p class="text-sm text-slate-200 leading-relaxed">${p.content}</p>
-    <div class="flex items-center gap-5 mt-4 pt-3 border-t border-slate-700">
-      <button onclick="curtir('${p.id}',this)" class="flex items-center gap-1.5 text-sm transition-transform active:scale-125">
-        <span>${p.likedByMe?'❤️':'🤍'}</span>
-        <span class="like-count text-slate-400 text-xs">${p.likesCount||0}</span>
-      </button>
-      <button onclick="toggleComment('${p.id}')" class="flex items-center gap-1.5 text-slate-400 text-sm">
-        <span>💬</span><span class="text-xs">${p.commentsCount||0}</span>
-      </button>
-      <button onclick="compartilhar('${p.user.name}','${p.content.substring(0,60)}')" class="ml-auto text-slate-400">↗️</button>
-    </div>
-    ${comentarios ? `<div class="mt-2">${comentarios}</div>` : ''}
-    <div id="cmt-${p.id}" class="hidden mt-3 flex gap-2">
-      <input placeholder="Adicionar comentário..." 
-        class="flex-1 bg-slate-700 rounded-full px-4 py-2 text-xs border border-slate-600 outline-none focus:border-green-500"
-        onkeydown="if(event.key==='Enter')comentar('${p.id}',this)">
+
+      ${cmts ? `<div class="mt-2">${cmts}</div>` : ''}
+
+      <div id="cmt-${p.id}" class="hidden mt-3 flex gap-2">
+        <input placeholder="Comentar..." maxlength="200"
+          class="flex-1 bg-slate-700 rounded-full px-4 py-2 text-sm border border-slate-600 outline-none focus:border-green-500"
+          onkeydown="if(event.key==='Enter')comentar('${p.id}',this)">
+        <button onclick="comentar('${p.id}',this.previousElementSibling)" class="bg-green-500 text-black font-black px-3 py-2 rounded-full text-xs">→</button>
+      </div>
     </div>
   </div>`;
 }
 
 async function curtir(postId, btn) {
   if (!token) { window.location.href='/entrar.html'; return; }
-  const r = await fetch(`/posts/${postId}/like`, {method:'POST', headers:{Authorization:`Bearer ${token}`}});
+  const r = await fetch(`/posts/${postId}/like`, { method:'POST', headers:{ Authorization:`Bearer ${token}` } });
   const d = await r.json();
-  btn.querySelector('span').textContent = d.liked ? '❤️' : '🤍';
+  const heart = btn.querySelector('span:first-child');
   const cnt = btn.querySelector('.like-count');
+  heart.textContent = d.liked ? '❤️' : '🤍';
   cnt.textContent = parseInt(cnt.textContent) + (d.liked ? 1 : -1);
 }
 
 async function seguir(userId, btn) {
   if (!token) { window.location.href='/entrar.html'; return; }
-  const r = await fetch(`/follow/${userId}`, {method:'POST', headers:{Authorization:`Bearer ${token}`}});
+  const r = await fetch(`/follow/${userId}`, { method:'POST', headers:{ Authorization:`Bearer ${token}` } });
   const d = await r.json();
   btn.textContent = d.following ? 'Seguindo ✓' : 'Seguir';
   btn.className = d.following
@@ -165,9 +256,9 @@ async function seguir(userId, btn) {
     : 'text-xs font-bold text-green-400 border border-green-500 px-3 py-1 rounded-full';
 }
 
-function toggleComment(postId) {
+function toggleCmt(id) {
   if (!token) { window.location.href='/entrar.html'; return; }
-  const el = document.getElementById(`cmt-${postId}`);
+  const el = document.getElementById(`cmt-${id}`);
   el.classList.toggle('hidden');
   if (!el.classList.contains('hidden')) el.querySelector('input').focus();
 }
@@ -175,28 +266,36 @@ function toggleComment(postId) {
 async function comentar(postId, input) {
   const content = input.value.trim();
   if (!content) return;
-  await fetch(`/posts/${postId}/comment`, {method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body: JSON.stringify({content})});
   input.value = '';
-  loadFeed();
+  await fetch(`/posts/${postId}/comment`, {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+    body: JSON.stringify({ content })
+  });
+  await loadFeed();
 }
 
 function compartilhar(nome, texto) {
-  if (navigator.share) navigator.share({title:`${nome} no PACE`, text:texto, url:location.href});
+  if (navigator.share) navigator.share({ title:`${nome} no PACE`, text: texto, url: location.href });
+  else { navigator.clipboard.writeText(location.href); alert('Link copiado!'); }
 }
 
 async function loadFeed() {
   try {
-    const r = await fetch('/feed', {headers: token ? {Authorization:`Bearer ${token}`} : {}});
+    const r = await fetch('/feed', { headers: token ? { Authorization:`Bearer ${token}` } : {} });
     const posts = await r.json();
     document.getElementById('loading').classList.add('hidden');
     if (!Array.isArray(posts) || !posts.length) {
       document.getElementById('vazio').classList.remove('hidden');
+      document.getElementById('feed').classList.add('hidden');
       return;
     }
     document.getElementById('vazio').classList.add('hidden');
     document.getElementById('feed').classList.remove('hidden');
     document.getElementById('feed').innerHTML = posts.map(renderPost).join('');
-  } catch { document.getElementById('loading').innerHTML = '<p class="text-red-400">❌ Erro ao carregar</p>'; }
+  } catch(e) {
+    document.getElementById('loading').innerHTML = `<p class="text-red-400">❌ Erro: ${e.message}</p>`;
+  }
 }
 
 loadFeed();

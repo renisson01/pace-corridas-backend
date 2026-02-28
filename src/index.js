@@ -12,6 +12,8 @@ import { authRoutes } from './modules/auth/auth.routes.js';
 import { organizerRoutes } from './modules/organizer/organizer.routes.js';
 import { matchRoutes } from './modules/match/match.routes.js';
 import { analyticsRoutes } from './modules/analytics/analytics.routes.js';
+import { socialRoutes } from './modules/social/social.routes.js';
+import { verifyRoutes } from './modules/results/verify.routes.js';
 import { uploadRoutes } from './modules/upload/upload.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -39,6 +41,8 @@ await app.register(organizerRoutes);
 await app.register(matchRoutes);
 await app.register(analyticsRoutes);
 await app.register(uploadRoutes);
+await app.register(socialRoutes);
+await app.register(verifyRoutes);
 
 
 setTimeout(async()=>{
