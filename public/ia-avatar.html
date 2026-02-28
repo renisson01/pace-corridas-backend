@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PACE — Meu Avatar</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#0f172a;}</style>
+</head>
+<body class="text-white min-h-screen pb-24">
+<header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center gap-3">
+  <a href="/ia.html" class="text-slate-400">←</a>
+  <h1 class="font-black">👤 Meu Avatar de Corredor</h1>
+</header>
+
+<div class="max-w-lg mx-auto px-4 py-6">
+
+  <!-- AVATAR VISUAL -->
+  <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-5 text-center">
+    <div id="avatarCircle" class="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-5xl mx-auto mb-3">🏃</div>
+    <p id="nomeAtleta" class="font-black text-xl"></p>
+    <p id="statsAtleta" class="text-slate-400 text-sm mt-1"></p>
+    <div id="manequimTag" class="hidden mt-3 inline-block bg-green-500 text-black font-black px-4 py-1 rounded-full text-sm"></div>
+    
+    <!-- Upload foto evento -->
+    <label class="mt-4 flex items-center justify-center gap-2 bg-slate-700 border border-slate-600 rounded-xl py-2.5 px-4 text-sm cursor-pointer hover:bg-slate-600 mx-auto w-fit">
+      <span>📸</span><span>Foto correndo</span>
+      <input type="file" accept="image/*" class="hidden" onchange="uploadFotoEvento(this)">
+    </label>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-4">
+    <h2 class="font-black mb-4">📏 Minhas medidas</h2>
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Altura (cm)</label>
+          <input id="altura" type="number" placeholder="Ex: 175" min="140" max="220"
+            class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white outline-none focus:border-green-500">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Peso (kg)</label>
+          <input id="peso" type="number" step="0.1" placeholder="Ex: 70.5" min="40" max="200"
+            class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white outline-none focus:border-green-500">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Medida do Tórax (cm)</label>
+          <input id="torax" type="number" placeholder="Ex: 96" min="70" max="150"
+            class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white outline-none focus:border-green-500">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Medida do Ombro (cm)</label>
+          <input id="ombro" type="number" placeholder="Ex: 44" min="30" max="70"
+            class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white outline-none focus:border-green-500">
+        </div>
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 block mb-2">Tipo de corpo</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="selectTipo('ectomorfo')" id="tipo-ectomorfo" class="tipo-btn bg-slate-700 border border-slate-600 rounded-xl p-2 text-center">
+            <div class="text-2xl">🦴</div><p class="text-xs mt-1">Ectomorfo</p><p class="text-xs text-slate-400">Magro/esguio</p>
+          </button>
+          <button onclick="selectTipo('mesomorfo')" id="tipo-mesomorfo" class="tipo-btn bg-slate-700 border border-slate-600 rounded-xl p-2 text-center">
+            <div class="text-2xl">💪</div><p class="text-xs mt-1">Mesomorfo</p><p class="text-xs text-slate-400">Atlético</p>
+          </button>
+          <button onclick="selectTipo('endomorfo')" id="tipo-endomorfo" class="tipo-btn bg-slate-700 border border-slate-600 rounded-xl p-2 text-center">
+            <div class="text-2xl">🐻</div><p class="text-xs mt-1">Endomorfo</p><p class="text-xs text-slate-400">Robusto</p>
+          </button>
+        </div>
+      </div>
+    </div>
+    <button onclick="salvar()" class="w-full mt-5 bg-green-500 text-black font-black py-3 rounded-xl text-base">
+      💾 Salvar meu perfil
+    </button>
+  </div>
+
+  <!-- TABELA DE TAMANHOS -->
+  <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5">
+    <h3 class="font-black mb-3">📊 Tabela de Tamanhos PACE</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs">
+        <thead><tr class="text-slate-400">
+          <th class="text-left pb-2">Tam</th>
+          <th class="pb-2">Tórax</th>
+          <th class="pb-2">Ombro</th>
+          <th class="pb-2">Comprimento</th>
+        </tr></thead>
+        <tbody class="divide-y divide-slate-700">
+          <tr id="row-PP"><td class="py-1.5 font-bold">PP</td><td class="text-center">80-84cm</td><td class="text-center">40-41cm</td><td class="text-center">66cm</td></tr>
+          <tr id="row-P"><td class="py-1.5 font-bold">P</td><td class="text-center">85-92cm</td><td class="text-center">42-43cm</td><td class="text-center">68cm</td></tr>
+          <tr id="row-M"><td class="py-1.5 font-bold">M</td><td class="text-center">93-100cm</td><td class="text-center">44-45cm</td><td class="text-center">70cm</td></tr>
+          <tr id="row-G"><td class="py-1.5 font-bold">G</td><td class="text-center">101-108cm</td><td class="text-center">46-47cm</td><td class="text-center">72cm</td></tr>
+          <tr id="row-GG"><td class="py-1.5 font-bold">GG</td><td class="text-center">109-116cm</td><td class="text-center">48-49cm</td><td class="text-center">74cm</td></tr>
+          <tr id="row-XG"><td class="py-1.5 font-bold">XG</td><td class="text-center">117-124cm</td><td class="text-center">50-51cm</td><td class="text-center">76cm</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
+  <a href="/" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🏠</span></a>
+  <a href="/ia.html" class="flex flex-col items-center text-xs text-green-400 py-1 px-3"><span class="text-xl">🤖</span><span>PACE IA</span></a>
+  <a href="/loja.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">🛍️</span><span>Loja</span></a>
+  <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-400 py-1 px-3"><span class="text-xl">👤</span><span>Perfil</span></a>
+</nav>
+
+<script>
+const token = localStorage.getItem('pace_token');
+const me = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
+if (!token) window.location.href = '/entrar.html';
+
+let tipoSelecionado = null;
+
+document.getElementById('nomeAtleta').textContent = me?.name || 'Atleta';
+
+function selectTipo(tipo) {
+  tipoSelecionado = tipo;
+  document.querySelectorAll('.tipo-btn').forEach(b => {
+    b.className = 'tipo-btn bg-slate-700 border border-slate-600 rounded-xl p-2 text-center';
+  });
+  document.getElementById(`tipo-${tipo}`).className = 'tipo-btn bg-green-500/20 border border-green-500 rounded-xl p-2 text-center';
+}
+
+async function uploadFotoEvento(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('avatarCircle').innerHTML = `<img src="${e.target.result}" class="w-24 h-24 rounded-full object-cover">`;
+    // Salvar foto junto com outros dados
+  };
+  reader.readAsDataURL(file);
+}
+
+async function salvar() {
+  const data = {
+    altura: document.getElementById('altura').value,
+    peso: document.getElementById('peso').value,
+    medidaTorax: document.getElementById('torax').value,
+    medidaOmbro: document.getElementById('ombro').value,
+    tipoCorpo: tipoSelecionado,
+  };
+
+  const r = await fetch('/ia/avatar', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+    body: JSON.stringify(data)
+  });
+  const d = await r.json();
+
+  if (d.success) {
+    if (d.manequim) {
+      document.getElementById('manequimTag').textContent = `Seu tamanho: ${d.manequim}`;
+      document.getElementById('manequimTag').classList.remove('hidden');
+      // Destacar linha na tabela
+      document.querySelectorAll('[id^="row-"]').forEach(r => r.style.background = '');
+      const row = document.getElementById(`row-${d.manequim}`);
+      if (row) row.style.background = 'rgba(34,197,94,0.15)';
+    }
+    alert('✅ Perfil salvo! A PACE IA já conhece suas medidas.');
+    window.location.href = '/ia.html';
+  } else {
+    alert(d.error || 'Erro ao salvar');
+  }
+}
+
+// Carregar avatar existente
+async function load() {
+  const r = await fetch('/ia/avatar', { headers: { Authorization:`Bearer ${token}` } });
+  const d = await r.json();
+  if (d.altura) document.getElementById('altura').value = d.altura;
+  if (d.peso) document.getElementById('peso').value = d.peso;
+  if (d.medidaTorax) document.getElementById('torax').value = d.medidaTorax;
+  if (d.medidaOmbro) document.getElementById('ombro').value = d.medidaOmbro;
+  if (d.tipoCorpo) selectTipo(d.tipoCorpo);
+  if (d.manequim) {
+    document.getElementById('manequimTag').textContent = `Seu tamanho: ${d.manequim}`;
+    document.getElementById('manequimTag').classList.remove('hidden');
+    const stats = [];
+    if (d.altura) stats.push(`${d.altura}cm`);
+    if (d.peso) stats.push(`${d.peso}kg`);
+    document.getElementById('statsAtleta').textContent = stats.join(' · ');
+  }
+  if (d.fotoEvento) document.getElementById('avatarCircle').innerHTML = `<img src="${d.fotoEvento}" class="w-24 h-24 rounded-full object-cover">`;
+}
+load();
+</script>
+</body>
+</html>

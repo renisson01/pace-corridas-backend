@@ -25,7 +25,7 @@ await app.register(cors, { origin: '*' });
 
 
 
-const pages = ['loja-admin','loja','assessoria','assessorias','elite','meu-resultado','calculadoras','usuario','index','entrar','perfil','pacematch','calendario','importar-resultado','organizador','resultados','stats','social','faixas'];
+const pages = ['admin-pedidos','ia-avatar','ia','loja-admin','loja','assessoria','assessorias','elite','meu-resultado','calculadoras','usuario','index','entrar','perfil','pacematch','calendario','importar-resultado','organizador','resultados','stats','social','faixas'];
 for(const pg of pages) {
   const route = pg==='index' ? '/' : `/${pg}.html`;
   const file = pg==='index' ? 'index.html' : `${pg}.html`;

@@ -1,16 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
-const prisma = new PrismaClient();
-const JWT = process.env.JWT_SECRET || 'pace-2026';
-
-function getUser(req) {
-  try { return jwt.verify(req.headers.authorization?.replace('Bearer ',''), JWT); }
-  catch { return null; }
-}
-async function isAdmin(userId) {
-  const u = await prisma.user.findUnique({ where: { id: userId }, select: { isAdmin: true } });
-  return u?.isAdmin || false;
-}
 
 export async function lojaRoutes(fastify) {
   // Listar todos os produtos
@@ -112,4 +99,26 @@ export async function lojaRoutes(fastify) {
     
     return { success: true, pedido, waLink };
   });
+
+  // ADMIN - listar todos os pedidos
+  fastify.get('/loja/pedidos/admin', async (req, reply) => {
+    const u = getUser(req);
+    if (!u || !await isAdmin(u.userId)) return reply.code(403).send({ error: 'Apenas admin' });
+    return prisma.pedidoCompleto.findMany({
+      orderBy: { criadoEm: 'desc' },
+      include: {
+        user: { select: { name: true, phone: true, email: true } },
+        itens: { include: { variante: { include: { produto: { select: { nome: true } } } } } }
+      }
+    });
+  });
+
+  // ADMIN - mudar status do pedido
+  fastify.patch('/loja/pedidos/:id/status', async (req, reply) => {
+    const u = getUser(req);
+    if (!u || !await isAdmin(u.userId)) return reply.code(403).send({ error: 'Apenas admin' });
+    const { status } = req.body;
+    return prisma.pedidoCompleto.update({ where: { id: req.params.id }, data: { status, visto: true } });
+  });
+
 }

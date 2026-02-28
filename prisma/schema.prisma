@@ -81,6 +81,10 @@ model User {
   postLikes     PostLike[]
   comments      Comment[]
   medals        Medal[]
+  pedidosLoja   PedidoCompleto[]
+  avatar        AtletaAvatar?
+  iaConversa    IaConversa?
+  iaPerfil      IaPerfilCorredor?
 }
 model Like {
   id         String   @id @default(cuid())
@@ -191,6 +195,7 @@ model Produto {
   createdAt     DateTime  @default(now())
   assessoria    Assessoria? @relation(fields: [assessoriaId], references: [id])
   pedidos       Pedido[]
+  variantes     ProdutoVariante[]
 }
 
 model Pedido {
@@ -205,4 +210,82 @@ model Pedido {
   obs         String?
   createdAt   DateTime @default(now())
   produto     Produto  @relation(fields: [produtoId], references: [id])
+}
+
+model ProdutoVariante {
+  id         String  @id @default(cuid())
+  produtoId  String
+  cor        String
+  tamanho    String
+  estoque    Int     @default(0)
+  produto    Produto @relation(fields: [produtoId], references: [id])
+  pedidoItens PedidoItem[]
+}
+
+model PedidoItem {
+  id          String          @id @default(cuid())
+  pedidoId    String
+  varianteId  String
+  quantidade  Int
+  precoUnit   Float
+  pedido      PedidoCompleto  @relation(fields: [pedidoId], references: [id])
+  variante    ProdutoVariante @relation(fields: [varianteId], references: [id])
+}
+
+model PedidoCompleto {
+  id          String       @id @default(cuid())
+  userId      String
+  status      String       @default("novo")
+  total       Float
+  endereco    String?
+  cep         String?
+  cidade      String?
+  estado      String?
+  obs         String?
+  visto       Boolean      @default(false)
+  criadoEm   DateTime     @default(now())
+  itens       PedidoItem[]
+  user        User         @relation(fields: [userId], references: [id])
+}
+
+model AtletaAvatar {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  altura       Int?
+  peso         Float?
+  fotoEvento   String?
+  manequim     String?
+  medidaTorax  Float?
+  medidaOmbro  Float?
+  tipoCorpo    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model IaConversa {
+  id        String     @id @default(cuid())
+  userId    String
+  mensagens String
+  contexto  String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id])
+}
+
+model IaPerfilCorredor {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  biologico       String?
+  psicologico     String?
+  social          String?
+  funcional       String?
+  espiritual      String?
+  ambiental       String?
+  objetivos       String?
+  limitacoes      String?
+  historico       String?
+  preferencias    String?
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
 }
