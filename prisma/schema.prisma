@@ -250,7 +250,7 @@ model PedidoCompleto {
 
 model AtletaAvatar {
   id           String   @id @default(cuid())
-  userId       String   @unique
+  userId       String   @unique   @unique
   altura       Int?
   peso         Float?
   fotoEvento   String?
@@ -265,7 +265,7 @@ model AtletaAvatar {
 
 model IaConversa {
   id        String     @id @default(cuid())
-  userId    String
+  userId    String   @unique
   mensagens String
   contexto  String?
   createdAt DateTime   @default(now())
