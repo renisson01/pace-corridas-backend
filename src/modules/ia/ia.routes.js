@@ -62,7 +62,7 @@ export async function iaRoutes(fastify) {
           'x-api-key': process.env.ANTHROPIC_API_KEY || '',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
+          model: 'claude-haiku-4-5-20251001',
           max_tokens: 600,
           system: SYSTEM,
           messages: [
