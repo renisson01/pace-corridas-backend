@@ -1,7 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
-import staticFiles from '@fastify/static';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -26,6 +25,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = Fastify({ logger: false });
 
 await app.register(cors, { origin: '*' });
+await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
 
 // Páginas HTML
 const pages = [
