@@ -2,208 +2,289 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PACE - Meu Perfil</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PACE — Meu Perfil</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#0a0f1a;}
+.grad{background:linear-gradient(135deg,#22c55e,#16a34a);}
+.card-glass{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);}
+::-webkit-scrollbar{display:none;}
+</style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen">
-<div class="max-w-xl mx-auto p-4">
+<body class="text-white min-h-screen pb-24">
 
-  <div id="loading" class="text-center py-12 text-slate-400">⏳ Carregando perfil...</div>
-
-  <div id="naoLogado" class="hidden text-center py-12">
-    <p class="text-5xl mb-4">👤</p>
-    <p class="text-xl font-bold mb-2">Faça login para ver seu perfil</p>
-    <a href="/entrar.html" class="bg-green-500 text-black px-6 py-3 rounded-full font-black inline-block mt-2">Entrar / Criar conta</a>
+<header class="sticky top-0 z-40 px-4 py-3 flex items-center justify-between" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.08);">
+  <h1 class="font-black text-lg">👤 Meu Perfil</h1>
+  <div class="flex gap-2">
+    <a href="/meu-resultado.html" class="text-xs bg-green-500/20 border border-green-500/50 text-green-400 px-3 py-2 rounded-xl font-bold">+ Resultado</a>
+    <button onclick="sair()" class="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-3 py-2 rounded-xl">Sair</button>
   </div>
+</header>
 
-  <div id="perfilContent" class="hidden">
-    <!-- HEADER -->
-    <div class="bg-gradient-to-br from-green-900 to-slate-800 rounded-2xl p-6 mb-4 text-center">
-      <div id="avatar" class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-4xl font-black mx-auto mb-3"></div>
-      <h1 id="userName" class="text-2xl font-black"></h1>
-      <p id="userInfo" class="text-slate-400 text-sm mt-1"></p>
-      <div class="flex justify-center gap-6 mt-4">
-        <div class="text-center"><p id="totalRaces" class="text-2xl font-black text-green-400">0</p><p class="text-xs text-slate-400">corridas</p></div>
-        <div class="text-center"><p id="totalPoints" class="text-2xl font-black text-blue-400">0</p><p class="text-xs text-slate-400">pontos</p></div>
-        <div class="text-center"><p id="nivel" class="text-2xl">🌱</p><p class="text-xs text-slate-400">nível</p></div>
-      </div>
-    </div>
-
-    <!-- AÇÕES -->
-    <div class="grid grid-cols-3 gap-2 mb-4">
-      <a href="/pacematch.html" class="bg-slate-800 rounded-xl p-3 text-center hover:bg-slate-700">
-        <p class="text-xl">💚</p><p class="text-xs mt-1">PaceMatch</p>
-      </a>
-      <a href="/calendario.html" class="bg-slate-800 rounded-xl p-3 text-center hover:bg-slate-700">
-        <p class="text-xl">📅</p><p class="text-xs mt-1">Corridas</p>
-      </a>
-      <a href="/resultados.html" class="bg-slate-800 rounded-xl p-3 text-center hover:bg-slate-700">
-        <p class="text-xl">🏆</p><p class="text-xs mt-1">Ranking</p>
-      </a>
-    </div>
-
-    <!-- HISTÓRICO -->
-    <div class="bg-slate-800 rounded-2xl p-5 mb-4">
-      <h2 class="font-bold mb-3">🏅 Histórico de corridas</h2>
-      <div id="historico" class="space-y-2 text-sm text-slate-400 text-center py-4">
-        <p>Nenhum resultado vinculado ainda</p>
-        <p class="text-xs">Seus resultados aparecerão aqui conforme forem importados</p>
-      </div>
-    </div>
-
-    <!-- EDITAR -->
-    <div class="bg-slate-800 rounded-2xl p-5 mb-4">
-      <h2 class="font-bold mb-3">⚙️ Editar perfil</h2>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs text-slate-400 block mb-1">Cidade</label>
-          <input id="editCidade" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 outline-none">
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 block mb-1">Estado</label>
-          <input id="editEstado" maxlength="2" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 outline-none uppercase">
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 block mb-1">Idade</label>
-          <input id="editIdade" type="number" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 outline-none">
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 block mb-1">WhatsApp</label>
-          <input id="editPhone" placeholder="(79) 99999-9999" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 outline-none">
-        </div>
-      </div>
-      <button onclick="salvarPerfil()" class="mt-3 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-xl text-sm font-bold">Salvar</button>
-      <div id="editMsg" class="text-xs text-center mt-2"></div>
-    </div>
-
-    <!-- PREMIUM -->
-    <div id="premiumBanner" class="bg-gradient-to-r from-yellow-900 to-orange-900 border border-yellow-500 rounded-2xl p-5 mb-4">
-      <div class="flex items-center gap-3 mb-2">
-        <span class="text-3xl">⭐</span>
-        <div><h3 class="font-black text-yellow-400">PACE Premium</h3><p class="text-xs text-slate-300">R$19/mês</p></div>
-      </div>
-      <ul class="text-xs text-slate-300 space-y-1 mb-3">
-        <li>✅ Perfil destacado no PaceMatch</li>
-        <li>✅ Histórico completo de todas as corridas</li>
-        <li>✅ Análise de performance (pace, evolução)</li>
-        <li>✅ Notificações de corridas na sua cidade</li>
-        <li>✅ Badge verificado</li>
-      </ul>
-      <button class="w-full bg-yellow-500 text-black py-2 rounded-xl font-black text-sm">Em breve - PIX R$19/mês</button>
-    </div>
-
-    <button onclick="logout()" class="w-full bg-red-900 text-red-400 py-3 rounded-xl text-sm font-bold mb-6">Sair da conta</button>
-  </div>
+<div id="nao-logado" class="hidden px-4 py-20 text-center">
+  <p class="text-5xl mb-4">🔒</p>
+  <p class="font-black text-xl mb-2">Faça login</p>
+  <p class="text-slate-400 text-sm mb-6">Para ver seu perfil, entre na sua conta</p>
+  <a href="/entrar.html" class="inline-block grad text-black font-black px-8 py-4 rounded-2xl">Entrar agora</a>
 </div>
 
+<div id="conteudo" class="hidden">
+
+  <!-- CARD PERFIL -->
+  <div class="px-4 pt-4">
+    <div class="card-glass rounded-3xl p-5">
+      <div class="flex items-start gap-4">
+        <div id="avatar" class="w-20 h-20 rounded-2xl grad flex items-center justify-center text-black font-black text-3xl flex-shrink-0">?</div>
+        <div class="flex-1 min-w-0">
+          <h2 id="nome" class="font-black text-xl leading-tight">—</h2>
+          <p id="info-sub" class="text-slate-400 text-sm mt-0.5">—</p>
+          <div id="nivel-badge" class="inline-block mt-2 text-xs font-black px-3 py-1.5 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">🌱 Iniciando</div>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="grid grid-cols-3 gap-3 mt-4">
+        <div class="bg-slate-800/50 rounded-2xl p-3 text-center">
+          <p id="stat-provas" class="font-black text-xl text-green-400">0</p>
+          <p class="text-xs text-slate-400 mt-0.5">Provas</p>
+        </div>
+        <div class="bg-slate-800/50 rounded-2xl p-3 text-center">
+          <p id="stat-pontos" class="font-black text-xl text-green-400">0</p>
+          <p class="text-xs text-slate-400 mt-0.5">Pontos</p>
+        </div>
+        <div class="bg-slate-800/50 rounded-2xl p-3 text-center">
+          <p id="stat-posicao" class="font-black text-xl text-green-400">—</p>
+          <p class="text-xs text-slate-400 mt-0.5">Ranking</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="px-4 mt-4 flex gap-2 border-b border-slate-800 pb-3">
+    <button onclick="setTab('resultados')" id="tab-resultados" class="tab text-sm font-black text-green-400 border-b-2 border-green-400 pb-1 px-2">🏅 Resultados</button>
+    <button onclick="setTab('medalhas')"   id="tab-medalhas"   class="tab text-sm text-slate-500 px-2 pb-1 border-b-2 border-transparent">🥇 Medalhas</button>
+    <button onclick="setTab('editar')"     id="tab-editar"     class="tab text-sm text-slate-500 px-2 pb-1 border-b-2 border-transparent">✏️ Editar</button>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div id="tab-resultados-content" class="px-4 mt-4 space-y-3">
+    <div id="lista-resultados" class="space-y-2">
+      <p class="text-slate-500 text-sm text-center py-6">Carregando resultados...</p>
+    </div>
+    <a href="/meu-resultado.html" class="flex items-center justify-center gap-2 card-glass rounded-2xl py-4 text-sm text-green-400 font-bold border border-dashed border-green-500/30 active:scale-95 transition-transform">
+      + Adicionar resultado de corrida
+    </a>
+  </div>
+
+  <!-- MEDALHAS -->
+  <div id="tab-medalhas-content" class="px-4 mt-4 hidden">
+    <p class="text-xs text-slate-500 mb-3 text-center">Conquistas baseadas nos seus resultados</p>
+    <div id="lista-medalhas" class="grid grid-cols-3 gap-3"></div>
+  </div>
+
+  <!-- EDITAR -->
+  <div id="tab-editar-content" class="px-4 mt-4 hidden space-y-3">
+    <div class="card-glass rounded-2xl p-4 space-y-3">
+      <h3 class="font-black text-sm">Dados pessoais</h3>
+      <input id="edit-nome" placeholder="Nome completo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+      <div class="grid grid-cols-2 gap-3">
+        <select id="edit-genero" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+          <option value="">Gênero</option>
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+        </select>
+        <input id="edit-idade" type="number" placeholder="Idade" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+      </div>
+      <select id="edit-estado" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+        <option value="">Estado</option>
+        <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+        <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+        <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+        <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+        <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+        <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+        <option selected>SE</option><option>SP</option><option>TO</option>
+      </select>
+      <button onclick="salvarPerfil()" class="w-full grad text-black font-black py-3 rounded-2xl text-sm active:scale-95">💾 Salvar</button>
+    </div>
+
+    <div class="card-glass rounded-2xl p-4">
+      <h3 class="font-black text-sm mb-3">Links</h3>
+      <a href="/ia-avatar.html" class="flex items-center justify-between py-2 border-b border-slate-800">
+        <span class="text-sm">🏃 Perfil PACE IA (medidas)</span>
+        <span class="text-slate-400 text-xs">→</span>
+      </a>
+      <a href="/pacematch.html" class="flex items-center justify-between py-2">
+        <span class="text-sm">💜 PACE Match (parceiros)</span>
+        <span class="text-slate-400 text-xs">→</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<nav class="fixed bottom-0 left-0 right-0 z-50" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);">
+  <div class="flex justify-around py-2">
+    <a href="/" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏠</span><span>Início</span></a>
+    <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
+    <a href="/elite.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏆</span><span>Ranking</span></a>
+    <a href="/loja.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">👕</span><span>Loja</span></a>
+    <a href="/ia.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏃</span><span>IA</span></a>
+    <a href="/perfil.html" class="flex flex-col items-center text-xs text-green-400 py-1 px-3"><span class="text-xl">👤</span><span class="font-bold">Perfil</span></a>
+  </div>
+</nav>
+
 <script>
-const NIVEIS = [
-  { min:0, icon:'🌱', label:'Iniciante' },
-  { min:3, icon:'🏃', label:'Corredor' },
-  { min:10, icon:'⚡', label:'Avançado' },
-  { min:20, icon:'🔥', label:'Expert' },
-  { min:50, icon:'🏆', label:'Elite' }
+const token = localStorage.getItem('pace_token');
+const user = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
+
+const MEDALHAS_DEF = [
+  { id:'primeira', icon:'🎽', nome:'Primeira Corrida', desc:'Registrou seu primeiro resultado', cond: r => r.length >= 1 },
+  { id:'5provas',  icon:'⭐', nome:'5 Provas',         desc:'Completou 5 corridas',             cond: r => r.length >= 5 },
+  { id:'10provas', icon:'🏆', nome:'Veterano',         desc:'10 provas completadas',             cond: r => r.length >= 10 },
+  { id:'maratona', icon:'🏅', nome:'Maratonista',      desc:'Completou uma maratona (42km)',     cond: r => r.some(x => x.distance?.includes('42')) },
+  { id:'meia',     icon:'🥈', nome:'Meia Maratonista', desc:'Completou uma meia maratona',       cond: r => r.some(x => x.distance?.includes('21')) },
+  { id:'sub5',     icon:'⚡', nome:'Sub 5min/km',      desc:'Pace abaixo de 5min/km',           cond: r => r.some(x => x.pace && x.pace < '5:00') },
+  { id:'podio',    icon:'🥇', nome:'Pódio',            desc:'Top 3 em alguma prova',             cond: r => r.some(x => x.overallRank <= 3) },
+  { id:'multidist',icon:'🗺️', nome:'Explorador',       desc:'Correu 3 distâncias diferentes',   cond: r => new Set(r.map(x=>x.distance)).size >= 3 },
+  { id:'streak',   icon:'🔥', nome:'Dedicado',         desc:'Resultados em anos consecutivos',  cond: r => r.length >= 3 },
 ];
-function getNivel(races) {
-  return NIVEIS.filter(n => races >= n.min).pop();
+
+if (!token) {
+  document.getElementById('nao-logado').classList.remove('hidden');
+} else {
+  document.getElementById('conteudo').classList.remove('hidden');
+  carregarPerfil();
 }
 
-async function loadPerfil() {
-  const token = localStorage.getItem('pace_token');
-  const userRaw = localStorage.getItem('pace_user');
-  document.getElementById('loading').classList.add('hidden');
-
-  if(!token || !userRaw) {
-    document.getElementById('naoLogado').classList.remove('hidden');
-    return;
-  }
-
-  let user = JSON.parse(userRaw);
-  document.getElementById('perfilContent').classList.remove('hidden');
-
-  // Buscar dados atualizados
+async function carregarPerfil() {
   try {
-    const res = await fetch('/auth/me', { headers: { 'Authorization': 'Bearer ' + token } }).then(r=>r.json());
-    if(res.success) {
-      user = res.user;
-      localStorage.setItem('pace_user', JSON.stringify(user));
+    const r = await fetch('/auth/me', { headers:{'Authorization':'Bearer '+token} });
+    const d = await r.json();
+    if (!d.user) { sair(); return; }
+    const u = d.user;
+
+    // Avatar com iniciais
+    const iniciais = u.name?.split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase() || '?';
+    document.getElementById('avatar').textContent = iniciais;
+    document.getElementById('nome').textContent = u.name || 'Atleta';
+    document.getElementById('info-sub').textContent = [u.gender === 'M' ? '👨 Masculino' : u.gender === 'F' ? '👩 Feminino' : '', u.age ? u.age + ' anos' : '', u.state || ''].filter(Boolean).join(' · ');
+
+    // Editar
+    if (u.name) document.getElementById('edit-nome').value = u.name;
+    if (u.gender) document.getElementById('edit-genero').value = u.gender;
+    if (u.age) document.getElementById('edit-idade').value = u.age;
+    if (u.state) document.getElementById('edit-estado').value = u.state;
+
+    // Carregar resultados do atleta
+    await carregarResultados(u.id || u.athleteId);
+  } catch(e) { console.error(e); }
+}
+
+async function carregarResultados(userId) {
+  try {
+    const r = await fetch('/results/me', { headers:{'Authorization':'Bearer '+token} });
+    const resultados = await r.json() || [];
+
+    // Stats
+    const pts = resultados.reduce((s,x)=>s+(x.points||0),0);
+    document.getElementById('stat-provas').textContent = resultados.length;
+    document.getElementById('stat-pontos').textContent = pts.toLocaleString('pt-BR');
+
+    // Nível
+    let nivel = '🌱 Iniciando';
+    if (pts >= 12000) nivel = '⭐ Elite Mundial';
+    else if (pts >= 7000) nivel = '🔥 Elite Nacional';
+    else if (pts >= 3000) nivel = '💪 Elite Regional';
+    else if (pts >= 1000) nivel = '📈 Sub-Elite';
+    else if (pts >= 100) nivel = '🏃 Ativo';
+    document.getElementById('nivel-badge').textContent = nivel;
+
+    // Ranking pessoal
+    if (pts > 0) {
+      const rank = await fetch('/ranking?limit=1000').then(r=>r.json()).catch(()=>[]);
+      const pos = rank.findIndex(a => a.totalPoints <= pts) + 1;
+      document.getElementById('stat-posicao').textContent = pos > 0 ? pos+'º' : '—';
     }
-  } catch(e) {}
 
-  // Preencher
-  const initials = user.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
-  document.getElementById('avatar').textContent = initials;
-  document.getElementById('userName').textContent = user.name;
-  document.getElementById('userInfo').textContent = [
-    user.gender==='F'?'👩 Feminino':'👨 Masculino',
-    user.age ? user.age + ' anos' : null,
-    user.city && user.state ? user.city + '/' + user.state : user.city||user.state||null
-  ].filter(Boolean).join(' · ');
+    // Lista de resultados
+    const el = document.getElementById('lista-resultados');
+    if (!resultados.length) {
+      el.innerHTML = `<div class="text-center py-8">
+        <p class="text-4xl mb-2">🏃</p>
+        <p class="text-slate-400 text-sm">Nenhum resultado ainda</p>
+        <p class="text-slate-500 text-xs mt-1">Adicione seu primeiro resultado de corrida!</p>
+      </div>`;
+    } else {
+      el.innerHTML = resultados.map(r => {
+        const data = r.createdAt ? new Date(r.createdAt).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'2-digit'}) : '';
+        const icon = r.distance?.includes('42') ? '🏅' : r.distance?.includes('21') ? '🥈' : '🏃';
+        return `<div class="card-glass rounded-2xl p-4 flex items-center gap-3">
+          <span class="text-2xl">${icon}</span>
+          <div class="flex-1">
+            <p class="font-bold text-sm">${r.race?.name || 'Corrida'}</p>
+            <p class="text-xs text-slate-400">${r.distance||''} · ${data}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-black text-green-400">${r.time||'—'}</p>
+            ${r.overallRank ? `<p class="text-xs text-slate-400">${r.overallRank}º lugar</p>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    }
 
-  const races = user.athlete?.totalRaces || 0;
-  const points = user.athlete?.totalPoints || 0;
-  const nivel = getNivel(races);
-
-  document.getElementById('totalRaces').textContent = races;
-  document.getElementById('totalPoints').textContent = points;
-  document.getElementById('nivel').textContent = nivel.icon;
-
-  // Histórico
-  const results = user.athlete?.results || [];
-  if(results.length > 0) {
-    document.getElementById('historico').innerHTML = results.map(r => `
-      <div class="flex items-center justify-between bg-slate-700 rounded-xl p-3">
-        <div>
-          <p class="font-bold text-xs">${r.race.name}</p>
-          <p class="text-slate-400 text-xs">📍 ${r.race.city} · ${new Date(r.race.date).toLocaleDateString('pt-BR')}</p>
-        </div>
-        <div class="text-right">
-          <p class="text-green-400 font-black text-sm">${r.time}</p>
-          <p class="text-xs text-slate-400">#${r.overallRank||'?'}</p>
-        </div>
+    // Medalhas
+    const conquistadas = MEDALHAS_DEF.map(m => ({...m, conquistada: m.cond(resultados)}));
+    document.getElementById('lista-medalhas').innerHTML = conquistadas.map(m => `
+      <div class="card-glass rounded-2xl p-3 text-center ${m.conquistada ? '' : 'opacity-30'}">
+        <div class="text-3xl mb-1">${m.icon}</div>
+        <p class="text-xs font-black leading-tight">${m.nome}</p>
+        <p class="text-xs text-slate-500 mt-0.5 leading-tight">${m.desc}</p>
+        ${m.conquistada ? '<p class="text-xs text-green-400 mt-1 font-bold">✅</p>' : '<p class="text-xs text-slate-600 mt-1">🔒</p>'}
       </div>`).join('');
+
+  } catch(e) {
+    document.getElementById('lista-resultados').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">Erro ao carregar resultados</p>';
   }
+}
 
-  // Preencher campos edit
-  document.getElementById('editCidade').value = user.city||'';
-  document.getElementById('editEstado').value = user.state||'';
-  document.getElementById('editIdade').value = user.age||'';
-
-  // Esconder banner premium se já é premium
-  if(user.isPremium) document.getElementById('premiumBanner').classList.add('hidden');
+function setTab(tab) {
+  ['resultados','medalhas','editar'].forEach(t => {
+    document.getElementById('tab-'+t).className = 'tab text-sm text-slate-500 px-2 pb-1 border-b-2 border-transparent';
+    document.getElementById('tab-'+t+'-content').classList.add('hidden');
+  });
+  document.getElementById('tab-'+tab).className = 'tab text-sm font-black text-green-400 border-b-2 border-green-400 pb-1 px-2';
+  document.getElementById('tab-'+tab+'-content').classList.remove('hidden');
 }
 
 async function salvarPerfil() {
-  const token = localStorage.getItem('pace_token');
-  const body = {
-    city: document.getElementById('editCidade').value,
-    state: document.getElementById('editEstado').value.toUpperCase(),
-    age: parseInt(document.getElementById('editIdade').value)||null,
-    phone: document.getElementById('editPhone').value
-  };
-  const res = await fetch('/auth/me', {
-    method: 'PATCH', headers: { 'Authorization': 'Bearer '+token, 'Content-Type':'application/json' },
-    body: JSON.stringify(body)
-  }).then(r=>r.json()).catch(()=>({error:'Erro'}));
-  document.getElementById('editMsg').innerHTML = res.success ? '<span class="text-green-400">✅ Salvo!</span>' : '<span class="text-red-400">❌ '+res.error+'</span>';
+  try {
+    const r = await fetch('/auth/update', {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({
+        name: document.getElementById('edit-nome').value,
+        gender: document.getElementById('edit-genero').value,
+        age: parseInt(document.getElementById('edit-idade').value) || null,
+        state: document.getElementById('edit-estado').value,
+      })
+    });
+    if (r.ok) {
+      const d = await r.json();
+      if (d.user) localStorage.setItem('pace_user', JSON.stringify(d.user));
+      alert('✅ Perfil salvo!');
+      carregarPerfil();
+    } else { alert('Erro ao salvar'); }
+  } catch { alert('Erro de conexão'); }
 }
 
-function logout() {
+function sair() {
   localStorage.removeItem('pace_token');
   localStorage.removeItem('pace_user');
-  window.location = '/entrar.html';
+  window.location.href = '/entrar.html';
 }
-
-loadPerfil();
 </script>
-<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
-  <a href="/" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏠</span><span>Início</span></a>
-  <a href="/calendario.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">📅</span><span>Corridas</span></a>
-  <a href="/elite.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏆</span><span>Ranking</span></a>
-  <a href="/loja.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👕</span><span>Loja</span></a>
-  <a href="/ia.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏃</span><span>PACE IA</span></a>
-  <a href="/perfil.html" class="flex flex-col items-center text-xs py-1 px-2 text-green-400"><span class="text-xl">👤</span><span>Perfil</span></a>
-</nav>
 </body>
 </html>
