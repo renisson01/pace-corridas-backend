@@ -20,7 +20,7 @@ body{background:#0f172a;}
 
 <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center gap-3 sticky top-0 z-40">
   <a href="/" class="text-slate-400 text-xl">←</a>
-  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center font-black text-black text-lg">🤖</div>
+  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center font-black text-black text-lg">🏃</div>
   <div>
     <p class="font-black text-sm leading-none">PACE IA</p>
     <p class="text-xs text-green-400 leading-none mt-0.5">Sua amiga de corrida</p>
@@ -42,7 +42,7 @@ body{background:#0f172a;}
 <div id="mensagens" class="flex-1 overflow-y-auto px-4 py-4 pb-32 space-y-4">
   <!-- Mensagem de boas vindas -->
   <div class="flex gap-3">
-    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🤖</div>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🏃</div>
     <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none p-3 max-w-xs">
       <p class="text-sm">Olá! 👋 Sou a PACE IA, sua amiga pessoal de corrida!</p>
       <p class="text-sm mt-2">Estou aqui para te ajudar com treinos, saúde, motivação, e também com nossas camisas exclusivas. 👕</p>
@@ -105,7 +105,7 @@ function adicionarMsgIA(texto, scroll=true) {
   const div = document.createElement('div');
   div.className = 'flex gap-3 msg-ia';
   div.innerHTML = `
-    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🤖</div>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🏃</div>
     <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none px-4 py-3 max-w-xs">
       <p class="text-sm leading-relaxed">${texto.replace(/\n/g,'<br>').replace(/</g,'&lt;').replace(/&lt;br>/g,'<br>')}</p>
     </div>`;
@@ -118,7 +118,7 @@ function mostrarTyping() {
   div.id = 'typing';
   div.className = 'flex gap-3';
   div.innerHTML = `
-    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🤖</div>
+    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-sm flex-shrink-0">🏃</div>
     <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none px-4 py-3">
       <div class="typing"><span></span><span></span><span></span></div>
     </div>`;
@@ -174,5 +174,13 @@ function enviarRapido(texto) {
 
 carregarHistorico();
 </script>
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
+  <a href="/" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏠</span><span>Início</span></a>
+  <a href="/calendario.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">📅</span><span>Corridas</span></a>
+  <a href="/elite.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏆</span><span>Ranking</span></a>
+  <a href="/loja.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👕</span><span>Loja</span></a>
+  <a href="/ia.html" class="flex flex-col items-center text-xs py-1 px-2 text-green-400"><span class="text-xl">🏃</span><span>PACE IA</span></a>
+  <a href="/perfil.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👤</span><span>Perfil</span></a>
+</nav>
 </body>
 </html>
