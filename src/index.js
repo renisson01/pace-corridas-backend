@@ -52,23 +52,29 @@ app.get('/sw.js', async (req, reply) => {
   catch { reply.send(''); }
 });
 
-// Rotas API - cada uma registrada UMA vez
-await app.register(authRoutes);
-await app.register(raceRoutes);
-await app.register(resultsRoutes);
-await app.register(rankingRoutes);
-await app.register(scraperRoutes);
-await app.register(organizerRoutes);
-await app.register(matchRoutes);
-await app.register(analyticsRoutes);
-await app.register(uploadRoutes);
-await app.register(socialRoutes, { prefix: '/social' });
-await app.register(assessoriaRoutes);
-await app.register(lojaRoutes);
-await app.register(verifyRoutes);
-await app.register(iaRoutes);
-await app.register(adminRoutes);
-await app.register(pagamentosRoutes);
+// Rotas API - com tratamento de erro
+try {
+  await app.register(authRoutes);
+  await app.register(raceRoutes);
+  await app.register(resultsRoutes);
+  await app.register(rankingRoutes);
+  await app.register(scraperRoutes);
+  await app.register(organizerRoutes);
+  await app.register(matchRoutes);
+  await app.register(analyticsRoutes);
+  await app.register(uploadRoutes);
+  await app.register(socialRoutes, { prefix: '/social' });
+  await app.register(assessoriaRoutes);
+  await app.register(lojaRoutes);
+  await app.register(verifyRoutes);
+  await app.register(iaRoutes);
+  await app.register(adminRoutes);
+  await app.register(pagamentosRoutes);
+  console.log('✅ Todas as rotas registradas');
+} catch(e) {
+  console.error('❌ ERRO ao registrar rotas:', e.message);
+  console.error(e.stack);
+}
 
 // Job de scraping (após 1 min)
 setTimeout(async () => {
@@ -80,6 +86,6 @@ setTimeout(async () => {
 }, 60000);
 
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
-  if (err) { console.error(err); process.exit(1); }
-  console.log('✅ PACE online');
+  if (err) { console.error('❌ ERRO ao iniciar servidor:', err); process.exit(1); }
+  console.log('✅ PACE online na porta ' + (process.env.PORT || 3000));
 });
