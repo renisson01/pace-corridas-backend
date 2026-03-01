@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "npx prisma db push --skip-generate && node src/index.js"
+startCommand = "node src/index.js"
