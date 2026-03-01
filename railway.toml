@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "node src/index.js"
+startCommand = "node seed-ranking-cbat.cjs && node src/index.js"

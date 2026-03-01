@@ -5,7 +5,8 @@
   "scripts": {
     "start": "npx prisma db push --skip-generate && node src/index.js",
     "dev": "node --watch src/index.js",
-    "scraper": "node src/scripts/run-scraper.js"
+    "scraper": "node src/scripts/run-scraper.js",
+    "seed:cbat": "node seed-ranking-cbat.cjs"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
