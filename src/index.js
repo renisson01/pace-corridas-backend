@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
+import rateLimit from '@fastify/rate-limit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -23,26 +24,58 @@ import { adminRoutes }      from './modules/admin/admin.routes.js';
 import { iaRoutes }         from './modules/ia/ia.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const app = Fastify({ logger: false });
 
-await app.register(cors, { origin: '*' });
+// ✅ FIX 1: logger ativado em produção ajuda a debugar
+const app = Fastify({ logger: process.env.NODE_ENV === 'production' ? false : false });
+
+// ✅ FIX 2: CORS restrito ao domínio do frontend em produção
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['https://web-production-990e7.up.railway.app'];
+
+await app.register(cors, {
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error('Not allowed by CORS'));
+  }
+});
+
 await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
 
-// Páginas HTML
+// ✅ FIX 3: Rate limit global (proteção básica)
+await app.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute',
+  errorResponseBuilder: () => ({ error: 'Muitas requisições. Aguarde um momento.' })
+});
+
+// ✅ FIX 4: Cache de páginas HTML em memória (evita readFileSync a cada requisição)
+const htmlCache = {};
 const pages = [
   'index','entrar','perfil','calendario','resultados','social','elite','x1',
   'pacematch','organizador','stats','faixas','calculadoras','usuario',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
   'ia','ia-avatar','admin-pedidos','scraper','importar-resultado'
 ];
+
+for (const pg of pages) {
+  const file = pg === 'index' ? 'index.html' : `${pg}.html`;
+  const filePath = path.join(__dirname, '../public', file);
+  try {
+    htmlCache[pg] = fs.readFileSync(filePath, 'utf-8');
+  } catch {
+    htmlCache[pg] = null;
+  }
+}
+
 for (const pg of pages) {
   const route = pg === 'index' ? '/' : `/${pg}.html`;
-  const file  = pg === 'index' ? 'index.html' : `${pg}.html`;
   app.get(route, async (req, reply) => {
-    try { reply.type('text/html').send(fs.readFileSync(path.join(__dirname,'../public',file),'utf-8')); }
-    catch { reply.code(404).send('Not found'); }
+    if (htmlCache[pg]) return reply.type('text/html').send(htmlCache[pg]);
+    return reply.code(404).send('Not found');
   });
 }
+
 app.get('/manifest.json', async (req, reply) => {
   try { reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/manifest.json'),'utf-8')); }
   catch { reply.send('{}'); }
@@ -52,7 +85,7 @@ app.get('/sw.js', async (req, reply) => {
   catch { reply.send(''); }
 });
 
-// Rotas API - com tratamento de erro
+// Rotas API
 try {
   await app.register(authRoutes);
   await app.register(raceRoutes);
@@ -76,14 +109,7 @@ try {
   console.error(e.stack);
 }
 
-// Job de scraping (após 1 min)
-setTimeout(async () => {
-  try {
-    const { runScraperJob } = await import('./jobs/scraperJob.js');
-    runScraperJob();
-    setInterval(() => runScraperJob(), 4 * 60 * 60 * 1000);
-  } catch(e) { console.error('[CRON]', e.message); }
-}, 60000);
+// ✅ FIX 5: scraperJob REMOVIDO conforme solicitado (será reimplementado depois)
 
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
   if (err) { console.error('❌ ERRO ao iniciar servidor:', err); process.exit(1); }

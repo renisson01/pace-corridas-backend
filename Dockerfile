@@ -9,4 +9,4 @@ RUN npm ci
 RUN npx prisma generate
 COPY . .
 EXPOSE 8080
-CMD ["node", "src/index.js"]
+CMD ["sh", "-c", "node seed-ranking-cbat.cjs && node src/index.js"]

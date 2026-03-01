@@ -4,6 +4,23 @@ import jwt from 'jsonwebtoken';
 const prisma = new PrismaClient();
 const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
 
+// ✅ FIX: Rate limit por usuário para IA (evita gastar créditos em excesso)
+const userIaRequests = new Map();
+const IA_RATE_LIMIT = 20;       // máx 20 mensagens
+const IA_RATE_WINDOW = 60 * 60 * 1000; // por hora
+
+function checkIaRateLimit(userId) {
+  const now = Date.now();
+  const entry = userIaRequests.get(userId);
+  if (!entry || now - entry.windowStart > IA_RATE_WINDOW) {
+    userIaRequests.set(userId, { count: 1, windowStart: now });
+    return true;
+  }
+  if (entry.count >= IA_RATE_LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 function getUser(req) {
   try { return jwt.verify(req.headers.authorization?.replace('Bearer ',''), JWT); }
   catch { return null; }
@@ -27,11 +44,21 @@ export async function iaRoutes(fastify) {
   fastify.post('/ia/chat', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
+
+    // ✅ FIX: Rate limit por usuário
+    if (!checkIaRateLimit(u.userId)) {
+      return reply.code(429).send({ error: 'Limite de mensagens atingido. Tente novamente em 1 hora.' });
+    }
+
     const { mensagem, contextoLoja } = req.body || {};
     if (!mensagem?.trim()) return reply.code(400).send({ error: 'Mensagem vazia' });
 
+    // ✅ FIX: Limitar tamanho da mensagem do usuário
+    if (mensagem.length > 1000) {
+      return reply.code(400).send({ error: 'Mensagem muito longa (máx 1000 caracteres)' });
+    }
+
     try {
-      // Buscar dados do atleta
       const [user, avatar, perfil, conversa, resultados] = await Promise.all([
         prisma.user.findUnique({ where: { id: u.userId }, select: { name:true, city:true, state:true, age:true, gender:true } }),
         prisma.atletaAvatar.findUnique({ where: { userId: u.userId } }).catch(()=>null),
@@ -40,26 +67,23 @@ export async function iaRoutes(fastify) {
         prisma.result.findMany({ where: { athlete: { user: { id: u.userId } } }, include: { race: { select:{ name:true } } }, orderBy: { createdAt:'desc' }, take: 5 }).catch(()=>[]),
       ]);
 
-      // Histórico
+      // ✅ FIX: Histórico reduzido de 20 para 10 mensagens (economiza tokens)
       let historico = [];
-      try { if (conversa?.mensagens) historico = JSON.parse(conversa.mensagens).slice(-20); } catch {}
+      try { if (conversa?.mensagens) historico = JSON.parse(conversa.mensagens).slice(-10); } catch {}
 
-      // Contexto do atleta
       const ctx = [
         `ATLETA: ${user?.name || 'Atleta'}${user?.city ? ', '+user.city : ''}${user?.state ? '/'+user.state : ''}${user?.age ? ', '+user.age+'anos' : ''}`,
-        avatar?.altura ? `MEDIDAS: ${avatar.altura}cm ${avatar.peso||''}kg${avatar.manequim ? ' - Tam '+avatar.manequim : ''}` : 'MEDIDAS: não cadastradas',
-        resultados.length ? `CORRIDAS RECENTES: ${resultados.map(r=>`${r.race.name}(${r.time})`).join(', ')}` : 'SEM corridas cadastradas ainda',
-        perfil?.objetivos ? `OBJETIVOS: ${perfil.objetivos.substring(0,150)}` : '',
+        avatar?.altura ? `MEDIDAS: ${avatar.altura}cm ${avatar.peso||''}kg${avatar.manequim ? ' - Tam '+avatar.manequim : ''}` : '',
+        resultados.length ? `CORRIDAS RECENTES: ${resultados.map(r=>`${r.race.name}(${r.time})`).join(', ')}` : '',
+        perfil?.objetivos ? `OBJETIVOS: ${perfil.objetivos.substring(0,100)}` : '',
         contextoLoja ? 'CONTEXTO: atleta está na loja querendo comprar camisa' : '',
       ].filter(Boolean).join('\n');
 
-      // Verificar chave
       const apiKey = process.env.ANTHROPIC_API_KEY;
       if (!apiKey) {
         return { resposta: 'Estou descansando um momento! Em breve volto para te ajudar nos seus treinos. 🏃‍♂️💚' };
       }
 
-      // Chamar Claude
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -69,7 +93,7 @@ export async function iaRoutes(fastify) {
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 600,
+          max_tokens: 400, // ✅ FIX: Reduzido de 600 para 400 (economiza ~33% nos custos)
           system: SYSTEM,
           messages: [
             ...historico,
@@ -81,16 +105,17 @@ export async function iaRoutes(fastify) {
       const data = await resp.json();
       if (data.error) {
         console.error('[IA API ERROR]', JSON.stringify(data.error));
-        return { resposta: `Erro API: ${data.error.type} - ${data.error.message}` };
+        // ✅ FIX: Não expor detalhes do erro para o usuário
+        return { resposta: 'Estou com uma dificuldade técnica agora. Tente novamente em instantes! 💚' };
       }
       const resposta = data.content?.[0]?.text || 'Desculpe, erro ao processar!';
 
-      // Salvar histórico
+      // ✅ FIX: Histórico salvo com limite menor (10 em vez de 40)
       const novoHist = [
         ...historico,
         { role: 'user', content: mensagem },
         { role: 'assistant', content: resposta }
-      ].slice(-40);
+      ].slice(-20);
 
       const histStr = JSON.stringify(novoHist);
       if (conversa) {
@@ -99,14 +124,13 @@ export async function iaRoutes(fastify) {
         await prisma.iaConversa.create({ data: { userId: u.userId, mensagens: histStr } });
       }
 
-      // Atualizar perfil IA em background
       atualizarPerfil(u.userId, mensagem, perfil).catch(()=>{});
 
       return { resposta };
 
     } catch(e) {
       console.error('[IA CATCH]', e.message);
-      return { resposta: `Erro: ${e.message}` };
+      return { resposta: 'Erro interno. Tente novamente!' };
     }
   });
 
