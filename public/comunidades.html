@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Comunidades — PACE BRAZIL</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh}
+.header{background:linear-gradient(135deg,#065f46,#10b981);padding:20px;text-align:center}
+.header h1{font-size:1.8rem;margin-bottom:4px}
+.header p{opacity:.8;font-size:.9rem}
+.container{max-width:600px;margin:0 auto;padding:16px}
+.card{background:#1a1a2e;border-radius:16px;padding:20px;margin-bottom:16px;border-left:4px solid}
+.card h2{font-size:1.2rem;margin-bottom:6px}
+.card .desc{color:#aaa;font-size:.85rem;margin-bottom:12px}
+.card .info{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:#888;margin-bottom:12px}
+.card .info span{display:flex;align-items:center;gap:4px}
+.treinos{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.treino-tag{background:#ffffff15;padding:4px 10px;border-radius:20px;font-size:.75rem}
+.btn{display:inline-block;padding:10px 24px;border-radius:25px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;text-decoration:none;color:#fff}
+.btn-entrar{background:#10b981}
+.btn-entrar:hover{background:#059669}
+.btn-criar{background:transparent;border:2px solid #10b981;color:#10b981;width:100%;text-align:center;margin-top:12px}
+.membros{font-size:1.1rem;font-weight:700;color:#10b981}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#111;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #333;z-index:100}
+.bottom-nav a{color:#666;text-decoration:none;font-size:.7rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bottom-nav a.active{color:#10b981}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🏘️ Comunidades</h1>
+  <p>Encontre seu grupo de corrida</p>
+</div>
+<div class="container" id="lista">
+  <div style="text-align:center;padding:40px;color:#666">Carregando comunidades...</div>
+</div>
+<nav class="bottom-nav">
+  <a href="/">🏠<span>Home</span></a>
+  <a href="/comunidades.html" class="active">🏘️<span>Grupos</span></a>
+  <a href="/gps.html">📡<span>GPS</span></a>
+  <a href="/social.html">💬<span>Social</span></a>
+  <a href="/perfil.html">👤<span>Perfil</span></a>
+</nav>
+<script>
+const API = '';
+const token = localStorage.getItem('token');
+const headers = token ? { Authorization: 'Bearer ' + token } : {};
+
+async function carregarComunidades() {
+  try {
+    const res = await fetch(API + '/comunidades');
+    const data = await res.json();
+    const lista = document.getElementById('lista');
+    if (!data.length) { lista.innerHTML = '<p style="text-align:center;color:#666;padding:40px">Nenhuma comunidade ainda. Seja o primeiro a criar!</p>'; return; }
+    lista.innerHTML = data.map(c => `
+      <div class="card" style="border-color:${c.cor}">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2>${c.nome}</h2>
+          <span class="membros">${c.totalMembros} 👥</span>
+        </div>
+        <p class="desc">${c.descricao}</p>
+        <div class="info">
+          ${c.local ? '<span>📍 '+c.local+'</span>' : ''}
+          ${c.generoRestrito === 'F' ? '<span>💜 Só mulheres</span>' : '<span>🌍 Aberto</span>'}
+        </div>
+        <div class="treinos">
+          ${(c.treinos||[]).map(t => '<span class="treino-tag">'+t.diaSemana+' '+t.horario+'</span>').join('')}
+        </div>
+        <button class="btn btn-entrar" onclick="entrar('${c.slug}')">Entrar no grupo</button>
+      </div>
+    `).join('') + '<button class="btn btn-criar" onclick="location.href=\'#criar\'">+ Criar nova comunidade</button>';
+  } catch(e) { console.error(e); }
+}
+
+async function entrar(slug) {
+  if (!token) { alert('Faça login primeiro!'); location.href = '/entrar.html'; return; }
+  const res = await fetch(API + '/comunidades/' + slug + '/entrar', { method: 'POST', headers });
+  const data = await res.json();
+  alert(data.message || data.error);
+  carregarComunidades();
+}
+
+carregarComunidades();
+</script>
+</body>
+</html>

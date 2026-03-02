@@ -23,7 +23,7 @@ model Race {
 model Athlete {
   id          String   @id @default(cuid())
   name        String
-  equipe        String?
+  equipe      String?
   state       String?
   gender      String?
   age         Int?
@@ -86,6 +86,14 @@ model User {
   avatar        AtletaAvatar?
   iaConversa    IaConversa?
   iaPerfil      IaPerfilCorredor?
+  // NOVAS RELAÇÕES
+  comunidadesCriadas  Comunidade[]        @relation("CriadorComunidade")
+  membroComunidades   MembroComunidade[]
+  confirmacoesTreino  ConfirmacaoTreino[]
+  muralFotos          MuralFoto[]
+  conquistas          Conquista[]
+  pontos              PontosUsuario?
+  atividadesGPS       AtividadeGPS[]
 }
 model Like {
   id         String   @id @default(cuid())
@@ -163,7 +171,6 @@ model OrganizerRequest {
   status          String   @default("pending")
   createdAt       DateTime @default(now())
 }
-
 model Assessoria {
   id          String   @id @default(cuid())
   nome        String
@@ -181,7 +188,6 @@ model Assessoria {
   createdAt   DateTime @default(now())
   produtos    Produto[]
 }
-
 model Produto {
   id            String    @id @default(cuid())
   nome          String
@@ -198,7 +204,6 @@ model Produto {
   pedidos       Pedido[]
   variantes     ProdutoVariante[]
 }
-
 model Pedido {
   id          String   @id @default(cuid())
   userId      String
@@ -212,7 +217,6 @@ model Pedido {
   createdAt   DateTime @default(now())
   produto     Produto  @relation(fields: [produtoId], references: [id])
 }
-
 model ProdutoVariante {
   id         String  @id @default(cuid())
   produtoId  String
@@ -222,7 +226,6 @@ model ProdutoVariante {
   produto    Produto @relation(fields: [produtoId], references: [id])
   pedidoItens PedidoItem[]
 }
-
 model PedidoItem {
   id          String          @id @default(cuid())
   pedidoId    String
@@ -232,7 +235,6 @@ model PedidoItem {
   pedido      PedidoCompleto  @relation(fields: [pedidoId], references: [id])
   variante    ProdutoVariante @relation(fields: [varianteId], references: [id])
 }
-
 model PedidoCompleto {
   id          String       @id @default(cuid())
   userId      String
@@ -244,11 +246,10 @@ model PedidoCompleto {
   estado      String?
   obs         String?
   visto       Boolean      @default(false)
-  criadoEm   DateTime     @default(now())
+  criadoEm    DateTime     @default(now())
   itens       PedidoItem[]
   user        User         @relation(fields: [userId], references: [id])
 }
-
 model AtletaAvatar {
   id           String   @id @default(cuid())
   userId       String   @unique
@@ -263,17 +264,15 @@ model AtletaAvatar {
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
 }
-
 model IaConversa {
-  id        String     @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String   @unique
   mensagens String
   contexto  String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  user      User       @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
 }
-
 model IaPerfilCorredor {
   id              String   @id @default(cuid())
   userId          String   @unique
@@ -289,4 +288,166 @@ model IaPerfilCorredor {
   preferencias    String?
   updatedAt       DateTime @updatedAt
   user            User     @relation(fields: [userId], references: [id])
+}
+
+// ==================== COMUNIDADES ====================
+model Comunidade {
+  id              String   @id @default(cuid())
+  nome            String
+  slug            String   @unique
+  descricao       String
+  banner          String?
+  icone           String?
+  cor             String   @default("#10B981")
+  tipo            String   @default("aberto")
+  generoRestrito  String?
+  local           String?
+  cidade          String?
+  estado          String?
+  maxMembros      Int?
+  criadorId       String
+  ativa           Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  criador         User     @relation("CriadorComunidade", fields: [criadorId], references: [id])
+  membros         MembroComunidade[]
+  treinos         Treino[]
+  muralFotos      MuralFoto[]
+}
+model MembroComunidade {
+  id            String   @id @default(cuid())
+  userId        String
+  comunidadeId  String
+  role          String   @default("membro")
+  apelido       String?
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
+  comunidade    Comunidade @relation(fields: [comunidadeId], references: [id])
+  checkins      Checkin[]
+  @@unique([userId, comunidadeId])
+}
+
+// ==================== TREINOS ====================
+model Treino {
+  id            String   @id @default(cuid())
+  comunidadeId  String
+  titulo        String
+  descricao     String?
+  diaSemana     String?
+  horario       String
+  periodo       String?
+  local         String?
+  recorrente    Boolean  @default(true)
+  dataEspecifica DateTime?
+  ativo         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  comunidade    Comunidade @relation(fields: [comunidadeId], references: [id])
+  checkins      Checkin[]
+  confirmacoes  ConfirmacaoTreino[]
+}
+
+// ==================== CHECK-IN ====================
+model ConfirmacaoTreino {
+  id        String   @id @default(cuid())
+  userId    String
+  treinoId  String
+  data      DateTime
+  status    String   @default("confirmado")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  treino    Treino   @relation(fields: [treinoId], references: [id])
+  @@unique([userId, treinoId, data])
+}
+model Checkin {
+  id            String   @id @default(cuid())
+  membroId      String
+  treinoId      String?
+  data          DateTime @default(now())
+  tipo          String   @default("treino")
+  membro        MembroComunidade @relation(fields: [membroId], references: [id])
+  treino        Treino?  @relation(fields: [treinoId], references: [id])
+}
+
+// ==================== MURAL FOTOS ====================
+model MuralFoto {
+  id            String   @id @default(cuid())
+  comunidadeId  String
+  userId        String
+  url           String
+  legenda       String?
+  data          DateTime @default(now())
+  comunidade    Comunidade @relation(fields: [comunidadeId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+// ==================== GAMIFICAÇÃO ====================
+model Conquista {
+  id          String   @id @default(cuid())
+  userId      String
+  tipo        String
+  titulo      String
+  descricao   String
+  icone       String
+  pontosGanhos Int     @default(0)
+  desbloqueadoEm DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  @@unique([userId, tipo])
+}
+model PontosUsuario {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  total       Int      @default(0)
+  checkins    Int      @default(0)
+  convites    Int      @default(0)
+  postagens   Int      @default(0)
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+// ==================== GPS TRACKING ====================
+model AtividadeGPS {
+  id            String   @id @default(cuid())
+  userId        String
+  tipo          String   @default("corrida")
+  distanciaKm   Float
+  duracaoSeg    Int
+  paceMedio     String?
+  paceMin       String?
+  paceMax       String?
+  velMedia      Float?
+  caloriasEst   Int?
+  elevacaoGanho Float?
+  rotaJSON      String?
+  pontosRota    String?
+  inicioLat     Float?
+  inicioLng     Float?
+  fimLat        Float?
+  fimLng        Float?
+  clima         String?
+  temperatura   Float?
+  titulo        String?
+  nota          String?
+  compartilhado Boolean  @default(false)
+  iniciadoEm    DateTime
+  finalizadoEm  DateTime
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+// ==================== CORRIDAS ABERTAS ====================
+model CorridaAberta {
+  id            String   @id @default(cuid())
+  nome          String
+  data          DateTime
+  cidade        String
+  estado        String
+  distancias    String
+  linkInscricao String
+  fonte         String?
+  preco         Float?
+  organizador   String?
+  imageUrl      String?
+  ativa         Boolean  @default(true)
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
 }
