@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "npx prisma db push --skip-generate && node src/index.js",
+    "start": "npx prisma generate && npx prisma db push --skip-generate && node src/index.js",
     "dev": "node --watch src/index.js",
     "scraper": "node src/scripts/run-scraper.js",
     "seed:cbat": "node seed-ranking-cbat.cjs"
