@@ -24,9 +24,9 @@ import { verifyRoutes }     from './modules/results/verify.routes.js';
 import { pagamentosRoutes } from './modules/pagamentos/pagamentos.routes.js';
 import { adminRoutes }      from './modules/admin/admin.routes.js';
 import { iaRoutes }         from './modules/ia/ia.routes.js';
-import { comunidadeRoutes } from './modules/comunidade/comunidade.routes.js';
-import { gpsRoutes }        from './modules/gps/gps.routes.js';
-import { corridasAbertasRoutes } from './modules/corridas-abertas/corridas.routes.js';
+// import { comunidadeRoutes } from './modules/comunidade/comunidade.routes.js';
+// import { gpsRoutes }        from './modules/gps/gps.routes.js';
+// import { corridasAbertasRoutes } from './modules/corridas-abertas/corridas.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -100,9 +100,9 @@ try {
   await app.register(iaRoutes);
   await app.register(adminRoutes);
   await app.register(pagamentosRoutes);
-  await app.register(comunidadeRoutes);
-  await app.register(gpsRoutes);
-  await app.register(corridasAbertasRoutes);
+  // await app.register(comunidadeRoutes);
+  // await app.register(gpsRoutes);
+  // await app.register(corridasAbertasRoutes);
   console.log('✅ Todas as rotas registradas (v2.0 PACE BRAZIL)');
 } catch(e) {
   console.error('❌ ERRO ao registrar rotas:', e.message);
