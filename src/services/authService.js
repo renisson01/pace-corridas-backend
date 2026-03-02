@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as bip39 from 'bip39';
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'pace-secret-2026-change-in-prod';

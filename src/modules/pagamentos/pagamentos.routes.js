@@ -1,5 +1,6 @@
 import { MercadoPagoConfig, Preference } from 'mercadopago';
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 
 // ✅ FIX: Prisma instanciado uma única vez no módulo, não dentro de cada requisição
 const prisma = new PrismaClient();
