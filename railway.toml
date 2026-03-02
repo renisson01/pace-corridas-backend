@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "node src/index.js"
+startCommand = "node seed-corridas-abertas.cjs; node src/index.js"
