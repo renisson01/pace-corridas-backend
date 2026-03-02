@@ -45,7 +45,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#fff;m
 </nav>
 <script>
 const API = '';
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('pace_token');
 const headers = token ? { Authorization: 'Bearer ' + token } : {};
 
 async function carregarComunidades() {
