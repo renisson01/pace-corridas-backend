@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import fs from 'fs';
@@ -22,13 +23,15 @@ import { verifyRoutes }     from './modules/results/verify.routes.js';
 import { pagamentosRoutes } from './modules/pagamentos/pagamentos.routes.js';
 import { adminRoutes }      from './modules/admin/admin.routes.js';
 import { iaRoutes }         from './modules/ia/ia.routes.js';
+import { comunidadeRoutes } from './modules/comunidade/comunidade.routes.js';
+import { gpsRoutes }        from './modules/gps/gps.routes.js';
+import { corridasAbertasRoutes } from './modules/corridas-abertas/corridas.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// ✅ FIX 1: logger ativado em produção ajuda a debugar
-const app = Fastify({ logger: process.env.NODE_ENV === 'production' ? false : false });
+const app = Fastify({ logger: false });
 
-// ✅ FIX 2: CORS restrito ao domínio do frontend em produção
+// CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
   : ['https://web-production-990e7.up.railway.app'];
@@ -40,34 +43,28 @@ await app.register(cors, {
   }
 });
 
+await app.register(helmet, { contentSecurityPolicy: false });
 await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
-
-// ✅ FIX 3: Rate limit global (proteção básica)
 await app.register(rateLimit, {
-  max: 100,
-  timeWindow: '1 minute',
+  max: 100, timeWindow: '1 minute',
   errorResponseBuilder: () => ({ error: 'Muitas requisições. Aguarde um momento.' })
 });
 
-// ✅ FIX 4: Cache de páginas HTML em memória (evita readFileSync a cada requisição)
+// Cache HTML
 const htmlCache = {};
 const pages = [
   'index','entrar','perfil','calendario','resultados','social','elite','x1',
   'pacematch','organizador','stats','faixas','calculadoras','usuario',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
-  'ia','ia-avatar','admin-pedidos','scraper','importar-resultado'
+  'ia','ia-avatar','admin-pedidos','scraper','importar-resultado',
+  'comunidades','gps','corridas-abertas'
 ];
 
 for (const pg of pages) {
   const file = pg === 'index' ? 'index.html' : `${pg}.html`;
-  const filePath = path.join(__dirname, '../public', file);
-  try {
-    htmlCache[pg] = fs.readFileSync(filePath, 'utf-8');
-  } catch {
-    htmlCache[pg] = null;
-  }
+  try { htmlCache[pg] = fs.readFileSync(path.join(__dirname, '../public', file), 'utf-8'); }
+  catch { htmlCache[pg] = null; }
 }
-
 for (const pg of pages) {
   const route = pg === 'index' ? '/' : `/${pg}.html`;
   app.get(route, async (req, reply) => {
@@ -85,7 +82,7 @@ app.get('/sw.js', async (req, reply) => {
   catch { reply.send(''); }
 });
 
-// Rotas API
+// ROTAS API
 try {
   await app.register(authRoutes);
   await app.register(raceRoutes);
@@ -103,15 +100,16 @@ try {
   await app.register(iaRoutes);
   await app.register(adminRoutes);
   await app.register(pagamentosRoutes);
-  console.log('✅ Todas as rotas registradas');
+  await app.register(comunidadeRoutes);
+  await app.register(gpsRoutes);
+  await app.register(corridasAbertasRoutes);
+  console.log('✅ Todas as rotas registradas (v2.0 PACE BRAZIL)');
 } catch(e) {
   console.error('❌ ERRO ao registrar rotas:', e.message);
   console.error(e.stack);
 }
 
-// ✅ FIX 5: scraperJob REMOVIDO conforme solicitado (será reimplementado depois)
-
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
-  if (err) { console.error('❌ ERRO ao iniciar servidor:', err); process.exit(1); }
-  console.log('✅ PACE online na porta ' + (process.env.PORT || 3000));
+  if (err) { console.error('❌', err); process.exit(1); }
+  console.log('🏃 PACE BRAZIL online na porta ' + (process.env.PORT || 3000));
 });
