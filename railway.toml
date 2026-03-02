@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "node seed-comunidades.cjs; node src/index.js"
+startCommand = "npx prisma db push --skip-generate && node seed-comunidades.cjs && node src/index.js"
