@@ -1,7 +1,7 @@
 process.on("unhandledRejection", e => { console.error("❌ ERRO FATAL:", e); }); process.on("uncaughtException", e => { console.error("❌ CRASH:", e); });
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import helmet from '@fastify/helmet';
+
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import fs from 'fs';
@@ -44,7 +44,6 @@ await app.register(cors, {
   }
 });
 
-await app.register(helmet, { contentSecurityPolicy: false });
 await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
 await app.register(rateLimit, {
   max: 100, timeWindow: '1 minute',
