@@ -1,5 +1,6 @@
 
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 import { calcPoints, POINTS_GENERAL, POINTS_AGE } from '../utils/ageGroupCalculator.js';
 const prisma = new PrismaClient();
 

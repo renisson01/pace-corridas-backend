@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 const ADMIN_KEY = process.env.ADMIN_KEY || 'pace-admin-2026';
 
