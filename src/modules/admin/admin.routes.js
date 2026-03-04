@@ -220,8 +220,7 @@ export async function adminRoutes(fastify) {
       let athlete = await prisma.athlete.findFirst({ where: { name: { equals: nome, mode:'insensitive' } } });
       if (!athlete) {
         athlete = await prisma.athlete.create({ data: {
-          name: nome, gender: genero || 'M', equipe: equipe || null,
-          city: corridaCidade || 'Sergipe', state: 'SE', totalRaces: 0, totalPoints: 0
+          name: nome, gender: genero || 'M', equipe: equipe || null, state: 'SE', totalRaces: 0, totalPoints: 0
         }});
       }
 
