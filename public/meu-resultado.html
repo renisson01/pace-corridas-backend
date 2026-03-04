@@ -2,344 +2,251 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PACE — Adicionar Resultado</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>body{background:#0f172a;} .animate-pulse{animation:pulse 2s infinite;} @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Resultado — PACE Brasil</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
+.topbar{position:sticky;top:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(8,11,16,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--verde);text-decoration:none}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.container{max-width:700px;margin:0 auto;padding:24px 16px}
+.tabs{display:flex;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.tab{flex:1;padding:12px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;transition:all 0.2s;border:none;background:none;letter-spacing:0.5px}
+.tab.ativo{background:var(--verde);color:#080B10}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;margin-bottom:6px}
+.card-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;transition:border-color 0.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--verde)}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.field textarea{resize:vertical;min-height:80px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-primary{width:100%;padding:14px;background:var(--verde);color:#080B10;border:none;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;cursor:pointer;transition:all 0.2s;margin-top:4px}
+.btn-primary:hover{background:var(--verde2)}
+.btn-primary:disabled{background:var(--surface);color:var(--muted);cursor:not-allowed}
+.result-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.result-status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:10px}
+.status-verificado{background:rgba(0,230,118,0.1);color:var(--verde);border:1px solid rgba(0,230,118,0.3)}
+.status-parcial{background:rgba(251,191,36,0.1);color:#FBBF24;border:1px solid rgba(251,191,36,0.3)}
+.status-pendente{background:rgba(100,116,139,0.1);color:var(--muted);border:1px solid var(--border)}
+.status-aprovado{background:rgba(0,230,118,0.15);color:var(--verde);border:1px solid rgba(0,230,118,0.4)}
+.result-nome{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px}
+.result-meta{font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap}
+.verify-resultado{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:16px}
+.verify-score{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--verde);text-align:center;margin-bottom:4px}
+.verify-msg{text-align:center;font-size:14px;margin-bottom:16px}
+.verify-details{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.verify-item{background:var(--surface);border-radius:8px;padding:10px 12px}
+.verify-item-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
+.verify-item-value{font-size:13px;font-weight:600}
+.info-box{background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.15);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#94A3B8;line-height:1.6}
+.info-box strong{color:var(--verde)}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--verde);color:#080B10;padding:12px 24px;border-radius:20px;font-weight:700;font-size:14px;z-index:300;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 0 12px;z-index:100}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;padding:4px 12px}
+.nav-icon{font-size:20px}
+.nav-label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.nav-item.ativo .nav-label{color:var(--verde)}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
+</style>
 </head>
-<body class="text-white min-h-screen pb-24">
-
-<header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 py-3 flex items-center gap-3">
-  <a href="/perfil.html" class="text-slate-400 text-xl">←</a>
-  <h1 class="font-bold">🔍 Adicionar Resultado</h1>
-</header>
-
-<div class="max-w-lg mx-auto px-4 py-6">
-
-  <!-- PASSO 1 -->
-  <div id="passo1">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-4">
-      <h2 class="font-black text-lg mb-1">Como funciona</h2>
-      <div class="space-y-3 mt-3">
-        <div class="flex gap-3 items-start">
-          <span class="bg-green-500 text-black font-black w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0">1</span>
-          <p class="text-sm text-slate-300">Cole o link da página de resultados da corrida</p>
-        </div>
-        <div class="flex gap-3 items-start">
-          <span class="bg-green-500 text-black font-black w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0">2</span>
-          <p class="text-sm text-slate-300">Nossa IA busca seu nome e confirma o resultado</p>
-        </div>
-        <div class="flex gap-3 items-start">
-          <span class="bg-green-500 text-black font-black w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0">3</span>
-          <p class="text-sm text-slate-300">Confirme os dados e salve no seu histórico</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-4">
-      <p class="text-xs text-slate-400 mb-3 font-bold">SITES SUPORTADOS</p>
-      <div class="flex flex-wrap gap-2">
-        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">sportschrono.com.br</span>
-        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">leveyourun.com</span>
-        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">chipower.com.br</span>
-        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">centraldacorrida.com.br</span>
-        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">ticketsports.com.br</span>
-        <span class="bg-slate-700 text-xs px-3 py-1 rounded-full">+ outros</span>
-      </div>
-    </div>
-
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5">
-      <label class="text-xs text-slate-400 font-bold block mb-2">LINK DA PÁGINA DE RESULTADOS</label>
-      <input id="urlInput" type="url" placeholder="https://sportschrono.com.br/resultado/..."
-        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500 mb-3">
-      
-      <label class="text-xs text-slate-400 font-bold block mb-2">SEU NOME NA CORRIDA (como aparece no resultado)</label>
-      <input id="nomeInput" type="text" placeholder="Ex: João Silva"
-        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500 mb-4">
-      
-      <button onclick="verificar()" class="w-full bg-green-500 text-black font-black py-3 rounded-xl text-lg">
-        🔍 Verificar resultado
-      </button>
-    </div>
+<body>
+<div class="topbar">
+  <a href="/" class="logo">PACE</a>
+  <span class="topbar-title">Meu Resultado</span>
+</div>
+<div class="container">
+  <div class="tabs">
+    <button class="tab ativo" onclick="mudarTab(this,'verificar')">🔗 Verificar Link</button>
+    <button class="tab" onclick="mudarTab(this,'manual')">✏️ Envio Manual</button>
+    <button class="tab" onclick="mudarTab(this,'historico')">📋 Histórico</button>
   </div>
 
-  <!-- VERIFICANDO -->
-  <div id="verificando" class="hidden text-center py-12">
-    <div class="text-6xl mb-4 animate-pulse">🤖</div>
-    <p class="font-black text-xl text-green-400">Verificando resultado...</p>
-    <p class="text-slate-400 text-sm mt-2">Nossa IA está buscando seus dados</p>
-    <div class="mt-6 space-y-2 text-left max-w-xs mx-auto">
-      <div id="step1" class="flex items-center gap-2 text-sm text-slate-400">
-        <span class="animate-pulse">⏳</span> Acessando página de resultados...
-      </div>
-      <div id="step2" class="flex items-center gap-2 text-sm text-slate-400 opacity-40">
-        <span>🔍</span> Buscando seu nome...
-      </div>
-      <div id="step3" class="flex items-center gap-2 text-sm text-slate-400 opacity-40">
-        <span>✅</span> Confirmando dados...
-      </div>
+  <!-- TAB: VERIFICAR LINK -->
+  <div id="tab-verificar">
+    <div class="info-box">
+      <strong>Como funciona:</strong> Cole o link da página oficial com seu resultado (chipagem, site da corrida) e nossa IA irá verificar automaticamente se as informações batem. Resultados verificados aparecem no seu perfil!
     </div>
-  </div>
-
-  <!-- RESULTADO ENCONTRADO -->
-  <div id="resultadoEncontrado" class="hidden">
-    <div class="bg-green-900/30 border border-green-500/50 rounded-2xl p-5 mb-4">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-2xl">✅</span>
-        <h2 class="font-black text-green-400">Resultado encontrado!</h2>
+    <div class="card">
+      <div class="card-title">🔗 Verificar resultado por link</div>
+      <div class="card-sub">Cole o link da página oficial do seu resultado. Aceitamos: RunningChip, Chip4You, Sympla, Ticket, CBAT e outros.</div>
+      <div class="field">
+        <label>Link do resultado *</label>
+        <input id="vLink" placeholder="https://runningchip.com.br/resultado/...">
       </div>
-      <p id="tituloProva" class="font-bold text-lg mb-4"></p>
-      
-      <div class="grid grid-cols-3 gap-3 mb-4">
-        <div class="bg-slate-800 rounded-xl p-3 text-center">
-          <p id="resDistancia" class="font-black text-green-400 text-xl">--</p>
-          <p class="text-xs text-slate-400">distância</p>
+      <div class="row2">
+        <div class="field">
+          <label>Seu nome (como aparece no resultado)</label>
+          <input id="vNome" placeholder="Nome completo">
         </div>
-        <div class="bg-slate-800 rounded-xl p-3 text-center">
-          <p id="resTempo" class="font-black text-blue-400 text-xl">--</p>
-          <p class="text-xs text-slate-400">tempo</p>
-        </div>
-        <div class="bg-slate-800 rounded-xl p-3 text-center">
-          <p id="resPosicao" class="font-black text-yellow-400 text-xl">--</p>
-          <p class="text-xs text-slate-400">posição</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-4">
-      <p class="text-xs text-slate-400 font-bold mb-3">CONFIRME OU CORRIJA OS DADOS</p>
-      <div class="space-y-3">
-        <div>
-          <label class="text-xs text-slate-400 block mb-1">Nome da prova</label>
-          <input id="confProva" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-green-500">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-xs text-slate-400 block mb-1">Distância</label>
-            <select id="confDistancia" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-              <option value="5km">5km</option>
-              <option value="10km">10km</option>
-              <option value="21km">21km - Meia</option>
-              <option value="42km">42km - Maratona</option>
-              <option value="3km">3km</option>
-              <option value="6km">6km</option>
-              <option value="15km">15km</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 block mb-1">Posição geral</label>
-            <input id="confPosicao" type="number" min="1" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-green-500">
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-xs text-slate-400 block mb-1">Tempo</label>
-            <input id="confTempo" placeholder="1:05:30" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-green-500">
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 block mb-1">Estado</label>
-            <select id="confEstado" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-              <option value="SE">SE</option><option value="SP">SP</option><option value="RJ">RJ</option>
-              <option value="MG">MG</option><option value="BA">BA</option><option value="PR">PR</option>
-              <option value="SC">SC</option><option value="RS">RS</option><option value="CE">CE</option>
-              <option value="PE">PE</option><option value="DF">DF</option><option value="GO">GO</option>
-              <option value="AM">AM</option><option value="PA">PA</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button onclick="confirmar()" class="w-full bg-green-500 text-black font-black py-4 rounded-2xl text-lg">
-      ✅ Confirmar e salvar no meu histórico
-    </button>
-    <button onclick="voltarInicio()" class="w-full mt-2 text-slate-400 text-sm py-2">Cancelar</button>
-  </div>
-
-  <!-- ERRO -->
-  <div id="resultadoErro" class="hidden">
-    <div class="bg-red-900/30 border border-red-500/50 rounded-2xl p-5 mb-4">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-2xl">❌</span>
-        <h2 class="font-black text-red-400">Não encontrado</h2>
-      </div>
-      <p id="erroMsg" class="text-sm text-slate-300 mb-2"></p>
-      <p id="erroSugestao" class="text-xs text-slate-400"></p>
-    </div>
-    
-    <!-- CADASTRO MANUAL -->
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5">
-      <h3 class="font-black mb-3">✍️ Cadastrar manualmente</h3>
-      <div class="space-y-3">
-        <input id="manualProva" placeholder="Nome da prova" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-green-500">
-        <div class="grid grid-cols-2 gap-3">
-          <select id="manualDistancia" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-            <option value="5km">5km</option><option value="10km">10km</option>
-            <option value="21km">Meia 21km</option><option value="42km">Maratona</option>
-          </select>
-          <input id="manualTempo" placeholder="Tempo ex: 1:05:30" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-green-500">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <input id="manualPosicao" type="number" placeholder="Posição geral" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-green-500">
-          <select id="manualEstado" class="bg-slate-700 border border-slate-600 rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-            <option value="SE">SE</option><option value="SP">SP</option><option value="RJ">RJ</option>
-            <option value="MG">MG</option><option value="BA">BA</option><option value="PR">PR</option>
-            <option value="SC">SC</option><option value="RS">RS</option><option value="CE">CE</option>
-            <option value="PE">PE</option><option value="DF">DF</option>
+        <div class="field">
+          <label>Distância</label>
+          <select id="vDist">
+            <option value="">Selecione</option>
+            <option value="5km">5km</option>
+            <option value="10km">10km</option>
+            <option value="21km">Meia Maratona (21km)</option>
+            <option value="42km">Maratona (42km)</option>
+            <option value="outros">Outra distância</option>
           </select>
         </div>
       </div>
-      <button onclick="salvarManual()" class="w-full mt-4 bg-blue-500 text-white font-black py-3 rounded-xl">
-        💾 Salvar resultado manual
-      </button>
-    </div>
-    <button onclick="voltarInicio()" class="w-full mt-3 text-slate-400 text-sm py-2">Tentar outro link</button>
-  </div>
-
-  <!-- SUCESSO FINAL -->
-  <div id="sucesso" class="hidden text-center py-12">
-    <div class="text-7xl mb-4">🏅</div>
-    <h2 class="font-black text-2xl text-green-400 mb-2">Resultado salvo!</h2>
-    <p id="sucessoMsg" class="text-slate-300 mb-6"></p>
-    <div class="flex flex-col gap-3">
-      <a href="/perfil.html" class="bg-green-500 text-black font-black py-3 px-8 rounded-full">Ver meu perfil</a>
-      <button onclick="voltarInicio()" class="text-slate-400 text-sm">Adicionar outro resultado</button>
+      <div class="row2">
+        <div class="field">
+          <label>Tempo que fez (ex: 00:48:32)</label>
+          <input id="vTempo" placeholder="HH:MM:SS">
+        </div>
+        <div class="field">
+          <label>Data da prova</label>
+          <input id="vData" type="date">
+        </div>
+      </div>
+      <button class="btn-primary" id="btnVerificar" onclick="verificarLink()">🤖 Verificar com IA</button>
+      <div id="verifyResult"></div>
     </div>
   </div>
 
+  <!-- TAB: MANUAL -->
+  <div id="tab-manual" style="display:none">
+    <div class="info-box">
+      <strong>Envio manual:</strong> Não tem o link? Sem problema! Preencha as informações da sua prova e um admin irá revisar e adicionar ao seu perfil em até 24h.
+    </div>
+    <div class="card">
+      <div class="card-title">✏️ Enviar resultado manualmente</div>
+      <div class="field">
+        <label>Nome da prova *</label>
+        <input id="mProva" placeholder="Ex: Corrida das Ruas de Aracaju 2026">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Distância *</label>
+          <select id="mDist">
+            <option value="">Selecione</option>
+            <option value="5km">5km</option>
+            <option value="10km">10km</option>
+            <option value="21km">Meia Maratona</option>
+            <option value="42km">Maratona</option>
+            <option value="outros">Outra</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tempo oficial *</label>
+          <input id="mTempo" placeholder="HH:MM:SS">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Data da prova</label>
+          <input id="mData" type="date">
+        </div>
+        <div class="field">
+          <label>Posição geral</label>
+          <input id="mPos" type="number" placeholder="Ex: 42">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Cidade</label>
+          <input id="mCidade" placeholder="Aracaju">
+        </div>
+        <div class="field">
+          <label>Estado</label>
+          <select id="mEstado">
+            <option value="">UF</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Link do resultado (opcional mas recomendado)</label>
+        <input id="mLink" placeholder="https://...">
+      </div>
+      <button class="btn-primary" id="btnManual" onclick="enviarManual()">📋 Enviar para revisão</button>
+    </div>
+  </div>
+
+  <!-- TAB: HISTÓRICO -->
+  <div id="tab-historico" style="display:none">
+    <div id="historicoLista"><div class="empty">Carregando...</div></div>
+  </div>
 </div>
 
-<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around py-2 z-50">
-  <a href="/" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏠</span><span>Início</span></a>
-  <a href="/calendario.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">📅</span><span>Corridas</span></a>
-  <a href="/elite.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏆</span><span>Ranking</span></a>
-  <a href="/loja.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👕</span><span>Loja</span></a>
-  <a href="/ia.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏃</span><span>PACE IA</span></a>
-  <a href="/perfil.html" class="flex flex-col items-center text-xs py-1 px-2 text-green-400"><span class="text-xl">👤</span><span>Perfil</span></a>
+<div class="toast" id="toast"></div>
+<nav class="bottom-nav">
+  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
+  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
+  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
+  <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
+  <a href="/loja.html" class="nav-item"><span class="nav-icon">🛒</span><span class="nav-label">Loja</span></a>
 </nav>
 
 <script>
-const token = localStorage.getItem('pace_token');
-if (!token) window.location.href = '/entrar.html';
-
-let dadosVerificados = null;
-
-function show(id) {
-  ['passo1','verificando','resultadoEncontrado','resultadoErro','sucesso'].forEach(i => {
-    document.getElementById(i).classList.add('hidden');
-  });
-  document.getElementById(id).classList.remove('hidden');
+const token=localStorage.getItem('token');
+function mudarTab(btn,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  ['verificar','manual','historico'].forEach(t=>document.getElementById('tab-'+t).style.display=t===id?'block':'none');
+  if(id==='historico')carregarHistorico();
 }
-
-async function verificar() {
-  const url = document.getElementById('urlInput').value.trim();
-  const nome = document.getElementById('nomeInput').value.trim();
-  if (!url) return alert('Cole o link do resultado!');
-  if (!nome) return alert('Digite seu nome como aparece no resultado!');
-
-  show('verificando');
-
-  // Animar passos
-  setTimeout(() => {
-    document.getElementById('step1').innerHTML = '<span>✅</span> <span class="text-green-400">Página acessada!</span>';
-    document.getElementById('step2').classList.remove('opacity-40');
-    document.getElementById('step2').innerHTML = '<span class="animate-pulse">⏳</span> Buscando seu nome...';
-  }, 1500);
-  setTimeout(() => {
-    document.getElementById('step2').innerHTML = '<span>✅</span> <span class="text-green-400">Nome encontrado!</span>';
-    document.getElementById('step3').classList.remove('opacity-40');
-    document.getElementById('step3').innerHTML = '<span class="animate-pulse">⏳</span> Confirmando dados...';
-  }, 3000);
-
-  try {
-    const r = await fetch('/results/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ url, nomeNoResultado: nome })
-    });
-    const data = await r.json();
-
-    if (data.success && data.resultados?.length) {
-      const res = data.resultados[0];
-      dadosVerificados = { ...data, resultado: res };
-
-      document.getElementById('tituloProva').textContent = data.tituloProva || 'Corrida';
-      document.getElementById('resDistancia').textContent = data.distancia || '--';
-      document.getElementById('resTempo').textContent = res.tempo || '--';
-      document.getElementById('resPosicao').textContent = res.posicao ? `${res.posicao}°` : '--';
-
-      document.getElementById('confProva').value = data.tituloProva || '';
-      document.getElementById('confTempo').value = res.tempo || '';
-      document.getElementById('confPosicao').value = res.posicao || '';
-      if (data.distancia) {
-        const sel = document.getElementById('confDistancia');
-        [...sel.options].forEach(o => { if (data.distancia.includes(o.value.replace('km',''))) o.selected = true; });
-      }
-
-      show('resultadoEncontrado');
-    } else {
-      document.getElementById('erroMsg').textContent = data.message || 'Resultado não encontrado';
-      document.getElementById('erroSugestao').textContent = data.sugestao || '';
-      show('resultadoErro');
-    }
-  } catch(e) {
-    document.getElementById('erroMsg').textContent = 'Erro de conexão. Tente novamente.';
-    document.getElementById('erroSugestao').textContent = '';
-    show('resultadoErro');
-  }
+async function verificarLink(){
+  if(!token){mostrarToast('⚠️ Faça login primeiro!');return;}
+  const link=document.getElementById('vLink').value.trim();
+  if(!link){mostrarToast('Cole o link do resultado!');return;}
+  const btn=document.getElementById('btnVerificar');
+  btn.disabled=true;btn.textContent='🤖 Verificando com IA...';
+  try{
+    const res=await fetch('/resultados/verificar-link',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({linkResultado:link,nomeAtleta:document.getElementById('vNome').value,distancia:document.getElementById('vDist').value,tempoInformado:document.getElementById('vTempo').value,dataProva:document.getElementById('vData').value})});
+    const d=await res.json();
+    const cor=d.score>=70?'var(--verde)':d.score>=40?'#FBBF24':'#EF4444';
+    document.getElementById('verifyResult').innerHTML=`
+      <div class="verify-resultado">
+        <div class="verify-score" style="color:${cor}">${d.score}<small style="font-size:20px">/100</small></div>
+        <div class="verify-msg">${d.mensagem}</div>
+        <div class="verify-details">
+          <div class="verify-item"><div class="verify-item-label">Site confiável</div><div class="verify-item-value">${d.siteConfiavel?'✅ Sim':'⚠️ Não reconhecido'}</div></div>
+          <div class="verify-item"><div class="verify-item-label">Página acessada</div><div class="verify-item-value">${d.acessoOk?'✅ Sim':'❌ Não'}</div></div>
+          <div class="verify-item"><div class="verify-item-label">Nome encontrado</div><div class="verify-item-value">${d.dadosEncontrados?.nome?'✅ Sim':'❌ Não'}</div></div>
+          <div class="verify-item"><div class="verify-item-label">Tempo</div><div class="verify-item-value">${d.dadosEncontrados?.tempo||'—'}</div></div>
+        </div>
+        ${d.analiseIA?`<p style="margin-top:12px;font-size:13px;color:var(--muted);text-align:center">🤖 IA: ${d.analiseIA.resumo}</p>`:''}
+        <p style="margin-top:12px;font-size:12px;color:var(--muted);text-align:center">${d.proximoPasso}</p>
+      </div>`;
+  }catch(e){mostrarToast('Erro ao verificar. Tente novamente.');}
+  finally{btn.disabled=false;btn.textContent='🤖 Verificar com IA';}
 }
-
-async function confirmar() {
-  const body = {
-    url: dadosVerificados?.url,
-    tituloProva: document.getElementById('confProva').value,
-    distancia: document.getElementById('confDistancia').value,
-    tempo: document.getElementById('confTempo').value,
-    posicao: document.getElementById('confPosicao').value,
-    estado: document.getElementById('confEstado').value,
-  };
-
-  if (!body.tempo || !body.tituloProva) return alert('Preencha tempo e nome da prova!');
-
-  const r = await fetch('/results/confirm', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(body)
-  });
-  const data = await r.json();
-
-  if (data.success) {
-    document.getElementById('sucessoMsg').textContent = `+${data.pontos} pontos! Resultado de ${body.tituloProva} confirmado.`;
-    show('sucesso');
-  } else {
-    alert(data.message || 'Erro ao salvar');
-  }
+async function enviarManual(){
+  if(!token){mostrarToast('⚠️ Faça login primeiro!');return;}
+  const dist=document.getElementById('mDist').value;
+  const tempo=document.getElementById('mTempo').value;
+  if(!dist||!tempo){mostrarToast('Preencha distância e tempo!');return;}
+  const btn=document.getElementById('btnManual');btn.disabled=true;btn.textContent='Enviando...';
+  try{
+    const res=await fetch('/resultados/enviar-manual',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({nomeProva:document.getElementById('mProva').value,distancia:dist,tempoInformado:tempo,dataProva:document.getElementById('mData').value,posicaoGeral:document.getElementById('mPos').value,cidade:document.getElementById('mCidade').value,estado:document.getElementById('mEstado').value,linkResultado:document.getElementById('mLink').value})});
+    const d=await res.json();
+    if(d.success){mostrarToast('✅ Resultado enviado para revisão!');document.querySelectorAll('.tab')[2].click();}
+    else mostrarToast(d.error||'Erro ao enviar');
+  }catch(e){mostrarToast('Erro de conexão');}
+  finally{btn.disabled=false;btn.textContent='📋 Enviar para revisão';}
 }
-
-async function salvarManual() {
-  const body = {
-    tituloProva: document.getElementById('manualProva').value,
-    distancia: document.getElementById('manualDistancia').value,
-    tempo: document.getElementById('manualTempo').value,
-    posicao: document.getElementById('manualPosicao').value,
-    estado: document.getElementById('manualEstado').value,
-    url: document.getElementById('urlInput').value || null,
-  };
-  if (!body.tituloProva || !body.tempo) return alert('Preencha nome da prova e tempo!');
-
-  const r = await fetch('/results/confirm', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(body)
-  });
-  const data = await r.json();
-  if (data.success) {
-    document.getElementById('sucessoMsg').textContent = `Resultado salvo! +${data.pontos} pontos`;
-    show('sucesso');
-  } else alert(data.message || 'Erro');
+async function carregarHistorico(){
+  if(!token){document.getElementById('historicoLista').innerHTML='<div class="empty"><p>Faça login para ver seu histórico</p><br><a href="/entrar.html" style="color:var(--verde);font-weight:700">Entrar →</a></div>';return;}
+  try{
+    const d=await fetch('/resultados/meus-enviados',{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json());
+    if(!d.length){document.getElementById('historicoLista').innerHTML='<div class="empty">Nenhum resultado enviado ainda.<br><br>Use as abas acima para enviar seu primeiro resultado! 🏃</div>';return;}
+    const statusMap={verificado:'status-verificado ✅ Verificado',parcial:'status-parcial ⚠️ Parcial',aprovado:'status-aprovado ✅ Aprovado',pendente_revisao:'status-pendente ⏳ Em revisão',nao_verificado:'status-pendente ❌ Não verificado'};
+    document.getElementById('historicoLista').innerHTML=d.map(r=>{
+      const [cls,...labelParts]=( statusMap[r.statusVerificacao]||'status-pendente ⏳ Pendente').split(' ');
+      return `<div class="result-card"><div class="result-status ${cls}">${labelParts.join(' ')}</div><div class="result-nome">${r.nomeProva||r.distancia}</div><div class="result-meta"><span>⏱️ ${r.tempoInformado}</span><span>📏 ${r.distancia}</span><span>📅 ${new Date(r.dataProva).toLocaleDateString('pt-BR')}</span>${r.scoreVerificacao?`<span>Score: ${r.scoreVerificacao}/100</span>`:''}</div></div>`;
+    }).join('');
+  }catch(e){document.getElementById('historicoLista').innerHTML='<div class="empty">Erro ao carregar histórico.</div>';}
 }
-
-function voltarInicio() { show('passo1'); }
+function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 </script>
 </body>
 </html>
