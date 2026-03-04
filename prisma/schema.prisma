@@ -90,6 +90,7 @@ model User {
   pedidosLoja   PedidoCompleto[]
   avatar        AtletaAvatar?
   iaConversa    IaConversa?
+  comportamentos ComportamentoCorredor[]
   iaPerfil      IaPerfilCorredor?
   comunidadesCriadas  Comunidade[]         @relation("CriadorComunidade")
   membroComunidades   MembroComunidade[]
