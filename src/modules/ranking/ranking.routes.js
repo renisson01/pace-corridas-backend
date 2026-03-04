@@ -140,3 +140,39 @@ async function rankingPorDistancia(distKm, genero) {
 
   return comResultado;
 }
+
+  // BUSCA DE ATLETAS
+  fastify.get('/buscar-atletas', async (req) => {
+    const { nome, estado, distancia, faixa, limit = 20 } = req.query;
+    const where = {};
+    if (nome)   where.name  = { contains: nome, mode: 'insensitive' };
+    if (estado) where.state = estado;
+
+    let atletas = await prisma.athlete.findMany({
+      where,
+      take: parseInt(limit),
+      orderBy: { totalPoints: 'desc' },
+      select: {
+        id:true, name:true, equipe:true, state:true, gender:true,
+        totalPoints:true, totalRaces:true,
+        results: {
+          orderBy: { points: 'desc' },
+          take: 1,
+          include: { race: { select: { name:true } } }
+        }
+      }
+    });
+
+    return atletas.map((a, i) => ({
+      posicao: i + 1,
+      id: a.id,
+      name: a.name,
+      equipe: a.equipe || null,
+      state: a.state || null,
+      gender: a.gender,
+      totalPoints: a.totalPoints,
+      totalRaces: a.totalRaces,
+      nivel: nivelAtleta(a.totalPoints).label,
+      melhorProva: a.results[0]?.race?.name || null,
+    }));
+  });
