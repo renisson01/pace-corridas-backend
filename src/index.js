@@ -1,38 +1,48 @@
-process.on("unhandledRejection", e => { console.error("❌ ERRO FATAL:", e); }); process.on("uncaughtException", e => { console.error("❌ CRASH:", e); });
+
+process.on("unhandledRejection", e => { console.error("❌ ERRO FATAL:", e); });
+process.on("uncaughtException", e => { console.error("❌ CRASH:", e); });
+
+if (!process.env.DATABASE_URL) { console.error("❌ DATABASE_URL não configurada!"); process.exit(1); }
+if (!process.env.JWT_SECRET)      console.warn('⚠️  JWT_SECRET não configurado — usando fallback INSEGURO!');
+if (!process.env.ADMIN_KEY)       console.warn('⚠️  ADMIN_KEY não configurado — usando fallback INSEGURO!');
+if (!process.env.MP_ACCESS_TOKEN) console.warn('⚠️  MP_ACCESS_TOKEN não configurado — pagamentos desativados.');
+if (!process.env.ANTHROPIC_API_KEY) console.warn('⚠️  ANTHROPIC_API_KEY não configurado — IA desativada.');
+
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-
+import helmet from '@fastify/helmet';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { raceRoutes }       from './modules/races/races.routes.js';
-import { resultsRoutes }    from './modules/results/results.routes.js';
-import { rankingRoutes }    from './modules/ranking/ranking.routes.js';
-import { scraperRoutes }    from './modules/scraper/scraper.routes.js';
-import { authRoutes }       from './modules/auth/auth.routes.js';
-import { organizerRoutes }  from './modules/organizer/organizer.routes.js';
-import { matchRoutes }      from './modules/match/match.routes.js';
-import { analyticsRoutes }  from './modules/analytics/analytics.routes.js';
-import { uploadRoutes }     from './modules/upload/upload.routes.js';
-import { socialRoutes }     from './modules/social/social.routes.js';
-import { assessoriaRoutes } from './modules/assessoria/assessoria.routes.js';
-import { lojaRoutes }       from './modules/loja/loja.routes.js';
-import { verifyRoutes }     from './modules/results/verify.routes.js';
-import { pagamentosRoutes } from './modules/pagamentos/pagamentos.routes.js';
-import { adminRoutes }      from './modules/admin/admin.routes.js';
-import { iaRoutes }         from './modules/ia/ia.routes.js';
-import { comunidadeRoutes } from './modules/comunidade/comunidade.routes.js';
-import { gpsRoutes }        from './modules/gps/gps.routes.js';
+import { raceRoutes }            from './modules/races/races.routes.js';
+import { resultsRoutes }         from './modules/results/results.routes.js';
+import { rankingRoutes }         from './modules/ranking/ranking.routes.js';
+import { scraperRoutes }         from './modules/scraper/scraper.routes.js';
+import { authRoutes }            from './modules/auth/auth.routes.js';
+import { organizerRoutes }       from './modules/organizer/organizer.routes.js';
+import { matchRoutes }           from './modules/match/match.routes.js';
+import { analyticsRoutes }       from './modules/analytics/analytics.routes.js';
+import { uploadRoutes }          from './modules/upload/upload.routes.js';
+import { socialRoutes }          from './modules/social/social.routes.js';
+import { assessoriaRoutes }      from './modules/assessoria/assessoria.routes.js';
+import { lojaRoutes }            from './modules/loja/loja.routes.js';
+import { verifyRoutes }          from './modules/results/verify.routes.js';
+import { pagamentosRoutes }      from './modules/pagamentos/pagamentos.routes.js';
+import { adminRoutes }           from './modules/admin/admin.routes.js';
+import { iaRoutes }              from './modules/ia/ia.routes.js';
+import { comunidadeRoutes }      from './modules/comunidade/comunidade.routes.js';
+import { gpsRoutes }             from './modules/gps/gps.routes.js';
 import { corridasAbertasRoutes } from './modules/corridas-abertas/corridas.routes.js';
+import { amigoPaceRoutes }       from './modules/amigo-pace/amigo-pace.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 const app = Fastify({ logger: false });
 
-// CORS
+await app.register(helmet, { contentSecurityPolicy: false });
+
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
   : ['https://web-production-990e7.up.railway.app'];
@@ -50,14 +60,13 @@ await app.register(rateLimit, {
   errorResponseBuilder: () => ({ error: 'Muitas requisições. Aguarde um momento.' })
 });
 
-// Cache HTML
 const htmlCache = {};
 const pages = [
   'index','entrar','perfil','calendario','resultados','social','elite','x1',
   'pacematch','organizador','stats','faixas','calculadoras','usuario',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
   'ia','ia-avatar','admin-pedidos','scraper','importar-resultado',
-  'comunidades','gps','corridas-abertas'
+  'comunidades','gps','corridas-abertas','amigo-pace'
 ];
 
 for (const pg of pages) {
@@ -82,7 +91,6 @@ app.get('/sw.js', async (req, reply) => {
   catch { reply.send(''); }
 });
 
-// ROTAS API
 try {
   await app.register(authRoutes);
   await app.register(raceRoutes);
@@ -103,7 +111,8 @@ try {
   await app.register(comunidadeRoutes);
   await app.register(gpsRoutes);
   await app.register(corridasAbertasRoutes);
-  console.log('✅ Todas as rotas registradas (v2.0 PACE BRAZIL)');
+  await app.register(amigoPaceRoutes);
+  console.log('✅ Todas as rotas registradas (v3.0 PACE BRAZIL)');
 } catch(e) {
   console.error('❌ ERRO ao registrar rotas:', e.message);
   console.error(e.stack);
@@ -111,5 +120,5 @@ try {
 
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
   if (err) { console.error('❌', err); process.exit(1); }
-  console.log('🏃 PACE BRAZIL online na porta ' + (process.env.PORT || 3000));
+  console.log('🏃 PACE BRAZIL v3.0 online na porta ' + (process.env.PORT || 3000));
 });
