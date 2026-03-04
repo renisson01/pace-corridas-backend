@@ -2,222 +2,236 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>PACE — Loja Oficial</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACE Loja</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-body{background:#0a0f1a;}
-.grad{background:linear-gradient(135deg,#22c55e,#16a34a);}
-.card-glass{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);}
-::-webkit-scrollbar{display:none;}
+:root{--verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(8,11,16,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);text-decoration:none}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-left:10px}
+.hero{background:linear-gradient(135deg,#080B10,#0A1A0F,#0D1117);padding:44px 20px 36px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,230,118,0.08),transparent 70%)}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:var(--verde);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(36px,8vw,64px);font-weight:900;line-height:1;margin-bottom:8px;letter-spacing:-1px}
+.hero h1 span{color:var(--verde)}
+.hero-sub{color:var(--muted);font-size:15px}
+.filtros{display:flex;gap:8px;overflow-x:auto;padding:14px 20px;background:var(--bg2);border-bottom:1px solid var(--border);scrollbar-width:none}
+.filtros::-webkit-scrollbar{display:none}
+.filtro-btn{white-space:nowrap;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Barlow',sans-serif}
+.filtro-btn.ativo{background:var(--verde);color:#080B10;border-color:var(--verde)}
+.filtro-btn:hover:not(.ativo){border-color:var(--verde);color:var(--verde)}
+.produtos-section{padding:24px 16px 90px;max-width:1100px;margin:0 auto}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900}
+.count-badge{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px 12px;font-size:12px;color:var(--muted)}
+.produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.produto-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.3s}
+.produto-card:hover{border-color:var(--verde);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,230,118,0.12)}
+.produto-img{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--bg3)}
+.produto-img-placeholder{width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,var(--bg3),var(--surface));display:flex;align-items:center;justify-content:center;font-size:64px}
+.produto-info{padding:16px}
+.produto-categoria{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.produto-nome{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px;line-height:1.2}
+.produto-assessoria{font-size:12px;color:var(--muted);margin-bottom:10px}
+.tamanhos-preview{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.tam-chip{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:var(--muted)}
+.produto-footer{display:flex;align-items:center;justify-content:space-between}
+.produto-preco{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:var(--verde)}
+.produto-preco small{font-size:12px;font-weight:400;color:var(--muted);display:block}
+.ver-btn{background:var(--verde);color:#080B10;border:none;border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Barlow',sans-serif}
+.ver-btn:hover{background:var(--verde2);transform:scale(1.05)}
+.skeleton{animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.skeleton-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.skeleton-img{background:var(--surface);aspect-ratio:1/1}
+.skeleton-info{padding:16px}
+.skeleton-line{background:var(--surface);border-radius:6px;height:14px;margin-bottom:8px}
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;animation:slideUp 0.3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-header{padding:20px 20px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1;border-bottom:1px solid var(--border)}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900}
+.modal-close{background:var(--surface);border:none;color:var(--text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:20px}
+.modal-img{width:100%;border-radius:16px;aspect-ratio:4/3;object-fit:cover;background:var(--bg3);margin-bottom:16px}
+.modal-preco{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:var(--verde);margin-bottom:6px}
+.modal-desc{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px}
+.label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.tamanhos-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tam-btn{background:var(--bg3);border:2px solid var(--border);color:var(--text);padding:8px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Barlow',sans-serif}
+.tam-btn.sel{background:var(--verde);color:#080B10;border-color:var(--verde)}
+.tam-btn:hover:not(.sel){border-color:var(--verde);color:var(--verde)}
+.qtd-ctrl{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.qtd-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.qtd-num{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;min-width:32px;text-align:center}
+.comprar-btn{width:100%;padding:16px;background:var(--verde);color:#080B10;border:none;border-radius:14px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;margin-bottom:10px}
+.comprar-btn:hover{background:var(--verde2);transform:scale(1.02)}
+.comprar-btn:disabled{background:var(--surface);color:var(--muted);cursor:not-allowed;transform:none}
+.wa-btn{width:100%;padding:14px;background:#25D366;color:white;border:none;border-radius:14px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:all 0.2s}
+.wa-btn:hover{background:#128C7E}
+.login-warning{background:rgba(255,109,0,0.1);border:1px solid rgba(255,109,0,0.3);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:#FF6D00;text-align:center}
+.login-warning a{color:var(--verde);font-weight:700}
+.empty{text-align:center;padding:60px 20px;grid-column:1/-1}
+.empty-icon{font-size:64px;margin-bottom:16px}
+.empty h3{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px}
+.empty p{color:var(--muted);font-size:14px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--verde);color:#080B10;padding:12px 24px;border-radius:20px;font-weight:700;font-size:14px;z-index:300;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 0 12px;z-index:100}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;padding:4px 12px}
+.nav-icon{font-size:20px}
+.nav-label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.nav-item.ativo .nav-label{color:var(--verde)}
 </style>
 </head>
-<body class="text-white min-h-screen pb-24">
-
-<header class="sticky top-0 z-40 px-4 py-3 flex items-center gap-3" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.08);">
-  <a href="/" class="text-slate-400 text-xl">←</a>
-  <div class="flex-1">
-    <h1 class="font-black text-lg leading-none">👕 Loja PACE</h1>
-    <p class="text-xs text-slate-400">Camisas oficiais para corredores</p>
+<body>
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:8px">
+    <a href="/" class="logo">PACE</a>
+    <span style="color:var(--border)">|</span>
+    <span class="topbar-title">Loja</span>
   </div>
-  <a href="https://www.instagram.com/estampacecamisetas" target="_blank"
-    class="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-bold"
-    style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:white;">
-    📸 Instagram
-  </a>
-</header>
-
-<!-- BANNER INSTAGRAM -->
-<div class="mx-4 mt-4 rounded-2xl overflow-hidden" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);">
-  <a href="https://www.instagram.com/estampacecamisetas" target="_blank" class="flex items-center gap-3 p-4">
-    <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-2xl">📸</div>
-    <div class="flex-1">
-      <p class="font-black text-sm">@estampacecamisetas</p>
-      <p class="text-xs text-white/80">Veja nossos modelos no Instagram</p>
+</div>
+<div class="hero">
+  <div class="hero-tag">✦ Coleção 2026</div>
+  <h1>PACE <span>STORE</span></h1>
+  <p class="hero-sub">Camisetas oficiais · Grupos de corrida · Equipamentos</p>
+</div>
+<div class="filtros">
+  <button class="filtro-btn ativo" onclick="filtrar(this,'')">Todos</button>
+  <button class="filtro-btn" onclick="filtrar(this,'camisa')">👕 Camisetas</button>
+  <button class="filtro-btn" onclick="filtrar(this,'bone')">🧢 Bonés</button>
+  <button class="filtro-btn" onclick="filtrar(this,'acessorio')">⌚ Acessórios</button>
+  <button class="filtro-btn" onclick="filtrar(this,'kit')">📦 Kits</button>
+</div>
+<div class="produtos-section">
+  <div class="section-header">
+    <span class="section-title">Produtos</span>
+    <span class="count-badge" id="countBadge">carregando...</span>
+  </div>
+  <div class="produtos-grid" id="grid">
+    <div class="skeleton-card skeleton"><div class="skeleton-img"></div><div class="skeleton-info"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:80%"></div><div class="skeleton-line" style="width:55%"></div></div></div>
+    <div class="skeleton-card skeleton"><div class="skeleton-img"></div><div class="skeleton-info"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:80%"></div><div class="skeleton-line" style="width:55%"></div></div></div>
+    <div class="skeleton-card skeleton"><div class="skeleton-img"></div><div class="skeleton-info"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:80%"></div><div class="skeleton-line" style="width:55%"></div></div></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalNome">Produto</span>
+      <button class="modal-close" onclick="fecharModalDireto()">✕</button>
     </div>
-    <span class="text-white/80 text-lg">→</span>
-  </a>
-</div>
-
-<!-- FILTROS -->
-<div class="px-4 mt-4 flex gap-2 overflow-x-auto pb-1">
-  <button onclick="filtrar('')"         id="f-"        class="filtro whitespace-nowrap text-xs font-black bg-green-500 text-black px-4 py-2 rounded-full">Todos</button>
-  <button onclick="filtrar('camisa')"   id="f-camisa"  class="filtro whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full">👕 Camisas</button>
-  <button onclick="filtrar('shorts')"   id="f-shorts"  class="filtro whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full">🩳 Shorts</button>
-  <button onclick="filtrar('bone')"     id="f-bone"    class="filtro whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full">🧢 Bonés</button>
-  <button onclick="filtrar('acessorio')" id="f-acessorio" class="filtro whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full">⌚ Acessórios</button>
-</div>
-
-<!-- PRODUTOS -->
-<div class="px-4 mt-4 pb-4">
-  <div id="produtos" class="grid grid-cols-2 gap-3">
-    <div class="card-glass rounded-2xl p-4 animate-pulse col-span-2 h-32"></div>
-  </div>
-  <div id="vazio" class="hidden text-center py-12">
-    <p class="text-5xl mb-3">👕</p>
-    <p class="font-black text-lg mb-1">Em breve!</p>
-    <p class="text-slate-400 text-sm mb-4">Estamos preparando os produtos. Veja os modelos no Instagram!</p>
-    <a href="https://www.instagram.com/estampacecamisetas" target="_blank"
-      class="inline-block px-6 py-3 rounded-2xl font-black text-white text-sm"
-      style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);">
-      📸 Ver no Instagram
-    </a>
+    <div class="modal-body">
+      <div id="modalImgWrap"></div>
+      <div class="modal-preco" id="modalPreco"></div>
+      <p class="modal-desc" id="modalDesc"></p>
+      <div id="loginWarn"></div>
+      <div id="tamanhosWrap"></div>
+      <div class="label">Quantidade</div>
+      <div class="qtd-ctrl">
+        <button class="qtd-btn" onclick="mudaQtd(-1)">−</button>
+        <span class="qtd-num" id="qtdNum">1</span>
+        <button class="qtd-btn" onclick="mudaQtd(1)">+</button>
+      </div>
+      <button class="comprar-btn" id="comprarBtn" onclick="comprar()">🛒 COMPRAR AGORA</button>
+      <a class="wa-btn" id="waBtn" href="#" target="_blank">💬 Pedir pelo WhatsApp</a>
+    </div>
   </div>
 </div>
-
-<!-- MODAL PRODUTO -->
-<div id="modal" class="fixed inset-0 z-50 hidden items-end justify-center" style="background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);">
-  <div class="w-full max-w-lg rounded-t-3xl overflow-hidden" style="background:#111827;border-top:1px solid rgba(255,255,255,0.1);max-height:90vh;overflow-y:auto;">
-    <div class="flex justify-center pt-3 pb-1"><div class="w-10 h-1 bg-slate-700 rounded-full"></div></div>
-    <div id="modal-content" class="p-5"></div>
-  </div>
-</div>
-
-<nav class="fixed bottom-0 left-0 right-0 z-50" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);">
-  <div class="flex justify-around py-2">
-    <a href="/" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏠</span><span>Início</span></a>
-    <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">📅</span><span>Corridas</span></a>
-    <a href="/elite.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏆</span><span>Ranking</span></a>
-    <a href="/loja.html" class="flex flex-col items-center text-xs text-green-400 py-1 px-3"><span class="text-xl">👕</span><span class="font-bold">Loja</span></a>
-    <a href="/ia.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">🏃</span><span>IA</span></a>
-    <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-3"><span class="text-xl">👤</span><span>Perfil</span></a>
-  </div>
+<div class="toast" id="toast"></div>
+<nav class="bottom-nav">
+  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
+  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
+  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
+  <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
+  <a href="/loja.html" class="nav-item ativo"><span class="nav-icon">🛒</span><span class="nav-label">Loja</span></a>
 </nav>
-
 <script>
-const token = localStorage.getItem('pace_token');
-const WPP = '5579998020798';
-let todos = [], catAtual = '';
+let produtos=[],categoriaAtual='',produtoAtual=null,qtd=1,tamanhoSel='';
+const token=localStorage.getItem('token');
 
-async function carregarProdutos() {
-  try {
-    const r = await fetch('/loja/produtos');
-    todos = await r.json() || [];
-    renderizar();
-  } catch { renderizar(); }
-}
-
-function filtrar(cat) {
-  catAtual = cat;
-  document.querySelectorAll('.filtro').forEach(b => {
-    b.className = 'filtro whitespace-nowrap text-xs bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-full';
-  });
-  const id = 'f-' + cat;
-  const el = document.getElementById(id);
-  if (el) el.className = 'filtro whitespace-nowrap text-xs font-black bg-green-500 text-black px-4 py-2 rounded-full';
-  renderizar();
-}
-
-function renderizar() {
-  const lista = catAtual ? todos.filter(p => p.categoria === catAtual) : todos;
-  const el = document.getElementById('produtos');
-  if (!lista.length) {
-    el.innerHTML = '';
-    document.getElementById('vazio').classList.remove('hidden');
-    return;
+async function carregarProdutos(){
+  try{
+    const url=categoriaAtual?`/loja/produtos?categoria=${categoriaAtual}`:'/loja/produtos';
+    const res=await fetch(url);
+    produtos=await res.json();
+    renderProdutos(produtos);
+  }catch(e){
+    document.getElementById('grid').innerHTML='<div class="empty"><div class="empty-icon">😕</div><h3>Erro ao carregar</h3><p>Verifique sua conexão</p></div>';
   }
-  document.getElementById('vazio').classList.add('hidden');
-  el.innerHTML = lista.map(p => `
-    <div onclick="abrirProduto('${p.id}')" class="card-glass rounded-2xl overflow-hidden cursor-pointer active:scale-95 transition-transform">
-      <div class="w-full h-44 bg-slate-800 flex items-center justify-center overflow-hidden">
-        ${p.imagem
-          ? `<img src="${p.imagem}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<span class=\\'text-5xl\\'>👕</span>'">`
-          : '<span class="text-5xl">👕</span>'}
+}
+
+function renderProdutos(lista){
+  document.getElementById('countBadge').textContent=`${lista.length} produto${lista.length!==1?'s':''}`;
+  if(!lista.length){document.getElementById('grid').innerHTML='<div class="empty"><div class="empty-icon">🛍️</div><h3>Nenhum produto ainda</h3><p>Em breve novidades!</p></div>';return;}
+  document.getElementById('grid').innerHTML=lista.map(p=>{
+    const fotos=p.fotos?p.fotos.split(',').filter(Boolean):[];
+    const tams=p.tamanhos?p.tamanhos.split(',').slice(0,4):[];
+    return `<div class="produto-card" onclick="abrirModal('${p.id}')">
+      ${fotos[0]?`<img class="produto-img" src="${fotos[0]}" alt="${p.nome}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="produto-img-placeholder" style="display:none">👕</div>`:`<div class="produto-img-placeholder">👕</div>`}
+      <div class="produto-info">
+        <div class="produto-categoria">${p.categoria||'produto'}</div>
+        <div class="produto-nome">${p.nome}</div>
+        ${p.assessoria?`<div class="produto-assessoria">🏃 ${p.assessoria.nome}</div>`:''}
+        ${tams.length?`<div class="tamanhos-preview">${tams.map(t=>`<span class="tam-chip">${t.trim()}</span>`).join('')}${p.tamanhos.split(',').length>4?'<span class="tam-chip">+</span>':''}</div>`:''}
+        <div class="produto-footer">
+          <div class="produto-preco"><small>R$</small>${parseFloat(p.preco).toFixed(2).replace('.',',')}</div>
+          <button class="ver-btn">Ver →</button>
+        </div>
       </div>
-      <div class="p-3">
-        <p class="font-black text-sm leading-tight">${p.nome}</p>
-        <p class="text-green-400 font-bold text-sm mt-1">R$ ${parseFloat(p.preco||0).toFixed(2)}</p>
-        <p class="text-xs text-slate-500 mt-0.5">${p.variantes?.length ? 'Vários tamanhos' : ''}</p>
-      </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-function abrirProduto(id) {
-  const p = todos.find(x => x.id === id);
-  if (!p) return;
-
-  const tamanhos = [...new Set(p.variantes?.map(v => v.tamanho) || [])];
-  const cores = [...new Set(p.variantes?.map(v => v.cor) || [])];
-
-  document.getElementById('modal-content').innerHTML = `
-    <div class="w-full h-64 bg-slate-800 rounded-2xl flex items-center justify-center overflow-hidden mb-4">
-      ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover rounded-2xl">` : '<span class="text-8xl">👕</span>'}
-    </div>
-    <h2 class="font-black text-xl mb-1">${p.nome}</h2>
-    <p class="text-green-400 font-black text-2xl mb-3">R$ ${parseFloat(p.preco||0).toFixed(2)}</p>
-    ${p.descricao ? `<p class="text-slate-400 text-sm mb-4">${p.descricao}</p>` : ''}
-    ${cores.length > 1 ? `
-    <div class="mb-4">
-      <p class="text-xs text-slate-400 font-bold mb-2">COR</p>
-      <div class="flex gap-2 flex-wrap" id="cores-sel">
-        ${cores.map((c,i) => `<button onclick="selecionarCor('${c}')" id="cor-${c}" class="cor-btn text-xs px-3 py-2 rounded-xl border ${i===0?'bg-green-500 text-black border-green-500':'bg-slate-800 border-slate-700 text-slate-300'}">${c}</button>`).join('')}
-      </div>
-    </div>` : ''}
-    ${tamanhos.length ? `
-    <div class="mb-4">
-      <p class="text-xs text-slate-400 font-bold mb-2">TAMANHO</p>
-      <div class="flex gap-2 flex-wrap" id="tam-sel">
-        ${tamanhos.map((t,i) => `<button onclick="selecionarTam('${t}')" id="tam-${t}" class="tam-btn w-12 h-12 rounded-xl border text-sm font-bold ${i===0?'bg-green-500 text-black border-green-500':'bg-slate-800 border-slate-700 text-slate-300'}">${t}</button>`).join('')}
-      </div>
-    </div>` : ''}
-    <button onclick="comprarWhatsApp('${p.id}','${p.nome}', ${p.preco})" class="w-full py-4 rounded-2xl font-black text-black text-base mb-3 active:scale-95 transition-all" style="background:linear-gradient(135deg,#25d366,#128c7e);">
-      💬 Comprar pelo WhatsApp
-    </button>
-    <a href="https://www.instagram.com/estampacecamisetas" target="_blank" class="block w-full py-3 rounded-2xl font-bold text-white text-sm text-center" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);">
-      📸 Ver mais modelos no Instagram
-    </a>`;
-
-  document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('modal').classList.add('flex');
+function abrirModal(id){
+  const p=produtos.find(x=>x.id===id);if(!p)return;
+  produtoAtual=p;qtd=1;tamanhoSel='';
+  document.getElementById('modalNome').textContent=p.nome;
+  document.getElementById('modalPreco').innerHTML=`<small style="font-size:16px;color:var(--muted)">R$ </small>${parseFloat(p.preco).toFixed(2).replace('.',',')}`;
+  document.getElementById('modalDesc').textContent=p.descricao||'Produto oficial PACE Brasil.';
+  document.getElementById('qtdNum').textContent='1';
+  const fotos=p.fotos?p.fotos.split(',').filter(Boolean):[];
+  document.getElementById('modalImgWrap').innerHTML=fotos[0]?`<img class="modal-img" src="${fotos[0]}" alt="${p.nome}">`:`<div class="modal-img" style="display:flex;align-items:center;justify-content:center;font-size:80px">👕</div>`;
+  document.getElementById('loginWarn').innerHTML=!token?`<div class="login-warning">⚠️ <a href="/entrar.html">Faça login</a> para comprar. Ou use o WhatsApp abaixo.</div>`:'';
+  const tams=p.tamanhos?p.tamanhos.split(',').filter(Boolean):[];
+  document.getElementById('tamanhosWrap').innerHTML=tams.length?`<div class="label">Tamanho</div><div class="tamanhos-grid">${tams.map(t=>`<button class="tam-btn" onclick="selecionarTam(this,'${t.trim()}')">${t.trim()}</button>`).join('')}</div>`:'';
+  const wap=p.assessoria?.whatsapp||'5579999999999';
+  const msg=encodeURIComponent(`🏃 Olá! Tenho interesse no produto *${p.nome}* — R$ ${parseFloat(p.preco).toFixed(2)}`);
+  document.getElementById('waBtn').href=`https://wa.me/${wap.replace(/\D/g,'')}?text=${msg}`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
 }
 
-let tamSel = '', corSel = '';
-function selecionarTam(t) {
-  tamSel = t;
-  document.querySelectorAll('.tam-btn').forEach(b => b.className = 'tam-btn w-12 h-12 rounded-xl border text-sm font-bold bg-slate-800 border-slate-700 text-slate-300');
-  const el = document.getElementById('tam-'+t);
-  if (el) el.className = 'tam-btn w-12 h-12 rounded-xl border text-sm font-bold bg-green-500 text-black border-green-500';
-}
-function selecionarCor(c) {
-  corSel = c;
-  document.querySelectorAll('.cor-btn').forEach(b => b.className = 'cor-btn text-xs px-3 py-2 rounded-xl border bg-slate-800 border-slate-700 text-slate-300');
-  const el = document.getElementById('cor-'+c);
-  if (el) el.className = 'cor-btn text-xs px-3 py-2 rounded-xl border bg-green-500 text-black border-green-500';
-}
+function fecharModal(e){if(e.target===document.getElementById('modalOverlay'))fecharModalDireto();}
+function fecharModalDireto(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
+function selecionarTam(btn,tam){document.querySelectorAll('.tam-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');tamanhoSel=tam;}
+function mudaQtd(d){qtd=Math.max(1,Math.min(10,qtd+d));document.getElementById('qtdNum').textContent=qtd;}
 
-async function comprarWhatsApp(produtoId, nome, preco) {
-  const tam = tamSel || 'M';
-  const cor = corSel || '';
-
-  // Tentar MP Checkout Pro primeiro
-  try {
-    const btn = event?.target;
-    if (btn) { btn.textContent = '⏳ Gerando pagamento...'; btn.disabled = true; }
-
-    const r = await fetch('/pagamentos/loja', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ produtoId, tamanho: tam, cor, quantidade: 1 })
-    });
-    const d = await r.json();
-    if (d.url) {
-      window.open(d.url, '_blank');
-      if (btn) { btn.textContent = '💬 Comprar'; btn.disabled = false; }
-      return;
-    }
-  } catch(e) { console.warn('MP indisponível, usando WhatsApp'); }
-
-  // Fallback: WhatsApp
-  const msg = `Olá! Quero comprar pelo app PACE:\n\n👕 *${nome}*\n📏 Tamanho: ${tam}${cor ? '\n🎨 Cor: '+cor : ''}\n💰 R$ ${parseFloat(preco).toFixed(2)}\n\nPode me ajudar?`;
-  window.open(`https://wa.me/${WPP}?text=${encodeURIComponent(msg)}`, '_blank');
+async function comprar(){
+  if(!token){mostrarToast('⚠️ Faça login primeiro!');return;}
+  const tams=produtoAtual.tamanhos?produtoAtual.tamanhos.split(',').filter(Boolean):[];
+  if(tams.length&&!tamanhoSel){mostrarToast('👆 Selecione um tamanho!');return;}
+  const btn=document.getElementById('comprarBtn');
+  btn.disabled=true;btn.textContent='Processando...';
+  try{
+    const res=await fetch('/loja/pedidos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({produtoId:produtoAtual.id,tamanho:tamanhoSel,quantidade:qtd})});
+    const data=await res.json();
+    if(data.waLink){mostrarToast('✅ Pedido criado!');setTimeout(()=>window.open(data.waLink,'_blank'),1000);fecharModalDireto();}
+    else mostrarToast(data.error||'Erro ao fazer pedido');
+  }catch(e){mostrarToast('Erro de conexão');}
+  finally{btn.disabled=false;btn.textContent='🛒 COMPRAR AGORA';}
 }
 
-document.getElementById('modal').addEventListener('click', function(e) {
-  if (e.target === this) {
-    this.classList.add('hidden');
-    this.classList.remove('flex');
-  }
-});
+function filtrar(btn,cat){document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('ativo'));btn.classList.add('ativo');categoriaAtual=cat;carregarProdutos();}
+function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+const p=new URLSearchParams(window.location.search);
+if(p.get('pagamento')==='sucesso')mostrarToast('✅ Pagamento aprovado!');
+if(p.get('pagamento')==='erro')mostrarToast('❌ Erro no pagamento');
 
 carregarProdutos();
 </script>
