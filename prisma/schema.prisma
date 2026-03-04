@@ -551,3 +551,14 @@ model PagamentoRegistro {
   status       String   @default("aprovado")
   criadoEm    DateTime @default(now())
 }
+
+model ComportamentoCorredor {
+  id         String   @id @default(cuid())
+  userId     String
+  intencao   String
+  topico     String
+  hora       Int
+  diaSemana  Int
+  criadoEm  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
