@@ -199,5 +199,53 @@ export async function adminRoutes(fastify) {
       return { ok:true, removidos:ids.length, criados, resultados };
     } catch(e) { return reply.code(500).send({ error:e.message }); }
   });
+  // SEED RESULTADO — inserir atleta + resultado de corrida real
+  fastify.post('/admin/seed-resultado', async (req, reply) => {
+    const key = req.headers['x-admin-key'] || req.body?.key;
+    if (key !== ADMIN_KEY) return reply.code(403).send({ error: 'Nao autorizado' });
+    try {
+      const { nome, genero, equipe, corrida, corridaData, corridaCidade, tempo, posicao, distancia } = req.body;
+
+      // Buscar ou criar corrida
+      let race = await prisma.race.findFirst({ where: { name: { contains: corrida.substring(0,25), mode:'insensitive' } } });
+      if (!race) {
+        race = await prisma.race.create({ data: {
+          name: corrida, city: corridaCidade || 'Sergipe', state: 'SE',
+          date: new Date(corridaData || '2026-01-01'),
+          distances: distancia || '3km', organizer: 'Oficial', status: 'completed'
+        }});
+      }
+
+      // Buscar ou criar atleta
+      let athlete = await prisma.athlete.findFirst({ where: { name: { equals: nome, mode:'insensitive' } } });
+      if (!athlete) {
+        athlete = await prisma.athlete.create({ data: {
+          name: nome, gender: genero || 'M', equipe: equipe || null,
+          city: corridaCidade || 'Sergipe', state: 'SE', totalRaces: 0, totalPoints: 0
+        }});
+      }
+
+      // Verificar se resultado ja existe
+      const existe = await prisma.result.findUnique({ where: { athleteId_raceId: { athleteId: athlete.id, raceId: race.id } } });
+      if (existe) return { ok: true, status: 'ja_existe', atletaId: athlete.id };
+
+      // Pontos por posicao
+      const pts = posicao <= 1 ? 100 : posicao <= 3 ? 80 : posicao <= 10 ? 60 : posicao <= 20 ? 40 : 20;
+
+      await prisma.result.create({ data: {
+        athleteId: athlete.id, raceId: race.id,
+        time: tempo, overallRank: posicao, genderRank: posicao,
+        distance: distancia || '3km', points: pts
+      }});
+
+      await prisma.athlete.update({ where: { id: athlete.id }, data: {
+        totalRaces: { increment: 1 }, totalPoints: { increment: pts }
+      }});
+
+      return { ok: true, status: 'criado', atletaId: athlete.id, raceId: race.id };
+    } catch(e) { return reply.code(500).send({ error: e.message }); }
+  });
+
+
 }
 // PATCH aplicado via append - ignorar, o array ELITE já tem os atletas
