@@ -1,172 +1,108 @@
-import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
 
-// ✅ FIX: Prisma instanciado uma única vez no módulo, não dentro de cada requisição
 const prisma = new PrismaClient();
-
-// ✅ FIX: Verificar se token existe antes de inicializar o cliente MP
 const MP_TOKEN = process.env.MP_ACCESS_TOKEN || '';
-if (!MP_TOKEN) {
-  console.warn('[MP] AVISO: MP_ACCESS_TOKEN não configurado! Pagamentos estarão desativados.');
-}
+if (!MP_TOKEN) console.warn('[MP] AVISO: MP_ACCESS_TOKEN não configurado!');
 
-const client = new MercadoPagoConfig({ 
-  accessToken: MP_TOKEN,
-});
-
+const client = new MercadoPagoConfig({ accessToken: MP_TOKEN });
 const BASE_URL = process.env.BASE_URL || 'https://web-production-990e7.up.railway.app';
-
-// ✅ FIX: Taxa documentada corretamente
-const TAXA_PLATAFORMA = 0.15; // 15% de taxa de serviço da plataforma
+const TAXA_PLATAFORMA = 0.15;
+const votosX1 = { pedro: 0, tiago: 0, doacoes: [] };
 
 export async function pagamentosRoutes(fastify) {
 
-  // POST /pagamentos/loja — gera link de pagamento para produto da loja
   fastify.post('/pagamentos/loja', async (req, reply) => {
-    // ✅ FIX: Bloquear se MP não estiver configurado
-    if (!MP_TOKEN) {
-      return reply.code(503).send({ error: 'Sistema de pagamentos não configurado.' });
-    }
-
+    if (!MP_TOKEN) return reply.code(503).send({ error: 'Pagamentos não configurados. Configure MP_ACCESS_TOKEN no Railway.' });
     try {
-      const { produtoId, tamanho, cor, quantidade = 1, compradorNome, compradorEmail } = req.body || {};
+      const { produtoId, tamanho, cor, quantidade = 1, compradorNome, compradorEmail, pedidoId } = req.body || {};
       if (!produtoId) return reply.code(400).send({ error: 'produtoId obrigatório' });
-
-      // ✅ FIX: Usando a instância única do Prisma (sem criar/desconectar a cada req)
       const p = await prisma.produto.findUnique({ where: { id: produtoId } }).catch(() => null);
       if (!p) return reply.code(404).send({ error: 'Produto não encontrado' });
-
+      const ref = pedidoId ? `loja-${pedidoId}` : `loja-${produtoId}-${Date.now()}`;
       const preference = new Preference(client);
-      const result = await preference.create({
-        body: {
-          items: [{
-            id: p.id,
-            title: `${p.nome}${tamanho ? ' — Tam. '+tamanho : ''}${cor ? ' / '+cor : ''}`,
-            description: p.descricao || 'Camisa PACE',
-            quantity: parseInt(quantidade),
-            unit_price: parseFloat(p.preco),
-            currency_id: 'BRL',
-            category_id: 'fashion',
-          }],
-          payer: {
-            name: compradorNome || '',
-            email: compradorEmail || '',
-          },
-          payment_methods: {
-            excluded_payment_types: [],
-            installments: 12,
-          },
-          back_urls: {
-            success: `${BASE_URL}/loja.html?pagamento=sucesso`,
-            failure: `${BASE_URL}/loja.html?pagamento=erro`,
-            pending: `${BASE_URL}/loja.html?pagamento=pendente`,
-          },
-          auto_return: 'approved',
-          statement_descriptor: 'PACE CORRIDAS',
-          external_reference: `loja-${produtoId}-${Date.now()}`,
-          notification_url: `${BASE_URL}/pagamentos/webhook`,
-        }
-      });
-
-      return { 
-        url: result.init_point,
-        preferenceId: result.id,
-        produto: p.nome,
-        valor: p.preco
-      };
-    } catch(e) {
+      const result = await preference.create({ body: { items: [{ id: p.id, title: `${p.nome}${tamanho ? ' — Tam. '+tamanho : ''}${cor ? ' / '+cor : ''}`, description: p.descricao || 'Produto PACE', quantity: parseInt(quantidade), unit_price: parseFloat(p.preco), currency_id: 'BRL', category_id: 'fashion' }], payer: { name: compradorNome || '', email: compradorEmail || '' }, payment_methods: { installments: 12 }, back_urls: { success: `${BASE_URL}/loja.html?pagamento=sucesso`, failure: `${BASE_URL}/loja.html?pagamento=erro`, pending: `${BASE_URL}/loja.html?pagamento=pendente` }, auto_return: 'approved', statement_descriptor: 'PACE CORRIDAS', external_reference: ref, notification_url: `${BASE_URL}/pagamentos/webhook` } });
+      return { url: result.init_point, preferenceId: result.id, produto: p.nome, valor: p.preco, ref };
+    } catch (e) {
       console.error('[MP LOJA]', e.message);
-      // ✅ FIX: Mensagem de erro mais amigável
-      return reply.code(500).send({ error: 'Erro ao gerar link de pagamento. Tente novamente.' });
+      return reply.code(500).send({ error: 'Erro ao gerar link de pagamento.' });
     }
   });
 
-  // POST /pagamentos/doacao-x1 — gera link de doação para o X1
   fastify.post('/pagamentos/doacao-x1', async (req, reply) => {
-    if (!MP_TOKEN) {
-      return reply.code(503).send({ error: 'Sistema de pagamentos não configurado.' });
-    }
-
+    if (!MP_TOKEN) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
     try {
       const { valor, atletaApoio, doadorNome, doadorEmail } = req.body || {};
       if (!valor || valor < 5) return reply.code(400).send({ error: 'Valor mínimo R$ 5,00' });
-
+      if (!atletaApoio) return reply.code(400).send({ error: 'atletaApoio obrigatório' });
       const valorTotal = parseFloat(valor);
-      const valorAtleta = valorTotal * (1 - TAXA_PLATAFORMA); // ✅ FIX: Taxa correta (15%)
-
+      const valorAtleta = parseFloat((valorTotal * (1 - TAXA_PLATAFORMA)).toFixed(2));
+      const atletaNome = atletaApoio === 'pedro' ? 'Pedrinho 19km' : 'Tiago Portões 17km';
       const preference = new Preference(client);
-      const result = await preference.create({
-        body: {
-          items: [{
-            id: `doacao-x1-${Date.now()}`,
-            title: `Apoio X1 — ${atletaApoio === 'pedro' ? 'Pedrinho 19km' : 'Tiago Portões 17km'}`,
-            description: `Doação ao vencedor. Taxa de serviço PACE: ${TAXA_PLATAFORMA * 100}%. Valor ao atleta: R$ ${valorAtleta.toFixed(2)}`,
-            quantity: 1,
-            unit_price: valorTotal,
-            currency_id: 'BRL',
-            category_id: 'services',
-          }],
-          payer: {
-            name: doadorNome || 'Torcedor',
-            email: doadorEmail || '',
-          },
-          payment_methods: {
-            installments: 1,
-          },
-          back_urls: {
-            success: `${BASE_URL}/x1.html?doacao=sucesso&atleta=${atletaApoio}&valor=${valorTotal}`,
-            failure: `${BASE_URL}/x1.html?doacao=erro`,
-            pending: `${BASE_URL}/x1.html?doacao=pendente`,
-          },
-          auto_return: 'approved',
-          statement_descriptor: 'PACE X1',
-          external_reference: `x1-${atletaApoio}-${Date.now()}`,
-          notification_url: `${BASE_URL}/pagamentos/webhook`,
-        }
-      });
-
-      return {
-        url: result.init_point,
-        preferenceId: result.id,
-        valorTotal,
-        valorAtleta: parseFloat(valorAtleta.toFixed(2)),
-        taxaPlataforma: parseFloat((valorTotal * TAXA_PLATAFORMA).toFixed(2)),
-        atleta: atletaApoio
-      };
-    } catch(e) {
+      const result = await preference.create({ body: { items: [{ id: `x1-${Date.now()}`, title: `🏃 Apoio X1 — ${atletaNome}`, description: `Taxa PACE: ${TAXA_PLATAFORMA*100}%. Atleta recebe: R$ ${valorAtleta}`, quantity: 1, unit_price: valorTotal, currency_id: 'BRL', category_id: 'services' }], payer: { name: doadorNome || 'Torcedor', email: doadorEmail || '' }, payment_methods: { installments: 1 }, back_urls: { success: `${BASE_URL}/x1.html?doacao=sucesso&atleta=${atletaApoio}&valor=${valorTotal}`, failure: `${BASE_URL}/x1.html?doacao=erro`, pending: `${BASE_URL}/x1.html?doacao=pendente` }, auto_return: 'approved', statement_descriptor: 'PACE X1', external_reference: `x1-${atletaApoio}-${Date.now()}`, notification_url: `${BASE_URL}/pagamentos/webhook` } });
+      return { url: result.init_point, preferenceId: result.id, valorTotal, valorAtleta, taxaPlataforma: parseFloat((valorTotal*TAXA_PLATAFORMA).toFixed(2)), atleta: atletaApoio, atletaNome };
+    } catch (e) {
       console.error('[MP DOACAO]', e.message);
       return reply.code(500).send({ error: e.message });
     }
   });
 
-  // POST /pagamentos/webhook — recebe notificações do MP
-  fastify.post('/pagamentos/webhook', async (req, reply) => {
+  fastify.get('/pagamentos/x1/votos', async (req, reply) => {
     try {
-      const { type, data } = req.body || {};
-      console.log('[MP WEBHOOK]', type, data?.id);
-
-      // ✅ FIX: Processar pagamento aprovado (básico)
-      if (type === 'payment' && data?.id) {
-        console.log('[MP WEBHOOK] Pagamento recebido, ID:', data.id);
-        // TODO: buscar detalhes do pagamento via API do MP e registrar no banco
-        // Exemplo futuro:
-        // const payment = await new Payment(client).get({ id: data.id });
-        // if (payment.status === 'approved') { ... registrar no banco ... }
-      }
-
-      return reply.code(200).send({ ok: true });
-    } catch(e) {
-      return reply.code(200).send({ ok: true }); // sempre 200 para MP
+      const doacoes = await prisma.pagamentoRegistro.findMany({ where: { tipo: 'x1', status: 'aprovado' }, orderBy: { criadoEm: 'desc' } }).catch(() => []);
+      const placar = { pedro: 0, tiago: 0, totalArrecadado: 0, doacoes: [] };
+      doacoes.forEach(d => {
+        if (d.atletaRef === 'pedro') placar.pedro += d.valor;
+        else if (d.atletaRef === 'tiago') placar.tiago += d.valor;
+        placar.totalArrecadado += d.valor;
+        placar.doacoes.push({ atleta: d.atletaRef, valor: d.valor, doador: d.doadorNome || 'Anônimo', quando: d.criadoEm });
+      });
+      if (placar.totalArrecadado === 0 && votosX1.doacoes.length > 0) return { ...votosX1, fonte: 'memoria' };
+      return { ...placar, fonte: 'banco' };
+    } catch (e) {
+      return { pedro: votosX1.pedro, tiago: votosX1.tiago, doacoes: votosX1.doacoes };
     }
   });
 
-  // GET /pagamentos/status — verificar se MP está configurado
+  fastify.post('/pagamentos/webhook', async (req, reply) => {
+    reply.code(200).send({ ok: true });
+    try {
+      const { type, data } = req.body || {};
+      if (type !== 'payment' || !data?.id) return;
+      const paymentApi = new Payment(client);
+      const payment = await paymentApi.get({ id: data.id });
+      console.log('[WEBHOOK] Status:', payment.status, '| Ref:', payment.external_reference, '| R$', payment.transaction_amount);
+      if (payment.status !== 'approved') return;
+      const ref = payment.external_reference || '';
+      const valor = parseFloat(payment.transaction_amount || 0);
+      const doadorEmail = payment.payer?.email || '';
+      const doadorNome = payment.payer?.first_name || 'Anônimo';
+      if (ref.startsWith('loja-')) {
+        const pedidoId = ref.replace('loja-', '').split('-')[0];
+        await prisma.pedido.updateMany({ where: { id: pedidoId }, data: { status: 'pago' } }).catch(() => {});
+        await prisma.pedidoCompleto.updateMany({ where: { id: pedidoId }, data: { status: 'pago' } }).catch(() => {});
+        await prisma.pagamentoRegistro.upsert({ where: { paymentId: String(data.id) }, create: { paymentId: String(data.id), tipo: 'loja', valor, doadorNome, doadorEmail, ref, status: 'aprovado' }, update: { status: 'aprovado' } }).catch(() => {});
+        console.log('[WEBHOOK] ✅ Loja paga:', ref);
+      }
+      if (ref.startsWith('x1-')) {
+        const atletaRef = ref.split('-')[1];
+        if (atletaRef === 'pedro') votosX1.pedro += valor;
+        else if (atletaRef === 'tiago') votosX1.tiago += valor;
+        votosX1.doacoes.push({ atleta: atletaRef, valor, doador: doadorNome, quando: new Date() });
+        await prisma.pagamentoRegistro.upsert({ where: { paymentId: String(data.id) }, create: { paymentId: String(data.id), tipo: 'x1', atletaRef, valor, doadorNome, doadorEmail, ref, status: 'aprovado' }, update: { status: 'aprovado' } }).catch(() => {});
+        console.log('[WEBHOOK] ✅ X1 doação:', atletaRef, 'R$', valor);
+      }
+    } catch (e) { console.error('[WEBHOOK ERROR]', e.message); }
+  });
+
   fastify.get('/pagamentos/status', async (req, reply) => {
-    return {
-      configurado: !!MP_TOKEN,
-      modo: MP_TOKEN?.includes('TEST') ? 'sandbox' : 'producao',
-      linkDoacao: 'https://link.mercadopago.com.br/rnestampace',
-    };
+    return { configurado: !!MP_TOKEN, modo: MP_TOKEN?.startsWith('APP_USR') ? 'producao' : MP_TOKEN?.includes('TEST') ? 'sandbox' : 'nao_configurado', linkDoacaoX1: 'https://link.mercadopago.com.br/rnestampace' };
+  });
+
+  fastify.get('/pagamentos/admin/lista', async (req, reply) => {
+    if (req.headers['x-admin-key'] !== (process.env.ADMIN_KEY || 'pace-admin-2026')) return reply.code(403).send({ error: 'Sem permissão' });
+    const pagamentos = await prisma.pagamentoRegistro.findMany({ orderBy: { criadoEm: 'desc' }, take: 100 }).catch(() => []);
+    return pagamentos;
   });
 }
