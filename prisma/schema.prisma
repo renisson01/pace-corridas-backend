@@ -537,3 +537,17 @@ model MembroGrupoTreino {
   grupo     GrupoTreino @relation(fields: [grupoId], references: [id])
   @@unique([userId, grupoId])
 }
+
+// ==================== PAGAMENTOS REGISTRADOS ====================
+model PagamentoRegistro {
+  id           String   @id @default(cuid())
+  paymentId    String   @unique
+  tipo         String
+  atletaRef    String?
+  valor        Float
+  doadorNome   String?
+  doadorEmail  String?
+  ref          String?
+  status       String   @default("aprovado")
+  criadoEm    DateTime @default(now())
+}
