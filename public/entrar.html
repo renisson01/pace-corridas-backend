@@ -196,7 +196,11 @@ async function doLogin() {
       msg.innerHTML = '<span class="text-red-400">❌ '+res.error+'</span>';
     }
   } catch(e) {
-    msg.innerHTML = '<span class="text-red-400">❌ Erro de conexão</span>';
+    if (tentativa < 3) {
+      setTimeout(() => doLogin(tentativa + 1), 2000);
+    } else {
+      msg.innerHTML = '<span class="text-red-400">❌ Servidor indisponível. Tente novamente em instantes.</span>';
+    }
   }
 }
 
