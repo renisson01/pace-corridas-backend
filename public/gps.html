@@ -4,213 +4,188 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GPS Tracker — PACE BRAZIL</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh}
-.header{background:linear-gradient(135deg,#1e3a5f,#3b82f6);padding:20px;text-align:center}
-.header h1{font-size:1.8rem}
-.header p{opacity:.8;font-size:.85rem}
-.container{max-width:600px;margin:0 auto;padding:16px}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.stat-card{background:#1a1a2e;border-radius:14px;padding:16px;text-align:center}
-.stat-card .valor{font-size:1.8rem;font-weight:800;color:#3b82f6}
-.stat-card .label{font-size:.75rem;color:#888;margin-top:4px}
-.big-btn{width:100%;padding:20px;border-radius:50px;border:none;font-size:1.3rem;font-weight:800;cursor:pointer;margin-bottom:16px;transition:.3s}
-.btn-start{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
-.btn-start:hover{transform:scale(1.02)}
-.btn-stop{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
-.tracker{display:none;text-align:center;padding:20px}
-.tracker .tempo{font-size:3rem;font-weight:800;font-variant-numeric:tabular-nums;margin:10px 0}
-.tracker .dist{font-size:1.5rem;color:#10b981;font-weight:700}
-.tracker .pace{font-size:1.1rem;color:#888;margin-top:4px}
-.historico{margin-top:20px}
-.historico h3{margin-bottom:12px;color:#aaa}
-.ativ{background:#1a1a2e;border-radius:12px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.ativ .esq .titulo{font-weight:600;font-size:.95rem}
-.ativ .esq .data{font-size:.75rem;color:#666;margin-top:2px}
-.ativ .dir{text-align:right}
-.ativ .dir .km{font-size:1.3rem;font-weight:800;color:#3b82f6}
-.ativ .dir .pace{font-size:.8rem;color:#888}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#111;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #333}
-.bottom-nav a{color:#666;text-decoration:none;font-size:.7rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
-.bottom-nav a.active{color:#3b82f6}
+:root{--verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(8,11,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
+.gps-hero{background:linear-gradient(135deg,rgba(0,230,118,0.08),rgba(0,200,83,0.03));border-bottom:1px solid var(--border);padding:24px 20px;text-align:center}
+.gps-hero-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.gps-hero-title{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.gps-hero-sub{font-size:13px;color:var(--muted)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:20px 16px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
+.stat-card .valor{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--verde);display:block;line-height:1}
+.stat-card .label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;display:block}
+.tracker-box{margin:0 16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.tracker-header{padding:20px;border-bottom:1px solid var(--border);text-align:center}
+.tracker-status{display:inline-flex;align-items:center;gap:6px;background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.2);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:16px}
+.tracker-status.ativo{background:rgba(0,230,118,0.1);border-color:rgba(0,230,118,0.2);color:var(--verde)}
+.tracker-status::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.tracker-status.ativo::before{animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.tempo-display{font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;line-height:1;letter-spacing:-3px;color:var(--text);font-variant-numeric:tabular-nums}
+.tempo-display.correndo{color:var(--verde)}
+.metricas-live{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.metrica{text-align:center}
+.metrica .val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:var(--text)}
+.metrica .val.verde{color:var(--verde)}
+.metrica .uni{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.btn-area{padding:16px 20px}
+.btn-iniciar{width:100%;padding:18px;background:var(--verde);color:#080B10;border:none;border-radius:50px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-iniciar:hover{background:var(--verde2);transform:scale(1.02);box-shadow:0 0 30px rgba(0,230,118,0.3)}
+.btn-parar{width:100%;padding:18px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:50px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:none;align-items:center;justify-content:center;gap:10px}
+.btn-parar:hover{background:rgba(239,68,68,0.25)}
+.historico-section{padding:0 16px 20px}
+.sec-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:14px}
+.ativ-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:all 0.2s}
+.ativ-card:hover{border-color:var(--verde);background:var(--bg3)}
+.ativ-icon{width:44px;height:44px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ativ-info{flex:1}
+.ativ-titulo{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700}
+.ativ-data{font-size:11px;color:var(--muted);margin-top:2px}
+.ativ-stats{text-align:right}
+.ativ-km{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde);line-height:1}
+.ativ-pace{font-size:11px;color:var(--muted)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 0 12px;z-index:100}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;padding:4px 12px}
+.nav-icon{font-size:20px}
+.nav-label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.nav-item.ativo .nav-label{color:var(--verde)}
 </style>
 </head>
 <body>
-<div class="header">
-  <h1>📡 GPS Tracker</h1>
-  <p>Registre seus treinos e evolua</p>
+<div class="topbar">
+  <a href="/" class="topbar-logo">PACE</a>
+  <span class="topbar-title">📡 GPS Tracker</span>
+  <span style="width:52px"></span>
 </div>
-<div class="container">
-  <div id="statsArea" class="stats-grid">
-    <div class="stat-card"><div class="valor" id="totalKm">0</div><div class="label">KM TOTAL</div></div>
-    <div class="stat-card"><div class="valor" id="totalAtiv">0</div><div class="label">ATIVIDADES</div></div>
-    <div class="stat-card"><div class="valor" id="semanaKm">0</div><div class="label">KM SEMANA</div></div>
-    <div class="stat-card"><div class="valor" id="totalCal">0</div><div class="label">CALORIAS</div></div>
+<div class="gps-hero">
+  <div class="gps-hero-label">🏃 Rastreie seu treino</div>
+  <div class="gps-hero-title">GPS <span style="color:var(--verde)">TRACKER</span></div>
+  <div class="gps-hero-sub">Distância, pace e rota em tempo real</div>
+</div>
+<div class="stats-grid">
+  <div class="stat-card"><span class="valor" id="totalKm">0</span><span class="label">KM Total</span></div>
+  <div class="stat-card"><span class="valor" id="totalAtiv">0</span><span class="label">Corridas</span></div>
+  <div class="stat-card"><span class="valor" id="semanaKm">0</span><span class="label">KM Semana</span></div>
+  <div class="stat-card"><span class="valor" id="totalCal">0</span><span class="label">Calorias</span></div>
+</div>
+<div class="tracker-box">
+  <div class="tracker-header">
+    <div class="tracker-status" id="statusBadge">Aguardando início</div>
+    <div class="tempo-display" id="timer">00:00:00</div>
   </div>
-
-  <div id="preTracker">
-    <button class="big-btn btn-start" onclick="iniciarGPS()">▶ INICIAR CORRIDA</button>
+  <div class="metricas-live">
+    <div class="metrica">
+      <div class="val verde"><span id="distancia">0.00</span> <span style="font-size:16px">km</span></div>
+      <div class="uni">Distância</div>
+    </div>
+    <div class="metrica">
+      <div class="val"><span id="paceAtual">--:--</span></div>
+      <div class="uni">Pace /km</div>
+    </div>
   </div>
-
-  <div id="tracker" class="tracker">
-    <div class="tempo" id="timer">00:00:00</div>
-    <div class="dist"><span id="distancia">0.00</span> km</div>
-    <div class="pace">Pace: <span id="paceAtual">--:--</span> /km</div>
-    <br>
-    <button class="big-btn btn-stop" onclick="pararGPS()">⏹ PARAR E SALVAR</button>
-  </div>
-
-  <div class="historico" id="historico">
-    <h3>📋 Últimas Atividades</h3>
-    <div id="listaAtiv">Carregando...</div>
+  <div class="btn-area">
+    <button class="btn-iniciar" id="btnIniciar" onclick="iniciarGPS()">▶ INICIAR CORRIDA</button>
+    <button class="btn-parar" id="btnParar" onclick="pararGPS()">⏹ PARAR E SALVAR</button>
   </div>
 </div>
-
+<div class="historico-section" id="historicoSection">
+  <div class="sec-label">Seu histórico</div>
+  <div class="sec-title">Últimas Corridas</div>
+  <div id="listaAtiv"><div class="empty-state"><div class="empty-icon">🏃</div><div>Carregando...</div></div></div>
+</div>
 <nav class="bottom-nav">
-  <a href="/">🏠<span>Home</span></a>
-  <a href="/comunidades.html">🏘️<span>Grupos</span></a>
-  <a href="/gps.html" class="active">📡<span>GPS</span></a>
-  <a href="/social.html">💬<span>Social</span></a>
-  <a href="/perfil.html">👤<span>Perfil</span></a>
+  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
+  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
+  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
+  <a href="/gps.html" class="nav-item ativo"><span class="nav-icon">📡</span><span class="nav-label">GPS</span></a>
+  <a href="/perfil.html" class="nav-item"><span class="nav-icon">👤</span><span class="nav-label">Perfil</span></a>
 </nav>
-
 <script>
-const API = '';
-const token = localStorage.getItem('pace_token');
-const headers = { 'Content-Type': 'application/json' };
-if (token) headers['Authorization'] = 'Bearer ' + token;
-
-let watchId = null;
-let pontos = [];
-let startTime = null;
-let timerInterval = null;
-let distTotal = 0;
-
-function toRad(d) { return d * Math.PI / 180; }
-function haversine(lat1,lon1,lat2,lon2) {
-  const R=6371; const dLat=toRad(lat2-lat1); const dLon=toRad(lon2-lon1);
-  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+const API='';
+const token=localStorage.getItem('pace_token');
+const headers={'Content-Type':'application/json'};
+if(token)headers['Authorization']='Bearer '+token;
+let watchId=null,pontos=[],startTime=null,timerInterval=null,distTotal=0;
+function toRad(d){return d*Math.PI/180}
+function haversine(la1,lo1,la2,lo2){const R=6371,dLa=toRad(la2-la1),dLo=toRad(lo2-lo1),a=Math.sin(dLa/2)**2+Math.cos(toRad(la1))*Math.cos(toRad(la2))*Math.sin(dLo/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+function fmtTime(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=Math.floor(s%60);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
+function calcPace(km,sec){if(km<=0)return'--:--';const p=sec/km,m=Math.floor(p/60),s=Math.floor(p%60);return m+':'+String(s).padStart(2,'0')}
+function iniciarGPS(){
+  if(!token){alert('Faca login primeiro!');location.href='/entrar.html';return}
+  if(!navigator.geolocation){alert('GPS nao disponivel');return}
+  pontos=[];distTotal=0;startTime=Date.now();
+  document.getElementById('btnIniciar').style.display='none';
+  document.getElementById('btnParar').style.display='flex';
+  document.getElementById('timer').classList.add('correndo');
+  const b=document.getElementById('statusBadge');
+  b.textContent='Correndo...';b.className='tracker-status ativo';
+  document.getElementById('historicoSection').style.display='none';
+  timerInterval=setInterval(()=>{document.getElementById('timer').textContent=fmtTime((Date.now()-startTime)/1000)},1000);
+  watchId=navigator.geolocation.watchPosition(pos=>{
+    const p={lat:pos.coords.latitude,lng:pos.coords.longitude,ts:Date.now()};
+    if(pontos.length>0){const l=pontos[pontos.length-1],d=haversine(l.lat,l.lng,p.lat,p.lng);if(d>0.003){distTotal+=d;pontos.push(p)}}
+    else pontos.push(p);
+    document.getElementById('distancia').textContent=distTotal.toFixed(2);
+    document.getElementById('paceAtual').textContent=calcPace(distTotal,(Date.now()-startTime)/1000);
+  },err=>console.warn(err.message),{enableHighAccuracy:true,maximumAge:3000,timeout:10000});
 }
-
-function fmtTime(sec) {
-  const h=Math.floor(sec/3600); const m=Math.floor((sec%3600)/60); const s=Math.floor(sec%60);
-  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+async function pararGPS(){
+  if(watchId)navigator.geolocation.clearWatch(watchId);
+  if(timerInterval)clearInterval(timerInterval);
+  const dur=Math.floor((Date.now()-startTime)/1000);
+  if(distTotal<0.01){alert('Distancia muito curta.');resetUI();return}
+  try{
+    const body={tipo:'corrida',distanciaKm:parseFloat(distTotal.toFixed(3)),duracaoSeg:dur,pontosRota:pontos,inicioLat:pontos[0]?.lat,inicioLng:pontos[0]?.lng,fimLat:pontos[pontos.length-1]?.lat,fimLng:pontos[pontos.length-1]?.lng,iniciadoEm:new Date(startTime).toISOString(),finalizadoEm:new Date().toISOString(),compartilhado:true};
+    const res=await fetch(API+'/gps/atividade',{method:'POST',headers,body:JSON.stringify(body)});
+    const data=await res.json();
+    if(data.success)alert('Atividade salva!\n'+data.atividade.distanciaKm+' km | Pace '+data.atividade.paceMedio+'\n+'+data.atividade.pontosGanhos+' pontos!');
+    else alert('Erro: '+(data.error||'Tente novamente'));
+  }catch(e){alert('Erro ao salvar: '+e.message)}
+  resetUI();carregarStats();carregarHistorico();
 }
-
-function calcPace(km,sec) {
-  if(km<=0) return '--:--';
-  const p=sec/km; const m=Math.floor(p/60); const s=Math.floor(p%60);
-  return `${m}:${s.toString().padStart(2,'0')}`;
+function resetUI(){
+  document.getElementById('btnIniciar').style.display='flex';
+  document.getElementById('btnParar').style.display='none';
+  document.getElementById('timer').classList.remove('correndo');
+  document.getElementById('timer').textContent='00:00:00';
+  document.getElementById('distancia').textContent='0.00';
+  document.getElementById('paceAtual').textContent='--:--';
+  const b=document.getElementById('statusBadge');b.textContent='Aguardando inicio';b.className='tracker-status';
+  document.getElementById('historicoSection').style.display='block';
 }
-
-function iniciarGPS() {
-  if (!token) { alert('Faça login primeiro!'); location.href='/entrar.html'; return; }
-  if (!navigator.geolocation) { alert('GPS não disponível neste dispositivo'); return; }
-
-  pontos = []; distTotal = 0; startTime = Date.now();
-  document.getElementById('preTracker').style.display = 'none';
-  document.getElementById('tracker').style.display = 'block';
-  document.getElementById('historico').style.display = 'none';
-
-  timerInterval = setInterval(() => {
-    const elapsed = (Date.now() - startTime) / 1000;
-    document.getElementById('timer').textContent = fmtTime(elapsed);
-  }, 1000);
-
-  watchId = navigator.geolocation.watchPosition(pos => {
-    const p = { lat: pos.coords.latitude, lng: pos.coords.longitude, alt: pos.coords.altitude, ts: Date.now() };
-    if (pontos.length > 0) {
-      const last = pontos[pontos.length - 1];
-      const d = haversine(last.lat, last.lng, p.lat, p.lng);
-      if (d > 0.003) { // mín 3m pra filtrar ruído
-        distTotal += d;
-        pontos.push(p);
-      }
-    } else {
-      pontos.push(p);
-    }
-    document.getElementById('distancia').textContent = distTotal.toFixed(2);
-    const elapsed = (Date.now() - startTime) / 1000;
-    document.getElementById('paceAtual').textContent = calcPace(distTotal, elapsed);
-  }, err => console.warn('GPS erro:', err.message), {
-    enableHighAccuracy: true, maximumAge: 3000, timeout: 10000
-  });
+async function carregarStats(){
+  if(!token)return;
+  try{const res=await fetch(API+'/gps/stats',{headers});const d=await res.json();
+    document.getElementById('totalKm').textContent=d.totalKm||0;
+    document.getElementById('totalAtiv').textContent=d.totalAtividades||0;
+    document.getElementById('semanaKm').textContent=d.semana?.km||0;
+    document.getElementById('totalCal').textContent=d.totalCalorias||0;
+  }catch(e){}
 }
-
-async function pararGPS() {
-  if (watchId) navigator.geolocation.clearWatch(watchId);
-  if (timerInterval) clearInterval(timerInterval);
-
-  const duracaoSeg = Math.floor((Date.now() - startTime) / 1000);
-
-  if (distTotal < 0.01) { alert('Distância muito curta. Tente novamente.'); resetUI(); return; }
-
-  try {
-    const body = {
-      tipo: 'corrida',
-      distanciaKm: parseFloat(distTotal.toFixed(3)),
-      duracaoSeg,
-      pontosRota: pontos,
-      inicioLat: pontos[0]?.lat, inicioLng: pontos[0]?.lng,
-      fimLat: pontos[pontos.length-1]?.lat, fimLng: pontos[pontos.length-1]?.lng,
-      iniciadoEm: new Date(startTime).toISOString(),
-      finalizadoEm: new Date().toISOString(),
-      compartilhado: true
-    };
-
-    const res = await fetch(API + '/gps/atividade', { method: 'POST', headers, body: JSON.stringify(body) });
-    const data = await res.json();
-    if (data.success) {
-      alert(`✅ Atividade salva!\n${data.atividade.distanciaKm} km | Pace ${data.atividade.paceMedio}\n+${data.atividade.pontosGanhos} pontos!\nTotal acumulado: ${data.kmTotal} km`);
-    } else {
-      alert('Erro: ' + (data.error || 'Tente novamente'));
-    }
-  } catch(e) { alert('Erro ao salvar: ' + e.message); }
-
-  resetUI();
-  carregarStats();
-  carregarHistorico();
-}
-
-function resetUI() {
-  document.getElementById('preTracker').style.display = 'block';
-  document.getElementById('tracker').style.display = 'none';
-  document.getElementById('historico').style.display = 'block';
-  document.getElementById('timer').textContent = '00:00:00';
-  document.getElementById('distancia').textContent = '0.00';
-  document.getElementById('paceAtual').textContent = '--:--';
-}
-
-async function carregarStats() {
-  if (!token) return;
-  try {
-    const res = await fetch(API + '/gps/stats', { headers });
-    const d = await res.json();
-    document.getElementById('totalKm').textContent = d.totalKm || 0;
-    document.getElementById('totalAtiv').textContent = d.totalAtividades || 0;
-    document.getElementById('semanaKm').textContent = d.semana?.km || 0;
-    document.getElementById('totalCal').textContent = d.totalCalorias || 0;
-  } catch(e) {}
-}
-
-async function carregarHistorico() {
-  if (!token) { document.getElementById('listaAtiv').innerHTML = '<p style="color:#666">Faça login para ver seu histórico</p>'; return; }
-  try {
-    const res = await fetch(API + '/gps/atividades?limit=5', { headers });
-    const data = await res.json();
-    if (!data.length) { document.getElementById('listaAtiv').innerHTML = '<p style="color:#666">Nenhuma atividade ainda. Comece sua primeira corrida!</p>'; return; }
-    document.getElementById('listaAtiv').innerHTML = data.map(a => {
-      const dt = new Date(a.iniciadoEm);
-      const dataStr = dt.toLocaleDateString('pt-BR') + ' ' + dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-      return `<div class="ativ"><div class="esq"><div class="titulo">${a.titulo||'🏃 Corrida'}</div><div class="data">${dataStr}</div></div><div class="dir"><div class="km">${a.distanciaKm.toFixed(2)} km</div><div class="pace">${a.paceMedio || '--'} /km</div></div></div>`;
+async function carregarHistorico(){
+  const el=document.getElementById('listaAtiv');
+  if(!token){el.innerHTML='<div class="empty-state"><div class="empty-icon">🔒</div><div>Faca login para ver seu historico</div></div>';return}
+  try{
+    const res=await fetch(API+'/gps/atividades?limit=8',{headers});
+    const data=await res.json();
+    if(!data.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🏃</div><div>Nenhuma atividade ainda. Comece agora!</div></div>';return}
+    el.innerHTML=data.map(a=>{
+      const dt=new Date(a.iniciadoEm);
+      const ds=dt.toLocaleDateString('pt-BR')+' as '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      return'<div class="ativ-card"><div class="ativ-icon">🏃</div><div class="ativ-info"><div class="ativ-titulo">'+(a.titulo||'Corrida')+'</div><div class="ativ-data">'+ds+'</div></div><div class="ativ-stats"><div class="ativ-km">'+a.distanciaKm.toFixed(2)+' km</div><div class="ativ-pace">'+(a.paceMedio||'--')+' /km</div></div></div>';
     }).join('');
-  } catch(e) {}
+  }catch(e){el.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div>Erro ao carregar</div></div>'}
 }
-
-carregarStats();
-carregarHistorico();
+carregarStats();carregarHistorico();
 </script>
 </body>
 </html>
