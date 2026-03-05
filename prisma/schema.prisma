@@ -100,6 +100,7 @@ model User {
   conquistas          Conquista[]
   pontos              PontosUsuario?
   atividadesGPS       AtividadeGPS[]
+  favoritosCorrida    FavoritoCorrida[]
   amigosEnviados      AmigoPace[]          @relation("AmigoPaceEnviou")
   amigosRecebidos     AmigoPace[]          @relation("AmigoPaceRecebeu")
   gruposTreino        MembroGrupoTreino[]
@@ -480,20 +481,50 @@ model AtividadeGPS {
 }
 
 model CorridaAberta {
-  id            String   @id @default(cuid())
-  nome          String
-  data          DateTime
-  cidade        String
-  estado        String
-  distancias    String
-  linkInscricao String
-  fonte         String?
-  preco         Float?
-  organizador   String?
-  imageUrl      String?
-  ativa         Boolean  @default(true)
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  id               String   @id @default(cuid())
+  nome             String
+  data             DateTime
+  cidade           String
+  estado           String
+  distancias       String
+  linkInscricao    String
+  fonte            String?
+  preco            Float?
+  organizador      String?
+  imageUrl         String?
+  cartazUrl        String?
+  descricao        String?
+  regulamentoUrl   String?
+  regulamentoTexto String?
+  temKit           Boolean  @default(false)
+  tipoPiso         String?
+  tipoPerfil       String?
+  horarioLargada   String?
+  vagasTotal       Int?
+  vagasRestantes   Int?
+  certificado      Boolean  @default(false)
+  edicaoNumero     Int?
+  modalidades      String?
+  faixasEtarias    String?
+  podioGeral       String?
+  checklist        String?
+  instagram        String?
+  whatsapp         String?
+  pontoAgua        String?
+  ativa            Boolean  @default(true)
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
+  favoritos        FavoritoCorrida[]
+}
+
+model FavoritoCorrida {
+  id         String        @id @default(cuid())
+  userId     String
+  corridaId  String
+  criadoEm  DateTime      @default(now())
+  user       User          @relation(fields: [userId], references: [id])
+  corrida    CorridaAberta @relation(fields: [corridaId], references: [id])
+  @@unique([userId, corridaId])
 }
 
 model AmigoPace {
@@ -563,3 +594,4 @@ model ComportamentoCorredor {
   criadoEm  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id])
 }
+// placeholder
