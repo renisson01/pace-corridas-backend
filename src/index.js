@@ -118,6 +118,17 @@ try {
   console.error(e.stack);
 }
 
+
+// Keep-alive: evita que o banco durma no Railway
+setInterval(async () => {
+  try {
+    const { PrismaClient } = await import('@prisma/client');
+    const p = new PrismaClient();
+    await p.$queryRaw`SELECT 1`;
+    await p.$disconnect();
+  } catch(e) {}
+}, 4 * 60 * 1000); // a cada 4 minutos
+
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
   if (err) { console.error('❌', err); process.exit(1); }
   console.log('🏃 PACE BRAZIL v3.0 online na porta ' + (process.env.PORT || 3000));
