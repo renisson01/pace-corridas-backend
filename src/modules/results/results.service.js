@@ -17,7 +17,7 @@ export const resultsService = {
     
     const distanceKm = parseFloat(distance.replace('k', ''));
     const pace = calculatePace(time, distanceKm);
-    const ageGroup = getAgeGroup(age, gender);
+    const ageGroup = (age != null && gender) ? getAgeGroup(age, gender) : 'GERAL';
     
     return await prisma.result.create({
       data: {
