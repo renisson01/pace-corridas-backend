@@ -204,7 +204,7 @@ function mudarTab(id){
 }
 
 async function entrarGrupo(slug){
-  if(!token){alert('Faca login primeiro!');location.href='/entrar.html';return}
+  if(!token){alert('Faca login primeiro!');sessionStorage.setItem('pace_redirect','/comunidades.html');location.href='/entrar.html';return}
   try{
     const res=await fetch(API+'/comunidades/'+slug+'/entrar',{method:'POST',headers:{...headers,'Content-Type':'application/json'}});
     const data=await res.json();

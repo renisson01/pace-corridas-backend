@@ -120,7 +120,7 @@ function haversine(la1,lo1,la2,lo2){const R=6371,dLa=toRad(la2-la1),dLo=toRad(lo
 function fmtTime(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=Math.floor(s%60);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
 function calcPace(km,sec){if(km<=0)return'--:--';const p=sec/km,m=Math.floor(p/60),s=Math.floor(p%60);return m+':'+String(s).padStart(2,'0')}
 function iniciarGPS(){
-  if(!token){alert('Faca login primeiro!');location.href='/entrar.html';return}
+  if(!token){alert('Faca login primeiro!');sessionStorage.setItem('pace_redirect','/gps.html');location.href='/entrar.html';return}
   if(!navigator.geolocation){alert('GPS nao disponivel');return}
   pontos=[];distTotal=0;startTime=Date.now();
   document.getElementById('btnIniciar').style.display='none';

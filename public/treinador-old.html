@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Treinador — PACE</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;--roxo:#7C3AED;--azul:#3B82F6;--vermelho:#EF4444;--amarelo:#F59E0B;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:100px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(8,11,16,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
+.topbar-btn{background:var(--verde);color:#080B10;border:none;border-radius:20px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
+.hero{padding:24px 20px 0;background:linear-gradient(180deg,rgba(0,230,118,0.05) 0%,transparent 100%);border-bottom:1px solid var(--border)}
+.hero-stats{display:flex;border-top:1px solid var(--border)}
+.hero-stat{flex:1;padding:14px 0;text-align:center;border-right:1px solid var(--border)}
+.hero-stat:last-child{border-right:none}
+.hero-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--verde)}
+.hero-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.tabs-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--border)}
+.tabs-scroll::-webkit-scrollbar{display:none}
+.tabs{display:flex;min-width:max-content;padding:0 16px}
+.tab{padding:14px 18px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none}
+.tab.ativo{color:var(--verde);border-bottom-color:var(--verde)}
+.section{padding:16px}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-title span{font-size:14px;color:var(--muted);font-family:'Barlow',sans-serif;font-weight:400}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px}
+.card-hover{transition:all 0.2s;cursor:pointer}
+.card-hover:hover{border-color:var(--verde);background:var(--bg3)}
+.treino-dia{background:linear-gradient(135deg,#0A1F0A,#0D2B0D);border:1px solid rgba(0,230,118,0.25);border-radius:20px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
+.treino-dia::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,230,118,0.15),transparent 70%);pointer-events:none}
+.treino-badge{display:inline-flex;align-items:center;background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.25);color:var(--verde);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.treino-nome{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:4px}
+.treino-desc{font-size:13px;color:#94a3b8;margin-bottom:14px;line-height:1.5}
+.treino-meta{display:flex;gap:16px;margin-bottom:16px}
+.treino-meta-item{display:flex;flex-direction:column}
+.treino-meta-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900}
+.treino-meta-lbl{font-size:10px;color:var(--muted)}
+.btn-iniciar{width:100%;padding:13px;background:var(--verde);color:#080B10;border:none;border-radius:30px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;cursor:pointer;transition:all 0.2s}
+.btn-iniciar:hover{background:var(--verde2);transform:scale(1.02)}
+.semana-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
+.dia-pill{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border-radius:12px;border:1px solid var(--border);background:var(--bg2)}
+.dia-pill.hoje{background:var(--verde);border-color:var(--verde)}
+.dia-pill.hoje .dia-nome,.dia-pill.hoje .dia-num{color:#080B10}
+.dia-pill.feito{background:rgba(0,230,118,0.06);border-color:rgba(0,230,118,0.15)}
+.dia-nome{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.dia-num{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900}
+.dia-dot{width:5px;height:5px;border-radius:50%;margin-top:4px}
+.serie-lista{display:flex;flex-direction:column;gap:8px}
+.serie-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg3);border-radius:12px;border-left:3px solid transparent}
+.serie-item.aquecimento{border-left-color:var(--amarelo)}
+.serie-item.tiro{border-left-color:var(--laranja)}
+.serie-item.recuperacao{border-left-color:var(--azul)}
+.serie-item.volta{border-left-color:var(--roxo)}
+.serie-num{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;min-width:28px}
+.serie-info{flex:1}
+.serie-desc{font-size:13px;font-weight:600}
+.serie-pace{font-size:11px;color:var(--muted)}
+.serie-dur{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--muted)}
+.zona-lista{display:flex;flex-direction:column;gap:8px}
+.zona-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--bg3)}
+.zona-cor{width:12px;height:36px;border-radius:6px;flex-shrink:0}
+.zona-info{flex:1}
+.zona-nome{font-size:13px;font-weight:700;margin-bottom:2px}
+.zona-bpm{font-size:11px;color:var(--muted)}
+.zona-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.zona-bar{height:100%;border-radius:4px}
+.zona-pct{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;min-width:36px;text-align:right}
+.planilha-card{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all 0.2s}
+.planilha-card:hover{border-color:var(--verde);transform:translateY(-2px)}
+.planilha-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.planilha-nome{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900}
+.planilha-level{font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px}
+.planilha-level.iniciante{background:rgba(0,230,118,0.12);color:var(--verde)}
+.planilha-level.intermediario{background:rgba(245,158,11,0.12);color:var(--amarelo)}
+.planilha-level.avancado{background:rgba(239,68,68,0.12);color:var(--vermelho)}
+.planilha-desc{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.planilha-meta-row{display:flex;gap:16px}
+.planilha-meta{display:flex;flex-direction:column}
+.planilha-meta-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900}
+.planilha-meta-lbl{font-size:10px;color:var(--muted)}
+.planilha-progress{margin-top:12px}
+.planilha-progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px}
+.planilha-progress-fill{height:100%;background:var(--verde);border-radius:3px}
+.planilha-progress-text{font-size:10px;color:var(--muted);display:flex;justify-content:space-between}
+.hist-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;margin-bottom:10px}
+.hist-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hist-info{flex:1}
+.hist-nome{font-size:14px;font-weight:700;margin-bottom:2px}
+.hist-data{font-size:11px;color:var(--muted)}
+.hist-stats{display:flex;gap:14px;text-align:right}
+.hist-stat{display:flex;flex-direction:column}
+.hist-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900}
+.hist-lbl{font-size:9px;color:var(--muted);text-transform:uppercase}
+.ia-card{background:linear-gradient(135deg,#0A0A1F,#12122B);border:1px solid rgba(124,58,237,0.3);border-radius:20px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
+.ia-card::before{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;background:radial-gradient(circle,rgba(124,58,237,0.2),transparent 70%);pointer-events:none}
+.ia-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ia-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#5B21B6);display:flex;align-items:center;justify-content:center;font-size:16px}
+.ia-label{font-size:10px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px}
+.ia-nome{font-size:13px;font-weight:700;color:#fff}
+.ia-texto{font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:14px}
+.ia-texto strong{color:#fff}
+.ia-chips{display:flex;gap:6px;flex-wrap:wrap}
+.ia-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(124,58,237,0.3);color:#a78bfa;cursor:pointer}
+.calc-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px}
+.calc-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;margin-bottom:14px}
+.input-group{margin-bottom:12px}
+.input-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block}
+.input-row{display:flex;gap:8px}
+.input-field{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:16px;font-family:'Barlow',sans-serif;outline:none}
+.input-field:focus{border-color:var(--verde)}
+.input-unit{background:var(--bg3);border:1px solid var(--border);border-left:none;border-radius:0 10px 10px 0;padding:10px 12px;font-size:12px;color:var(--muted);display:flex;align-items:center;white-space:nowrap}
+.input-field.cu{border-radius:10px 0 0 10px}
+.btn-calc{width:100%;padding:11px;background:var(--verde);color:#080B10;border:none;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;cursor:pointer;margin-top:4px}
+.resultado-box{background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:14px;padding:16px;margin-top:12px;text-align:center;display:none}
+.resultado-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:var(--verde)}
+.resultado-lbl{font-size:12px;color:var(--muted)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,11,16,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 0 14px;z-index:100}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;padding:4px 12px}
+.nav-icon{font-size:21px}
+.nav-label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.nav-item.ativo .nav-label{color:var(--verde)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--bg2);border-top:1px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:24px 20px 40px}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.timer-display{font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;text-align:center;color:var(--verde);letter-spacing:-2px;margin:20px 0}
+.timer-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-timer{padding:14px;border-radius:16px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;cursor:pointer}
+.btn-timer.pause{background:var(--bg3);color:var(--text)}
+.btn-timer.stop{background:rgba(239,68,68,0.1);color:var(--vermelho);border:1px solid rgba(239,68,68,0.2)}
+.btn-timer.proximo{background:var(--verde);color:#080B10;grid-column:span 2}
+.chips-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}
+.chip.ativo{background:rgba(0,230,118,0.1);border-color:rgba(0,230,118,0.3);color:var(--verde)}
+.avatar-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--verde),#00C853);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#080B10;font-family:'Barlow Condensed',sans-serif}
+.avatar-info{flex:1}
+.avatar-nome{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900}
+.avatar-level{font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/" class="topbar-logo">PACE</a>
+  <span class="topbar-title">🏃 Treinador</span>
+  <button class="topbar-btn" onclick="abrirModal()">▶ Iniciar</button>
+</div>
+<div class="hero">
+  <div class="avatar-row" style="padding-top:4px">
+    <div class="avatar" id="avatarLetra">R</div>
+    <div class="avatar-info">
+      <div class="avatar-nome" id="nomeAtleta">Atleta PACE</div>
+      <div class="avatar-level">🏃 Corredor Intermediário • Itabaiana, SE</div>
+    </div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--verde)">🔥 7d</div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-val">28</div><div class="hero-stat-lbl">km semana</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">4</div><div class="hero-stat-lbl">treinos</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">5:42</div><div class="hero-stat-lbl">pace médio</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">7</div><div class="hero-stat-lbl">sequência</div></div>
+  </div>
+</div>
+<div class="tabs-scroll">
+  <div class="tabs">
+    <button class="tab ativo" onclick="mostrarAba('hoje',this)">📅 Hoje</button>
+    <button class="tab" onclick="mostrarAba('semana',this)">📊 Semana</button>
+    <button class="tab" onclick="mostrarAba('planilhas',this)">📋 Planilhas</button>
+    <button class="tab" onclick="mostrarAba('calculos',this)">🧮 Cálculos</button>
+    <button class="tab" onclick="mostrarAba('historico',this)">📈 Histórico</button>
+    <button class="tab" onclick="mostrarAba('ia',this)">🤖 PACE IA</button>
+  </div>
+</div>
+<div id="aba-hoje" class="section">
+  <div class="treino-dia">
+    <div class="treino-badge">⚡ TREINO DE VELOCIDADE</div>
+    <div class="treino-nome">Intervalados 400m</div>
+    <div class="treino-desc">Trabalho de velocidade com repetições curtas. Foco na frequência de passada e economia de corrida.</div>
+    <div class="treino-meta">
+      <div class="treino-meta-item"><div class="treino-meta-val">6 km</div><div class="treino-meta-lbl">Distância</div></div>
+      <div class="treino-meta-item"><div class="treino-meta-val">45 min</div><div class="treino-meta-lbl">Duração</div></div>
+      <div class="treino-meta-item"><div class="treino-meta-val">Alta</div><div class="treino-meta-lbl">Intensidade</div></div>
+      <div class="treino-meta-item"><div class="treino-meta-val">4:45/km</div><div class="treino-meta-lbl">Pace alvo</div></div>
+    </div>
+    <button class="btn-iniciar" onclick="abrirModal()">▶ Iniciar Treino</button>
+  </div>
+  <div class="sec-title">Estrutura do Treino</div>
+  <div class="serie-lista">
+    <div class="serie-item aquecimento"><div class="serie-num">1</div><div class="serie-info"><div class="serie-desc">Aquecimento contínuo</div><div class="serie-pace">Pace livre • Zona 1-2</div></div><div class="serie-dur">15 min</div></div>
+    <div class="serie-item tiro"><div class="serie-num">2</div><div class="serie-info"><div class="serie-desc">8x 400m tiro</div><div class="serie-pace">Pace 4:30/km • Zona 4-5</div></div><div class="serie-dur">2 min</div></div>
+    <div class="serie-item recuperacao"><div class="serie-num">3</div><div class="serie-info"><div class="serie-desc">Recuperação ativa</div><div class="serie-pace">Caminhada ou trote leve</div></div><div class="serie-dur">90 seg</div></div>
+    <div class="serie-item volta"><div class="serie-num">4</div><div class="serie-info"><div class="serie-desc">Volta calma + alongamento</div><div class="serie-pace">Pace livre • Zona 1</div></div><div class="serie-dur">10 min</div></div>
+  </div>
+  <div class="sec-title" style="margin-top:20px">❤️ Zonas de FC <span id="fcMax-display"></span></div>
+  <div class="zona-lista">
+    <div class="zona-item"><div class="zona-cor" style="background:#3B82F6"></div><div class="zona-info"><div class="zona-nome">Z1 — Recuperação</div><div class="zona-bpm" id="z1-bpm">50–60%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:60%;background:#3B82F6"></div></div><div class="zona-pct" style="color:#3B82F6">60%</div></div>
+    <div class="zona-item"><div class="zona-cor" style="background:#10B981"></div><div class="zona-info"><div class="zona-nome">Z2 — Base aeróbica</div><div class="zona-bpm" id="z2-bpm">60–70%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:70%;background:#10B981"></div></div><div class="zona-pct" style="color:#10B981">70%</div></div>
+    <div class="zona-item"><div class="zona-cor" style="background:#F59E0B"></div><div class="zona-info"><div class="zona-nome">Z3 — Aeróbico intenso</div><div class="zona-bpm" id="z3-bpm">70–80%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:80%;background:#F59E0B"></div></div><div class="zona-pct" style="color:#F59E0B">80%</div></div>
+    <div class="zona-item"><div class="zona-cor" style="background:#F97316"></div><div class="zona-info"><div class="zona-nome">Z4 — Limiar</div><div class="zona-bpm" id="z4-bpm">80–90%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:90%;background:#F97316"></div></div><div class="zona-pct" style="color:#F97316">90%</div></div>
+    <div class="zona-item"><div class="zona-cor" style="background:#EF4444"></div><div class="zona-info"><div class="zona-nome">Z5 — VO2max / Tiros</div><div class="zona-bpm" id="z5-bpm">90–100%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:100%;background:#EF4444"></div></div><div class="zona-pct" style="color:#EF4444">100%</div></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px">⚙️ Configure sua FC</div>
+    <div class="input-row" style="gap:8px">
+      <div style="flex:1"><div class="input-label">Idade</div><div class="input-row"><input class="input-field cu" type="number" id="inputIdade" placeholder="31"><div class="input-unit">anos</div></div></div>
+      <div style="flex:1"><div class="input-label">FCmáx manual</div><div class="input-row"><input class="input-field cu" type="number" id="inputFCmax" placeholder="auto"><div class="input-unit">bpm</div></div></div>
+    </div>
+    <button class="btn-calc" onclick="calcularZonas()">Calcular Zonas</button>
+  </div>
+</div>
+<div id="aba-semana" class="section" style="display:none">
+  <div class="sec-title">📅 Esta Semana</div>
+  <div class="semana-grid" id="calendarioSemana"></div>
+  <div id="listaTreinosSemana"></div>
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:700;font-size:14px">Meta semanal</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--verde)">28/40 km</div></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:70%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:6px">70% da meta • Faltam 12 km</div></div>
+</div>
+<div id="aba-planilhas" class="section" style="display:none">
+  <div class="sec-title">📋 Planilhas de Treino</div>
+  <div class="chips-row"><div class="chip ativo" onclick="filtrarPlanilha(this,'todas')">Todas</div><div class="chip" onclick="filtrarPlanilha(this,'5km')">5km</div><div class="chip" onclick="filtrarPlanilha(this,'10km')">10km</div><div class="chip" onclick="filtrarPlanilha(this,'meia')">Meia</div><div class="chip" onclick="filtrarPlanilha(this,'maratona')">Maratona</div></div>
+  <div class="planilha-card" data-cat="5km"><div class="planilha-top"><div class="planilha-nome">5km Sub-30 em 6 semanas</div><div class="planilha-level iniciante">Iniciante</div></div><div class="planilha-desc">Planilha progressiva para completar os 5km abaixo de 30 minutos. 4 treinos por semana.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">6</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">4x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">20km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Progresso</span><span>Semana 1/6</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:17%"></div></div></div></div>
+  <div class="planilha-card" data-cat="10km"><div class="planilha-top"><div class="planilha-nome">10km — Quebre os 50min</div><div class="planilha-level intermediario">Intermediário</div></div><div class="planilha-desc">8 semanas de treino específico. Limiar e tiros de 1000m. Pace alvo: 4:55/km.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">8</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">5x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">40km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Não iniciada</span><span>0/8</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:0%"></div></div></div></div>
+  <div class="planilha-card" data-cat="meia"><div class="planilha-top"><div class="planilha-nome">Meia Maratona — 1h45min</div><div class="planilha-level intermediario">Intermediário</div></div><div class="planilha-desc">12 semanas com longão aos fins de semana e trabalho de limiar progressivo.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">12</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">5x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">60km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Não iniciada</span><span>0/12</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:0%"></div></div></div></div>
+  <div class="planilha-card" data-cat="maratona"><div class="planilha-top"><div class="planilha-nome">Maratona — Sub 4 horas</div><div class="planilha-level avancado">Avançado</div></div><div class="planilha-desc">18 semanas completas. Longões de até 35km, bi-diários e trabalho de limiar.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">18</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">6x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">80km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Não iniciada</span><span>0/18</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:0%"></div></div></div></div>
+  <div class="planilha-card" data-cat="5km"><div class="planilha-top"><div class="planilha-nome">5km Sub-20 — Elite</div><div class="planilha-level avancado">Avançado</div></div><div class="planilha-desc">Para corredores já sub-22. VO2max e economia de corrida. Pace alvo: 3:55/km.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">10</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">6x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">55km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Não iniciada</span><span>0/10</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:0%"></div></div></div></div>
+</div>
+<div id="aba-calculos" class="section" style="display:none">
+  <div class="sec-title">🧮 Calculadoras do Corredor</div>
+  <div class="calc-card">
+    <div class="calc-title">⏱️ Calculadora de Pace</div>
+    <div class="input-group"><label class="input-label">Distância</label><div class="input-row"><input class="input-field cu" type="number" id="cDistancia" placeholder="10" step="0.1"><div class="input-unit">km</div></div></div>
+    <div class="input-group"><label class="input-label">Tempo</label><div class="input-row" style="gap:6px"><input class="input-field" type="number" id="cHora" placeholder="0" style="text-align:center"><span style="line-height:42px;color:var(--muted)">h</span><input class="input-field" type="number" id="cMin" placeholder="50" style="text-align:center"><span style="line-height:42px;color:var(--muted)">min</span><input class="input-field" type="number" id="cSeg" placeholder="00" style="text-align:center"><span style="line-height:42px;color:var(--muted)">seg</span></div></div>
+    <button class="btn-calc" onclick="calcPace()">Calcular Pace</button>
+    <div class="resultado-box" id="resPace"><div class="resultado-val" id="resPaceVal">—</div><div class="resultado-lbl">min/km</div></div>
+  </div>
+  <div class="calc-card">
+    <div class="calc-title">🏁 Tempo Estimado de Prova</div>
+    <div class="chips-row"><div class="chip ativo" onclick="selecionarDist(this,5)">5km</div><div class="chip" onclick="selecionarDist(this,10)">10km</div><div class="chip" onclick="selecionarDist(this,21.097)">Meia</div><div class="chip" onclick="selecionarDist(this,42.195)">Maratona</div></div>
+    <div class="input-group"><label class="input-label">Seu pace médio de treino</label><div class="input-row" style="gap:6px"><input class="input-field" type="number" id="ePaceMin" placeholder="5" style="text-align:center"><span style="line-height:42px;color:var(--muted)">min</span><input class="input-field" type="number" id="ePaceSeg" placeholder="30" style="text-align:center"><span style="line-height:42px;color:var(--muted)">seg</span></div></div>
+    <button class="btn-calc" onclick="calcTempo()">Estimar Tempo</button>
+    <div class="resultado-box" id="resTempo"><div class="resultado-val" id="resTempoVal">—</div><div class="resultado-lbl">Tempo estimado na prova</div></div>
+  </div>
+  <div class="calc-card">
+    <div class="calc-title">⚖️ Peso Ideal do Corredor</div>
+    <div class="input-group"><label class="input-label">Altura</label><div class="input-row"><input class="input-field cu" type="number" id="cAltura" placeholder="175"><div class="input-unit">cm</div></div></div>
+    <div class="input-group"><label class="input-label">Peso atual</label><div class="input-row"><input class="input-field cu" type="number" id="cPeso" placeholder="70" step="0.1"><div class="input-unit">kg</div></div></div>
+    <button class="btn-calc" onclick="calcIMC()">Calcular</button>
+    <div class="resultado-box" id="resIMC"><div class="resultado-val" id="resIMCVal">—</div><div class="resultado-lbl" id="resIMCDesc">IMC atual</div></div>
+  </div>
+  <div class="calc-card">
+    <div class="calc-title">🔬 VDOT — VO2max Estimado</div>
+    <div class="chips-row"><div class="chip ativo" onclick="selecionarProva(this,5)">5km</div><div class="chip" onclick="selecionarProva(this,10)">10km</div><div class="chip" onclick="selecionarProva(this,21.097)">Meia</div></div>
+    <div class="input-group"><label class="input-label">Tempo na prova</label><div class="input-row" style="gap:6px"><input class="input-field" type="number" id="vHora" placeholder="0" style="text-align:center"><span style="line-height:42px;color:var(--muted)">h</span><input class="input-field" type="number" id="vMin" placeholder="25" style="text-align:center"><span style="line-height:42px;color:var(--muted)">min</span><input class="input-field" type="number" id="vSeg" placeholder="00" style="text-align:center"><span style="line-height:42px;color:var(--muted)">seg</span></div></div>
+    <button class="btn-calc" onclick="calcVDOT()">Calcular VDOT</button>
+    <div class="resultado-box" id="resVDOT"><div class="resultado-val" id="resVDOTVal">—</div><div class="resultado-lbl" id="resVDOTDesc">VO2max estimado</div></div>
+  </div>
+</div>
+<div id="aba-historico" class="section" style="display:none">
+  <div class="sec-title">📈 Histórico de Treinos</div>
+  <div class="chips-row"><div class="chip ativo">Esta semana</div><div class="chip">Mês</div><div class="chip">3 meses</div><div class="chip">Tudo</div></div>
+  <div class="hist-item"><div class="hist-icon" style="background:rgba(255,109,0,0.1)">⚡</div><div class="hist-info"><div class="hist-nome">Intervalados 400m</div><div class="hist-data">Hoje, 06h30</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">6.2km</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">4:52</div><div class="hist-lbl">pace</div></div></div></div>
+  <div class="hist-item"><div class="hist-icon" style="background:rgba(59,130,246,0.1)">🌊</div><div class="hist-info"><div class="hist-nome">Rodagem Longa Z2</div><div class="hist-data">Ontem, 07h00</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">14km</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">6:10</div><div class="hist-lbl">pace</div></div></div></div>
+  <div class="hist-item"><div class="hist-icon" style="background:rgba(245,158,11,0.1)">🔥</div><div class="hist-info"><div class="hist-nome">Limiar 20min</div><div class="hist-data">Qua, 06h30</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">8.5km</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">5:05</div><div class="hist-lbl">pace</div></div></div></div>
+  <div class="hist-item"><div class="hist-icon" style="background:rgba(16,185,129,0.1)">🏃</div><div class="hist-info"><div class="hist-nome">Corrida Fácil</div><div class="hist-data">Seg, 07h00</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">5km</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">6:30</div><div class="hist-lbl">pace</div></div></div></div>
+  <div class="card" style="margin-top:6px">
+    <div class="sec-title" style="font-size:16px;margin-bottom:12px">📊 Resumo Semanal</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--verde)">33.7</div><div style="font-size:11px;color:var(--muted)">km totais</div></div>
+      <div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--azul)">4</div><div style="font-size:11px;color:var(--muted)">treinos</div></div>
+      <div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--amarelo)">5:42</div><div style="font-size:11px;color:var(--muted)">pace médio</div></div>
+      <div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--laranja)">3h24</div><div style="font-size:11px;color:var(--muted)">tempo total</div></div>
+    </div>
+  </div>
+</div>
+<div id="aba-ia" class="section" style="display:none">
+  <div class="sec-title">🤖 PACE IA <span>— Seu treinador inteligente</span></div>
+  <div class="ia-card">
+    <div class="ia-header"><div class="ia-avatar">🤖</div><div><div class="ia-label">PACE IA</div><div class="ia-nome">Análise personalizada</div></div></div>
+    <div class="ia-texto"><strong>Sua semana está ótima!</strong> Você já completou 4 treinos e 33,7km. Hoje é dia de <strong>velocidade</strong> — os intervalados vão melhorar sua economia de corrida.<br><br>💡 <strong>Dica:</strong> Com seu pace de 5:42/km, você está pronto para quebrar os <strong>45min nos 10km</strong>.</div>
+    <div class="ia-chips">
+      <div class="ia-chip" onclick="perguntarIA('Como melhorar meu pace?')">💬 Melhorar pace</div>
+      <div class="ia-chip" onclick="perguntarIA('Qual treino fazer amanhã?')">📅 Treino amanhã</div>
+      <div class="ia-chip" onclick="perguntarIA('Estou pronto para meia maratona?')">🏅 Pronto para meia?</div>
+      <div class="ia-chip" onclick="perguntarIA('Como evitar lesões?')">🦵 Evitar lesões</div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px">💬 Pergunte ao PACE IA</div>
+    <div id="chatMsgs" style="max-height:260px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:8px"></div>
+    <div style="display:flex;gap:8px"><input class="input-field" type="text" id="chatInput" placeholder="Ex: Quanto devo correr por semana?" style="flex:1" onkeydown="if(event.key==='Enter')enviarIA()"><button onclick="enviarIA()" style="background:var(--verde);color:#080B10;border:none;border-radius:12px;padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;cursor:pointer">▶</button></div>
+  </div>
+  <div class="sec-title" style="margin-top:6px">💡 Insights da semana</div>
+  <div class="card card-hover"><div style="display:flex;align-items:center;gap:10px"><div style="font-size:28px">📈</div><div><div style="font-weight:700;margin-bottom:2px">Evolução de pace</div><div style="font-size:12px;color:var(--muted)">Seu pace melhorou 8 segundos/km nos últimos 30 dias!</div></div></div></div>
+  <div class="card card-hover"><div style="display:flex;align-items:center;gap:10px"><div style="font-size:28px">😴</div><div><div style="font-weight:700;margin-bottom:2px">Recuperação importante</div><div style="font-size:12px;color:var(--muted)">Após a rodagem longa, durma 8h esta noite para recuperar.</div></div></div></div>
+  <div class="card card-hover"><div style="display:flex;align-items:center;gap:10px"><div style="font-size:28px">💧</div><div><div style="font-weight:700;margin-bottom:2px">Hidratação no calor</div><div style="font-size:12px;color:var(--muted)">Com o calor de Sergipe, beba 500ml antes do treino.</div></div></div></div>
+</div>
+<nav class="bottom-nav">
+  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
+  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
+  <a href="/treinador.html" class="nav-item ativo"><span class="nav-icon">🏃</span><span class="nav-label">Treinador</span></a>
+  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
+  <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
+</nav>
+<div class="modal-overlay" id="modalTreino">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="treino-badge" style="display:block;text-align:center;margin-bottom:6px">⚡ TREINO EM ANDAMENTO</div>
+    <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px">Intervalados 400m</div>
+    <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:4px" id="etapaAtual">Aquecimento</div>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:16px" id="timerDesc">Aquecimento de 15 min • Pace livre</div>
+    <div class="timer-buttons">
+      <button class="btn-timer pause" id="btnPause" onclick="togglePause()">⏸ Pausar</button>
+      <button class="btn-timer stop" onclick="pararTreino()">⏹ Encerrar</button>
+      <button class="btn-timer proximo" onclick="proximaEtapa()">➡️ Próxima etapa</button>
+    </div>
+    <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+      <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)" id="tKm">0.0</div><div style="font-size:10px;color:var(--muted)">km</div></div>
+      <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900">—:—</div><div style="font-size:10px;color:var(--muted)">pace</div></div>
+      <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--laranja)" id="tEtapa">1/4</div><div style="font-size:10px;color:var(--muted)">etapa</div></div>
+    </div>
+  </div>
+</div>
+<script>
+const user=JSON.parse(localStorage.getItem('pace_user')||'{}');
+if(user.name){document.getElementById('avatarLetra').textContent=user.name.charAt(0).toUpperCase();document.getElementById('nomeAtleta').textContent=user.name}
+function mostrarAba(id,el){document.querySelectorAll('[id^="aba-"]').forEach(e=>e.style.display='none');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));document.getElementById('aba-'+id).style.display='block';el.classList.add('ativo')}
+function gerarCalendario(){const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];const hoje=new Date();const ds=hoje.getDay();const tipos=['descanso','feito','feito','feito','descanso','feito','hoje'];const grid=document.getElementById('calendarioSemana');if(!grid)return;const ini=new Date(hoje);ini.setDate(hoje.getDate()-ds);grid.innerHTML=dias.map((d,i)=>{const dt=new Date(ini);dt.setDate(ini.getDate()+i);const isH=i===ds;return'<div class="dia-pill '+(isH?'hoje':tipos[i])+'"><div class="dia-nome">'+d+'</div><div class="dia-num">'+dt.getDate()+'</div><div class="dia-dot" style="background:'+(tipos[i]==='feito'?'var(--verde)':tipos[i]==='hoje'?'#080B10':'transparent')+'"></div></div>'}).join('');const lista=document.getElementById('listaTreinosSemana');if(lista){const ts=[{e:'🌊',n:'Rodagem Z2',k:'8km',p:'6:20',d:'Seg'},{e:'⚡',n:'Tiros 1000m',k:'10km',p:'5:00',d:'Ter'},{e:'🏃',n:'Corrida Facil',k:'6km',p:'6:30',d:'Qua'},{e:'🔥',n:'Limiar',k:'8km',p:'5:10',d:'Qui'},{e:'😴',n:'Descanso',k:'—',p:'—',d:'Sex'},{e:'🌄',n:'Longao',k:'16km',p:'6:00',d:'Sab'},{e:'⚡',n:'Intervalados 400m',k:'6km',p:'4:45',d:'Hoje'}];lista.innerHTML=ts.map((t,i)=>'<div class="hist-item" style="'+(i===6?'border-color:rgba(0,230,118,0.3);background:rgba(0,230,118,0.04)':'')+'"><div class="hist-icon" style="background:rgba(255,255,255,0.05)">'+t.e+'</div><div class="hist-info"><div class="hist-nome">'+t.n+'</div><div class="hist-data">'+t.d+'</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">'+t.k+'</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">'+t.p+'</div><div class="hist-lbl">pace</div></div></div></div>').join('')}}
+gerarCalendario();
+function calcularZonas(){const idade=parseInt(document.getElementById('inputIdade').value);const fcM=parseInt(document.getElementById('inputFCmax').value);const fc=fcM||(220-(idade||31));document.getElementById('fcMax-display').textContent='FCmax: '+fc+'bpm';[['z1-bpm',0.5,0.6],['z2-bpm',0.6,0.7],['z3-bpm',0.7,0.8],['z4-bpm',0.8,0.9],['z5-bpm',0.9,1]].forEach(z=>{const el=document.getElementById(z[0]);if(el)el.textContent=Math.round(z[1]*fc)+'-'+Math.round(z[2]*fc)+' bpm'})}
+document.getElementById('inputIdade').value=user.age||31;calcularZonas();
+function filtrarPlanilha(el,cat){document.querySelectorAll('#aba-planilhas .chip').forEach(c=>c.classList.remove('ativo'));el.classList.add('ativo');document.querySelectorAll('.planilha-card').forEach(c=>{c.style.display=(cat==='todas'||c.dataset.cat===cat)?'block':'none'})}
+function calcPace(){const dist=parseFloat(document.getElementById('cDistancia').value);const h=parseInt(document.getElementById('cHora').value)||0;const m=parseInt(document.getElementById('cMin').value)||0;const s=parseInt(document.getElementById('cSeg').value)||0;if(!dist||(!h&&!m&&!s))return;const tot=h*3600+m*60+s;const ps=tot/dist;const pm=Math.floor(ps/60);const ss=Math.round(ps%60);document.getElementById('resPaceVal').textContent=pm+':'+ss.toString().padStart(2,'0');document.getElementById('resPace').style.display='block'}
+let dEst=5;
+function selecionarDist(el,v){document.querySelectorAll('#aba-calculos .calc-card:nth-child(2) .chip').forEach(c=>c.classList.remove('ativo'));el.classList.add('ativo');dEst=v}
+function calcTempo(){const pm=parseInt(document.getElementById('ePaceMin').value)||0;const ps=parseInt(document.getElementById('ePaceSeg').value)||0;if(!pm&&!ps)return;const paceS=pm*60+ps;const tot=paceS*dEst;const h=Math.floor(tot/3600);const m=Math.floor((tot%3600)/60);const s=Math.round(tot%60);document.getElementById('resTempoVal').textContent=h>0?h+'h'+m.toString().padStart(2,'0')+'m'+s.toString().padStart(2,'0')+'s':m+'min '+s.toString().padStart(2,'0')+'seg';document.getElementById('resTempo').style.display='block'}
+function calcIMC(){const h=parseFloat(document.getElementById('cAltura').value)/100;const p=parseFloat(document.getElementById('cPeso').value);if(!h||!p)return;const imc=p/(h*h);const desc=imc<18.5?'Abaixo do peso':imc<24.9?'Peso ideal':imc<29.9?'Sobrepeso':'Obesidade';document.getElementById('resIMCVal').textContent=imc.toFixed(1);document.getElementById('resIMCDesc').textContent=desc+' • Ideal: ~'+(22*h*h).toFixed(1)+'kg';document.getElementById('resIMC').style.display='block'}
+let vDist=5;
+function selecionarProva(el,v){document.querySelectorAll('#aba-calculos .calc-card:nth-child(4) .chip').forEach(c=>c.classList.remove('ativo'));el.classList.add('ativo');vDist=v}
+function calcVDOT(){const h=parseInt(document.getElementById('vHora').value)||0;const m=parseInt(document.getElementById('vMin').value)||0;const s=parseInt(document.getElementById('vSeg').value)||0;if(!m&&!h)return;const tot=h*60+m+s/60;const vel=(vDist*1000)/(tot*60);const vdot=Math.abs(Math.round((-4.60+0.182258*vel*60+0.000104*Math.pow(vel*60,2))/(0.8+0.1894393*Math.exp(-0.012778*tot)+0.2989558*Math.exp(-0.1932605*tot))));const nivel=vdot<30?'Iniciante':vdot<40?'Recreacional':vdot<52?'Intermediario':vdot<60?'Avancado':'Elite';document.getElementById('resVDOTVal').textContent=vdot;document.getElementById('resVDOTDesc').textContent='VO2max estimado • Nivel: '+nivel;document.getElementById('resVDOT').style.display='block'}
+let timerInt=null,timerS=0,pausado=false,etapaIdx=0;
+const etapas=[{n:'Aquecimento',d:'15 min continuo • Pace livre'},{n:'8x 400m tiro',d:'Tiro em 4:30/km • Zona 4-5'},{n:'Recuperacao',d:'Caminhada ou trote leve'},{n:'Volta calma',d:'10 min • Pace livre • Alongar'}];
+function abrirModal(){document.getElementById('modalTreino').classList.add('open');if(!timerInt)iniciarTimer()}
+function fecharModal(){document.getElementById('modalTreino').classList.remove('open')}
+function iniciarTimer(){timerS=0;etapaIdx=0;atualizarEtapa();timerInt=setInterval(()=>{if(!pausado){timerS++;const m=Math.floor(timerS/60);const s=timerS%60;document.getElementById('timerDisplay').textContent=m.toString().padStart(2,'0')+':'+s.toString().padStart(2,'0');document.getElementById('tKm').textContent=(timerS/360).toFixed(1)}},1000)}
+function atualizarEtapa(){const e=etapas[etapaIdx];document.getElementById('etapaAtual').textContent=e.n;document.getElementById('timerDesc').textContent=e.d;document.getElementById('tEtapa').textContent=(etapaIdx+1)+'/'+etapas.length;timerS=0}
+function togglePause(){pausado=!pausado;document.getElementById('btnPause').textContent=pausado?'▶ Retomar':'⏸ Pausar'}
+function proximaEtapa(){if(etapaIdx<etapas.length-1){etapaIdx++;atualizarEtapa()}else pararTreino()}
+function pararTreino(){clearInterval(timerInt);timerInt=null;pausado=false;timerS=0;etapaIdx=0;fecharModal();alert('Treino finalizado! Parabens!')}
+document.getElementById('modalTreino').addEventListener('click',function(e){if(e.target===this)fecharModal()});
+const resIA={'pace':'Para melhorar seu pace, foque em treinos de limiar 1x por semana e tiros de 400m. Da pra ganhar 15-20s/km em 6 semanas!','amanha':'Recomendo rodagem leve Z2 de 8km amanha. Apos os intervalados o corpo precisa recuperar. Pace: 6:00-6:30/km.','meia':'Com seu pace de 5:42/km voce completaria uma meia em 2h00min. Para 1h45 precisa de 4:57/km. Mais 6-8 semanas!','lesao':'Prevencao: nunca aumente volume mais de 10%/semana, aquecimento sempre, fortaleça o core e respeite os descansos.','default':'Com base no seu historico, mantenha a consistencia! Volume + intensidade progressiva = resultado garantido.'};
+function perguntarIA(txt){document.getElementById('chatInput').value=txt;enviarIA()}
+function enviarIA(){const inp=document.getElementById('chatInput');const msg=inp.value.trim();if(!msg)return;const chat=document.getElementById('chatMsgs');chat.innerHTML+='<div style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.15);border-radius:12px 12px 4px 12px;padding:10px 14px;font-size:13px;align-self:flex-end;max-width:85%">'+msg+'</div>';inp.value='';const ml=msg.toLowerCase();let r=resIA.default;if(ml.includes('pace')||ml.includes('ritmo'))r=resIA.pace;else if(ml.includes('amanha')||ml.includes('treino'))r=resIA.amanha;else if(ml.includes('meia')||ml.includes('maratona'))r=resIA.meia;else if(ml.includes('lesao')||ml.includes('dor')||ml.includes('evitar'))r=resIA.lesao;setTimeout(()=>{chat.innerHTML+='<div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.15);border-radius:12px 12px 12px 4px;padding:10px 14px;font-size:13px;max-width:85%"><span style="font-size:10px;color:#a78bfa;font-weight:700;display:block;margin-bottom:4px">🤖 PACE IA</span>'+r+'</div>';chat.scrollTop=chat.scrollHeight},800);chat.scrollTop=chat.scrollHeight}
+</script>
+</body>
+</html>
