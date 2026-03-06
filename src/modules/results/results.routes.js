@@ -29,7 +29,13 @@ export async function resultsRoutes(fastify) {
       const results = await prisma.result.findMany({
         where: { athlete: { user: { id: decoded.userId } } },
         include: { race: { select:{ name:true, city:true, state:true } } },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' 
+  fastify.delete('/results/:id', async (request) => {
+    const { id } = request.params;
+    await prisma.result.delete({ where: { id } });
+    return { deleted: true };
+  });
+}
       });
       return results;
     } catch(e) { return reply.code(401).send({ error: 'Token inválido' }); }
