@@ -43,16 +43,7 @@ const app = Fastify({ logger: false });
 
 // helmet desativado temporariamente
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['https://web-production-990e7.up.railway.app'];
-
-await app.register(cors, {
-  origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error('Not allowed by CORS'));
-  }
-});
+await app.register(cors, { origin: true });
 
 await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
 await app.register(rateLimit, {
