@@ -102,7 +102,7 @@ textarea::placeholder{color:var(--muted)}
   <div style="font-size:48px">🏃</div>
   <h2>PACE IA</h2>
   <p>Sua treinadora pessoal de corrida.<br>Faça login para conversar!</p>
-  <button class="btnp" onclick="location.href='/entrar.html'">Entrar / Criar conta</button>
+  <button class="btnp" onclick="sessionStorage.setItem('pace_redirect','/ia.html');location.href='/entrar.html'">Entrar / Criar conta</button>
   <a href="/index.html" class="btns">Voltar ao início</a>
 </div>
 <div class="app" id="app">
@@ -247,7 +247,7 @@ async function enviar(){
     document.getElementById('sbtn').disabled=false;
     if(d.error){
       if(r.status===429)addMsg('Limite de mensagens atingido. Volte em 1 hora! 💚','ia');
-      else if(r.status===401){localStorage.removeItem('token');location.href='/entrar.html';}
+      else if(r.status===401){localStorage.removeItem('token');sessionStorage.setItem('pace_redirect','/ia.html');location.href='/entrar.html';}
       else addMsg('Erro: '+d.error,'ia');
       return;
     }
