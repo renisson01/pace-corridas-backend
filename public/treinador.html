@@ -4,299 +4,395 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Treinador — PACE</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;--roxo:#7C3AED;--azul:#3B82F6;--vermelho:#EF4444;--amarelo:#F59E0B;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:100px}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(8,11,16,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.topbar-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
-.topbar-btn{background:var(--verde);color:#080B10;border:none;border-radius:20px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
-.hero{padding:24px 20px 0;background:linear-gradient(180deg,rgba(0,230,118,0.05) 0%,transparent 100%);border-bottom:1px solid var(--border)}
-.hero-stats{display:flex;border-top:1px solid var(--border)}
-.hero-stat{flex:1;padding:14px 0;text-align:center;border-right:1px solid var(--border)}
-.hero-stat:last-child{border-right:none}
-.hero-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--verde)}
-.hero-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.tabs-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--border)}
-.tabs-scroll::-webkit-scrollbar{display:none}
-.tabs{display:flex;min-width:max-content;padding:0 16px}
-.tab{padding:14px 18px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none}
-.tab.ativo{color:var(--verde);border-bottom-color:var(--verde)}
-.section{padding:16px}
-.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.sec-title span{font-size:14px;color:var(--muted);font-family:'Barlow',sans-serif;font-weight:400}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px}
-.card-hover{transition:all 0.2s;cursor:pointer}
-.card-hover:hover{border-color:var(--verde);background:var(--bg3)}
-.treino-dia{background:linear-gradient(135deg,#0A1F0A,#0D2B0D);border:1px solid rgba(0,230,118,0.25);border-radius:20px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
-.treino-dia::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,230,118,0.15),transparent 70%);pointer-events:none}
-.treino-badge{display:inline-flex;align-items:center;background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.25);color:var(--verde);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
-.treino-nome{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:4px}
-.treino-desc{font-size:13px;color:#94a3b8;margin-bottom:14px;line-height:1.5}
-.treino-meta{display:flex;gap:16px;margin-bottom:16px}
-.treino-meta-item{display:flex;flex-direction:column}
-.treino-meta-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900}
-.treino-meta-lbl{font-size:10px;color:var(--muted)}
-.btn-iniciar{width:100%;padding:13px;background:var(--verde);color:#080B10;border:none;border-radius:30px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;cursor:pointer;transition:all 0.2s}
-.btn-iniciar:hover{background:var(--verde2);transform:scale(1.02)}
-.semana-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
-.dia-pill{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border-radius:12px;border:1px solid var(--border);background:var(--bg2)}
-.dia-pill.hoje{background:var(--verde);border-color:var(--verde)}
-.dia-pill.hoje .dia-nome,.dia-pill.hoje .dia-num{color:#080B10}
-.dia-pill.feito{background:rgba(0,230,118,0.06);border-color:rgba(0,230,118,0.15)}
-.dia-nome{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
-.dia-num{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900}
-.dia-dot{width:5px;height:5px;border-radius:50%;margin-top:4px}
-.serie-lista{display:flex;flex-direction:column;gap:8px}
-.serie-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg3);border-radius:12px;border-left:3px solid transparent}
-.serie-item.aquecimento{border-left-color:var(--amarelo)}
-.serie-item.tiro{border-left-color:var(--laranja)}
-.serie-item.recuperacao{border-left-color:var(--azul)}
-.serie-item.volta{border-left-color:var(--roxo)}
-.serie-num{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;min-width:28px}
-.serie-info{flex:1}
-.serie-desc{font-size:13px;font-weight:600}
-.serie-pace{font-size:11px;color:var(--muted)}
-.serie-dur{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--muted)}
-.zona-lista{display:flex;flex-direction:column;gap:8px}
-.zona-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--bg3)}
-.zona-cor{width:12px;height:36px;border-radius:6px;flex-shrink:0}
-.zona-info{flex:1}
-.zona-nome{font-size:13px;font-weight:700;margin-bottom:2px}
-.zona-bpm{font-size:11px;color:var(--muted)}
-.zona-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
-.zona-bar{height:100%;border-radius:4px}
-.zona-pct{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;min-width:36px;text-align:right}
-.planilha-card{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all 0.2s}
-.planilha-card:hover{border-color:var(--verde);transform:translateY(-2px)}
-.planilha-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
-.planilha-nome{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900}
-.planilha-level{font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px}
-.planilha-level.iniciante{background:rgba(0,230,118,0.12);color:var(--verde)}
-.planilha-level.intermediario{background:rgba(245,158,11,0.12);color:var(--amarelo)}
-.planilha-level.avancado{background:rgba(239,68,68,0.12);color:var(--vermelho)}
-.planilha-desc{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.planilha-meta-row{display:flex;gap:16px}
-.planilha-meta{display:flex;flex-direction:column}
-.planilha-meta-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900}
-.planilha-meta-lbl{font-size:10px;color:var(--muted)}
-.planilha-progress{margin-top:12px}
-.planilha-progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px}
-.planilha-progress-fill{height:100%;background:var(--verde);border-radius:3px}
-.planilha-progress-text{font-size:10px;color:var(--muted);display:flex;justify-content:space-between}
-.hist-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;margin-bottom:10px}
-.hist-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.hist-info{flex:1}
-.hist-nome{font-size:14px;font-weight:700;margin-bottom:2px}
-.hist-data{font-size:11px;color:var(--muted)}
-.hist-stats{display:flex;gap:14px;text-align:right}
-.hist-stat{display:flex;flex-direction:column}
-.hist-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900}
-.hist-lbl{font-size:9px;color:var(--muted);text-transform:uppercase}
-.ia-card{background:linear-gradient(135deg,#0A0A1F,#12122B);border:1px solid rgba(124,58,237,0.3);border-radius:20px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
-.ia-card::before{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;background:radial-gradient(circle,rgba(124,58,237,0.2),transparent 70%);pointer-events:none}
-.ia-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.ia-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#5B21B6);display:flex;align-items:center;justify-content:center;font-size:16px}
-.ia-label{font-size:10px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px}
-.ia-nome{font-size:13px;font-weight:700;color:#fff}
-.ia-texto{font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:14px}
-.ia-texto strong{color:#fff}
-.ia-chips{display:flex;gap:6px;flex-wrap:wrap}
-.ia-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(124,58,237,0.3);color:#a78bfa;cursor:pointer}
-.calc-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px}
-.calc-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;margin-bottom:14px}
-.input-group{margin-bottom:12px}
-.input-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block}
-.input-row{display:flex;gap:8px}
-.input-field{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:16px;font-family:'Barlow',sans-serif;outline:none}
-.input-field:focus{border-color:var(--verde)}
-.input-unit{background:var(--bg3);border:1px solid var(--border);border-left:none;border-radius:0 10px 10px 0;padding:10px 12px;font-size:12px;color:var(--muted);display:flex;align-items:center;white-space:nowrap}
-.input-field.cu{border-radius:10px 0 0 10px}
-.btn-calc{width:100%;padding:11px;background:var(--verde);color:#080B10;border:none;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;cursor:pointer;margin-top:4px}
-.resultado-box{background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:14px;padding:16px;margin-top:12px;text-align:center;display:none}
-.resultado-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:var(--verde)}
-.resultado-lbl{font-size:12px;color:var(--muted)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,11,16,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 0 14px;z-index:100}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;padding:4px 12px}
-.nav-icon{font-size:21px}
-.nav-label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.nav-item.ativo .nav-label{color:var(--verde)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:flex-end}
-.modal-overlay.open{display:flex}
-.modal-sheet{background:var(--bg2);border-top:1px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:24px 20px 40px}
-.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
-.timer-display{font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;text-align:center;color:var(--verde);letter-spacing:-2px;margin:20px 0}
-.timer-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn-timer{padding:14px;border-radius:16px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;cursor:pointer}
-.btn-timer.pause{background:var(--bg3);color:var(--text)}
-.btn-timer.stop{background:rgba(239,68,68,0.1);color:var(--vermelho);border:1px solid rgba(239,68,68,0.2)}
-.btn-timer.proximo{background:var(--verde);color:#080B10;grid-column:span 2}
-.chips-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}
-.chip.ativo{background:rgba(0,230,118,0.1);border-color:rgba(0,230,118,0.3);color:var(--verde)}
-.avatar-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--verde),#00C853);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#080B10;font-family:'Barlow Condensed',sans-serif}
-.avatar-info{flex:1}
-.avatar-nome{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900}
-.avatar-level{font-size:11px;color:var(--muted)}
+:root {
+  --verde: #00E676; --verde2: #00C853; --laranja: #FF6D00; --roxo: #7C3AED;
+  --azul: #3B82F6; --vermelho: #EF4444; --amarelo: #F59E0B; --rosa: #EC4899;
+  --bg: #080B10; --bg2: #0D1117; --bg3: #161B27; --border: #1F2937;
+  --text: #F1F5F9; --muted: #64748B;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; padding-bottom: 90px; }
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:rgba(8,11,16,0.98); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:200; }
+.topbar-logo { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:22px; color:var(--verde); letter-spacing:2px; text-decoration:none; }
+.modo-toggle { display:flex; background:var(--bg3); border-radius:24px; padding:3px; gap:2px; }
+.modo-btn { padding:6px 14px; border-radius:20px; border:none; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:900; cursor:pointer; color:var(--muted); background:transparent; transition:all 0.2s; white-space:nowrap; }
+.modo-btn.ativo { background:var(--verde); color:#080B10; }
+.hero-coach { background:linear-gradient(135deg,#050D05,#0A1A0A); border-bottom:1px solid rgba(0,230,118,0.15); padding:20px 18px 0; }
+.hero-aluno { background:linear-gradient(135deg,#050812,#0A0F1E); border-bottom:1px solid rgba(59,130,246,0.15); padding:20px 18px 0; }
+.coach-perfil, .aluno-perfil { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.coach-avatar { width:58px; height:58px; border-radius:16px; background:linear-gradient(135deg,#00E676,#00C853); display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:#080B10; flex-shrink:0; }
+.aluno-avatar { width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg,#3B82F6,#1D4ED8); display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:#fff; flex-shrink:0; position:relative; }
+.aluno-badge-nivel { position:absolute; bottom:-4px; right:-4px; background:var(--amarelo); color:#080B10; font-size:9px; font-weight:900; border-radius:8px; padding:1px 5px; }
+.coach-nome, .aluno-nome { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; }
+.coach-tag { font-size:11px; color:var(--verde); font-weight:700; }
+.aluno-treinador { font-size:11px; color:var(--azul); font-weight:600; }
+.stats-row { display:flex; border-top:1px solid var(--border); }
+.stat-box { flex:1; padding:12px 0; text-align:center; border-right:1px solid var(--border); }
+.stat-box:last-child { border-right:none; }
+.stat-val { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:900; }
+.stat-lbl { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+.tabs-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border-bottom:1px solid var(--border); background:var(--bg); }
+.tabs-wrap::-webkit-scrollbar { display:none; }
+.tabs { display:flex; min-width:max-content; padding:0 14px; }
+.tab { padding:13px 16px; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; color:var(--muted); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; white-space:nowrap; transition:all 0.2s; }
+.tab.ativo { color:var(--verde); border-bottom-color:var(--verde); }
+.tab.azul.ativo { color:var(--azul); border-bottom-color:var(--azul); }
+.section { padding:16px; }
+.sec-title { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; }
+.sec-sub { font-size:12px; color:var(--muted); font-family:'Barlow',sans-serif; font-weight:400; }
+.card { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px; }
+.card-verde { border-color:rgba(0,230,118,0.2); background:linear-gradient(135deg,rgba(0,230,118,0.04),var(--bg2)); }
+.card-azul { border-color:rgba(59,130,246,0.2); background:linear-gradient(135deg,rgba(59,130,246,0.04),var(--bg2)); }
+.card-laranja { border-color:rgba(255,109,0,0.2); background:linear-gradient(135deg,rgba(255,109,0,0.04),var(--bg2)); }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 18px; border-radius:24px; border:none; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:900; cursor:pointer; transition:all 0.2s; }
+.btn-verde { background:var(--verde); color:#080B10; }
+.btn-verde:hover { background:var(--verde2); }
+.btn-azul { background:var(--azul); color:#fff; }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--muted); }
+.btn-outline:hover { border-color:var(--verde); color:var(--verde); }
+.btn-full { width:100%; justify-content:center; padding:13px; border-radius:14px; font-size:16px; }
+.btn-sm { padding:6px 12px; font-size:12px; }
+.input-field { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:10px 14px; color:var(--text); font-size:15px; font-family:'Barlow',sans-serif; outline:none; transition:border-color 0.2s; }
+.input-field:focus { border-color:var(--verde); }
+.input-label { font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:block; }
+.input-group { margin-bottom:12px; }
+.input-row { display:flex; gap:8px; }
+textarea.input-field { min-height:80px; resize:vertical; }
+.aluno-item { display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--bg2); border:1px solid var(--border); border-radius:14px; margin-bottom:8px; }
+.aluno-av { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:900; flex-shrink:0; }
+.aluno-dados { flex:1; }
+.aluno-dados-nome { font-size:14px; font-weight:700; }
+.aluno-dados-info { font-size:11px; color:var(--muted); }
+.aluno-compliance { text-align:right; }
+.compliance-val { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:900; }
+.compliance-lbl { font-size:9px; color:var(--muted); text-transform:uppercase; }
+.treino-card { background:var(--bg2); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:12px; }
+.treino-card-header { padding:14px 16px 10px; display:flex; align-items:flex-start; gap:10px; }
+.treino-tipo-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.treino-card-nome { font-family:'Barlow Condensed',sans-serif; font-size:17px; font-weight:900; }
+.treino-card-footer { padding:10px 16px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg3); }
+.treino-alunos-count { font-size:11px; color:var(--muted); }
+.treino-status { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; }
+.treino-status.enviado { background:rgba(0,230,118,0.1); color:var(--verde); }
+.treino-status.pendente { background:rgba(245,158,11,0.1); color:var(--amarelo); }
+.treino-status.rascunho { background:rgba(100,116,139,0.1); color:var(--muted); }
+.mural-post { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:10px; }
+.mural-autor { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.mural-av { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900; font-family:'Barlow Condensed',sans-serif; }
+.mural-nome { font-size:13px; font-weight:700; }
+.mural-data { font-size:10px; color:var(--muted); }
+.mural-texto { font-size:13px; line-height:1.6; color:#94a3b8; margin-bottom:10px; }
+.mural-reacoes { display:flex; gap:6px; }
+.mural-reacao { background:var(--bg3); border:1px solid var(--border); border-radius:20px; padding:4px 10px; font-size:12px; cursor:pointer; transition:all 0.2s; }
+.mural-reacao.ativo { background:rgba(0,230,118,0.1); border-color:rgba(0,230,118,0.3); }
+.mural-pin-label { font-size:9px; font-weight:700; color:var(--amarelo); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.carinhas-row { display:flex; gap:6px; justify-content:space-between; }
+.carinha-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px; border-radius:12px; border:1px solid var(--border); background:var(--bg3); cursor:pointer; transition:all 0.2s; }
+.carinha-btn.ativo { border-color:var(--verde); background:rgba(0,230,118,0.08); }
+.carinha-emoji { font-size:22px; }
+.carinha-label { font-size:9px; color:var(--muted); font-weight:700; text-transform:uppercase; }
+.treino-dia-aluno { background:linear-gradient(135deg,#071A07,#0A2010); border:1px solid rgba(0,230,118,0.25); border-radius:20px; padding:18px; margin-bottom:14px; position:relative; overflow:hidden; }
+.treino-dia-aluno::before { content:''; position:absolute; top:-30px; right:-30px; width:140px; height:140px; background:radial-gradient(circle,rgba(0,230,118,0.12),transparent 70%); pointer-events:none; }
+.treino-badge { display:inline-flex; align-items:center; gap:5px; border-radius:20px; padding:3px 10px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.badge-verde { background:rgba(0,230,118,0.12); border:1px solid rgba(0,230,118,0.25); color:var(--verde); }
+.badge-laranja { background:rgba(255,109,0,0.12); border:1px solid rgba(255,109,0,0.25); color:var(--laranja); }
+.badge-azul { background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.25); color:var(--azul); }
+.treino-nome-dia { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; margin-bottom:4px; }
+.treino-desc-dia { font-size:12px; color:#94a3b8; line-height:1.5; margin-bottom:12px; }
+.treino-metas { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; }
+.treino-meta-v { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; }
+.treino-meta-l { font-size:9px; color:var(--muted); }
+.serie { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.03); margin-bottom:6px; border-left:3px solid transparent; }
+.serie.aquec { border-left-color:var(--amarelo); }
+.serie.tiro { border-left-color:var(--laranja); }
+.serie.recup { border-left-color:var(--azul); }
+.serie.volta { border-left-color:var(--roxo); }
+.serie-n { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:900; min-width:24px; }
+.serie-i { flex:1; }
+.serie-i .nome { font-size:12px; font-weight:600; }
+.serie-i .pace { font-size:10px; color:var(--muted); }
+.serie-dur { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:900; color:var(--muted); }
+.rank-item { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:14px; background:var(--bg2); border:1px solid var(--border); margin-bottom:8px; }
+.rank-pos { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; min-width:32px; color:var(--muted); }
+.rank-av { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:900; flex-shrink:0; }
+.rank-info { flex:1; }
+.rank-nome { font-size:13px; font-weight:700; }
+.rank-detalhe { font-size:10px; color:var(--muted); }
+.rank-pts { text-align:right; }
+.rank-pts-val { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:900; color:var(--verde); }
+.rank-pts-lbl { font-size:9px; color:var(--muted); }
+.rank-eu { background:linear-gradient(135deg,rgba(59,130,246,0.08),var(--bg2)); border-color:rgba(59,130,246,0.3); }
+.conform-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.conform-fill { height:100%; border-radius:3px; background:var(--verde); transition:width 0.8s ease; }
+.conform-fill.medio { background:var(--amarelo); }
+.conform-fill.baixo { background:var(--vermelho); }
+.alerta { display:flex; gap:10px; padding:12px 14px; border-radius:12px; margin-bottom:8px; }
+.alerta.atencao { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); }
+.alerta.ok { background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.15); }
+.alerta.risco { background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); }
+.alerta-ico { font-size:18px; flex-shrink:0; }
+.alerta-txt { font-size:12px; line-height:1.5; }
+.alerta-txt strong { display:block; font-size:13px; margin-bottom:2px; }
+.bottom-nav { position:fixed; bottom:0; left:0; right:0; background:rgba(8,11,16,0.97); backdrop-filter:blur(14px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:8px 0 14px; z-index:100; }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; padding:4px 10px; }
+.nav-icon { font-size:21px; }
+.nav-label { font-size:9px; font-weight:600; color:var(--muted); text-transform:uppercase; }
+.nav-item.ativo .nav-label { color:var(--verde); }
+.nav-item.ativo .nav-icon { filter:drop-shadow(0 0 6px var(--verde)); }
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:300; display:none; align-items:flex-end; }
+.modal-overlay.open { display:flex; }
+.modal-sheet { background:var(--bg2); border-top:1px solid var(--border); border-radius:24px 24px 0 0; width:100%; max-height:92vh; overflow-y:auto; padding:20px 18px 40px; }
+.modal-handle { width:40px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 18px; }
+.modal-title { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:900; margin-bottom:16px; }
+.chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.chip { padding:5px 12px; border-radius:20px; border:1px solid var(--border); background:var(--bg2); font-size:11px; font-weight:700; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+.chip.ativo { background:rgba(0,230,118,0.1); border-color:rgba(0,230,118,0.3); color:var(--verde); }
+.notif-badge { background:var(--vermelho); color:#fff; font-size:9px; font-weight:900; border-radius:50%; width:16px; height:16px; display:inline-flex; align-items:center; justify-content:center; margin-left:4px; }
+.cal-row { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:12px; }
+.cal-dia { display:flex; flex-direction:column; align-items:center; padding:7px 3px; border-radius:10px; border:1px solid var(--border); background:var(--bg2); }
+.cal-dia.hoje { background:var(--verde); border-color:var(--verde); }
+.cal-dia.hoje .cal-lbl, .cal-dia.hoje .cal-n { color:#080B10; }
+.cal-dia.feito { background:rgba(0,230,118,0.07); border-color:rgba(0,230,118,0.2); }
+.cal-dia.miss { background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.15); }
+.cal-lbl { font-size:8px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:3px; }
+.cal-n { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:900; }
+.cal-dot { width:4px; height:4px; border-radius:50%; margin-top:3px; }
+.prog-semana { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+.prog-box { background:var(--bg3); border-radius:12px; padding:12px; text-align:center; }
+.prog-val { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; }
+.prog-lbl { font-size:9px; color:var(--muted); text-transform:uppercase; }
+.div { height:1px; background:var(--border); margin:14px 0; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.fade-up { animation:fadeUp 0.25s ease; }
 </style>
 </head>
 <body>
+
 <div class="topbar">
   <a href="/" class="topbar-logo">PACE</a>
-  <span class="topbar-title">🏃 Treinador</span>
-  <button class="topbar-btn" onclick="abrirModal()">▶ Iniciar</button>
+  <div class="modo-toggle">
+    <button class="modo-btn ativo" id="btnModoCoach" onclick="setModo('coach')">🏋️ Treinador</button>
+    <button class="modo-btn" id="btnModoAluno" onclick="setModo('aluno')">🏃 Aluno</button>
+  </div>
 </div>
-<div class="hero">
-  <div class="avatar-row" style="padding-top:4px">
-    <div class="avatar" id="avatarLetra">R</div>
-    <div class="avatar-info">
-      <div class="avatar-nome" id="nomeAtleta">Atleta PACE</div>
-      <div class="avatar-level">🏃 Corredor Intermediário • Itabaiana, SE</div>
+
+<!-- ===== MODO TREINADOR ===== -->
+<div id="modoCoach">
+  <div class="hero-coach">
+    <div class="coach-perfil">
+      <div class="coach-avatar" id="coachAvatar">R</div>
+      <div style="flex:1">
+        <div class="coach-nome" id="coachNome">Coach Renisson</div>
+        <div class="coach-tag">⚡ Treinador Certificado PACE</div>
+      </div>
+      <button class="btn btn-verde btn-sm" onclick="abrirModalNovoTreino()">+ Treino</button>
     </div>
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--verde)">🔥 7d</div>
-  </div>
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-val">28</div><div class="hero-stat-lbl">km semana</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">4</div><div class="hero-stat-lbl">treinos</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">5:42</div><div class="hero-stat-lbl">pace médio</div></div>
-    <div class="hero-stat"><div class="hero-stat-val">7</div><div class="hero-stat-lbl">sequência</div></div>
-  </div>
-</div>
-<div class="tabs-scroll">
-  <div class="tabs">
-    <button class="tab ativo" onclick="mostrarAba('hoje',this)">📅 Hoje</button>
-    <button class="tab" onclick="mostrarAba('semana',this)">📊 Semana</button>
-    <button class="tab" onclick="mostrarAba('planilhas',this)">📋 Planilhas</button>
-    <button class="tab" onclick="mostrarAba('calculos',this)">🧮 Cálculos</button>
-    <button class="tab" onclick="mostrarAba('historico',this)">📈 Histórico</button>
-    <button class="tab" onclick="mostrarAba('ia',this)">🤖 PACE IA</button>
-  </div>
-</div>
-<div id="aba-hoje" class="section">
-  <div class="treino-dia">
-    <div class="treino-badge">⚡ TREINO DE VELOCIDADE</div>
-    <div class="treino-nome">Intervalados 400m</div>
-    <div class="treino-desc">Trabalho de velocidade com repetições curtas. Foco na frequência de passada e economia de corrida.</div>
-    <div class="treino-meta">
-      <div class="treino-meta-item"><div class="treino-meta-val">6 km</div><div class="treino-meta-lbl">Distância</div></div>
-      <div class="treino-meta-item"><div class="treino-meta-val">45 min</div><div class="treino-meta-lbl">Duração</div></div>
-      <div class="treino-meta-item"><div class="treino-meta-val">Alta</div><div class="treino-meta-lbl">Intensidade</div></div>
-      <div class="treino-meta-item"><div class="treino-meta-val">4:45/km</div><div class="treino-meta-lbl">Pace alvo</div></div>
-    </div>
-    <button class="btn-iniciar" onclick="abrirModal()">▶ Iniciar Treino</button>
-  </div>
-  <div class="sec-title">Estrutura do Treino</div>
-  <div class="serie-lista">
-    <div class="serie-item aquecimento"><div class="serie-num">1</div><div class="serie-info"><div class="serie-desc">Aquecimento contínuo</div><div class="serie-pace">Pace livre • Zona 1-2</div></div><div class="serie-dur">15 min</div></div>
-    <div class="serie-item tiro"><div class="serie-num">2</div><div class="serie-info"><div class="serie-desc">8x 400m tiro</div><div class="serie-pace">Pace 4:30/km • Zona 4-5</div></div><div class="serie-dur">2 min</div></div>
-    <div class="serie-item recuperacao"><div class="serie-num">3</div><div class="serie-info"><div class="serie-desc">Recuperação ativa</div><div class="serie-pace">Caminhada ou trote leve</div></div><div class="serie-dur">90 seg</div></div>
-    <div class="serie-item volta"><div class="serie-num">4</div><div class="serie-info"><div class="serie-desc">Volta calma + alongamento</div><div class="serie-pace">Pace livre • Zona 1</div></div><div class="serie-dur">10 min</div></div>
-  </div>
-  <div class="sec-title" style="margin-top:20px">❤️ Zonas de FC <span id="fcMax-display"></span></div>
-  <div class="zona-lista">
-    <div class="zona-item"><div class="zona-cor" style="background:#3B82F6"></div><div class="zona-info"><div class="zona-nome">Z1 — Recuperação</div><div class="zona-bpm" id="z1-bpm">50–60%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:60%;background:#3B82F6"></div></div><div class="zona-pct" style="color:#3B82F6">60%</div></div>
-    <div class="zona-item"><div class="zona-cor" style="background:#10B981"></div><div class="zona-info"><div class="zona-nome">Z2 — Base aeróbica</div><div class="zona-bpm" id="z2-bpm">60–70%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:70%;background:#10B981"></div></div><div class="zona-pct" style="color:#10B981">70%</div></div>
-    <div class="zona-item"><div class="zona-cor" style="background:#F59E0B"></div><div class="zona-info"><div class="zona-nome">Z3 — Aeróbico intenso</div><div class="zona-bpm" id="z3-bpm">70–80%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:80%;background:#F59E0B"></div></div><div class="zona-pct" style="color:#F59E0B">80%</div></div>
-    <div class="zona-item"><div class="zona-cor" style="background:#F97316"></div><div class="zona-info"><div class="zona-nome">Z4 — Limiar</div><div class="zona-bpm" id="z4-bpm">80–90%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:90%;background:#F97316"></div></div><div class="zona-pct" style="color:#F97316">90%</div></div>
-    <div class="zona-item"><div class="zona-cor" style="background:#EF4444"></div><div class="zona-info"><div class="zona-nome">Z5 — VO2max / Tiros</div><div class="zona-bpm" id="z5-bpm">90–100%</div></div><div class="zona-bar-wrap"><div class="zona-bar" style="width:100%;background:#EF4444"></div></div><div class="zona-pct" style="color:#EF4444">100%</div></div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px">⚙️ Configure sua FC</div>
-    <div class="input-row" style="gap:8px">
-      <div style="flex:1"><div class="input-label">Idade</div><div class="input-row"><input class="input-field cu" type="number" id="inputIdade" placeholder="31"><div class="input-unit">anos</div></div></div>
-      <div style="flex:1"><div class="input-label">FCmáx manual</div><div class="input-row"><input class="input-field cu" type="number" id="inputFCmax" placeholder="auto"><div class="input-unit">bpm</div></div></div>
-    </div>
-    <button class="btn-calc" onclick="calcularZonas()">Calcular Zonas</button>
-  </div>
-</div>
-<div id="aba-semana" class="section" style="display:none">
-  <div class="sec-title">📅 Esta Semana</div>
-  <div class="semana-grid" id="calendarioSemana"></div>
-  <div id="listaTreinosSemana"></div>
-  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:700;font-size:14px">Meta semanal</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--verde)">28/40 km</div></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:70%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:6px">70% da meta • Faltam 12 km</div></div>
-</div>
-<div id="aba-planilhas" class="section" style="display:none">
-  <div class="sec-title">📋 Planilhas de Treino</div>
-  <div class="chips-row"><div class="chip ativo" onclick="filtrarPlanilha(this,'todas')">Todas</div><div class="chip" onclick="filtrarPlanilha(this,'5km')">5km</div><div class="chip" onclick="filtrarPlanilha(this,'10km')">10km</div><div class="chip" onclick="filtrarPlanilha(this,'meia')">Meia</div><div class="chip" onclick="filtrarPlanilha(this,'maratona')">Maratona</div></div>
-  <div class="planilha-card" data-cat="5km"><div class="planilha-top"><div class="planilha-nome">5km Sub-30 em 6 semanas</div><div class="planilha-level iniciante">Iniciante</div></div><div class="planilha-desc">Planilha progressiva para completar os 5km abaixo de 30 minutos. 4 treinos por semana.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">6</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">4x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">20km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Progresso</span><span>Semana 1/6</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:17%"></div></div></div></div>
-  <div class="planilha-card" data-cat="10km"><div class="planilha-top"><div class="planilha-nome">10km — Quebre os 50min</div><div class="planilha-level intermediario">Intermediário</div></div><div class="planilha-desc">8 semanas de treino específico. Limiar e tiros de 1000m. Pace alvo: 4:55/km.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">8</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">5x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">40km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Não iniciada</span><span>0/8</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:0%"></div></div></div></div>
-  <div class="planilha-card" data-cat="meia"><div class="planilha-top"><div class="planilha-nome">Meia Maratona — 1h45min</div><div class="planilha-level intermediario">Intermediário</div></div><div class="planilha-desc">12 semanas com longão aos fins de semana e trabalho de limiar progressivo.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">12</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">5x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">60km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Não iniciada</span><span>0/12</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:0%"></div></div></div></div>
-  <div class="planilha-card" data-cat="maratona"><div class="planilha-top"><div class="planilha-nome">Maratona — Sub 4 horas</div><div class="planilha-level avancado">Avançado</div></div><div class="planilha-desc">18 semanas completas. Longões de até 35km, bi-diários e trabalho de limiar.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">18</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">6x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">80km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Não iniciada</span><span>0/18</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:0%"></div></div></div></div>
-  <div class="planilha-card" data-cat="5km"><div class="planilha-top"><div class="planilha-nome">5km Sub-20 — Elite</div><div class="planilha-level avancado">Avançado</div></div><div class="planilha-desc">Para corredores já sub-22. VO2max e economia de corrida. Pace alvo: 3:55/km.</div><div class="planilha-meta-row"><div class="planilha-meta"><div class="planilha-meta-val">10</div><div class="planilha-meta-lbl">semanas</div></div><div class="planilha-meta"><div class="planilha-meta-val">6x</div><div class="planilha-meta-lbl">por semana</div></div><div class="planilha-meta"><div class="planilha-meta-val">55km</div><div class="planilha-meta-lbl">volume</div></div></div><div class="planilha-progress"><div class="planilha-progress-text"><span>Não iniciada</span><span>0/10</span></div><div class="planilha-progress-bar"><div class="planilha-progress-fill" style="width:0%"></div></div></div></div>
-</div>
-<div id="aba-calculos" class="section" style="display:none">
-  <div class="sec-title">🧮 Calculadoras do Corredor</div>
-  <div class="calc-card">
-    <div class="calc-title">⏱️ Calculadora de Pace</div>
-    <div class="input-group"><label class="input-label">Distância</label><div class="input-row"><input class="input-field cu" type="number" id="cDistancia" placeholder="10" step="0.1"><div class="input-unit">km</div></div></div>
-    <div class="input-group"><label class="input-label">Tempo</label><div class="input-row" style="gap:6px"><input class="input-field" type="number" id="cHora" placeholder="0" style="text-align:center"><span style="line-height:42px;color:var(--muted)">h</span><input class="input-field" type="number" id="cMin" placeholder="50" style="text-align:center"><span style="line-height:42px;color:var(--muted)">min</span><input class="input-field" type="number" id="cSeg" placeholder="00" style="text-align:center"><span style="line-height:42px;color:var(--muted)">seg</span></div></div>
-    <button class="btn-calc" onclick="calcPace()">Calcular Pace</button>
-    <div class="resultado-box" id="resPace"><div class="resultado-val" id="resPaceVal">—</div><div class="resultado-lbl">min/km</div></div>
-  </div>
-  <div class="calc-card">
-    <div class="calc-title">🏁 Tempo Estimado de Prova</div>
-    <div class="chips-row"><div class="chip ativo" onclick="selecionarDist(this,5)">5km</div><div class="chip" onclick="selecionarDist(this,10)">10km</div><div class="chip" onclick="selecionarDist(this,21.097)">Meia</div><div class="chip" onclick="selecionarDist(this,42.195)">Maratona</div></div>
-    <div class="input-group"><label class="input-label">Seu pace médio de treino</label><div class="input-row" style="gap:6px"><input class="input-field" type="number" id="ePaceMin" placeholder="5" style="text-align:center"><span style="line-height:42px;color:var(--muted)">min</span><input class="input-field" type="number" id="ePaceSeg" placeholder="30" style="text-align:center"><span style="line-height:42px;color:var(--muted)">seg</span></div></div>
-    <button class="btn-calc" onclick="calcTempo()">Estimar Tempo</button>
-    <div class="resultado-box" id="resTempo"><div class="resultado-val" id="resTempoVal">—</div><div class="resultado-lbl">Tempo estimado na prova</div></div>
-  </div>
-  <div class="calc-card">
-    <div class="calc-title">⚖️ Peso Ideal do Corredor</div>
-    <div class="input-group"><label class="input-label">Altura</label><div class="input-row"><input class="input-field cu" type="number" id="cAltura" placeholder="175"><div class="input-unit">cm</div></div></div>
-    <div class="input-group"><label class="input-label">Peso atual</label><div class="input-row"><input class="input-field cu" type="number" id="cPeso" placeholder="70" step="0.1"><div class="input-unit">kg</div></div></div>
-    <button class="btn-calc" onclick="calcIMC()">Calcular</button>
-    <div class="resultado-box" id="resIMC"><div class="resultado-val" id="resIMCVal">—</div><div class="resultado-lbl" id="resIMCDesc">IMC atual</div></div>
-  </div>
-  <div class="calc-card">
-    <div class="calc-title">🔬 VDOT — VO2max Estimado</div>
-    <div class="chips-row"><div class="chip ativo" onclick="selecionarProva(this,5)">5km</div><div class="chip" onclick="selecionarProva(this,10)">10km</div><div class="chip" onclick="selecionarProva(this,21.097)">Meia</div></div>
-    <div class="input-group"><label class="input-label">Tempo na prova</label><div class="input-row" style="gap:6px"><input class="input-field" type="number" id="vHora" placeholder="0" style="text-align:center"><span style="line-height:42px;color:var(--muted)">h</span><input class="input-field" type="number" id="vMin" placeholder="25" style="text-align:center"><span style="line-height:42px;color:var(--muted)">min</span><input class="input-field" type="number" id="vSeg" placeholder="00" style="text-align:center"><span style="line-height:42px;color:var(--muted)">seg</span></div></div>
-    <button class="btn-calc" onclick="calcVDOT()">Calcular VDOT</button>
-    <div class="resultado-box" id="resVDOT"><div class="resultado-val" id="resVDOTVal">—</div><div class="resultado-lbl" id="resVDOTDesc">VO2max estimado</div></div>
-  </div>
-</div>
-<div id="aba-historico" class="section" style="display:none">
-  <div class="sec-title">📈 Histórico de Treinos</div>
-  <div class="chips-row"><div class="chip ativo">Esta semana</div><div class="chip">Mês</div><div class="chip">3 meses</div><div class="chip">Tudo</div></div>
-  <div class="hist-item"><div class="hist-icon" style="background:rgba(255,109,0,0.1)">⚡</div><div class="hist-info"><div class="hist-nome">Intervalados 400m</div><div class="hist-data">Hoje, 06h30</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">6.2km</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">4:52</div><div class="hist-lbl">pace</div></div></div></div>
-  <div class="hist-item"><div class="hist-icon" style="background:rgba(59,130,246,0.1)">🌊</div><div class="hist-info"><div class="hist-nome">Rodagem Longa Z2</div><div class="hist-data">Ontem, 07h00</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">14km</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">6:10</div><div class="hist-lbl">pace</div></div></div></div>
-  <div class="hist-item"><div class="hist-icon" style="background:rgba(245,158,11,0.1)">🔥</div><div class="hist-info"><div class="hist-nome">Limiar 20min</div><div class="hist-data">Qua, 06h30</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">8.5km</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">5:05</div><div class="hist-lbl">pace</div></div></div></div>
-  <div class="hist-item"><div class="hist-icon" style="background:rgba(16,185,129,0.1)">🏃</div><div class="hist-info"><div class="hist-nome">Corrida Fácil</div><div class="hist-data">Seg, 07h00</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">5km</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">6:30</div><div class="hist-lbl">pace</div></div></div></div>
-  <div class="card" style="margin-top:6px">
-    <div class="sec-title" style="font-size:16px;margin-bottom:12px">📊 Resumo Semanal</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--verde)">33.7</div><div style="font-size:11px;color:var(--muted)">km totais</div></div>
-      <div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--azul)">4</div><div style="font-size:11px;color:var(--muted)">treinos</div></div>
-      <div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--amarelo)">5:42</div><div style="font-size:11px;color:var(--muted)">pace médio</div></div>
-      <div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--laranja)">3h24</div><div style="font-size:11px;color:var(--muted)">tempo total</div></div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" style="color:var(--verde)">12</div><div class="stat-lbl">Alunos</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--verde)">87%</div><div class="stat-lbl">Conformidade</div></div>
+      <div class="stat-box"><div class="stat-val">38</div><div class="stat-lbl">Treinos</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--vermelho)">3</div><div class="stat-lbl">Alertas</div></div>
     </div>
   </div>
-</div>
-<div id="aba-ia" class="section" style="display:none">
-  <div class="sec-title">🤖 PACE IA <span>— Seu treinador inteligente</span></div>
-  <div class="ia-card">
-    <div class="ia-header"><div class="ia-avatar">🤖</div><div><div class="ia-label">PACE IA</div><div class="ia-nome">Análise personalizada</div></div></div>
-    <div class="ia-texto"><strong>Sua semana está ótima!</strong> Você já completou 4 treinos e 33,7km. Hoje é dia de <strong>velocidade</strong> — os intervalados vão melhorar sua economia de corrida.<br><br>💡 <strong>Dica:</strong> Com seu pace de 5:42/km, você está pronto para quebrar os <strong>45min nos 10km</strong>.</div>
-    <div class="ia-chips">
-      <div class="ia-chip" onclick="perguntarIA('Como melhorar meu pace?')">💬 Melhorar pace</div>
-      <div class="ia-chip" onclick="perguntarIA('Qual treino fazer amanhã?')">📅 Treino amanhã</div>
-      <div class="ia-chip" onclick="perguntarIA('Estou pronto para meia maratona?')">🏅 Pronto para meia?</div>
-      <div class="ia-chip" onclick="perguntarIA('Como evitar lesões?')">🦵 Evitar lesões</div>
+
+  <div class="tabs-wrap">
+    <div class="tabs">
+      <button class="tab ativo" onclick="abaCoach('dashboard',this)">📊 Dashboard</button>
+      <button class="tab" onclick="abaCoach('alunos',this)">👥 Alunos</button>
+      <button class="tab" onclick="abaCoach('treinos',this)">📋 Treinos</button>
+      <button class="tab" onclick="abaCoach('mural',this)">📣 Mural</button>
+      <button class="tab" onclick="abaCoach('biblioteca',this)">📚 Biblioteca</button>
     </div>
   </div>
-  <div class="card">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px">💬 Pergunte ao PACE IA</div>
-    <div id="chatMsgs" style="max-height:260px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:8px"></div>
-    <div style="display:flex;gap:8px"><input class="input-field" type="text" id="chatInput" placeholder="Ex: Quanto devo correr por semana?" style="flex:1" onkeydown="if(event.key==='Enter')enviarIA()"><button onclick="enviarIA()" style="background:var(--verde);color:#080B10;border:none;border-radius:12px;padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;cursor:pointer">▶</button></div>
+
+  <div id="coach-dashboard" class="section fade-up">
+    <div class="sec-title">🚨 Alertas da IA <span class="sec-sub">análise dos seus atletas</span></div>
+    <div class="alerta risco"><div class="alerta-ico">❌</div><div class="alerta-txt"><strong>Lucas Almeida — 3 treinos sem executar</strong>Último treino há 8 dias. Risco de abandono. Considere entrar em contato.</div></div>
+    <div class="alerta atencao"><div class="alerta-ico">⚠️</div><div class="alerta-txt"><strong>Ana Beatriz — Reportou dor no joelho</strong>Ela avaliou o treino de ontem como "Muito Pesado" e comentou desconforto. Avalie a carga.</div></div>
+    <div class="alerta ok"><div class="alerta-ico">🔥</div><div class="alerta-txt"><strong>Carlos Silva — 14 dias de sequência!</strong>Melhor mês dele no ano. Bom momento para aumentar carga progressivamente.</div></div>
+    <div class="div"></div>
+    <div class="sec-title">📈 Conformidade Semanal</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:600">Treinos executados</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)">87%</div>
+      </div>
+      <div class="conform-bar"><div class="conform-fill" style="width:87%"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;text-align:center">
+        <div style="background:var(--bg3);border-radius:10px;padding:10px"><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)">8</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Concluídos</div></div>
+        <div style="background:var(--bg3);border-radius:10px;padding:10px"><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--amarelo)">3</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Pendentes</div></div>
+        <div style="background:var(--bg3);border-radius:10px;padding:10px"><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--vermelho)">1</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Não feitos</div></div>
+      </div>
+    </div>
+    <div class="sec-title" style="margin-top:4px">📅 Para enviar hoje</div>
+    <div class="treino-card card-verde">
+      <div class="treino-card-header">
+        <div class="treino-tipo-dot" style="background:var(--laranja)"></div>
+        <div style="flex:1"><div class="treino-card-nome">Intervalados 400m</div><div style="font-size:11px;color:var(--muted)">Velocidade • 6km • 45min</div></div>
+        <button class="btn btn-verde btn-sm" onclick="abrirModalEnviar()">Enviar</button>
+      </div>
+      <div class="treino-card-footer"><span class="treino-alunos-count">👥 Grupo A — 8 alunos</span><span class="treino-status rascunho">Rascunho</span></div>
+    </div>
+    <div class="treino-card">
+      <div class="treino-card-header">
+        <div class="treino-tipo-dot" style="background:var(--azul)"></div>
+        <div style="flex:1"><div class="treino-card-nome">Rodagem Z2 Longa</div><div style="font-size:11px;color:var(--muted)">Fundo • 14km • 90min</div></div>
+        <button class="btn btn-verde btn-sm" onclick="abrirModalEnviar()">Enviar</button>
+      </div>
+      <div class="treino-card-footer"><span class="treino-alunos-count">👥 Grupo B — 4 alunos</span><span class="treino-status rascunho">Rascunho</span></div>
+    </div>
+    <div class="div"></div>
+    <div class="sec-title">💬 Feedbacks Recentes</div>
+    <div id="feedbacksRecentes"></div>
   </div>
-  <div class="sec-title" style="margin-top:6px">💡 Insights da semana</div>
-  <div class="card card-hover"><div style="display:flex;align-items:center;gap:10px"><div style="font-size:28px">📈</div><div><div style="font-weight:700;margin-bottom:2px">Evolução de pace</div><div style="font-size:12px;color:var(--muted)">Seu pace melhorou 8 segundos/km nos últimos 30 dias!</div></div></div></div>
-  <div class="card card-hover"><div style="display:flex;align-items:center;gap:10px"><div style="font-size:28px">😴</div><div><div style="font-weight:700;margin-bottom:2px">Recuperação importante</div><div style="font-size:12px;color:var(--muted)">Após a rodagem longa, durma 8h esta noite para recuperar.</div></div></div></div>
-  <div class="card card-hover"><div style="display:flex;align-items:center;gap:10px"><div style="font-size:28px">💧</div><div><div style="font-weight:700;margin-bottom:2px">Hidratação no calor</div><div style="font-size:12px;color:var(--muted)">Com o calor de Sergipe, beba 500ml antes do treino.</div></div></div></div>
+
+  <div id="coach-alunos" class="section fade-up" style="display:none">
+    <div class="sec-title">👥 Meus Alunos <span class="sec-sub">12 atletas</span></div>
+    <div class="chips">
+      <div class="chip ativo" onclick="filtrarAlunos(this,'todos')">Todos</div>
+      <div class="chip" onclick="filtrarAlunos(this,'ok')">Em dia 🟢</div>
+      <div class="chip" onclick="filtrarAlunos(this,'atencao')">Atenção 🟡</div>
+      <div class="chip" onclick="filtrarAlunos(this,'risco')">Risco 🔴</div>
+    </div>
+    <div id="listaAlunos"></div>
+  </div>
+
+  <div id="coach-treinos" class="section fade-up" style="display:none">
+    <div class="sec-title">📋 Histórico de Treinos <button class="btn btn-verde btn-sm" onclick="abrirModalNovoTreino()">+ Criar</button></div>
+    <div id="listaTreinos"></div>
+  </div>
+
+  <div id="coach-mural" class="section fade-up" style="display:none">
+    <div class="sec-title">📣 Mural da Assessoria</div>
+    <div class="card card-verde" style="margin-bottom:14px">
+      <textarea class="input-field" id="muralTexto" placeholder="Escreva um recado para todos os seus alunos..." style="min-height:70px;margin-bottom:10px"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div class="chips" style="margin:0;flex:1">
+          <div class="chip ativo" onclick="this.classList.toggle('ativo')">📢 Aviso</div>
+          <div class="chip" onclick="this.classList.toggle('ativo')">🏆 Conquista</div>
+          <div class="chip" onclick="this.classList.toggle('ativo')">📅 Evento</div>
+          <div class="chip" onclick="this.classList.toggle('ativo')">💪 Motivação</div>
+        </div>
+        <button class="btn btn-verde btn-sm" onclick="postarMural()">Publicar</button>
+      </div>
+    </div>
+    <div id="listaMural"></div>
+  </div>
+
+  <div id="coach-biblioteca" class="section fade-up" style="display:none">
+    <div class="sec-title">📚 Biblioteca <button class="btn btn-verde btn-sm" onclick="abrirModalNovoTreino()">+ Criar</button></div>
+    <div class="chips">
+      <div class="chip ativo">Todos</div>
+      <div class="chip">Velocidade</div>
+      <div class="chip">Fundo</div>
+      <div class="chip">Limiar</div>
+      <div class="chip">Recuperação</div>
+    </div>
+    <div id="listaBiblioteca"></div>
+  </div>
 </div>
+
+<!-- ===== MODO ALUNO ===== -->
+<div id="modoAluno" style="display:none">
+  <div class="hero-aluno">
+    <div class="aluno-perfil">
+      <div class="aluno-avatar" id="alunoAvatar">C<span class="aluno-badge-nivel">INT</span></div>
+      <div style="flex:1">
+        <div class="aluno-nome" id="alunoNome">Carlos Silva</div>
+        <div class="aluno-treinador">🏋️ Coach Renisson • Assessoria PACE</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--amarelo)">🔥14d</div>
+        <div style="font-size:9px;color:var(--muted)">sequência</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" style="color:var(--verde)">92%</div><div class="stat-lbl">Conformidade</div></div>
+      <div class="stat-box"><div class="stat-val">34km</div><div class="stat-lbl">esta semana</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--amarelo)">3°</div><div class="stat-lbl">Ranking</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--laranja)">5:38</div><div class="stat-lbl">pace médio</div></div>
+    </div>
+  </div>
+
+  <div class="tabs-wrap">
+    <div class="tabs">
+      <button class="tab azul ativo" onclick="abaAluno('hoje',this)">📅 Hoje</button>
+      <button class="tab azul" onclick="abaAluno('semana',this)">📊 Semana</button>
+      <button class="tab azul" onclick="abaAluno('mural-aluno',this)">📣 Mural <span class="notif-badge">2</span></button>
+      <button class="tab azul" onclick="abaAluno('ranking-aluno',this)">🏆 Ranking</button>
+      <button class="tab azul" onclick="abaAluno('historico-aluno',this)">📈 Histórico</button>
+    </div>
+  </div>
+
+  <div id="aluno-hoje" class="section fade-up">
+    <div class="treino-dia-aluno">
+      <div class="treino-badge badge-laranja">⚡ TREINO DO SEU TREINADOR</div>
+      <div class="treino-nome-dia">Intervalados 400m</div>
+      <div class="treino-desc-dia">Trabalho de velocidade com repetições curtas. Foco na frequência de passada. Aquecimento obrigatório. — <em>Coach Renisson</em></div>
+      <div class="treino-metas">
+        <div><div class="treino-meta-v">6 km</div><div class="treino-meta-l">Distância</div></div>
+        <div><div class="treino-meta-v">45min</div><div class="treino-meta-l">Duração</div></div>
+        <div><div class="treino-meta-v">4:30/km</div><div class="treino-meta-l">Pace alvo</div></div>
+        <div><div class="treino-meta-v" style="color:var(--vermelho)">Alta</div><div class="treino-meta-l">Intensidade</div></div>
+      </div>
+      <button class="btn btn-verde btn-full" onclick="marcarConcluido()">✅ Marcar como concluído</button>
+    </div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px">Estrutura do Treino</div>
+    <div class="serie aquec"><div class="serie-n">1</div><div class="serie-i"><div class="nome">Aquecimento contínuo</div><div class="pace">Pace livre • Zona 1-2</div></div><div class="serie-dur">15min</div></div>
+    <div class="serie tiro"><div class="serie-n">2</div><div class="serie-i"><div class="nome">8× 400m tiro</div><div class="pace">Pace 4:30/km • Zona 4-5</div></div><div class="serie-dur">2min</div></div>
+    <div class="serie recup"><div class="serie-n">3</div><div class="serie-i"><div class="nome">Recuperação ativa</div><div class="pace">Caminhada ou trote leve</div></div><div class="serie-dur">90seg</div></div>
+    <div class="serie volta"><div class="serie-n">4</div><div class="serie-i"><div class="nome">Volta calma + alongamento</div><div class="pace">Pace livre • Zona 1</div></div><div class="serie-dur">10min</div></div>
+    <div class="card card-azul" style="margin-top:14px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">💬 Como foi? <span style="font-size:11px;color:var(--muted);font-weight:400">seu coach vai ver</span></div>
+      <div class="carinhas-row" id="carinhasRow">
+        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">💀</div><div class="carinha-label">Destruiu</div></div>
+        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">😮‍💨</div><div class="carinha-label">Pesado</div></div>
+        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">😊</div><div class="carinha-label">Normal</div></div>
+        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">😎</div><div class="carinha-label">Tranquilo</div></div>
+        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">🚀</div><div class="carinha-label">Voei</div></div>
+      </div>
+      <textarea class="input-field" id="feedbackTexto" placeholder="Deixe um comentário para seu treinador..." style="min-height:60px;margin-top:10px;font-size:13px"></textarea>
+      <button class="btn btn-azul btn-full" style="margin-top:10px" onclick="enviarFeedback()">📤 Enviar feedback</button>
+    </div>
+  </div>
+
+  <div id="aluno-semana" class="section fade-up" style="display:none">
+    <div class="sec-title">📊 Minha Semana</div>
+    <div class="cal-row" id="calAluno"></div>
+    <div class="prog-semana">
+      <div class="prog-box"><div class="prog-val" style="color:var(--verde)">34</div><div class="prog-lbl">km feitos</div></div>
+      <div class="prog-box"><div class="prog-val" style="color:var(--azul)">5/6</div><div class="prog-lbl">treinos</div></div>
+      <div class="prog-box"><div class="prog-val" style="color:var(--amarelo)">5:38</div><div class="prog-lbl">pace médio</div></div>
+      <div class="prog-box"><div class="prog-val" style="color:var(--laranja)">3h52</div><div class="prog-lbl">tempo total</div></div>
+    </div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px">Treinos da Semana</div>
+    <div id="listaSemanaAluno"></div>
+  </div>
+
+  <div id="aluno-mural-aluno" class="section fade-up" style="display:none">
+    <div class="sec-title">📣 Mural da Assessoria</div>
+    <div id="muralAluno"></div>
+  </div>
+
+  <div id="aluno-ranking-aluno" class="section fade-up" style="display:none">
+    <div class="sec-title">🏆 Ranking <span class="sec-sub">esta semana</span></div>
+    <div class="chips">
+      <div class="chip ativo" onclick="toggleChip(this)">Km feitos</div>
+      <div class="chip" onclick="toggleChip(this)">Conformidade</div>
+      <div class="chip" onclick="toggleChip(this)">Pace médio</div>
+      <div class="chip" onclick="toggleChip(this)">Sequência</div>
+    </div>
+    <div id="rankingLista"></div>
+  </div>
+
+  <div id="aluno-historico-aluno" class="section fade-up" style="display:none">
+    <div class="sec-title">📈 Meu Histórico</div>
+    <div id="historicoLista"></div>
+  </div>
+</div>
+
 <nav class="bottom-nav">
   <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
   <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
@@ -304,56 +400,395 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-
   <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
   <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
 </nav>
-<div class="modal-overlay" id="modalTreino">
+
+<!-- MODAL NOVO TREINO -->
+<div class="modal-overlay" id="modalNovoTreino">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="treino-badge" style="display:block;text-align:center;margin-bottom:6px">⚡ TREINO EM ANDAMENTO</div>
-    <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px">Intervalados 400m</div>
-    <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:4px" id="etapaAtual">Aquecimento</div>
-    <div class="timer-display" id="timerDisplay">00:00</div>
-    <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:16px" id="timerDesc">Aquecimento de 15 min • Pace livre</div>
-    <div class="timer-buttons">
-      <button class="btn-timer pause" id="btnPause" onclick="togglePause()">⏸ Pausar</button>
-      <button class="btn-timer stop" onclick="pararTreino()">⏹ Encerrar</button>
-      <button class="btn-timer proximo" onclick="proximaEtapa()">➡️ Próxima etapa</button>
+    <div class="modal-title">📋 Criar Treino</div>
+    <div class="input-group"><label class="input-label">Nome do treino</label><input class="input-field" id="nt_nome" type="text" placeholder="Ex: Intervalados 400m"></div>
+    <div class="input-group">
+      <label class="input-label">Tipo</label>
+      <div class="chips" id="tipoChips">
+        <div class="chip ativo" onclick="soloChip(this,'tipoChips')">⚡ Velocidade</div>
+        <div class="chip" onclick="soloChip(this,'tipoChips')">🌊 Fundo</div>
+        <div class="chip" onclick="soloChip(this,'tipoChips')">🔥 Limiar</div>
+        <div class="chip" onclick="soloChip(this,'tipoChips')">💚 Recuperação</div>
+        <div class="chip" onclick="soloChip(this,'tipoChips')">🌄 Longão</div>
+        <div class="chip" onclick="soloChip(this,'tipoChips')">💪 Força</div>
+      </div>
     </div>
-    <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
-      <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)" id="tKm">0.0</div><div style="font-size:10px;color:var(--muted)">km</div></div>
-      <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900">—:—</div><div style="font-size:10px;color:var(--muted)">pace</div></div>
-      <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--laranja)" id="tEtapa">1/4</div><div style="font-size:10px;color:var(--muted)">etapa</div></div>
+    <div class="input-row">
+      <div class="input-group" style="flex:1"><label class="input-label">Distância</label><input class="input-field" id="nt_dist" placeholder="Ex: 8km"></div>
+      <div class="input-group" style="flex:1"><label class="input-label">Duração</label><input class="input-field" id="nt_dur" placeholder="Ex: 50min"></div>
+    </div>
+    <div class="input-row">
+      <div class="input-group" style="flex:1"><label class="input-label">Pace alvo</label><input class="input-field" id="nt_pace" placeholder="Ex: 5:00/km"></div>
+      <div class="input-group" style="flex:1">
+        <label class="input-label">Intensidade</label>
+        <select class="input-field" id="nt_int" style="cursor:pointer">
+          <option>Leve</option><option>Moderada</option><option selected>Alta</option><option>Máxima</option>
+        </select>
+      </div>
+    </div>
+    <div class="input-group"><label class="input-label">Instruções para o aluno</label><textarea class="input-field" id="nt_desc" placeholder="Descreva o treino com instruções claras..."></textarea></div>
+    <div class="input-group"><label class="input-label">Estrutura das séries</label><input class="input-field" id="nt_series" placeholder="Ex: 15min aquec • 8x400m (4:30) • 90seg recup • 10min volta"></div>
+    <div class="input-group">
+      <label class="input-label">Enviar para</label>
+      <div class="chips" id="grupoChips">
+        <div class="chip ativo" onclick="this.classList.toggle('ativo')">✅ Todos</div>
+        <div class="chip" onclick="this.classList.toggle('ativo')">Grupo A</div>
+        <div class="chip" onclick="this.classList.toggle('ativo')">Grupo B</div>
+        <div class="chip" onclick="this.classList.toggle('ativo')">Iniciantes</div>
+        <div class="chip" onclick="this.classList.toggle('ativo')">Avançados</div>
+      </div>
+    </div>
+    <div class="input-group"><label class="input-label">Data do treino</label><input class="input-field" type="date" id="nt_data"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+      <button class="btn btn-outline btn-full" onclick="fecharModais()">Cancelar</button>
+      <button class="btn btn-verde btn-full" onclick="salvarTreino()">🚀 Salvar & Enviar</button>
     </div>
   </div>
 </div>
+
+<!-- MODAL ENVIAR TREINO -->
+<div class="modal-overlay" id="modalEnviar">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📤 Enviar Treino</div>
+    <div class="card card-verde" style="margin-bottom:14px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;margin-bottom:4px">Intervalados 400m</div>
+      <div style="font-size:12px;color:var(--muted)">⚡ Velocidade • 6km • 45min • Pace 4:30/km</div>
+    </div>
+    <div class="input-group"><label class="input-label">Selecionar alunos</label><div id="checkAlunos" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto"></div></div>
+    <div class="input-group" style="margin-top:8px"><label class="input-label">Data do treino</label><input class="input-field" type="date" id="envio_data"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <button class="btn btn-outline btn-full" onclick="fecharModais()">Cancelar</button>
+      <button class="btn btn-verde btn-full" onclick="confirmarEnvio()">🚀 Enviar agora</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const user=JSON.parse(localStorage.getItem('pace_user')||'{}');
-if(user.name){document.getElementById('avatarLetra').textContent=user.name.charAt(0).toUpperCase();document.getElementById('nomeAtleta').textContent=user.name}
-function mostrarAba(id,el){document.querySelectorAll('[id^="aba-"]').forEach(e=>e.style.display='none');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));document.getElementById('aba-'+id).style.display='block';el.classList.add('ativo')}
-function gerarCalendario(){const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];const hoje=new Date();const ds=hoje.getDay();const tipos=['descanso','feito','feito','feito','descanso','feito','hoje'];const grid=document.getElementById('calendarioSemana');if(!grid)return;const ini=new Date(hoje);ini.setDate(hoje.getDate()-ds);grid.innerHTML=dias.map((d,i)=>{const dt=new Date(ini);dt.setDate(ini.getDate()+i);const isH=i===ds;return'<div class="dia-pill '+(isH?'hoje':tipos[i])+'"><div class="dia-nome">'+d+'</div><div class="dia-num">'+dt.getDate()+'</div><div class="dia-dot" style="background:'+(tipos[i]==='feito'?'var(--verde)':tipos[i]==='hoje'?'#080B10':'transparent')+'"></div></div>'}).join('');const lista=document.getElementById('listaTreinosSemana');if(lista){const ts=[{e:'🌊',n:'Rodagem Z2',k:'8km',p:'6:20',d:'Seg'},{e:'⚡',n:'Tiros 1000m',k:'10km',p:'5:00',d:'Ter'},{e:'🏃',n:'Corrida Facil',k:'6km',p:'6:30',d:'Qua'},{e:'🔥',n:'Limiar',k:'8km',p:'5:10',d:'Qui'},{e:'😴',n:'Descanso',k:'—',p:'—',d:'Sex'},{e:'🌄',n:'Longao',k:'16km',p:'6:00',d:'Sab'},{e:'⚡',n:'Intervalados 400m',k:'6km',p:'4:45',d:'Hoje'}];lista.innerHTML=ts.map((t,i)=>'<div class="hist-item" style="'+(i===6?'border-color:rgba(0,230,118,0.3);background:rgba(0,230,118,0.04)':'')+'"><div class="hist-icon" style="background:rgba(255,255,255,0.05)">'+t.e+'</div><div class="hist-info"><div class="hist-nome">'+t.n+'</div><div class="hist-data">'+t.d+'</div></div><div class="hist-stats"><div class="hist-stat"><div class="hist-val" style="color:var(--verde)">'+t.k+'</div><div class="hist-lbl">dist</div></div><div class="hist-stat"><div class="hist-val">'+t.p+'</div><div class="hist-lbl">pace</div></div></div></div>').join('')}}
-gerarCalendario();
-function calcularZonas(){const idade=parseInt(document.getElementById('inputIdade').value);const fcM=parseInt(document.getElementById('inputFCmax').value);const fc=fcM||(220-(idade||31));document.getElementById('fcMax-display').textContent='FCmax: '+fc+'bpm';[['z1-bpm',0.5,0.6],['z2-bpm',0.6,0.7],['z3-bpm',0.7,0.8],['z4-bpm',0.8,0.9],['z5-bpm',0.9,1]].forEach(z=>{const el=document.getElementById(z[0]);if(el)el.textContent=Math.round(z[1]*fc)+'-'+Math.round(z[2]*fc)+' bpm'})}
-document.getElementById('inputIdade').value=user.age||31;calcularZonas();
-function filtrarPlanilha(el,cat){document.querySelectorAll('#aba-planilhas .chip').forEach(c=>c.classList.remove('ativo'));el.classList.add('ativo');document.querySelectorAll('.planilha-card').forEach(c=>{c.style.display=(cat==='todas'||c.dataset.cat===cat)?'block':'none'})}
-function calcPace(){const dist=parseFloat(document.getElementById('cDistancia').value);const h=parseInt(document.getElementById('cHora').value)||0;const m=parseInt(document.getElementById('cMin').value)||0;const s=parseInt(document.getElementById('cSeg').value)||0;if(!dist||(!h&&!m&&!s))return;const tot=h*3600+m*60+s;const ps=tot/dist;const pm=Math.floor(ps/60);const ss=Math.round(ps%60);document.getElementById('resPaceVal').textContent=pm+':'+ss.toString().padStart(2,'0');document.getElementById('resPace').style.display='block'}
-let dEst=5;
-function selecionarDist(el,v){document.querySelectorAll('#aba-calculos .calc-card:nth-child(2) .chip').forEach(c=>c.classList.remove('ativo'));el.classList.add('ativo');dEst=v}
-function calcTempo(){const pm=parseInt(document.getElementById('ePaceMin').value)||0;const ps=parseInt(document.getElementById('ePaceSeg').value)||0;if(!pm&&!ps)return;const paceS=pm*60+ps;const tot=paceS*dEst;const h=Math.floor(tot/3600);const m=Math.floor((tot%3600)/60);const s=Math.round(tot%60);document.getElementById('resTempoVal').textContent=h>0?h+'h'+m.toString().padStart(2,'0')+'m'+s.toString().padStart(2,'0')+'s':m+'min '+s.toString().padStart(2,'0')+'seg';document.getElementById('resTempo').style.display='block'}
-function calcIMC(){const h=parseFloat(document.getElementById('cAltura').value)/100;const p=parseFloat(document.getElementById('cPeso').value);if(!h||!p)return;const imc=p/(h*h);const desc=imc<18.5?'Abaixo do peso':imc<24.9?'Peso ideal':imc<29.9?'Sobrepeso':'Obesidade';document.getElementById('resIMCVal').textContent=imc.toFixed(1);document.getElementById('resIMCDesc').textContent=desc+' • Ideal: ~'+(22*h*h).toFixed(1)+'kg';document.getElementById('resIMC').style.display='block'}
-let vDist=5;
-function selecionarProva(el,v){document.querySelectorAll('#aba-calculos .calc-card:nth-child(4) .chip').forEach(c=>c.classList.remove('ativo'));el.classList.add('ativo');vDist=v}
-function calcVDOT(){const h=parseInt(document.getElementById('vHora').value)||0;const m=parseInt(document.getElementById('vMin').value)||0;const s=parseInt(document.getElementById('vSeg').value)||0;if(!m&&!h)return;const tot=h*60+m+s/60;const vel=(vDist*1000)/(tot*60);const vdot=Math.abs(Math.round((-4.60+0.182258*vel*60+0.000104*Math.pow(vel*60,2))/(0.8+0.1894393*Math.exp(-0.012778*tot)+0.2989558*Math.exp(-0.1932605*tot))));const nivel=vdot<30?'Iniciante':vdot<40?'Recreacional':vdot<52?'Intermediario':vdot<60?'Avancado':'Elite';document.getElementById('resVDOTVal').textContent=vdot;document.getElementById('resVDOTDesc').textContent='VO2max estimado • Nivel: '+nivel;document.getElementById('resVDOT').style.display='block'}
-let timerInt=null,timerS=0,pausado=false,etapaIdx=0;
-const etapas=[{n:'Aquecimento',d:'15 min continuo • Pace livre'},{n:'8x 400m tiro',d:'Tiro em 4:30/km • Zona 4-5'},{n:'Recuperacao',d:'Caminhada ou trote leve'},{n:'Volta calma',d:'10 min • Pace livre • Alongar'}];
-function abrirModal(){document.getElementById('modalTreino').classList.add('open');if(!timerInt)iniciarTimer()}
-function fecharModal(){document.getElementById('modalTreino').classList.remove('open')}
-function iniciarTimer(){timerS=0;etapaIdx=0;atualizarEtapa();timerInt=setInterval(()=>{if(!pausado){timerS++;const m=Math.floor(timerS/60);const s=timerS%60;document.getElementById('timerDisplay').textContent=m.toString().padStart(2,'0')+':'+s.toString().padStart(2,'0');document.getElementById('tKm').textContent=(timerS/360).toFixed(1)}},1000)}
-function atualizarEtapa(){const e=etapas[etapaIdx];document.getElementById('etapaAtual').textContent=e.n;document.getElementById('timerDesc').textContent=e.d;document.getElementById('tEtapa').textContent=(etapaIdx+1)+'/'+etapas.length;timerS=0}
-function togglePause(){pausado=!pausado;document.getElementById('btnPause').textContent=pausado?'▶ Retomar':'⏸ Pausar'}
-function proximaEtapa(){if(etapaIdx<etapas.length-1){etapaIdx++;atualizarEtapa()}else pararTreino()}
-function pararTreino(){clearInterval(timerInt);timerInt=null;pausado=false;timerS=0;etapaIdx=0;fecharModal();alert('Treino finalizado! Parabens!')}
-document.getElementById('modalTreino').addEventListener('click',function(e){if(e.target===this)fecharModal()});
-const resIA={'pace':'Para melhorar seu pace, foque em treinos de limiar 1x por semana e tiros de 400m. Da pra ganhar 15-20s/km em 6 semanas!','amanha':'Recomendo rodagem leve Z2 de 8km amanha. Apos os intervalados o corpo precisa recuperar. Pace: 6:00-6:30/km.','meia':'Com seu pace de 5:42/km voce completaria uma meia em 2h00min. Para 1h45 precisa de 4:57/km. Mais 6-8 semanas!','lesao':'Prevencao: nunca aumente volume mais de 10%/semana, aquecimento sempre, fortaleça o core e respeite os descansos.','default':'Com base no seu historico, mantenha a consistencia! Volume + intensidade progressiva = resultado garantido.'};
-function perguntarIA(txt){document.getElementById('chatInput').value=txt;enviarIA()}
-function enviarIA(){const inp=document.getElementById('chatInput');const msg=inp.value.trim();if(!msg)return;const chat=document.getElementById('chatMsgs');chat.innerHTML+='<div style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.15);border-radius:12px 12px 4px 12px;padding:10px 14px;font-size:13px;align-self:flex-end;max-width:85%">'+msg+'</div>';inp.value='';const ml=msg.toLowerCase();let r=resIA.default;if(ml.includes('pace')||ml.includes('ritmo'))r=resIA.pace;else if(ml.includes('amanha')||ml.includes('treino'))r=resIA.amanha;else if(ml.includes('meia')||ml.includes('maratona'))r=resIA.meia;else if(ml.includes('lesao')||ml.includes('dor')||ml.includes('evitar'))r=resIA.lesao;setTimeout(()=>{chat.innerHTML+='<div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.15);border-radius:12px 12px 12px 4px;padding:10px 14px;font-size:13px;max-width:85%"><span style="font-size:10px;color:#a78bfa;font-weight:700;display:block;margin-bottom:4px">🤖 PACE IA</span>'+r+'</div>';chat.scrollTop=chat.scrollHeight},800);chat.scrollTop=chat.scrollHeight}
+const user = JSON.parse(localStorage.getItem('pace_user') || '{}');
+
+// DADOS
+const alunos = [
+  {nome:'Carlos Silva',   av:'C', cor:'#3B82F6', km:34, conf:92, seq:14, pace:'5:38', grupo:'A', status:'ok',      obs:''},
+  {nome:'Ana Beatriz',    av:'A', cor:'#EC4899', km:28, conf:78, seq:6,  pace:'6:02', grupo:'A', status:'atencao', obs:'Dor no joelho'},
+  {nome:'Lucas Almeida',  av:'L', cor:'#F59E0B', km:8,  conf:33, seq:0,  pace:'5:55', grupo:'B', status:'risco',   obs:'3 treinos sem fazer'},
+  {nome:'Fernanda Costa', av:'F', cor:'#10B981', km:42, conf:97, seq:21, pace:'5:15', grupo:'A', status:'ok',      obs:''},
+  {nome:'Rafael Mendes',  av:'R', cor:'#8B5CF6', km:30, conf:85, seq:9,  pace:'5:44', grupo:'B', status:'ok',      obs:''},
+  {nome:'Juliana Nunes',  av:'J', cor:'#EF4444', km:22, conf:70, seq:4,  pace:'6:18', grupo:'A', status:'atencao', obs:''},
+  {nome:'Diego Souza',    av:'D', cor:'#06B6D4', km:50, conf:100,seq:30, pace:'4:58', grupo:'A', status:'ok',      obs:''},
+  {nome:'Mariana Lima',   av:'M', cor:'#F97316', km:18, conf:58, seq:2,  pace:'6:35', grupo:'B', status:'atencao', obs:''},
+];
+
+const muralPosts = [
+  {autor:'Coach Renisson',av:'R',data:'Hoje, 07h00',tipo:'📢',pin:true,
+   texto:'Galera, o treino de hoje é CRUCIAL para a corrida do mês que vem! Quem fizer os 8 tiros no pace alvo vai sentir a diferença na largada. Vamos que vamos! 💪🔥'},
+  {autor:'Coach Renisson',av:'R',data:'Ontem, 19h30',tipo:'🏆',pin:false,
+   texto:'🎉 PARABÉNS Diego Souza! 30 dias de sequência perfeita! Você é o exemplo da assessoria! 🏃‍♂️'},
+  {autor:'Coach Renisson',av:'R',data:'04/03, 20h00',tipo:'📅',pin:false,
+   texto:'Atenção! Corrida da Amizade 10km — 15/03/2026. Quem vai participar comenta aqui! Vou montar estratégia de pace individual para cada um.'},
+];
+
+const feedbacks = [
+  {aluno:'Carlos Silva', av:'C', cor:'#3B82F6', treino:'Rodagem Z2', feeling:'🚀', msg:'Muito bem! Pace controlado durante todo o treino.', data:'Ontem'},
+  {aluno:'Ana Beatriz',  av:'A', cor:'#EC4899', treino:'Limiar 20min',feeling:'😮‍💨',msg:'Senti dor no joelho no final. Vou ver o médico.', data:'Qua'},
+  {aluno:'Diego Souza',  av:'D', cor:'#06B6D4', treino:'Tiros 1000m', feeling:'😎', msg:'Fácil demais! Pode aumentar a carga!', data:'Ter'},
+];
+
+const treinosBib = [
+  {nome:'Intervalados 400m', tipo:'Velocidade', cor:'#FF6D00', dist:'6km',  dur:'45min', pace:'4:30/km', usos:12},
+  {nome:'Rodagem Z2 Base',   tipo:'Fundo',      cor:'#3B82F6', dist:'10km', dur:'65min', pace:'6:10/km', usos:20},
+  {nome:'Limiar 20 min',     tipo:'Limiar',     cor:'#F59E0B', dist:'8km',  dur:'50min', pace:'5:05/km', usos:8},
+  {nome:'Longão Domingo',    tipo:'Longão',     cor:'#10B981', dist:'18km', dur:'110min',pace:'5:50/km', usos:6},
+  {nome:'Tiros de 1000m',    tipo:'Velocidade', cor:'#EF4444', dist:'10km', dur:'60min', pace:'4:45/km', usos:9},
+  {nome:'Recuperação Ativa', tipo:'Recuperação',cor:'#8B5CF6', dist:'5km',  dur:'35min', pace:'6:30/km', usos:15},
+];
+
+const treinosHist = [
+  {nome:'Intervalados 400m',data:'Qui 06/03',km:'6km', conf:75, total:8, enviados:6, feedbacks:3},
+  {nome:'Rodagem Z2 12km',   data:'Qua 05/03',km:'12km',conf:92,total:12,enviados:11,feedbacks:7},
+  {nome:'Limiar 20min',      data:'Ter 04/03',km:'8km', conf:62, total:8, enviados:5, feedbacks:2},
+];
+
+const ranking = [
+  {nome:'Diego Souza',   av:'D',cor:'#06B6D4',km:50,conf:100,eu:false},
+  {nome:'Fernanda Costa',av:'F',cor:'#10B981',km:42,conf:97, eu:false},
+  {nome:'Carlos Silva',  av:'C',cor:'#3B82F6',km:34,conf:92, eu:true},
+  {nome:'Rafael Mendes', av:'R',cor:'#8B5CF6',km:30,conf:85, eu:false},
+  {nome:'Ana Beatriz',   av:'A',cor:'#EC4899',km:28,conf:78, eu:false},
+  {nome:'Juliana Nunes', av:'J',cor:'#EF4444',km:22,conf:70, eu:false},
+  {nome:'Mariana Lima',  av:'M',cor:'#F97316',km:18,conf:58, eu:false},
+  {nome:'Lucas Almeida', av:'L',cor:'#F59E0B',km:8, conf:33, eu:false},
+];
+
+const historicoA = [
+  {e:'⚡',n:'Intervalados 400m',d:'Hoje 06h30',  km:'6.2km',p:'4:52',f:'🚀'},
+  {e:'🌊',n:'Rodagem Z2 Longa', d:'Ontem 07h00', km:'14km',  p:'6:10',f:'😊'},
+  {e:'🔥',n:'Limiar 20min',     d:'Qua 06h30',   km:'8.5km', p:'5:05',f:'😮‍💨'},
+  {e:'🏃',n:'Corrida Fácil',    d:'Seg 07h00',   km:'5km',   p:'6:30',f:'😎'},
+  {e:'🌄',n:'Longão Domingo',   d:'Dom 06h00',   km:'18km',  p:'5:50',f:'💀'},
+];
+
+// ============ MODO ============
+function setModo(m) {
+  document.getElementById('modoCoach').style.display = m==='coach'?'block':'none';
+  document.getElementById('modoAluno').style.display = m==='aluno'?'block':'none';
+  document.getElementById('btnModoCoach').classList.toggle('ativo',m==='coach');
+  document.getElementById('btnModoAluno').classList.toggle('ativo',m==='aluno');
+  if (m==='aluno') { renderCal(); renderSemana(); renderMuralEl('muralAluno'); renderRanking(); renderHistorico(); }
+}
+
+function abaCoach(id, btn) {
+  document.querySelectorAll('[id^="coach-"]').forEach(e=>e.style.display='none');
+  document.querySelectorAll('#modoCoach .tab').forEach(t=>t.classList.remove('ativo'));
+  document.getElementById('coach-'+id).style.display='block'; btn.classList.add('ativo');
+  if(id==='alunos') renderAlunos('todos');
+  if(id==='mural') renderMuralEl('listaMural');
+  if(id==='biblioteca') renderBib();
+  if(id==='treinos') renderTreinos();
+  if(id==='dashboard') renderFeedbacks();
+}
+
+function abaAluno(id, btn) {
+  document.querySelectorAll('[id^="aluno-"]').forEach(e=>e.style.display='none');
+  document.querySelectorAll('#modoAluno .tab').forEach(t=>t.classList.remove('ativo'));
+  document.getElementById('aluno-'+id).style.display='block'; btn.classList.add('ativo');
+}
+
+// ============ RENDERS ============
+function renderAlunos(filtro) {
+  const el = document.getElementById('listaAlunos'); if(!el) return;
+  const lista = filtro==='todos' ? alunos : alunos.filter(a=>a.status===filtro);
+  const cor = {ok:'var(--verde)',atencao:'var(--amarelo)',risco:'var(--vermelho)'};
+  const ico = {ok:'🟢',atencao:'🟡',risco:'🔴'};
+  el.innerHTML = lista.map(a=>`
+    <div class="aluno-item">
+      <div class="aluno-av" style="background:${a.cor}22;color:${a.cor}">${a.av}</div>
+      <div class="aluno-dados">
+        <div class="aluno-dados-nome">${ico[a.status]} ${a.nome}</div>
+        <div class="aluno-dados-info">Grupo ${a.grupo} • ${a.pace}/km • 🔥${a.seq}d ${a.obs?'• ⚠️'+a.obs:''}</div>
+        <div class="conform-bar" style="margin-top:5px;width:90px"><div class="conform-fill ${a.conf<60?'baixo':a.conf<80?'medio':''}" style="width:${a.conf}%"></div></div>
+      </div>
+      <div class="aluno-compliance">
+        <div class="compliance-val" style="color:${cor[a.status]}">${a.conf}%</div>
+        <div class="compliance-lbl">conform</div>
+      </div>
+    </div>`).join('');
+}
+
+function filtrarAlunos(btn, filtro) {
+  document.querySelectorAll('#coach-alunos .chip').forEach(c=>c.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  renderAlunos(filtro);
+}
+
+function renderMuralEl(containerId) {
+  const el = document.getElementById(containerId); if(!el) return;
+  el.innerHTML = muralPosts.map(p=>`
+    <div class="mural-post ${p.pin?'card-laranja':''}">
+      ${p.pin?'<div class="mural-pin-label">📌 Fixado</div>':''}
+      <div class="mural-autor">
+        <div class="mural-av" style="background:#00E67222;color:var(--verde)">${p.av}</div>
+        <div><div class="mural-nome">${p.autor} ${p.tipo}</div><div class="mural-data">${p.data}</div></div>
+      </div>
+      <div class="mural-texto">${p.texto}</div>
+      <div class="mural-reacoes">
+        <div class="mural-reacao" onclick="this.classList.toggle('ativo')">👍 ${3+Math.floor(Math.random()*6)}</div>
+        <div class="mural-reacao" onclick="this.classList.toggle('ativo')">🔥 ${1+Math.floor(Math.random()*4)}</div>
+        <div class="mural-reacao" onclick="this.classList.toggle('ativo')">💬 Comentar</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderBib() {
+  const el = document.getElementById('listaBiblioteca'); if(!el) return;
+  el.innerHTML = treinosBib.map(t=>`
+    <div class="treino-card">
+      <div class="treino-card-header">
+        <div class="treino-tipo-dot" style="background:${t.cor}"></div>
+        <div style="flex:1"><div class="treino-card-nome">${t.nome}</div><div style="font-size:11px;color:var(--muted)">${t.tipo} • ${t.dist} • ${t.dur} • ${t.pace}</div></div>
+        <button class="btn btn-verde btn-sm" onclick="abrirModalEnviar()">Enviar</button>
+      </div>
+      <div class="treino-card-footer"><span class="treino-alunos-count">📊 Usado ${t.usos}×</span><span class="treino-status enviado">✓ Ativo</span></div>
+    </div>`).join('');
+}
+
+function renderTreinos() {
+  const el = document.getElementById('listaTreinos'); if(!el) return;
+  el.innerHTML = treinosHist.map(t=>`
+    <div class="treino-card">
+      <div class="treino-card-header">
+        <div class="treino-tipo-dot" style="background:var(--verde)"></div>
+        <div style="flex:1"><div class="treino-card-nome">${t.nome}</div><div style="font-size:11px;color:var(--muted)">${t.data} • ${t.km} • ${t.total} alunos</div></div>
+      </div>
+      <div style="padding:0 16px 12px">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:5px">Conformidade</div>
+        <div class="conform-bar"><div class="conform-fill ${t.conf<60?'baixo':t.conf<80?'medio':''}" style="width:${t.conf}%"></div></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">${t.enviados}/${t.total} concluíram • ${t.conf}%</div>
+      </div>
+      <div class="treino-card-footer"><span style="font-size:11px;color:var(--muted)">💬 ${t.feedbacks} feedbacks</span><span class="treino-status enviado">Enviado</span></div>
+    </div>`).join('');
+}
+
+function renderFeedbacks() {
+  const el = document.getElementById('feedbacksRecentes'); if(!el) return;
+  el.innerHTML = feedbacks.map(f=>`
+    <div class="card" style="display:flex;gap:10px;align-items:flex-start;padding:12px;margin-bottom:8px">
+      <div class="aluno-av" style="background:${f.cor}22;color:${f.cor};width:36px;height:36px;font-size:15px">${f.av}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">${f.aluno} <span style="font-size:10px;color:var(--muted);font-weight:400">• ${f.treino} • ${f.data}</span></div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:3px">${f.msg}</div>
+      </div>
+      <div style="font-size:24px">${f.feeling}</div>
+    </div>`).join('');
+}
+
+function renderCal() {
+  const el = document.getElementById('calAluno'); if(!el) return;
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const hoje=new Date(); const dow=hoje.getDay();
+  const inicio=new Date(hoje); inicio.setDate(hoje.getDate()-dow);
+  const st=['feito','feito','feito','feito','miss','feito','hoje'];
+  const dc=['#00E676','#00E676','#00E676','#00E676','#EF4444','#00E676','#F59E0B'];
+  el.innerHTML=dias.map((d,i)=>{
+    const dt=new Date(inicio); dt.setDate(inicio.getDate()+i);
+    return `<div class="cal-dia ${st[i]}"><div class="cal-lbl">${d}</div><div class="cal-n">${dt.getDate()}</div><div class="cal-dot" style="background:${dc[i]}"></div></div>`;
+  }).join('');
+}
+
+function renderSemana() {
+  const el = document.getElementById('listaSemanaAluno'); if(!el) return;
+  const s=[
+    {e:'🌊',n:'Rodagem Z2', d:'Seg',km:'8km', p:'6:20',f:'😊'},
+    {e:'⚡',n:'Tiros 1000m',d:'Ter',km:'10km',p:'5:00',f:'💀'},
+    {e:'🏃',n:'Corrida Fácil',d:'Qua',km:'6km',p:'6:30',f:'😎'},
+    {e:'🔥',n:'Limiar',      d:'Qui',km:'8km', p:'5:10',f:'😮‍💨'},
+    {e:'❌',n:'Não executou', d:'Sex',km:'—',   p:'—',   f:''},
+    {e:'⚡',n:'Intervalados 400m',d:'Dom',km:'6km',p:'4:52',f:'🚀'},
+  ];
+  el.innerHTML=s.map(t=>`
+    <div class="card" style="display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px">
+      <div style="font-size:20px">${t.e}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700">${t.n}</div><div style="font-size:10px;color:var(--muted)">${t.d}</div></div>
+      <div style="text-align:right"><div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;color:var(--verde)">${t.km}</div><div style="font-size:10px;color:var(--muted)">${t.p}</div></div>
+      ${t.f?`<div style="font-size:20px">${t.f}</div>`:''}
+    </div>`).join('');
+}
+
+function renderRanking() {
+  const el = document.getElementById('rankingLista'); if(!el) return;
+  const pos=['🥇','🥈','🥉'];
+  el.innerHTML = ranking.map((a,i)=>`
+    <div class="rank-item ${a.eu?'rank-eu':''}">
+      <div class="rank-pos">${i<3?pos[i]:i+1}</div>
+      <div class="rank-av" style="background:${a.cor}22;color:${a.cor}">${a.av}</div>
+      <div class="rank-info"><div class="rank-nome">${a.nome}${a.eu?' ← você':''}</div><div class="rank-detalhe">Conformidade: ${a.conf}%</div></div>
+      <div class="rank-pts"><div class="rank-pts-val">${a.km}km</div><div class="rank-pts-lbl">esta semana</div></div>
+    </div>`).join('');
+}
+
+function renderHistorico() {
+  const el = document.getElementById('historicoLista'); if(!el) return;
+  el.innerHTML = historicoA.map(h=>`
+    <div class="card" style="display:flex;align-items:center;gap:12px;padding:14px;margin-bottom:8px">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:20px">${h.e}</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:700">${h.n}</div><div style="font-size:11px;color:var(--muted)">${h.d}</div></div>
+      <div style="text-align:right"><div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--verde)">${h.km}</div><div style="font-size:10px;color:var(--muted)">${h.p}/km</div></div>
+      <div style="font-size:22px">${h.f}</div>
+    </div>`).join('');
+}
+
+function renderCheckAlunos() {
+  const el = document.getElementById('checkAlunos'); if(!el) return;
+  el.innerHTML = alunos.map(a=>`
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:10px;cursor:pointer">
+      <input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--verde)">
+      <div style="width:32px;height:32px;border-radius:50%;background:${a.cor}22;color:${a.cor};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900">${a.av}</div>
+      <span style="font-size:13px;font-weight:600;flex:1">${a.nome}</span>
+      <span style="font-size:10px;color:var(--muted)">G.${a.grupo}</span>
+    </label>`).join('');
+}
+
+// ============ AÇÕES ============
+function abrirModalNovoTreino() {
+  const d=new Date(); d.setDate(d.getDate()+1);
+  document.getElementById('nt_data').value=d.toISOString().split('T')[0];
+  document.getElementById('modalNovoTreino').classList.add('open');
+}
+
+function abrirModalEnviar() {
+  const d=new Date(); d.setDate(d.getDate()+1);
+  document.getElementById('envio_data').value=d.toISOString().split('T')[0];
+  renderCheckAlunos();
+  document.getElementById('modalEnviar').classList.add('open');
+}
+
+function fecharModais() {
+  document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));
+}
+
+function salvarTreino() {
+  const n=document.getElementById('nt_nome').value||'Novo Treino';
+  fecharModais();
+  setTimeout(()=>toast(`✅ "${n}" salvo e enviado para os alunos!`),300);
+}
+
+function confirmarEnvio() {
+  fecharModais();
+  setTimeout(()=>toast('🚀 Treino enviado para os alunos selecionados!'),300);
+}
+
+function postarMural() {
+  const txt=document.getElementById('muralTexto').value.trim();
+  if(!txt) return;
+  muralPosts.unshift({autor:'Coach Renisson',av:'R',data:'Agora',tipo:'📢',pin:false,texto:txt});
+  document.getElementById('muralTexto').value='';
+  renderMuralEl('listaMural');
+  toast('📣 Publicado no mural!');
+}
+
+function marcarConcluido() { toast('✅ Treino concluído! Coach notificado. 🔥'); }
+
+function escolherCarinha(btn) {
+  document.querySelectorAll('.carinha-btn').forEach(b=>b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+}
+
+function enviarFeedback() {
+  if(!document.querySelector('.carinha-btn.ativo')) { toast('⚠️ Selecione como você se sentiu!'); return; }
+  toast('💬 Feedback enviado para o Coach Renisson!');
+}
+
+function soloChip(el, groupId) {
+  document.querySelectorAll('#'+groupId+' .chip').forEach(c=>c.classList.remove('ativo'));
+  el.classList.add('ativo');
+}
+
+function toggleChip(el) { el.classList.toggle('ativo'); }
+
+function toast(msg) {
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(0,230,118,0.3);color:#fff;padding:12px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.5);max-width:90vw;text-align:center';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) fecharModais(); });
+});
+
+if(user.name) {
+  document.getElementById('coachAvatar').textContent=user.name.charAt(0).toUpperCase();
+  document.getElementById('coachNome').textContent='Coach '+user.name;
+}
+
+// Init feedbacks no dashboard
+renderFeedbacks();
 </script>
 </body>
 </html>
