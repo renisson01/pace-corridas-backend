@@ -22,7 +22,7 @@ export const resultsService = {
     return await prisma.result.create({
       data: {
         raceId, athleteId: athlete.id, distance, time, pace, ageGroup,
-        overallRank: 0, genderRank: 0, ageGroupRank: 0
+        overallRank: 0, genderRank: 0
       }
     });
   },
@@ -66,8 +66,7 @@ export const resultsService = {
         where: { id: result.id },
         data: {
           overallRank: result.overallRank,
-          genderRank: result.genderRank,
-          ageGroupRank: result.ageGroupRank
+          genderRank: result.genderRank
         }
       });
     }
