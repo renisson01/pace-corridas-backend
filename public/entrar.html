@@ -177,7 +177,7 @@ function checkSenha() {
     '</div>';
 }
 
-async function doLogin() {
+async function doLogin(tentativa = 0) {
   const email = document.getElementById('loginEmail').value;
   const senha = document.getElementById('loginSenha').value;
   const msg = document.getElementById('loginMsg');
