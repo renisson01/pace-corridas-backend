@@ -432,7 +432,7 @@ function mostrarMsg(texto, tipo) {
 // Verificar autenticação
 if (!TOKEN) {
   alert('Faça login para acessar o painel admin');
-  window.location.href = '/entrar.html';
+  window.sessionStorage.setItem('pace_redirect','/loja-admin.html');location.href='/entrar.html';
 }
 </script>
 </body>
