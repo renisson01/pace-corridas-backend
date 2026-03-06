@@ -45,4 +45,15 @@ export async function corridasAbertasRoutes(fastify) {
     });
     return corrida;
   });
+
+  fastify.patch('/corridas-abertas/:id', async (request, reply) => {
+    const { id } = request.params;
+    const { cartazUrl, cartazBase64, adminKey, ...rest } = request.body;
+    if (adminKey !== 'pace-admin-2026') return reply.code(401).send({ error: 'Nao autorizado' });
+    let updateData = { ...rest };
+    if (cartazUrl) updateData.cartazUrl = cartazUrl;
+    if (cartazBase64) updateData.cartazUrl = 'data:image/jpeg;base64,' + cartazBase64;
+    const corrida = await prisma.corridaAberta.update({ where: { id }, data: updateData });
+    return corrida;
+  });
 }
