@@ -45,7 +45,7 @@ export async function authRoutes(fastify) {
       });
       const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
       return reply.code(201).send({ success: true, token, bip39Words, user: { id:user.id, email:user.email, name:user.name, city:user.city, state:user.state, gender:user.gender, isPremium:user.isPremium } });
-    } catch(e) { return reply.code(500).send({ error: e.message }); }
+    } catch(e) { console.error('AUTH ERROR:', e); return reply.code(500).send({ error: e.message }); }
   });
 
   fastify.post('/auth/login', async (req, reply) => {
@@ -57,7 +57,7 @@ export async function authRoutes(fastify) {
       if(!ok) return reply.code(401).send({ error: 'E-mail ou senha incorretos' });
       const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
       return { success: true, token, user: { id:user.id, email:user.email, name:user.name, city:user.city, state:user.state, gender:user.gender, age:user.age, isPremium:user.isPremium } };
-    } catch(e) { return reply.code(500).send({ error: e.message }); }
+    } catch(e) { console.error('AUTH ERROR:', e); return reply.code(500).send({ error: e.message }); }
   });
 
   fastify.post('/auth/recover', async (req, reply) => {
@@ -72,7 +72,7 @@ export async function authRoutes(fastify) {
       const passwordHash = await bcrypt.hash(novaSenha, 10);
       await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
       return { success: true, message: 'Senha alterada!' };
-    } catch(e) { return reply.code(500).send({ error: e.message }); }
+    } catch(e) { console.error('AUTH ERROR:', e); return reply.code(500).send({ error: e.message }); }
   });
 
   fastify.get('/auth/me', async (req, reply) => {
@@ -127,7 +127,7 @@ export async function authRoutes(fastify) {
       });
 
       return { success: true, status: mutual ? 'matched' : 'liked', partner: { id: toUser.id, name: toUser.name, city: toUser.city } };
-    } catch(e) { return reply.code(500).send({ error: e.message }); }
+    } catch(e) { console.error('AUTH ERROR:', e); return reply.code(500).send({ error: e.message }); }
   });
 
   // PaceMatch - meus matches
