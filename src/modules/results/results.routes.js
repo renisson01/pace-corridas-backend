@@ -1,4 +1,5 @@
 import { resultsService } from './results.service.js';
+import { prisma } from '../../utils/prisma.js';
 
 export async function resultsRoutes(fastify) {
   fastify.post('/results', async (request) => {
@@ -19,26 +20,30 @@ export async function resultsRoutes(fastify) {
     return await resultsService.calculateRankings(raceId, distance);
   });
 
-  // GET /results/me - resultados do usuário logado
   fastify.get('/results/me', async (req, reply) => {
     try {
-      const auth = req.headers.authorization?.replace('Bearer ','');
-      if (!auth) return reply.code(401).send({ error: 'Não autorizado' });
+      const auth = req.headers.authorization?.replace('Bearer ', '');
+      if (!auth) return reply.code(401).send({ error: 'Nao autorizado' });
       const jwt = await import('jsonwebtoken');
       const decoded = jwt.default.verify(auth, process.env.JWT_SECRET || 'pace-secret-2026');
       const results = await prisma.result.findMany({
         where: { athlete: { user: { id: decoded.userId } } },
-        include: { race: { select:{ name:true, city:true, state:true } } },
-        orderBy: { createdAt: 'desc' 
-  fastify.delete('/results/:id', async (request) => {
-    const { id } = request.params;
-    await prisma.result.delete({ where: { id } });
-    return { deleted: true };
-  });
-}
+        include: { race: { select: { name: true, city: true, state: true } } },
+        orderBy: { createdAt: 'desc' }
       });
       return results;
-    } catch(e) { return reply.code(401).send({ error: 'Token inválido' }); }
+    } catch(e) {
+      return reply.code(401).send({ error: 'Token invalido' });
+    }
   });
 
+  fastify.delete('/results/:id', async (request, reply) => {
+    const { id } = request.params;
+    try {
+      await prisma.result.delete({ where: { id } });
+      return { deleted: true };
+    } catch(e) {
+      return reply.code(404).send({ error: 'Nao encontrado' });
+    }
+  });
 }
