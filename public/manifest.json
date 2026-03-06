@@ -1,19 +1,21 @@
 {
-  "name": "PACE - Corridas Brasil",
-  "short_name": "PACE",
-  "description": "Ranking, calendário e parceiros de corrida no Brasil",
+  "name": "PACE BRAZIL — A Casa do Corredor",
+  "short_name": "PACE BR",
+  "description": "Corridas, ranking, GPS, comunidades e treinador IA para corredores do Brasil",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#22c55e",
+  "background_color": "#080B10",
+  "theme_color": "#00E676",
   "orientation": "portrait-primary",
   "icons": [
-    { "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "shortcuts": [
-    { "name": "Calendário", "url": "/calendario.html", "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>", "sizes": "any"}] },
-    { "name": "PaceMatch", "url": "/pacematch.html", "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💚</text></svg>", "sizes": "any"}] },
-    { "name": "Meu Perfil", "url": "/perfil.html", "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>", "sizes": "any"}] }
+    { "name": "Corridas", "url": "/corridas-abertas.html", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192"}] },
+    { "name": "Ranking", "url": "/elite.html", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192"}] },
+    { "name": "GPS", "url": "/gps.html", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192"}] },
+    { "name": "Comunidades", "url": "/comunidades.html", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192"}] }
   ],
   "categories": ["sports", "health", "fitness"],
   "lang": "pt-BR"
