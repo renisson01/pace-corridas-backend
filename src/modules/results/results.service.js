@@ -53,7 +53,7 @@ export const resultsService = {
     
     const byAgeGroup = {};
     results.forEach(result => {
-      const group = result.ageGroup;
+      const group = result.ageGroup || 'GERAL';
       if (!byAgeGroup[group]) byAgeGroup[group] = [];
       byAgeGroup[group].push(result);
     });
