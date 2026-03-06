@@ -177,30 +177,31 @@ function checkSenha() {
     '</div>';
 }
 
-async function doLogin(tentativa = 0) {
+async function doLogin(tentativa=0) {
   const email = document.getElementById('loginEmail').value;
   const senha = document.getElementById('loginSenha').value;
   const msg = document.getElementById('loginMsg');
-  msg.innerHTML = '⏳ Entrando...';
+  msg.innerHTML = "⏳ Entrando...";
   try {
-    const res = await fetch('/auth/login', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+    const response = await fetch("/auth/login", {
+      method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ email, senha })
-    }).then(r=>r.json());
+    });
+    const res = await response.json();
     if(res.success) {
-      localStorage.setItem('pace_token', res.token);
-      localStorage.setItem('pace_user', JSON.stringify(res.user));
-      msg.innerHTML = '<span class="text-green-400">✅ Bem-vindo, '+res.user.name+'!</span>';
-      setTimeout(() => window.location = '/', 1000);
+      localStorage.setItem("pace_token", res.token);
+      localStorage.setItem("pace_user", JSON.stringify(res.user));
+      msg.innerHTML = "<span class=\"text-green-400\">✅ Bem-vindo, "+res.user.name+"!</span>";
+      var redir = sessionStorage.getItem("pace_redirect");
+      sessionStorage.removeItem("pace_redirect");
+      setTimeout(function(){ window.location = redir || "/"; }, 1000);
     } else {
-      msg.innerHTML = '<span class="text-red-400">❌ '+res.error+'</span>';
+      msg.innerHTML = "<span class=\"text-red-400\">❌ "+(res.error||"Erro desconhecido")+"</span>";
     }
   } catch(e) {
-    if (tentativa < 3) {
-      setTimeout(() => doLogin(tentativa + 1), 2000);
-    } else {
-      msg.innerHTML = '<span class="text-red-400">❌ Servidor indisponível. Tente novamente em instantes.</span>';
-    }
+    console.error("Login error:", e);
+    if(tentativa < 2) { setTimeout(function(){ doLogin(tentativa+1); }, 2000); }
+    else { msg.innerHTML = "<span class=\"text-red-400\">❌ Servidor indisponível. Tente novamente.</span>"; }
   }
 }
 
