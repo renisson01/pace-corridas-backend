@@ -10,7 +10,7 @@ if (!process.env.ANTHROPIC_API_KEY) console.warn('⚠️  ANTHROPIC_API_KEY não
 
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import helmet from '@fastify/helmet';
+// import helmet from '@fastify/helmet';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import fs from 'fs';
@@ -41,7 +41,7 @@ import { amigoPaceRoutes }       from './modules/amigo-pace/amigo-pace.routes.js
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = Fastify({ logger: false });
 
-await app.register(helmet, { contentSecurityPolicy: false });
+// helmet desativado temporariamente
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
