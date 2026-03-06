@@ -187,7 +187,7 @@ async function doLogin(tentativa=0) {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ email, senha })
     });
-    const res = await response.json();
+    const text = await response.text(); console.log("LOGIN RESPONSE:", response.status, text); const res = JSON.parse(text);
     if(res.success) {
       localStorage.setItem("pace_token", res.token);
       localStorage.setItem("pace_user", JSON.stringify(res.user));
