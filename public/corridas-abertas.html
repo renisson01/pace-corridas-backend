@@ -77,7 +77,7 @@ async function carregar() {
           ${c.preco ? '<span>💰 R$ '+c.preco.toFixed(2)+'</span>' : '<span>💚 Gratuita</span>'}
         </div>
         <div class="dist-tags">${dists}</div>
-        <a href="${c.linkInscricao}" target="_blank" class="btn-inscrever">Inscrever-se →</a>
+        <span class="btn-inscrever" style="opacity:0.5;cursor:default">Em breve</span>
       </div>`;
     }).join('');
   } catch(e) { console.error(e); }
