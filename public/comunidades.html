@@ -204,8 +204,6 @@ async function carregarComunidades(){
     if(nights.length){
       document.getElementById('nightruns-api').innerHTML=nights.map(c=>'<div class="night-card"><div class="night-badge">🌙 Night Run</div><div class="night-nome">'+c.nome+'</div><div class="night-desc">'+(c.descricao||'')+'</div><button class="btn-night" onclick="entrarGrupo(''+c.slug+'')">🌙 Participar</button></div>').join('');
     }
-    const itaMembros=data.find(c=>c.slug==='ita-runners');
-    if(itaMembros)document.getElementById('ita-membros').innerHTML=itaMembros.totalMembros+'<span>membros</span>';
   }catch(e){console.log('Comunidades offline')}
 }
 
