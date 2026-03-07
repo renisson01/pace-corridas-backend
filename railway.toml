@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "npm start"
+startCommand = "node seed-comunidades-v2.cjs; npm start"
