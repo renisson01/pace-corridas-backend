@@ -199,10 +199,10 @@ async function carregarComunidades(){
     const grupos=data.filter(c=>!c.nome?.toLowerCase().includes('night'));
     const nights=data.filter(c=>c.nome?.toLowerCase().includes('night'));
     if(grupos.length){
-      document.getElementById('grupos-api').innerHTML=grupos.map(c=>'<div class="grupo-card"><div class="grupo-top"><div class="grupo-icon">🏃</div><div class="grupo-info"><div class="grupo-nome">'+c.nome+'</div><div class="grupo-local">📍 '+(c.local||'Brasil')+'</div></div><div class="grupo-membros" style="color:var(--verde)">'+(c.totalMembros||0)+'<span>membros</span></div></div><div class="grupo-desc">'+(c.descricao||'')+'</div><button class="btn-entrar" onclick="entrarGrupo(''+c.slug+'')">Entrar no grupo</button></div>').join('');
+      document.getElementById('grupos-api').innerHTML=grupos.map(c=>{return '<div class="grupo-card"><div class="grupo-top"><div class="grupo-icon">🏃</div><div class="grupo-info"><div class="grupo-nome">'+c.nome+'</div><div class="grupo-local">📍 '+(c.local||'Brasil')+'</div></div><div class="grupo-membros" style="color:var(--verde)">'+(c.totalMembros||0)+'<span>membros</span></div></div><div class="grupo-desc">'+(c.descricao||'')+'</div><button class="btn-entrar" onclick="entrarGrupo(&quot;'+c.slug+'&quot;)">Entrar no grupo</button></div>';}).join('');
     }
     if(nights.length){
-      document.getElementById('nightruns-api').innerHTML=nights.map(c=>'<div class="night-card"><div class="night-badge">🌙 Night Run</div><div class="night-nome">'+c.nome+'</div><div class="night-desc">'+(c.descricao||'')+'</div><button class="btn-night" onclick="entrarGrupo(''+c.slug+'')">🌙 Participar</button></div>').join('');
+      document.getElementById('nightruns-api').innerHTML=nights.map(c=>{return '<div class="night-card"><div class="night-badge">🌙 Night Run</div><div class="night-nome">'+c.nome+'</div><div class="night-desc">'+(c.descricao||'')+'</div><button class="btn-night" onclick="entrarGrupo(&quot;'+c.slug+'&quot;)">🌙 Participar</button></div>';}).join('');
     }
   }catch(e){console.log('Comunidades offline')}
 }

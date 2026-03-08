@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "npm start"
+startCommand = "node limpar-cbat.cjs; npm start"
