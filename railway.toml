@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "npm start"
+startCommand = "node recalcular-pontos.cjs; npm start"
