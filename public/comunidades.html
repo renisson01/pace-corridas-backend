@@ -195,24 +195,58 @@ async function carregarComunidades(){
   try{
     const res=await fetch('/comunidades');
     const data=await res.json();
-    console.log('Comunidades:',data.length);
-    if(!Array.isArray(data)||!data.length){
-      document.getElementById('grupos-api').innerHTML='<p style="color:#64748B;text-align:center;padding:20px">Nenhum grupo ainda</p>';
-      return;
+    if(!Array.isArray(data)||!data.length)return;
+    var grupos=[];
+    var nights=[];
+    for(var i=0;i<data.length;i++){
+      var c=data[i];
+      if(c.nome && c.nome.toLowerCase().indexOf('night')!==-1){
+        nights.push(c);
+      } else {
+        grupos.push(c);
+      }
     }
-    const grupos=data.filter(c=>c.tipo!=='nightrun'&&!c.nome.toLowerCase().includes('night'));
-    const nights=data.filter(c=>c.tipo==='nightrun'||c.nome.toLowerCase().includes('night'));
-    if(grupos.length){
-      document.getElementById('grupos-api').innerHTML=grupos.map(function(c){
-        return '<div class="grupo-card"><div class="grupo-top"><div class="grupo-icon">🏃</div><div class="grupo-info"><div class="grupo-nome">'+c.nome+'</div><div class="grupo-local">📍 '+(c.local||c.cidade||'Brasil')+'</div></div><div class="grupo-membros" style="color:var(--verde)">'+(c.totalMembros||0)+'<span> membros</span></div></div><div class="grupo-desc">'+(c.descricao||'')+'</div><div class="grupo-tags"><span class="tag">'+(c.generoRestrito==='F'?'💜 Feminino':'🌍 Aberto')+'</span></div><button class="btn-entrar" onclick="entrarGrupo(\x27'+c.slug+'\x27)">Entrar no grupo</button></div>';
-      }).join('');
+    var ghtml='';
+    for(var i=0;i<grupos.length;i++){
+      var g=grupos[i];
+      ghtml+='<div class="grupo-card">';
+      ghtml+='<div class="grupo-top">';
+      ghtml+='<div class="grupo-icon">'+((g.generoRestrito==="F")?"💜":"🏃")+'</div>';
+      ghtml+='<div class="grupo-info">';
+      ghtml+='<div class="grupo-nome">'+g.nome+'</div>';
+      ghtml+='<div class="grupo-local">📍 '+(g.local||g.cidade||'Brasil')+'</div>';
+      ghtml+='</div>';
+      ghtml+='<div class="grupo-membros" style="color:var(--verde)">'+(g.totalMembros||0)+' <span>membros</span></div>';
+      ghtml+='</div>';
+      ghtml+='<div class="grupo-desc">'+(g.descricao||'')+'</div>';
+      ghtml+='<div class="grupo-tags">';
+      if(g.generoRestrito==="F"){ghtml+='<span class="tag">💜 Feminino</span>';}
+      else{ghtml+='<span class="tag">🌍 Aberto</span>';}
+      ghtml+='</div>';
+      ghtml+='<button class="btn-entrar" data-slug="'+g.slug+'">Entrar no grupo</button>';
+      ghtml+='</div>';
     }
-    if(nights.length){
-      document.getElementById('nightruns-api').innerHTML=nights.map(function(c){
-        return '<div class="night-card"><div class="night-badge">🌙 Night Run</div><div class="night-nome">'+c.nome+'</div><div class="night-local">📍 '+(c.local||c.cidade||'')+'</div><div class="night-desc">'+(c.descricao||'')+'</div><div class="night-membros">'+(c.totalMembros||0)+' participantes</div><button class="btn-night" onclick="entrarGrupo(\x27'+c.slug+'\x27)">🌙 Participar</button></div>';
-      }).join('');
+    document.getElementById('grupos-api').innerHTML=ghtml;
+    document.querySelectorAll('.btn-entrar[data-slug]').forEach(function(btn){
+      btn.addEventListener('click',function(){entrarGrupo(this.getAttribute('data-slug'));});
+    });
+    var nhtml='';
+    for(var i=0;i<nights.length;i++){
+      var n=nights[i];
+      nhtml+='<div class="night-card">';
+      nhtml+='<div class="night-badge">🌙 Night Run</div>';
+      nhtml+='<div class="night-nome">'+n.nome+'</div>';
+      nhtml+='<div class="night-local">📍 '+(n.local||'')+'</div>';
+      nhtml+='<div class="night-desc">'+(n.descricao||'')+'</div>';
+      nhtml+='<div class="night-membros">'+(n.totalMembros||0)+' participantes</div>';
+      nhtml+='<button class="btn-night" data-slug="'+n.slug+'">🌙 Participar</button>';
+      nhtml+='</div>';
     }
-  }catch(e){console.error('Erro comunidades:',e)}
+    if(nhtml){document.getElementById('nightruns-api').innerHTML=nhtml;}
+    document.querySelectorAll('.btn-night[data-slug]').forEach(function(btn){
+      btn.addEventListener('click',function(){entrarGrupo(this.getAttribute('data-slug'));});
+    });
+  }catch(e){console.error('Erro:',e)}
 }
 
 carregarAssessorias();
