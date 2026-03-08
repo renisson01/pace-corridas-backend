@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perfil do Atleta — PACE BRAZIL</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#00E676;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(8,11,16,0.98);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.back{color:var(--verde);text-decoration:none;font-size:20px}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
+.profile-header{background:linear-gradient(135deg,#0d2818,#065f46);padding:30px 18px;text-align:center}
+.avatar{width:80px;height:80px;border-radius:50%;background:var(--verde);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:#080B10;margin:0 auto 12px}
+.nome{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900}
+.info{color:rgba(255,255,255,0.7);font-size:13px;margin-top:4px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
+.stat{padding:16px 8px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)}
+.stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+.section{padding:16px 18px}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.result-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.result-card .race-info{flex:1}
+.result-card .race-name{font-weight:700;font-size:14px;margin-bottom:2px}
+.result-card .race-meta{font-size:11px;color:var(--muted)}
+.result-card .time-info{text-align:right}
+.result-card .time{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)}
+.result-card .pace{font-size:11px;color:var(--muted)}
+.result-card .rank{font-size:11px;color:var(--verde);font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;margin:2px}
+.badge-gold{background:rgba(255,215,0,0.15);color:#FFD700}
+.badge-silver{background:rgba(192,192,192,0.15);color:#C0C0C0}
+.badge-bronze{background:rgba(205,127,50,0.15);color:#CD7F32}
+.badge-green{background:rgba(0,230,118,0.1);color:var(--verde)}
+.empty{text-align:center;padding:40px;color:var(--muted)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,11,16,0.98);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0;z-index:100}
+.bottom-nav a{color:var(--muted);text-decoration:none;font-size:10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="javascript:history.back()" class="back">←</a>
+  <a href="/" class="logo">PACE</a>
+  <span style="font-size:14px;font-weight:700;margin-left:auto">👤 Atleta</span>
+</div>
+<div class="profile-header">
+  <div class="avatar" id="avatar">?</div>
+  <div class="nome" id="nome">Carregando...</div>
+  <div class="info" id="info"></div>
+</div>
+<div class="stats-grid">
+  <div class="stat"><div class="stat-val" id="st-pts">-</div><div class="stat-lbl">Pontos</div></div>
+  <div class="stat"><div class="stat-val" id="st-provas">-</div><div class="stat-lbl">Provas</div></div>
+  <div class="stat"><div class="stat-val" id="st-km">-</div><div class="stat-lbl">Km total</div></div>
+  <div class="stat"><div class="stat-val" id="st-pace">-</div><div class="stat-lbl">Pace med</div></div>
+</div>
+<div id="badges" class="section" style="display:none">
+  <div class="sec-title">🏅 Conquistas</div>
+  <div id="badges-list"></div>
+</div>
+<div class="section">
+  <div class="sec-title">📋 Resultados</div>
+  <div id="resultados"><div class="empty">⏳ Carregando...</div></div>
+</div>
+<nav class="bottom-nav">
+  <a href="/"><span style="font-size:18px">🏠</span>Início</a>
+  <a href="/corridas-abertas.html"><span style="font-size:18px">🏁</span>Corridas</a>
+  <a href="/treinador.html"><span style="font-size:18px">🏃</span>Treinador</a>
+  <a href="/elite.html"><span style="font-size:18px">🏆</span>Ranking</a>
+  <a href="/comunidades.html"><span style="font-size:18px">👥</span>Comunidade</a>
+</nav>
+<script>
+const id=new URLSearchParams(location.search).get('id');
+if(!id){document.getElementById('nome').textContent='Atleta não encontrado';throw new Error('no id')}
+async function carregar(){
+  try{
+    const res=await fetch('/users/'+id+'/profile');
+    const a=await res.json();
+    if(a.error){
+      const r2=await fetch('/ranking?limit=5000');
+      const all=await r2.json();
+      const found=all.find(x=>x.id===id);
+      if(found){
+        document.getElementById('avatar').textContent=found.name.charAt(0);
+        document.getElementById('nome').textContent=found.name;
+        const infoParts=[];
+        if(found.gender) infoParts.push(found.gender==='M'?'👨 Masculino':'👩 Feminino');
+        if(found.state) infoParts.push('📍 '+found.state);
+        if(found.equipe) infoParts.push('🏃 '+found.equipe);
+        document.getElementById('info').textContent=infoParts.join(' · ');
+        document.getElementById('st-pts').textContent=found.totalPoints||0;
+        document.getElementById('st-provas').textContent=found.totalRaces||0;
+      }
+    }
+    const resResults=await fetch('/results?athleteId='+id);
+    let results=[];
+    try{results=await resResults.json();if(!Array.isArray(results))results=[];}catch(e){results=[];}
+    if(!results.length){
+      const r3=await fetch('/races');
+      const races=await r3.json();
+      for(const race of races){
+        const rr=await fetch('/results/race/'+race.id);
+        const rd=await rr.json();
+        const mine=rd.filter(x=>x.athleteId===id);
+        results.push(...mine.map(m=>({...m,race})));
+      }
+    }
+    if(results.length){
+      let totalKm=0;
+      let totalMinutes=0;
+      const html=results.map(r=>{
+        const race=r.race||{};
+        const dist=r.distance||'';
+        const km=parseFloat(dist.replace(/[^0-9.]/g,''))||0;
+        totalKm+=km;
+        const parts=(r.pace||'').split(':').map(Number);
+        if(parts.length===2) totalMinutes+=parts[0]+parts[1]/60;
+        const rankBadge=r.genderRank<=3?['badge-gold','badge-silver','badge-bronze'][r.genderRank-1]:'badge-green';
+        return '<div class="result-card"><div class="race-info"><div class="race-name">'+(race.name||'Corrida')+'</div><div class="race-meta">'+dist+' · '+(race.city||'')+' · '+(r.ageGroup||'')+'</div>'+(r.genderRank<=5?'<span class="badge '+rankBadge+'">'+(r.genderRank<=3?['🥇','🥈','🥉'][r.genderRank-1]:'🏅')+' '+r.genderRank+'° geral · '+r.points+' pts</span>':'<span class="badge badge-green">✅ '+r.points+' pt</span>')+'</div><div class="time-info"><div class="time">'+(r.time||'-')+'</div><div class="pace">pace '+(r.pace||'-')+'/km</div></div></div>';
+      }).join('');
+      document.getElementById('resultados').innerHTML=html;
+      document.getElementById('st-km').textContent=totalKm.toFixed(0);
+      if(results.length>0&&totalMinutes>0) document.getElementById('st-pace').textContent=(totalMinutes/results.length).toFixed(1)+"'";
+    }else{
+      document.getElementById('resultados').innerHTML='<div class="empty">Sem resultados ainda</div>';
+    }
+  }catch(e){console.error(e)}
+}
+carregar();
+</script>
+</body>
+</html>

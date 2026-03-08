@@ -78,7 +78,7 @@ function card(a, i) {
     a.gender === 'M' ? '👨' : a.gender === 'F' ? '👩' : '',
   ].filter(Boolean).join(' · ');
 
-  return `<div class="card border ${n.bg} rounded-2xl p-4 flex items-center gap-3">
+  return `<div onclick="location.href='/atleta.html?id='+a.id+''" style="cursor:pointer" class="card border ${n.bg} rounded-2xl p-4 flex items-center gap-3">
     <div class="w-10 h-10 rounded-full bg-slate-700/50 flex items-center justify-center flex-shrink-0 text-xl">${pos}</div>
     <div class="flex-1 min-w-0">
       <p class="font-black text-sm leading-tight">${a.name}</p>
