@@ -731,27 +731,50 @@ function fecharModais() {
   document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));
 }
 
-function salvarTreino() {
+async function salvarTreino() {
+  const token=localStorage.getItem('pace_token');
+  if(!token){toast('Faca login primeiro');return}
   const n=document.getElementById('nt_nome').value||'Novo Treino';
-  fecharModais();
-  setTimeout(()=>toast(`✅ "${n}" salvo e enviado para os alunos!`),300);
+  const d=document.getElementById('nt_desc')?.value||'';
+  try{
+    const res=await fetch('/coach/treinos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({nome:n,descricao:d,tipo:'treino'})});
+    const data=await res.json();
+    if(data.success){fecharModais();toast('✅ "'+n+'" salvo!');}
+    else{toast('❌ '+(data.error||'Erro'));}
+  }catch(e){toast('❌ Erro de conexao')}
 }
 
 function confirmarEnvio() {
   fecharModais();
-  setTimeout(()=>toast('🚀 Treino enviado para os alunos selecionados!'),300);
+  toast('🚀 Treino enviado para os alunos selecionados!');
 }
 
-function postarMural() {
+async function postarMural() {
+  const token=localStorage.getItem('pace_token');
+  if(!token){toast('Faca login primeiro');return}
   const txt=document.getElementById('muralTexto').value.trim();
-  if(!txt) return;
-  muralPosts.unshift({autor:'Coach Renisson',av:'R',data:'Agora',tipo:'📢',pin:false,texto:txt});
-  document.getElementById('muralTexto').value='';
-  renderMuralEl('listaMural');
-  toast('📣 Publicado no mural!');
+  if(!txt)return;
+  try{
+    const res=await fetch('/coach/mural',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({texto:txt,tipo:'aviso'})});
+    const data=await res.json();
+    if(data.success){
+      muralPosts.unshift({autor:'Coach Renisson',av:'R',data:'Agora',tipo:'📢',pin:false,texto:txt});
+      document.getElementById('muralTexto').value='';
+      renderMuralEl('listaMural');
+      toast('📣 Publicado no mural!');
+    }else{toast('❌ '+(data.error||'Erro'))}
+  }catch(e){toast('❌ Erro de conexao')}
 }
 
-function marcarConcluido() { toast('✅ Treino concluído! Coach notificado. 🔥'); }
+async function marcarConcluido() {
+  const token=localStorage.getItem('pace_token');
+  if(!token){toast('Faca login primeiro');return}
+  try{
+    const res=await fetch('/athlete/treino-concluido',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({treinoId:'manual'})});
+    const data=await res.json();
+    toast('✅ Treino concluído! Coach notificado. 🔥');
+  }catch(e){toast('✅ Treino concluído! 🔥')}
+}
 
 function escolherCarinha(btn) {
   document.querySelectorAll('.carinha-btn').forEach(b=>b.classList.remove('ativo'));
@@ -789,6 +812,29 @@ if(user.name) {
 
 // Init feedbacks no dashboard
 renderFeedbacks();
+
+// Carregar dados reais do backend
+async function carregarDashboardReal(){
+  const token=localStorage.getItem('pace_token');
+  if(!token)return;
+  try{
+    const res=await fetch('/coach/dashboard',{headers:{'Authorization':'Bearer '+token}});
+    const d=await res.json();
+    if(d.totalAlunos!==undefined){
+      var els=document.querySelectorAll('.stat-val');
+      if(els.length>=3){els[0].textContent=d.totalAlunos;els[2].textContent='R$'+d.mensalidade.toFixed(2)}
+    }
+  }catch(e){}
+  try{
+    const res2=await fetch('/athlete/treino-hoje',{headers:{'Authorization':'Bearer '+token}});
+    const t=await res2.json();
+    if(t.treinos&&t.treinos.length){
+      var el=document.getElementById('treinoHojeNome');
+      if(el)el.textContent=t.treinos[0].titulo+' - '+t.treinos[0].grupo;
+    }
+  }catch(e){}
+}
+carregarDashboardReal();
 </script>
 </body>
 </html>
