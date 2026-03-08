@@ -193,31 +193,28 @@ async function entrarGrupo(slug){
 
 async function carregarComunidades(){
   try{
-    const res=await fetch(API+'/comunidades');
+    const res=await fetch('/comunidades');
     const data=await res.json();
-    if(!Array.isArray(data)||!data.length)return;
-    const grupos=data.filter(c=>!c.nome?.toLowerCase().includes('night'));
-    const nights=data.filter(c=>c.nome?.toLowerCase().includes('night'));
+    console.log('Comunidades:',data.length);
+    if(!Array.isArray(data)||!data.length){
+      document.getElementById('grupos-api').innerHTML='<p style="color:#64748B;text-align:center;padding:20px">Nenhum grupo ainda</p>';
+      return;
+    }
+    const grupos=data.filter(c=>c.tipo!=='nightrun'&&!c.nome.toLowerCase().includes('night'));
+    const nights=data.filter(c=>c.tipo==='nightrun'||c.nome.toLowerCase().includes('night'));
     if(grupos.length){
-      document.getElementById('grupos-api').innerHTML=grupos.map(c=>{return '<div class="grupo-card"><div class="grupo-top"><div class="grupo-icon">🏃</div><div class="grupo-info"><div class="grupo-nome">'+c.nome+'</div><div class="grupo-local">📍 '+(c.local||'Brasil')+'</div></div><div class="grupo-membros" style="color:var(--verde)">'+(c.totalMembros||0)+'<span>membros</span></div></div><div class="grupo-desc">'+(c.descricao||'')+'</div><button class="btn-entrar" onclick="entrarGrupo(&quot;'+c.slug+'&quot;)">Entrar no grupo</button></div>';}).join('');
+      document.getElementById('grupos-api').innerHTML=grupos.map(function(c){
+        return '<div class="grupo-card"><div class="grupo-top"><div class="grupo-icon">🏃</div><div class="grupo-info"><div class="grupo-nome">'+c.nome+'</div><div class="grupo-local">📍 '+(c.local||c.cidade||'Brasil')+'</div></div><div class="grupo-membros" style="color:var(--verde)">'+(c.totalMembros||0)+'<span> membros</span></div></div><div class="grupo-desc">'+(c.descricao||'')+'</div><div class="grupo-tags"><span class="tag">'+(c.generoRestrito==='F'?'💜 Feminino':'🌍 Aberto')+'</span></div><button class="btn-entrar" onclick="entrarGrupo(\x27'+c.slug+'\x27)">Entrar no grupo</button></div>';
+      }).join('');
     }
     if(nights.length){
-      document.getElementById('nightruns-api').innerHTML=nights.map(c=>{return '<div class="night-card"><div class="night-badge">🌙 Night Run</div><div class="night-nome">'+c.nome+'</div><div class="night-desc">'+(c.descricao||'')+'</div><button class="btn-night" onclick="entrarGrupo(&quot;'+c.slug+'&quot;)">🌙 Participar</button></div>';}).join('');
+      document.getElementById('nightruns-api').innerHTML=nights.map(function(c){
+        return '<div class="night-card"><div class="night-badge">🌙 Night Run</div><div class="night-nome">'+c.nome+'</div><div class="night-local">📍 '+(c.local||c.cidade||'')+'</div><div class="night-desc">'+(c.descricao||'')+'</div><div class="night-membros">'+(c.totalMembros||0)+' participantes</div><button class="btn-night" onclick="entrarGrupo(\x27'+c.slug+'\x27)">🌙 Participar</button></div>';
+      }).join('');
     }
-  }catch(e){console.log('Comunidades offline')}
+  }catch(e){console.error('Erro comunidades:',e)}
 }
 
-async function carregarAssessorias(){
-  try{
-    const res=await fetch(API+'/assessorias');
-    const data=await res.json();
-    const lista=Array.isArray(data)?data:data.assessorias||[];
-    if(!lista.length)return;
-    document.getElementById('lista-assessorias').innerHTML=lista.map(a=>'<div class="assessoria-card"><div class="assessoria-top"><div class="assessoria-avatar">🏃</div><div class="assessoria-info"><div class="assessoria-nome">'+a.nome+'</div><div class="assessoria-treinador">👤 '+(a.treinador||'Treinador')+'</div></div>'+(a.preco?'<div class="assessoria-preco">R$'+a.preco+'<span>/mês</span></div>':'')+'</div><div class="assessoria-desc">'+(a.descricao||'')+'</div><button class="btn-assessoria" onclick="location.href='/assessoria.html?id='+a.id+''">Ver assessoria →</button></div>').join('');
-  }catch(e){console.log('Assessorias offline')}
-}
-
-carregarComunidades();
 carregarAssessorias();
 </script>
 </body>
