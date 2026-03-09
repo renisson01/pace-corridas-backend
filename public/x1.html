@@ -69,7 +69,7 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 .doacao-body{padding:16px}
 .field-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
 .valores-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
-.btn-valor{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 4px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;transition:all .2s}
+.btn-valor{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 4px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;transition:all .2s}
 .btn-valor.sel{background:var(--verde);color:#080B10;border-color:var(--verde)}
 .input-valor{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;outline:none;margin-bottom:12px;font-family:'Barlow',sans-serif}
 .input-valor:focus{border-color:var(--verde)}
@@ -170,10 +170,10 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
   <div class="doacao-body">
     <div class="field-label">Escolha um valor</div>
     <div class="valores-grid">
-      <button class="btn-valor" onclick="setValor(10,this)">R0</button>
-      <button class="btn-valor" onclick="setValor(20,this)">R0</button>
-      <button class="btn-valor" onclick="setValor(50,this)">R0</button>
-      <button class="btn-valor" onclick="setValor(100,this)">R00</button>
+      <button class="btn-valor" onclick="setValor(10,this)">R&#36;10</button>
+      <button class="btn-valor" onclick="setValor(20,this)">R&#36;20</button>
+      <button class="btn-valor" onclick="setValor(50,this)">R&#36;50</button>
+      <button class="btn-valor" onclick="setValor(100,this)">R&#36;100</button>
     </div>
     <input class="input-valor" id="inputValor" type="number" min="5" placeholder="Ou digite outro valor (R$)" oninput="atualizarResumo()">
 
@@ -211,21 +211,34 @@ const CHAVE_PIX = '42912886000190';
 let valorSel = 0;
 let apoioSel = '';
 
-// ─── CARREGAR VOTOS DO BANCO ─────────────────────────────────────────────────
-// A rota /pagamentos/x1/votos retorna: { votos: { tiago: N, pedro: N }, ... }
-// "pedrinho" na UI mapeia para "pedro" na API (nome original do arquivo)
+// ─── PALPITES ─────────────────────────────────────────────────────────────────
+// Palpites ficam no servidor (rota /match/x1/palpites) para serem compartilhados
+// Se não disponível, usa localStorage como fallback local
 async function carregarVotos() {
   try {
-    const d = await fetch('/pagamentos/x1/votos').then(r => r.json());
-    const votos = d.votos || {};
-    // Chaves podem ser 'tiago'/'pedro' ou 'tiago'/'pedrinho' — tentamos as duas
-    const vTiago    = votos['tiago']    || votos['Tiago']    || 0;
-    const vPedrinho = votos['pedro']    || votos['pedrinho'] || votos['Pedro'] || 0;
-    atualizarVotos(vTiago, vPedrinho);
+    const d = await fetch('/match/x1/palpites').then(r => r.json());
+    if (d && typeof d.tiago === 'number') {
+      atualizarVotos(d.tiago, d.pedrinho || d.pedro || 0);
+      return;
+    }
+  } catch(e) {}
+  // Fallback: localStorage acumulado deste dispositivo
+  const salvo = JSON.parse(localStorage.getItem('x1_palpites_global') || '{"tiago":0,"pedrinho":0}');
+  atualizarVotos(salvo.tiago || 0, salvo.pedrinho || 0);
+}
+
+async function enviarPalpite(atleta) {
+  try {
+    await fetch('/match/x1/palpites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ atleta })
+    });
   } catch(e) {
-    // Fallback localStorage
-    const salvo = JSON.parse(localStorage.getItem('x1_votos') || '{"tiago":0,"pedrinho":0}');
-    atualizarVotos(salvo.tiago || 0, salvo.pedrinho || 0);
+    // Se API não disponível, incrementar local
+    const salvo = JSON.parse(localStorage.getItem('x1_palpites_global') || '{"tiago":0,"pedrinho":0}');
+    salvo[atleta] = (salvo[atleta] || 0) + 1;
+    localStorage.setItem('x1_palpites_global', JSON.stringify(salvo));
   }
 }
 
@@ -249,14 +262,10 @@ if (localStorage.getItem('x1_meu_voto')) {
 }
 
 function votar(atleta) {
-  // Salvar localmente (votos "de torcida" não precisam de login)
-  const votos = JSON.parse(localStorage.getItem('x1_votos') || '{"tiago":0,"pedrinho":0}');
-  votos[atleta] = (votos[atleta] || 0) + 1;
-  localStorage.setItem('x1_votos', JSON.stringify(votos));
   localStorage.setItem('x1_meu_voto', atleta);
   document.getElementById('areaVoto').style.display = 'none';
   document.getElementById('jaVotou').style.display = 'block';
-  atualizarVotos(votos.tiago, votos.pedrinho);
+  enviarPalpite(atleta).then(() => carregarVotos());
   toast('✅ Palpite registrado!');
 }
 
@@ -288,13 +297,13 @@ function setApoio(a) {
 }
 
 async function gerarPix() {
-  if (valorSel < 5)  { toast('⚠️ Valor mínimo: R$ 5,00'); return; }
+  if (valorSel < 5)  { toast('⚠️ Valor mínimo: R&#36; 5,00'); return; }
   if (!apoioSel)     { toast('⚠️ Escolha quem você torce!'); return; }
   const btn = document.getElementById('btnPix');
   btn.disabled = true; btn.textContent = '⏳ Gerando link...';
   const paceUser = JSON.parse(localStorage.getItem('pace_user') || '{}');
   const atletaApi = apoioSel === 'pedrinho' ? 'pedro' : 'tiago';
-  const atletaNome = apoioSel === 'pedrinho' ? 'Pedrinho' : 'Tiago Portões';
+
   try {
     const r = await fetch('/pagamentos/doacao-x1', {
       method: 'POST',
@@ -308,16 +317,18 @@ async function gerarPix() {
     });
     const d = await r.json();
     if (d.url) {
-      // Abre o checkout do Mercado Pago direto
       window.location.href = d.url;
       return;
     }
-    // API retornou mas sem URL — mostrar erro claro
-    toast('⚠️ Pagamento indisponível no momento. Tente em breve.');
-  } catch(e) {
-    toast('⚠️ Erro ao conectar. Verifique sua internet.');
-  }
+  } catch(e) { /* fallback abaixo */ }
+
+  // Fallback: link fixo do MP (funciona mesmo sem token configurado)
+  // O usuario digita o valor manualmente na página do MP
   btn.disabled = false; btn.textContent = '📲 Gerar QR Code Pix';
+  const atletaNome = apoioSel === 'pedrinho' ? 'Pedrinho' : 'Tiago Portoes';
+  const msg = encodeURIComponent('X1 PACE - Apoio ' + atletaNome + ' - R&#36;' + valorSel.toFixed(2));
+  window.open('https://link.mercadopago.com.br/rnestampace', '_blank');
+  toast('✅ Link MP aberto! Informe o valor: R&#36;' + valorSel.toFixed(2).replace('.',','));
 }
 
 function copiarPix() {
