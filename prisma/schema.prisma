@@ -77,6 +77,7 @@ model User {
   premiumUntil  DateTime?
   isAdmin       Boolean   @default(false)
   isOrganizer   Boolean   @default(false)
+  isCoach       Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   likes         Like[]    @relation("UserLikes")
@@ -105,6 +106,8 @@ model User {
   amigosRecebidos     AmigoPace[]          @relation("AmigoPaceRecebeu")
   gruposTreino        MembroGrupoTreino[]
   gruposCriados       GrupoTreino[]
+  coachProfile        CoachProfile?
+  coachesQueTeino     CoachAtleta[]    @relation("AtletasDoCoach")
 }
 
 model Like {
@@ -595,3 +598,42 @@ model ComportamentoCorredor {
   user       User     @relation(fields: [userId], references: [id])
 }
 // placeholder
+
+// ==================== COACH SYSTEM ====================
+model CoachProfile {
+  id           String            @id @default(cuid())
+  userId       String            @unique
+  bio          String?
+  especialidade String?
+  instagram    String?
+  whatsapp     String?
+  cidade       String?
+  estado       String?
+  ativo        Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+  user         User              @relation(fields: [userId], references: [id])
+  atletas      CoachAtleta[]
+  subscription CoachSubscription?
+}
+
+model CoachSubscription {
+  id              String      @id @default(cuid())
+  coachId         String      @unique
+  signupFeePaid   Boolean     @default(false)
+  athleteCount    Int         @default(0)
+  monthlyValue    Float       @default(0)
+  status          String      @default("trial")
+  updatedAt       DateTime    @updatedAt
+  coach           CoachProfile @relation(fields: [coachId], references: [id])
+}
+
+model CoachAtleta {
+  id        String      @id @default(cuid())
+  coachId   String
+  atletaId  String
+  status    String      @default("ativo")
+  createdAt DateTime    @default(now())
+  coach     CoachProfile @relation(fields: [coachId], references: [id])
+  atleta    User         @relation("AtletasDoCoach", fields: [atletaId], references: [id])
+  @@unique([coachId, atletaId])
+}
