@@ -66,6 +66,8 @@ model User {
   state         String?
   gender        String?
   age           Int?
+  fcMax         Int?
+  fcRepouso     Int?
   bio           String?
   photo         String?
   athleteId     String?   @unique
@@ -395,6 +397,7 @@ model Treino {
   comunidade     Comunidade        @relation(fields: [comunidadeId], references: [id])
   checkins       Checkin[]
   confirmacoes   ConfirmacaoTreino[]
+  etapas         TreinoEtapa[]
 }
 
 model ConfirmacaoTreino {
@@ -636,4 +639,21 @@ model CoachAtleta {
   coach     CoachProfile @relation(fields: [coachId], references: [id])
   atleta    User         @relation("AtletasDoCoach", fields: [atletaId], references: [id])
   @@unique([coachId, atletaId])
+}
+
+// ==================== TREINO ESTRUTURADO ====================
+model TreinoEtapa {
+  id          String   @id @default(cuid())
+  treinoId    String
+  ordem       Int
+  tipo        String   // aquecimento | tiro | recuperacao | volta | base
+  descricao   String?
+  durMin      Int?     // duração em minutos
+  distanciaM  Int?     // distância em metros
+  zonaFC      Int?     // zona 1-5
+  paceMin     String?  // pace mínimo ex: "5:00"
+  paceMax     String?  // pace máximo ex: "5:30"
+  repeticoes  Int      @default(1)
+  createdAt   DateTime @default(now())
+  treino      Treino   @relation(fields: [treinoId], references: [id])
 }
