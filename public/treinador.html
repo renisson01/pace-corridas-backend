@@ -2,778 +2,645 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Treinador — PACE</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PACE — Treinador</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --verde: #00E676; --verde2: #00C853; --laranja: #FF6D00; --roxo: #7C3AED;
-  --azul: #3B82F6; --vermelho: #EF4444; --amarelo: #F59E0B; --rosa: #EC4899;
-  --bg: #080B10; --bg2: #0D1117; --bg3: #161B27; --border: #1F2937;
-  --text: #F1F5F9; --muted: #64748B;
+:root{
+  --verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;
+  --bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;
+  --border:#1F2937;--text:#F1F5F9;--muted:#64748B
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; padding-bottom: 90px; }
-.topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:rgba(8,11,16,0.98); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:200; }
-.topbar-logo { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:22px; color:var(--verde); letter-spacing:2px; text-decoration:none; }
-.modo-toggle { display:flex; background:var(--bg3); border-radius:24px; padding:3px; gap:2px; }
-.modo-btn { padding:6px 14px; border-radius:20px; border:none; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:900; cursor:pointer; color:var(--muted); background:transparent; transition:all 0.2s; white-space:nowrap; }
-.modo-btn.ativo { background:var(--verde); color:#080B10; }
-.hero-coach { background:linear-gradient(135deg,#050D05,#0A1A0A); border-bottom:1px solid rgba(0,230,118,0.15); padding:20px 18px 0; }
-.hero-aluno { background:linear-gradient(135deg,#050812,#0A0F1E); border-bottom:1px solid rgba(59,130,246,0.15); padding:20px 18px 0; }
-.coach-perfil, .aluno-perfil { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
-.coach-avatar { width:58px; height:58px; border-radius:16px; background:linear-gradient(135deg,#00E676,#00C853); display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:#080B10; flex-shrink:0; }
-.aluno-avatar { width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg,#3B82F6,#1D4ED8); display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:#fff; flex-shrink:0; position:relative; }
-.aluno-badge-nivel { position:absolute; bottom:-4px; right:-4px; background:var(--amarelo); color:#080B10; font-size:9px; font-weight:900; border-radius:8px; padding:1px 5px; }
-.coach-nome, .aluno-nome { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; }
-.coach-tag { font-size:11px; color:var(--verde); font-weight:700; }
-.aluno-treinador { font-size:11px; color:var(--azul); font-weight:600; }
-.stats-row { display:flex; border-top:1px solid var(--border); }
-.stat-box { flex:1; padding:12px 0; text-align:center; border-right:1px solid var(--border); }
-.stat-box:last-child { border-right:none; }
-.stat-val { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:900; }
-.stat-lbl { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
-.tabs-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border-bottom:1px solid var(--border); background:var(--bg); }
-.tabs-wrap::-webkit-scrollbar { display:none; }
-.tabs { display:flex; min-width:max-content; padding:0 14px; }
-.tab { padding:13px 16px; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; color:var(--muted); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; white-space:nowrap; transition:all 0.2s; }
-.tab.ativo { color:var(--verde); border-bottom-color:var(--verde); }
-.tab.azul.ativo { color:var(--azul); border-bottom-color:var(--azul); }
-.section { padding:16px; }
-.sec-title { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; }
-.sec-sub { font-size:12px; color:var(--muted); font-family:'Barlow',sans-serif; font-weight:400; }
-.card { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px; }
-.card-verde { border-color:rgba(0,230,118,0.2); background:linear-gradient(135deg,rgba(0,230,118,0.04),var(--bg2)); }
-.card-azul { border-color:rgba(59,130,246,0.2); background:linear-gradient(135deg,rgba(59,130,246,0.04),var(--bg2)); }
-.card-laranja { border-color:rgba(255,109,0,0.2); background:linear-gradient(135deg,rgba(255,109,0,0.04),var(--bg2)); }
-.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 18px; border-radius:24px; border:none; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:900; cursor:pointer; transition:all 0.2s; }
-.btn-verde { background:var(--verde); color:#080B10; }
-.btn-verde:hover { background:var(--verde2); }
-.btn-azul { background:var(--azul); color:#fff; }
-.btn-outline { background:transparent; border:1px solid var(--border); color:var(--muted); }
-.btn-outline:hover { border-color:var(--verde); color:var(--verde); }
-.btn-full { width:100%; justify-content:center; padding:13px; border-radius:14px; font-size:16px; }
-.btn-sm { padding:6px 12px; font-size:12px; }
-.input-field { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:10px 14px; color:var(--text); font-size:15px; font-family:'Barlow',sans-serif; outline:none; transition:border-color 0.2s; }
-.input-field:focus { border-color:var(--verde); }
-.input-label { font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:block; }
-.input-group { margin-bottom:12px; }
-.input-row { display:flex; gap:8px; }
-textarea.input-field { min-height:80px; resize:vertical; }
-.aluno-item { display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--bg2); border:1px solid var(--border); border-radius:14px; margin-bottom:8px; }
-.aluno-av { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:900; flex-shrink:0; }
-.aluno-dados { flex:1; }
-.aluno-dados-nome { font-size:14px; font-weight:700; }
-.aluno-dados-info { font-size:11px; color:var(--muted); }
-.aluno-compliance { text-align:right; }
-.compliance-val { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:900; }
-.compliance-lbl { font-size:9px; color:var(--muted); text-transform:uppercase; }
-.treino-card { background:var(--bg2); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:12px; }
-.treino-card-header { padding:14px 16px 10px; display:flex; align-items:flex-start; gap:10px; }
-.treino-tipo-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:5px; }
-.treino-card-nome { font-family:'Barlow Condensed',sans-serif; font-size:17px; font-weight:900; }
-.treino-card-footer { padding:10px 16px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg3); }
-.treino-alunos-count { font-size:11px; color:var(--muted); }
-.treino-status { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; }
-.treino-status.enviado { background:rgba(0,230,118,0.1); color:var(--verde); }
-.treino-status.pendente { background:rgba(245,158,11,0.1); color:var(--amarelo); }
-.treino-status.rascunho { background:rgba(100,116,139,0.1); color:var(--muted); }
-.mural-post { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:10px; }
-.mural-autor { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.mural-av { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900; font-family:'Barlow Condensed',sans-serif; }
-.mural-nome { font-size:13px; font-weight:700; }
-.mural-data { font-size:10px; color:var(--muted); }
-.mural-texto { font-size:13px; line-height:1.6; color:#94a3b8; margin-bottom:10px; }
-.mural-reacoes { display:flex; gap:6px; }
-.mural-reacao { background:var(--bg3); border:1px solid var(--border); border-radius:20px; padding:4px 10px; font-size:12px; cursor:pointer; transition:all 0.2s; }
-.mural-reacao.ativo { background:rgba(0,230,118,0.1); border-color:rgba(0,230,118,0.3); }
-.mural-pin-label { font-size:9px; font-weight:700; color:var(--amarelo); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
-.carinhas-row { display:flex; gap:6px; justify-content:space-between; }
-.carinha-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px; border-radius:12px; border:1px solid var(--border); background:var(--bg3); cursor:pointer; transition:all 0.2s; }
-.carinha-btn.ativo { border-color:var(--verde); background:rgba(0,230,118,0.08); }
-.carinha-emoji { font-size:22px; }
-.carinha-label { font-size:9px; color:var(--muted); font-weight:700; text-transform:uppercase; }
-.treino-dia-aluno { background:linear-gradient(135deg,#071A07,#0A2010); border:1px solid rgba(0,230,118,0.25); border-radius:20px; padding:18px; margin-bottom:14px; position:relative; overflow:hidden; }
-.treino-dia-aluno::before { content:''; position:absolute; top:-30px; right:-30px; width:140px; height:140px; background:radial-gradient(circle,rgba(0,230,118,0.12),transparent 70%); pointer-events:none; }
-.treino-badge { display:inline-flex; align-items:center; gap:5px; border-radius:20px; padding:3px 10px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
-.badge-verde { background:rgba(0,230,118,0.12); border:1px solid rgba(0,230,118,0.25); color:var(--verde); }
-.badge-laranja { background:rgba(255,109,0,0.12); border:1px solid rgba(255,109,0,0.25); color:var(--laranja); }
-.badge-azul { background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.25); color:var(--azul); }
-.treino-nome-dia { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; margin-bottom:4px; }
-.treino-desc-dia { font-size:12px; color:#94a3b8; line-height:1.5; margin-bottom:12px; }
-.treino-metas { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; }
-.treino-meta-v { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; }
-.treino-meta-l { font-size:9px; color:var(--muted); }
-.serie { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.03); margin-bottom:6px; border-left:3px solid transparent; }
-.serie.aquec { border-left-color:var(--amarelo); }
-.serie.tiro { border-left-color:var(--laranja); }
-.serie.recup { border-left-color:var(--azul); }
-.serie.volta { border-left-color:var(--roxo); }
-.serie-n { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:900; min-width:24px; }
-.serie-i { flex:1; }
-.serie-i .nome { font-size:12px; font-weight:600; }
-.serie-i .pace { font-size:10px; color:var(--muted); }
-.serie-dur { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:900; color:var(--muted); }
-.rank-item { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:14px; background:var(--bg2); border:1px solid var(--border); margin-bottom:8px; }
-.rank-pos { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; min-width:32px; color:var(--muted); }
-.rank-av { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:900; flex-shrink:0; }
-.rank-info { flex:1; }
-.rank-nome { font-size:13px; font-weight:700; }
-.rank-detalhe { font-size:10px; color:var(--muted); }
-.rank-pts { text-align:right; }
-.rank-pts-val { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:900; color:var(--verde); }
-.rank-pts-lbl { font-size:9px; color:var(--muted); }
-.rank-eu { background:linear-gradient(135deg,rgba(59,130,246,0.08),var(--bg2)); border-color:rgba(59,130,246,0.3); }
-.conform-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
-.conform-fill { height:100%; border-radius:3px; background:var(--verde); transition:width 0.8s ease; }
-.conform-fill.medio { background:var(--amarelo); }
-.conform-fill.baixo { background:var(--vermelho); }
-.alerta { display:flex; gap:10px; padding:12px 14px; border-radius:12px; margin-bottom:8px; }
-.alerta.atencao { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); }
-.alerta.ok { background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.15); }
-.alerta.risco { background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); }
-.alerta-ico { font-size:18px; flex-shrink:0; }
-.alerta-txt { font-size:12px; line-height:1.5; }
-.alerta-txt strong { display:block; font-size:13px; margin-bottom:2px; }
-.bottom-nav { position:fixed; bottom:0; left:0; right:0; background:rgba(8,11,16,0.97); backdrop-filter:blur(14px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:8px 0 14px; z-index:100; }
-.nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; padding:4px 10px; }
-.nav-icon { font-size:21px; }
-.nav-label { font-size:9px; font-weight:600; color:var(--muted); text-transform:uppercase; }
-.nav-item.ativo .nav-label { color:var(--verde); }
-.nav-item.ativo .nav-icon { filter:drop-shadow(0 0 6px var(--verde)); }
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:300; display:none; align-items:flex-end; }
-.modal-overlay.open { display:flex; }
-.modal-sheet { background:var(--bg2); border-top:1px solid var(--border); border-radius:24px 24px 0 0; width:100%; max-height:92vh; overflow-y:auto; padding:20px 18px 40px; }
-.modal-handle { width:40px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 18px; }
-.modal-title { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:900; margin-bottom:16px; }
-.chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
-.chip { padding:5px 12px; border-radius:20px; border:1px solid var(--border); background:var(--bg2); font-size:11px; font-weight:700; color:var(--muted); cursor:pointer; transition:all 0.2s; }
-.chip.ativo { background:rgba(0,230,118,0.1); border-color:rgba(0,230,118,0.3); color:var(--verde); }
-.notif-badge { background:var(--vermelho); color:#fff; font-size:9px; font-weight:900; border-radius:50%; width:16px; height:16px; display:inline-flex; align-items:center; justify-content:center; margin-left:4px; }
-.cal-row { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:12px; }
-.cal-dia { display:flex; flex-direction:column; align-items:center; padding:7px 3px; border-radius:10px; border:1px solid var(--border); background:var(--bg2); }
-.cal-dia.hoje { background:var(--verde); border-color:var(--verde); }
-.cal-dia.hoje .cal-lbl, .cal-dia.hoje .cal-n { color:#080B10; }
-.cal-dia.feito { background:rgba(0,230,118,0.07); border-color:rgba(0,230,118,0.2); }
-.cal-dia.miss { background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.15); }
-.cal-lbl { font-size:8px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:3px; }
-.cal-n { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:900; }
-.cal-dot { width:4px; height:4px; border-radius:50%; margin-top:3px; }
-.prog-semana { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
-.prog-box { background:var(--bg3); border-radius:12px; padding:12px; text-align:center; }
-.prog-val { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; }
-.prog-lbl { font-size:9px; color:var(--muted); text-transform:uppercase; }
-.div { height:1px; background:var(--border); margin:14px 0; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.fade-up { animation:fadeUp 0.25s ease; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:80px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Barlow',sans-serif}
+
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(8,11,16,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px}
+.mode-toggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px}
+.mode-btn{padding:4px 14px;border-radius:16px;font-size:11px;font-weight:700;background:transparent;border:none;color:var(--muted);transition:all .2s}
+.mode-btn.ativo{background:var(--verde);color:#080B10}
+.avatar-top{width:32px;height:32px;border-radius:50%;background:var(--verde);color:#080B10;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px}
+
+main{padding-top:60px}
+
+.tabs{display:flex;overflow-x:auto;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:52px;z-index:50;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:12px 16px;font-size:12px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s;white-space:nowrap}
+.tab.ativo{color:var(--verde);border-bottom-color:var(--verde)}
+
+.section{display:none;padding:16px}
+.section.ativo{display:block}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.card-titulo{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center}
+.stat-n{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--verde);display:block}
+.stat-l{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+.alert{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;margin-bottom:10px;font-size:13px;font-weight:600}
+.alert-info{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);color:var(--verde)}
+.alert-warn{background:rgba(255,109,0,.06);border:1px solid rgba(255,109,0,.2);color:#FF9040}
+
+.atleta-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.atleta-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;flex-shrink:0}
+.atleta-info{flex:1}
+.atleta-nome{font-size:14px;font-weight:700}
+.atleta-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.atleta-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
+.badge-direto{background:rgba(0,230,118,.1);color:var(--verde);border:1px solid rgba(0,230,118,.2)}
+.badge-grupo{background:rgba(100,116,139,.1);color:var(--muted);border:1px solid var(--border)}
+
+.treino-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.treino-dia{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;text-align:center;min-width:52px;flex-shrink:0}
+.treino-dia-n{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--verde);text-transform:uppercase}
+.treino-hora{font-size:10px;color:var(--muted)}
+.treino-info{flex:1}
+.treino-titulo{font-size:14px;font-weight:700}
+.treino-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.btn-icon{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s}
+.btn-icon:hover{border-color:var(--verde);color:var(--verde)}
+.btn-icon.danger:hover{border-color:#ef4444;color:#ef4444}
+
+.mural-item{padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.mural-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.mural-av{width:32px;height:32px;border-radius:50%;background:var(--verde);color:#080B10;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;flex-shrink:0}
+.mural-autor{font-size:13px;font-weight:700}
+.mural-data{font-size:10px;color:var(--muted)}
+.mural-tipo{font-size:10px;padding:2px 8px;border-radius:8px;margin-left:auto;font-weight:700}
+.tipo-aviso{background:rgba(255,109,0,.1);color:#FF9040;border:1px solid rgba(255,109,0,.2)}
+.tipo-feedback{background:rgba(0,230,118,.1);color:var(--verde);border:1px solid rgba(0,230,118,.2)}
+.tipo-texto{background:rgba(100,116,139,.1);color:var(--muted);border:1px solid var(--border)}
+.mural-texto{font-size:13px;line-height:1.5}
+
+.input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s}
+.input:focus{border-color:var(--verde)}
+.input::placeholder{color:var(--muted)}
+.textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;resize:vertical;min-height:80px;transition:border-color .2s}
+.textarea:focus{border-color:var(--verde)}
+.select{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;cursor:pointer}
+label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px}
+
+.btn-primary{background:var(--verde);color:#080B10;border:none;border-radius:10px;padding:12px 20px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;width:100%;letter-spacing:.5px;transition:all .2s}
+.btn-primary:hover{background:var(--verde2)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:11px 20px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;width:100%;transition:all .2s}
+.btn-secondary:hover{border-color:var(--verde);color:var(--verde)}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;border:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;transition:all .2s;cursor:pointer}
+.btn-verde{background:var(--verde);color:#080B10}
+.btn-verde:hover{background:var(--verde2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-group{margin-bottom:12px}
+
+.onboard{text-align:center;padding:40px 20px}
+.onboard-icon{font-size:56px;margin-bottom:16px}
+.onboard-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;margin-bottom:8px}
+.onboard-sub{color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.5}
+
+.hoje-card{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
+.hoje-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(0,230,118,.05);border-radius:50%}
+.hoje-hora{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.hoje-titulo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px}
+.hoje-grupo{font-size:12px;color:var(--muted)}
+.hoje-actions{margin-top:14px}
+
+.carinha-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.carinha-btn{font-size:22px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;transition:all .2s}
+.carinha-btn.ativo{border-color:var(--verde);background:rgba(0,230,118,.1);transform:scale(1.15)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
+.modal-titulo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;margin-bottom:16px}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+
+.empty{text-align:center;padding:32px 20px;color:var(--muted)}
+.empty-icon{font-size:40px;margin-bottom:10px}
+.empty-txt{font-size:14px;line-height:1.6}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:6px 0 10px}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;text-decoration:none;color:var(--muted);transition:color .2s}
+.nav-item.ativo{color:var(--verde)}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid rgba(0,230,118,.3);color:#fff;padding:12px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5);max-width:90vw;text-align:center;display:none}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <a href="/" class="topbar-logo">PACE</a>
-  <div class="modo-toggle">
-    <button class="modo-btn ativo" id="btnModoCoach" onclick="setModo('coach')">🏋️ Treinador</button>
-    <button class="modo-btn" id="btnModoAluno" onclick="setModo('aluno')">🏃 Aluno</button>
+  <span class="logo">PACE</span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="mode-toggle">
+      <button class="mode-btn ativo" onclick="setModo('coach')" id="btnCoach">Coach</button>
+      <button class="mode-btn" onclick="setModo('atleta')" id="btnAtleta">Atleta</button>
+    </div>
+    <div class="avatar-top" id="avatarTop">?</div>
   </div>
 </div>
 
-<!-- ===== MODO TREINADOR ===== -->
+<main>
+
+<!-- ===== MODO COACH ===== -->
 <div id="modoCoach">
-  <div class="hero-coach">
-    <div class="coach-perfil">
-      <div class="coach-avatar" id="coachAvatar">R</div>
-      <div style="flex:1">
-        <div class="coach-nome" id="coachNome">Coach Renisson</div>
-        <div class="coach-tag">⚡ Treinador Certificado PACE</div>
-      </div>
-      <button class="btn btn-verde btn-sm" onclick="abrirModalNovoTreino()">+ Treino</button>
-    </div>
-    <div class="stats-row">
-      <div class="stat-box"><div class="stat-val" style="color:var(--verde)">12</div><div class="stat-lbl">Alunos</div></div>
-      <div class="stat-box"><div class="stat-val" style="color:var(--verde)">87%</div><div class="stat-lbl">Conformidade</div></div>
-      <div class="stat-box"><div class="stat-val">38</div><div class="stat-lbl">Treinos</div></div>
-      <div class="stat-box"><div class="stat-val" style="color:var(--vermelho)">3</div><div class="stat-lbl">Alertas</div></div>
-    </div>
-  </div>
 
-  <div class="tabs-wrap">
-    <div class="tabs">
-      <button class="tab ativo" onclick="abaCoach('dashboard',this)">📊 Dashboard</button>
-      <button class="tab" onclick="abaCoach('alunos',this)">👥 Alunos</button>
-      <button class="tab" onclick="abaCoach('treinos',this)">📋 Treinos</button>
-      <button class="tab" onclick="abaCoach('mural',this)">📣 Mural</button>
-      <button class="tab" onclick="abaCoach('biblioteca',this)">📚 Biblioteca</button>
+  <div id="onboardCoach" style="display:none">
+    <div class="onboard">
+      <div class="onboard-icon">🏅</div>
+      <div class="onboard-title">Seja um Treinador PACE</div>
+      <div class="onboard-sub">Gerencie atletas, crie treinos, envie avisos e acompanhe a evolução de cada um em tempo real.</div>
     </div>
-  </div>
-
-  <div id="coach-dashboard" class="section fade-up">
-    <div class="sec-title">🚨 Alertas da IA <span class="sec-sub">análise dos seus atletas</span></div>
-    <div class="alerta risco"><div class="alerta-ico">❌</div><div class="alerta-txt"><strong>Lucas Almeida — 3 treinos sem executar</strong>Último treino há 8 dias. Risco de abandono. Considere entrar em contato.</div></div>
-    <div class="alerta atencao"><div class="alerta-ico">⚠️</div><div class="alerta-txt"><strong>Ana Beatriz — Reportou dor no joelho</strong>Ela avaliou o treino de ontem como "Muito Pesado" e comentou desconforto. Avalie a carga.</div></div>
-    <div class="alerta ok"><div class="alerta-ico">🔥</div><div class="alerta-txt"><strong>Carlos Silva — 14 dias de sequência!</strong>Melhor mês dele no ano. Bom momento para aumentar carga progressivamente.</div></div>
-    <div class="div"></div>
-    <div class="sec-title">📈 Conformidade Semanal</div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="font-size:13px;font-weight:600">Treinos executados</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)">87%</div>
-      </div>
-      <div class="conform-bar"><div class="conform-fill" style="width:87%"></div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;text-align:center">
-        <div style="background:var(--bg3);border-radius:10px;padding:10px"><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)">8</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Concluídos</div></div>
-        <div style="background:var(--bg3);border-radius:10px;padding:10px"><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--amarelo)">3</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Pendentes</div></div>
-        <div style="background:var(--bg3);border-radius:10px;padding:10px"><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--vermelho)">1</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Não feitos</div></div>
-      </div>
-    </div>
-    <div class="sec-title" style="margin-top:4px">📅 Para enviar hoje</div>
-    <div class="treino-card card-verde">
-      <div class="treino-card-header">
-        <div class="treino-tipo-dot" style="background:var(--laranja)"></div>
-        <div style="flex:1"><div class="treino-card-nome">Intervalados 400m</div><div style="font-size:11px;color:var(--muted)">Velocidade • 6km • 45min</div></div>
-        <button class="btn btn-verde btn-sm" onclick="abrirModalEnviar()">Enviar</button>
-      </div>
-      <div class="treino-card-footer"><span class="treino-alunos-count">👥 Grupo A — 8 alunos</span><span class="treino-status rascunho">Rascunho</span></div>
-    </div>
-    <div class="treino-card">
-      <div class="treino-card-header">
-        <div class="treino-tipo-dot" style="background:var(--azul)"></div>
-        <div style="flex:1"><div class="treino-card-nome">Rodagem Z2 Longa</div><div style="font-size:11px;color:var(--muted)">Fundo • 14km • 90min</div></div>
-        <button class="btn btn-verde btn-sm" onclick="abrirModalEnviar()">Enviar</button>
-      </div>
-      <div class="treino-card-footer"><span class="treino-alunos-count">👥 Grupo B — 4 alunos</span><span class="treino-status rascunho">Rascunho</span></div>
-    </div>
-    <div class="div"></div>
-    <div class="sec-title">💬 Feedbacks Recentes</div>
-    <div id="feedbacksRecentes"></div>
-  </div>
-
-  <div id="coach-alunos" class="section fade-up" style="display:none">
-    <div class="sec-title">👥 Meus Alunos <span class="sec-sub">12 atletas</span></div>
-    <div class="chips">
-      <div class="chip ativo" onclick="filtrarAlunos(this,'todos')">Todos</div>
-      <div class="chip" onclick="filtrarAlunos(this,'ok')">Em dia 🟢</div>
-      <div class="chip" onclick="filtrarAlunos(this,'atencao')">Atenção 🟡</div>
-      <div class="chip" onclick="filtrarAlunos(this,'risco')">Risco 🔴</div>
-    </div>
-    <div id="listaAlunos"></div>
-  </div>
-
-  <div id="coach-treinos" class="section fade-up" style="display:none">
-    <div class="sec-title">📋 Histórico de Treinos <button class="btn btn-verde btn-sm" onclick="abrirModalNovoTreino()">+ Criar</button></div>
-    <div id="listaTreinos"></div>
-  </div>
-
-  <div id="coach-mural" class="section fade-up" style="display:none">
-    <div class="sec-title">📣 Mural da Assessoria</div>
-    <div class="card card-verde" style="margin-bottom:14px">
-      <textarea class="input-field" id="muralTexto" placeholder="Escreva um recado para todos os seus alunos..." style="min-height:70px;margin-bottom:10px"></textarea>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <div class="chips" style="margin:0;flex:1">
-          <div class="chip ativo" onclick="this.classList.toggle('ativo')">📢 Aviso</div>
-          <div class="chip" onclick="this.classList.toggle('ativo')">🏆 Conquista</div>
-          <div class="chip" onclick="this.classList.toggle('ativo')">📅 Evento</div>
-          <div class="chip" onclick="this.classList.toggle('ativo')">💪 Motivação</div>
+    <div style="padding:0 16px 16px">
+      <div class="card">
+        <div class="card-titulo">Criar perfil de treinador</div>
+        <div class="form-group">
+          <label>Especialidade</label>
+          <input class="input" id="ob_esp" placeholder="Ex: Corrida de rua, Maratona...">
         </div>
-        <button class="btn btn-verde btn-sm" onclick="postarMural()">Publicar</button>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea class="textarea" id="ob_bio" placeholder="Conte sobre você e sua experiência..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>WhatsApp</label>
+            <input class="input" id="ob_wpp" placeholder="(79) 99999-9999">
+          </div>
+          <div class="form-group">
+            <label>Instagram</label>
+            <input class="input" id="ob_ig" placeholder="@seuuser">
+          </div>
+        </div>
+        <button class="btn-primary" id="btnAtivar" onclick="ativarCoach()">Ativar como Treinador →</button>
       </div>
     </div>
-    <div id="listaMural"></div>
   </div>
 
-  <div id="coach-biblioteca" class="section fade-up" style="display:none">
-    <div class="sec-title">📚 Biblioteca <button class="btn btn-verde btn-sm" onclick="abrirModalNovoTreino()">+ Criar</button></div>
-    <div class="chips">
-      <div class="chip ativo">Todos</div>
-      <div class="chip">Velocidade</div>
-      <div class="chip">Fundo</div>
-      <div class="chip">Limiar</div>
-      <div class="chip">Recuperação</div>
+  <div id="painelCoach" style="display:none">
+    <div class="tabs" id="tabsCoach">
+      <button class="tab ativo" onclick="mudarTabCoach('Dashboard',this)">Dashboard</button>
+      <button class="tab" onclick="mudarTabCoach('Atletas',this)">Atletas</button>
+      <button class="tab" onclick="mudarTabCoach('Treinos',this)">Treinos</button>
+      <button class="tab" onclick="mudarTabCoach('Mural',this)">Mural</button>
+      <button class="tab" onclick="mudarTabCoach('Feedbacks',this)">Feedbacks</button>
     </div>
-    <div id="listaBiblioteca"></div>
+
+    <div class="section ativo" id="tabDashboard">
+      <div id="dashContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+
+    <div class="section" id="tabAtletas">
+      <button class="btn-primary" style="margin-bottom:14px" onclick="abrirModalAtleta()">+ Adicionar Atleta por Email</button>
+      <div id="atletasContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+
+    <div class="section" id="tabTreinos">
+      <button class="btn-primary" style="margin-bottom:14px" onclick="abrirModalTreino()">+ Novo Treino</button>
+      <div id="treinosContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+
+    <div class="section" id="tabMural">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-titulo">Nova publicação</div>
+        <div class="form-group">
+          <select class="select" id="muralTipo" style="margin-bottom:10px">
+            <option value="aviso">📢 Aviso</option>
+            <option value="texto">💬 Mensagem</option>
+          </select>
+          <textarea class="textarea" id="muralTexto" placeholder="Escreva para seus atletas..."></textarea>
+        </div>
+        <button class="btn-primary" onclick="postarMural()">Publicar no Mural</button>
+      </div>
+      <div id="muralContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+
+    <div class="section" id="tabFeedbacks">
+      <div id="feedbacksContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== MODO ATLETA ===== -->
+<div id="modoAtleta" style="display:none">
+  <div class="tabs" id="tabsAtleta">
+    <button class="tab ativo" onclick="mudarTabAtleta('Hoje',this)">Hoje</button>
+    <button class="tab" onclick="mudarTabAtleta('Historico',this)">Histórico</button>
+    <button class="tab" onclick="mudarTabAtleta('MeuCoach',this)">Meu Coach</button>
+  </div>
+
+  <div class="section ativo" id="tabHoje">
+    <div id="hojeTreinosContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+    <div class="card" style="margin-top:8px">
+      <div class="card-titulo">Como você se sentiu hoje?</div>
+      <div class="carinha-grid">
+        <button class="carinha-btn" onclick="escolherCarinha(this)" data-v="😴">😴</button>
+        <button class="carinha-btn" onclick="escolherCarinha(this)" data-v="😤">😤</button>
+        <button class="carinha-btn" onclick="escolherCarinha(this)" data-v="😊">😊</button>
+        <button class="carinha-btn" onclick="escolherCarinha(this)" data-v="💪">💪</button>
+        <button class="carinha-btn" onclick="escolherCarinha(this)" data-v="🔥">🔥</button>
+      </div>
+      <textarea class="textarea" id="feedbackComentario" placeholder="Comentário opcional..." style="margin-top:10px;min-height:60px"></textarea>
+      <button class="btn-primary" style="margin-top:10px" onclick="enviarFeedback()">Enviar Feedback ao Coach</button>
+    </div>
+  </div>
+
+  <div class="section" id="tabHistorico">
+    <div id="historicoContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+  </div>
+
+  <div class="section" id="tabMeuCoach">
+    <div id="meuCoachContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
   </div>
 </div>
 
-<!-- ===== MODO ALUNO ===== -->
-<div id="modoAluno" style="display:none">
-  <div class="hero-aluno">
-    <div class="aluno-perfil">
-      <div class="aluno-avatar" id="alunoAvatar">C<span class="aluno-badge-nivel">INT</span></div>
-      <div style="flex:1">
-        <div class="aluno-nome" id="alunoNome">Carlos Silva</div>
-        <div class="aluno-treinador">🏋️ Coach Renisson • Assessoria PACE</div>
+</main>
+
+<!-- MODAL: ADICIONAR ATLETA -->
+<div class="modal-overlay" id="modalAtleta">
+  <div class="modal">
+    <div class="modal-titulo">👤 Adicionar Atleta</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">O atleta precisa ter uma conta no PACE. Adicione pelo email cadastrado.</p>
+    <div class="form-group">
+      <label>Email do atleta</label>
+      <input class="input" id="atletaEmail" type="email" placeholder="email@exemplo.com">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" style="flex:1" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-primary" style="flex:2" onclick="adicionarAtleta()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVO TREINO -->
+<div class="modal-overlay" id="modalTreino">
+  <div class="modal">
+    <div class="modal-titulo">🏃 Novo Treino</div>
+    <div class="form-group">
+      <label>Nome do treino *</label>
+      <input class="input" id="nt_nome" placeholder="Ex: Treino de velocidade">
+    </div>
+    <div class="form-group">
+      <label>Descrição</label>
+      <textarea class="textarea" id="nt_desc" placeholder="Detalhe o treino, distância, ritmo..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Dia da semana</label>
+        <select class="select" id="nt_dia">
+          <option value="">Sem dia fixo</option>
+          <option value="segunda">Segunda</option>
+          <option value="terca">Terça</option>
+          <option value="quarta">Quarta</option>
+          <option value="quinta">Quinta</option>
+          <option value="sexta">Sexta</option>
+          <option value="sabado">Sábado</option>
+          <option value="domingo">Domingo</option>
+        </select>
       </div>
-      <div style="text-align:right">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--amarelo)">🔥14d</div>
-        <div style="font-size:9px;color:var(--muted)">sequência</div>
+      <div class="form-group">
+        <label>Horário</label>
+        <input class="input" id="nt_hora" type="time" value="06:00">
       </div>
     </div>
-    <div class="stats-row">
-      <div class="stat-box"><div class="stat-val" style="color:var(--verde)">92%</div><div class="stat-lbl">Conformidade</div></div>
-      <div class="stat-box"><div class="stat-val">34km</div><div class="stat-lbl">esta semana</div></div>
-      <div class="stat-box"><div class="stat-val" style="color:var(--amarelo)">3°</div><div class="stat-lbl">Ranking</div></div>
-      <div class="stat-box"><div class="stat-val" style="color:var(--laranja)">5:38</div><div class="stat-lbl">pace médio</div></div>
-    </div>
-  </div>
-
-  <div class="tabs-wrap">
-    <div class="tabs">
-      <button class="tab azul ativo" onclick="abaAluno('hoje',this)">📅 Hoje</button>
-      <button class="tab azul" onclick="abaAluno('semana',this)">📊 Semana</button>
-      <button class="tab azul" onclick="abaAluno('mural-aluno',this)">📣 Mural <span class="notif-badge">2</span></button>
-      <button class="tab azul" onclick="abaAluno('ranking-aluno',this)">🏆 Ranking</button>
-      <button class="tab azul" onclick="abaAluno('historico-aluno',this)">📈 Histórico</button>
-    </div>
-  </div>
-
-  <div id="aluno-hoje" class="section fade-up">
-    <div class="treino-dia-aluno">
-      <div class="treino-badge badge-laranja">⚡ TREINO DO SEU TREINADOR</div>
-      <div class="treino-nome-dia">Intervalados 400m</div>
-      <div class="treino-desc-dia">Trabalho de velocidade com repetições curtas. Foco na frequência de passada. Aquecimento obrigatório. — <em>Coach Renisson</em></div>
-      <div class="treino-metas">
-        <div><div class="treino-meta-v">6 km</div><div class="treino-meta-l">Distância</div></div>
-        <div><div class="treino-meta-v">45min</div><div class="treino-meta-l">Duração</div></div>
-        <div><div class="treino-meta-v">4:30/km</div><div class="treino-meta-l">Pace alvo</div></div>
-        <div><div class="treino-meta-v" style="color:var(--vermelho)">Alta</div><div class="treino-meta-l">Intensidade</div></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Local</label>
+        <input class="input" id="nt_local" placeholder="Ex: Praça central">
       </div>
-      <button class="btn btn-verde btn-full" onclick="marcarConcluido()">✅ Marcar como concluído</button>
-    </div>
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px">Estrutura do Treino</div>
-    <div class="serie aquec"><div class="serie-n">1</div><div class="serie-i"><div class="nome">Aquecimento contínuo</div><div class="pace">Pace livre • Zona 1-2</div></div><div class="serie-dur">15min</div></div>
-    <div class="serie tiro"><div class="serie-n">2</div><div class="serie-i"><div class="nome">8× 400m tiro</div><div class="pace">Pace 4:30/km • Zona 4-5</div></div><div class="serie-dur">2min</div></div>
-    <div class="serie recup"><div class="serie-n">3</div><div class="serie-i"><div class="nome">Recuperação ativa</div><div class="pace">Caminhada ou trote leve</div></div><div class="serie-dur">90seg</div></div>
-    <div class="serie volta"><div class="serie-n">4</div><div class="serie-i"><div class="nome">Volta calma + alongamento</div><div class="pace">Pace livre • Zona 1</div></div><div class="serie-dur">10min</div></div>
-    <div class="card card-azul" style="margin-top:14px">
-      <div style="font-size:13px;font-weight:700;margin-bottom:8px">💬 Como foi? <span style="font-size:11px;color:var(--muted);font-weight:400">seu coach vai ver</span></div>
-      <div class="carinhas-row" id="carinhasRow">
-        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">💀</div><div class="carinha-label">Destruiu</div></div>
-        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">😮‍💨</div><div class="carinha-label">Pesado</div></div>
-        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">😊</div><div class="carinha-label">Normal</div></div>
-        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">😎</div><div class="carinha-label">Tranquilo</div></div>
-        <div class="carinha-btn" onclick="escolherCarinha(this)"><div class="carinha-emoji">🚀</div><div class="carinha-label">Voei</div></div>
+      <div class="form-group">
+        <label>Período</label>
+        <select class="select" id="nt_periodo">
+          <option value="manha">Manhã</option>
+          <option value="tarde">Tarde</option>
+          <option value="noite">Noite</option>
+        </select>
       </div>
-      <textarea class="input-field" id="feedbackTexto" placeholder="Deixe um comentário para seu treinador..." style="min-height:60px;margin-top:10px;font-size:13px"></textarea>
-      <button class="btn btn-azul btn-full" style="margin-top:10px" onclick="enviarFeedback()">📤 Enviar feedback</button>
     </div>
-  </div>
-
-  <div id="aluno-semana" class="section fade-up" style="display:none">
-    <div class="sec-title">📊 Minha Semana</div>
-    <div class="cal-row" id="calAluno"></div>
-    <div class="prog-semana">
-      <div class="prog-box"><div class="prog-val" style="color:var(--verde)">34</div><div class="prog-lbl">km feitos</div></div>
-      <div class="prog-box"><div class="prog-val" style="color:var(--azul)">5/6</div><div class="prog-lbl">treinos</div></div>
-      <div class="prog-box"><div class="prog-val" style="color:var(--amarelo)">5:38</div><div class="prog-lbl">pace médio</div></div>
-      <div class="prog-box"><div class="prog-val" style="color:var(--laranja)">3h52</div><div class="prog-lbl">tempo total</div></div>
+    <div class="form-group">
+      <label>Grupo</label>
+      <select class="select" id="nt_comunidade"><option value="">Carregando grupos...</option></select>
     </div>
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px">Treinos da Semana</div>
-    <div id="listaSemanaAluno"></div>
-  </div>
-
-  <div id="aluno-mural-aluno" class="section fade-up" style="display:none">
-    <div class="sec-title">📣 Mural da Assessoria</div>
-    <div id="muralAluno"></div>
-  </div>
-
-  <div id="aluno-ranking-aluno" class="section fade-up" style="display:none">
-    <div class="sec-title">🏆 Ranking <span class="sec-sub">esta semana</span></div>
-    <div class="chips">
-      <div class="chip ativo" onclick="toggleChip(this)">Km feitos</div>
-      <div class="chip" onclick="toggleChip(this)">Conformidade</div>
-      <div class="chip" onclick="toggleChip(this)">Pace médio</div>
-      <div class="chip" onclick="toggleChip(this)">Sequência</div>
+    <div class="modal-actions">
+      <button class="btn-secondary" style="flex:1" onclick="fecharModais()">Cancelar</button>
+      <button class="btn-primary" style="flex:2" onclick="salvarTreino()">Salvar Treino</button>
     </div>
-    <div id="rankingLista"></div>
-  </div>
-
-  <div id="aluno-historico-aluno" class="section fade-up" style="display:none">
-    <div class="sec-title">📈 Meu Histórico</div>
-    <div id="historicoLista"></div>
   </div>
 </div>
 
 <nav class="bottom-nav">
   <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
   <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
-  <a href="/treinador.html" class="nav-item ativo"><span class="nav-icon">🏃</span><span class="nav-label">Treinador</span></a>
-  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
+  <a href="/treinador.html" class="nav-item ativo"><span class="nav-icon">📋</span><span class="nav-label">Treinador</span></a>
+  <a href="/elite.html" class="nav-item"><span class="nav-icon">⚡</span><span class="nav-label">Elite</span></a>
   <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
 </nav>
 
-<!-- MODAL NOVO TREINO -->
-<div class="modal-overlay" id="modalNovoTreino">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📋 Criar Treino</div>
-    <div class="input-group"><label class="input-label">Nome do treino</label><input class="input-field" id="nt_nome" type="text" placeholder="Ex: Intervalados 400m"></div>
-    <div class="input-group">
-      <label class="input-label">Tipo</label>
-      <div class="chips" id="tipoChips">
-        <div class="chip ativo" onclick="soloChip(this,'tipoChips')">⚡ Velocidade</div>
-        <div class="chip" onclick="soloChip(this,'tipoChips')">🌊 Fundo</div>
-        <div class="chip" onclick="soloChip(this,'tipoChips')">🔥 Limiar</div>
-        <div class="chip" onclick="soloChip(this,'tipoChips')">💚 Recuperação</div>
-        <div class="chip" onclick="soloChip(this,'tipoChips')">🌄 Longão</div>
-        <div class="chip" onclick="soloChip(this,'tipoChips')">💪 Força</div>
-      </div>
-    </div>
-    <div class="input-row">
-      <div class="input-group" style="flex:1"><label class="input-label">Distância</label><input class="input-field" id="nt_dist" placeholder="Ex: 8km"></div>
-      <div class="input-group" style="flex:1"><label class="input-label">Duração</label><input class="input-field" id="nt_dur" placeholder="Ex: 50min"></div>
-    </div>
-    <div class="input-row">
-      <div class="input-group" style="flex:1"><label class="input-label">Pace alvo</label><input class="input-field" id="nt_pace" placeholder="Ex: 5:00/km"></div>
-      <div class="input-group" style="flex:1">
-        <label class="input-label">Intensidade</label>
-        <select class="input-field" id="nt_int" style="cursor:pointer">
-          <option>Leve</option><option>Moderada</option><option selected>Alta</option><option>Máxima</option>
-        </select>
-      </div>
-    </div>
-    <div class="input-group"><label class="input-label">Instruções para o aluno</label><textarea class="input-field" id="nt_desc" placeholder="Descreva o treino com instruções claras..."></textarea></div>
-    <div class="input-group"><label class="input-label">Estrutura das séries</label><input class="input-field" id="nt_series" placeholder="Ex: 15min aquec • 8x400m (4:30) • 90seg recup • 10min volta"></div>
-    <div class="input-group">
-      <label class="input-label">Enviar para</label>
-      <div class="chips" id="grupoChips">
-        <div class="chip ativo" onclick="this.classList.toggle('ativo')">✅ Todos</div>
-        <div class="chip" onclick="this.classList.toggle('ativo')">Grupo A</div>
-        <div class="chip" onclick="this.classList.toggle('ativo')">Grupo B</div>
-        <div class="chip" onclick="this.classList.toggle('ativo')">Iniciantes</div>
-        <div class="chip" onclick="this.classList.toggle('ativo')">Avançados</div>
-      </div>
-    </div>
-    <div class="input-group"><label class="input-label">Data do treino</label><input class="input-field" type="date" id="nt_data"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
-      <button class="btn btn-outline btn-full" onclick="fecharModais()">Cancelar</button>
-      <button class="btn btn-verde btn-full" onclick="salvarTreino()">🚀 Salvar & Enviar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL ENVIAR TREINO -->
-<div class="modal-overlay" id="modalEnviar">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📤 Enviar Treino</div>
-    <div class="card card-verde" style="margin-bottom:14px">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;margin-bottom:4px">Intervalados 400m</div>
-      <div style="font-size:12px;color:var(--muted)">⚡ Velocidade • 6km • 45min • Pace 4:30/km</div>
-    </div>
-    <div class="input-group"><label class="input-label">Selecionar alunos</label><div id="checkAlunos" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto"></div></div>
-    <div class="input-group" style="margin-top:8px"><label class="input-label">Data do treino</label><input class="input-field" type="date" id="envio_data"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <button class="btn btn-outline btn-full" onclick="fecharModais()">Cancelar</button>
-      <button class="btn btn-verde btn-full" onclick="confirmarEnvio()">🚀 Enviar agora</button>
-    </div>
-  </div>
-</div>
+<div id="toast"></div>
 
 <script>
-const user = JSON.parse(localStorage.getItem('pace_user') || '{}');
+const API = '';
+let token = localStorage.getItem('pace_token');
+let user = JSON.parse(localStorage.getItem('pace_user') || '{}');
+let comunidadesCoach = [];
 
-// DADOS
-const alunos = [
-  {nome:'Carlos Silva',   av:'C', cor:'#3B82F6', km:34, conf:92, seq:14, pace:'5:38', grupo:'A', status:'ok',      obs:''},
-  {nome:'Ana Beatriz',    av:'A', cor:'#EC4899', km:28, conf:78, seq:6,  pace:'6:02', grupo:'A', status:'atencao', obs:'Dor no joelho'},
-  {nome:'Lucas Almeida',  av:'L', cor:'#F59E0B', km:8,  conf:33, seq:0,  pace:'5:55', grupo:'B', status:'risco',   obs:'3 treinos sem fazer'},
-  {nome:'Fernanda Costa', av:'F', cor:'#10B981', km:42, conf:97, seq:21, pace:'5:15', grupo:'A', status:'ok',      obs:''},
-  {nome:'Rafael Mendes',  av:'R', cor:'#8B5CF6', km:30, conf:85, seq:9,  pace:'5:44', grupo:'B', status:'ok',      obs:''},
-  {nome:'Juliana Nunes',  av:'J', cor:'#EF4444', km:22, conf:70, seq:4,  pace:'6:18', grupo:'A', status:'atencao', obs:''},
-  {nome:'Diego Souza',    av:'D', cor:'#06B6D4', km:50, conf:100,seq:30, pace:'4:58', grupo:'A', status:'ok',      obs:''},
-  {nome:'Mariana Lima',   av:'M', cor:'#F97316', km:18, conf:58, seq:2,  pace:'6:35', grupo:'B', status:'atencao', obs:''},
-];
+document.addEventListener('DOMContentLoaded', () => {
+  if (!token) { window.location.href = '/entrar.html'; return; }
+  if (user.name) document.getElementById('avatarTop').textContent = user.name.charAt(0).toUpperCase();
+  carregarModoCoach();
+});
 
-const muralPosts = [
-  {autor:'Coach Renisson',av:'R',data:'Hoje, 07h00',tipo:'📢',pin:true,
-   texto:'Galera, o treino de hoje é CRUCIAL para a corrida do mês que vem! Quem fizer os 8 tiros no pace alvo vai sentir a diferença na largada. Vamos que vamos! 💪🔥'},
-  {autor:'Coach Renisson',av:'R',data:'Ontem, 19h30',tipo:'🏆',pin:false,
-   texto:'🎉 PARABÉNS Diego Souza! 30 dias de sequência perfeita! Você é o exemplo da assessoria! 🏃‍♂️'},
-  {autor:'Coach Renisson',av:'R',data:'04/03, 20h00',tipo:'📅',pin:false,
-   texto:'Atenção! Corrida da Amizade 10km — 15/03/2026. Quem vai participar comenta aqui! Vou montar estratégia de pace individual para cada um.'},
-];
-
-const feedbacks = [
-  {aluno:'Carlos Silva', av:'C', cor:'#3B82F6', treino:'Rodagem Z2', feeling:'🚀', msg:'Muito bem! Pace controlado durante todo o treino.', data:'Ontem'},
-  {aluno:'Ana Beatriz',  av:'A', cor:'#EC4899', treino:'Limiar 20min',feeling:'😮‍💨',msg:'Senti dor no joelho no final. Vou ver o médico.', data:'Qua'},
-  {aluno:'Diego Souza',  av:'D', cor:'#06B6D4', treino:'Tiros 1000m', feeling:'😎', msg:'Fácil demais! Pode aumentar a carga!', data:'Ter'},
-];
-
-const treinosBib = [
-  {nome:'Intervalados 400m', tipo:'Velocidade', cor:'#FF6D00', dist:'6km',  dur:'45min', pace:'4:30/km', usos:12},
-  {nome:'Rodagem Z2 Base',   tipo:'Fundo',      cor:'#3B82F6', dist:'10km', dur:'65min', pace:'6:10/km', usos:20},
-  {nome:'Limiar 20 min',     tipo:'Limiar',     cor:'#F59E0B', dist:'8km',  dur:'50min', pace:'5:05/km', usos:8},
-  {nome:'Longão Domingo',    tipo:'Longão',     cor:'#10B981', dist:'18km', dur:'110min',pace:'5:50/km', usos:6},
-  {nome:'Tiros de 1000m',    tipo:'Velocidade', cor:'#EF4444', dist:'10km', dur:'60min', pace:'4:45/km', usos:9},
-  {nome:'Recuperação Ativa', tipo:'Recuperação',cor:'#8B5CF6', dist:'5km',  dur:'35min', pace:'6:30/km', usos:15},
-];
-
-const treinosHist = [
-  {nome:'Intervalados 400m',data:'Qui 06/03',km:'6km', conf:75, total:8, enviados:6, feedbacks:3},
-  {nome:'Rodagem Z2 12km',   data:'Qua 05/03',km:'12km',conf:92,total:12,enviados:11,feedbacks:7},
-  {nome:'Limiar 20min',      data:'Ter 04/03',km:'8km', conf:62, total:8, enviados:5, feedbacks:2},
-];
-
-const ranking = [
-  {nome:'Diego Souza',   av:'D',cor:'#06B6D4',km:50,conf:100,eu:false},
-  {nome:'Fernanda Costa',av:'F',cor:'#10B981',km:42,conf:97, eu:false},
-  {nome:'Carlos Silva',  av:'C',cor:'#3B82F6',km:34,conf:92, eu:true},
-  {nome:'Rafael Mendes', av:'R',cor:'#8B5CF6',km:30,conf:85, eu:false},
-  {nome:'Ana Beatriz',   av:'A',cor:'#EC4899',km:28,conf:78, eu:false},
-  {nome:'Juliana Nunes', av:'J',cor:'#EF4444',km:22,conf:70, eu:false},
-  {nome:'Mariana Lima',  av:'M',cor:'#F97316',km:18,conf:58, eu:false},
-  {nome:'Lucas Almeida', av:'L',cor:'#F59E0B',km:8, conf:33, eu:false},
-];
-
-const historicoA = [
-  {e:'⚡',n:'Intervalados 400m',d:'Hoje 06h30',  km:'6.2km',p:'4:52',f:'🚀'},
-  {e:'🌊',n:'Rodagem Z2 Longa', d:'Ontem 07h00', km:'14km',  p:'6:10',f:'😊'},
-  {e:'🔥',n:'Limiar 20min',     d:'Qua 06h30',   km:'8.5km', p:'5:05',f:'😮‍💨'},
-  {e:'🏃',n:'Corrida Fácil',    d:'Seg 07h00',   km:'5km',   p:'6:30',f:'😎'},
-  {e:'🌄',n:'Longão Domingo',   d:'Dom 06h00',   km:'18km',  p:'5:50',f:'💀'},
-];
-
-// ============ MODO ============
-function setModo(m) {
-  document.getElementById('modoCoach').style.display = m==='coach'?'block':'none';
-  document.getElementById('modoAluno').style.display = m==='aluno'?'block':'none';
-  document.getElementById('btnModoCoach').classList.toggle('ativo',m==='coach');
-  document.getElementById('btnModoAluno').classList.toggle('ativo',m==='aluno');
-  if (m==='aluno') { renderCal(); renderSemana(); renderMuralEl('muralAluno'); renderRanking(); renderHistorico(); }
+// ===== MODO =====
+function setModo(modo) {
+  document.getElementById('btnCoach').classList.toggle('ativo', modo === 'coach');
+  document.getElementById('btnAtleta').classList.toggle('ativo', modo === 'atleta');
+  document.getElementById('modoCoach').style.display = modo === 'coach' ? 'block' : 'none';
+  document.getElementById('modoAtleta').style.display = modo === 'atleta' ? 'block' : 'none';
+  if (modo === 'atleta') carregarHoje();
 }
 
-function abaCoach(id, btn) {
-  document.querySelectorAll('[id^="coach-"]').forEach(e=>e.style.display='none');
-  document.querySelectorAll('#modoCoach .tab').forEach(t=>t.classList.remove('ativo'));
-  document.getElementById('coach-'+id).style.display='block'; btn.classList.add('ativo');
-  if(id==='alunos') renderAlunos('todos');
-  if(id==='mural') renderMuralEl('listaMural');
-  if(id==='biblioteca') renderBib();
-  if(id==='treinos') renderTreinos();
-  if(id==='dashboard') renderFeedbacks();
+// ===== COACH: ONBOARDING =====
+async function carregarModoCoach() {
+  const res = await api('GET', '/coach/perfil');
+  if (res.error && res.error.includes('não encontrado')) {
+    document.getElementById('onboardCoach').style.display = 'block';
+  } else if (!res.error) {
+    document.getElementById('painelCoach').style.display = 'block';
+    carregarDashboard();
+  } else {
+    document.getElementById('onboardCoach').style.display = 'block';
+  }
 }
 
-function abaAluno(id, btn) {
-  document.querySelectorAll('[id^="aluno-"]').forEach(e=>e.style.display='none');
-  document.querySelectorAll('#modoAluno .tab').forEach(t=>t.classList.remove('ativo'));
-  document.getElementById('aluno-'+id).style.display='block'; btn.classList.add('ativo');
+async function ativarCoach() {
+  const btn = document.getElementById('btnAtivar');
+  btn.disabled = true; btn.textContent = 'Ativando...';
+  const res = await api('POST', '/coach/ativar', {
+    bio: document.getElementById('ob_bio').value.trim(),
+    especialidade: document.getElementById('ob_esp').value.trim(),
+    whatsapp: document.getElementById('ob_wpp').value.trim(),
+    instagram: document.getElementById('ob_ig').value.trim()
+  });
+  btn.disabled = false; btn.textContent = 'Ativar como Treinador →';
+  if (res.error) { toast('❌ ' + res.error); return; }
+  toast('✅ Perfil de treinador criado!');
+  document.getElementById('onboardCoach').style.display = 'none';
+  document.getElementById('painelCoach').style.display = 'block';
+  carregarDashboard();
 }
 
-// ============ RENDERS ============
-function renderAlunos(filtro) {
-  const el = document.getElementById('listaAlunos'); if(!el) return;
-  const lista = filtro==='todos' ? alunos : alunos.filter(a=>a.status===filtro);
-  const cor = {ok:'var(--verde)',atencao:'var(--amarelo)',risco:'var(--vermelho)'};
-  const ico = {ok:'🟢',atencao:'🟡',risco:'🔴'};
-  el.innerHTML = lista.map(a=>`
-    <div class="aluno-item">
-      <div class="aluno-av" style="background:${a.cor}22;color:${a.cor}">${a.av}</div>
-      <div class="aluno-dados">
-        <div class="aluno-dados-nome">${ico[a.status]} ${a.nome}</div>
-        <div class="aluno-dados-info">Grupo ${a.grupo} • ${a.pace}/km • 🔥${a.seq}d ${a.obs?'• ⚠️'+a.obs:''}</div>
-        <div class="conform-bar" style="margin-top:5px;width:90px"><div class="conform-fill ${a.conf<60?'baixo':a.conf<80?'medio':''}" style="width:${a.conf}%"></div></div>
+// ===== COACH: TABS =====
+function mudarTabCoach(tab, el) {
+  document.querySelectorAll('#tabsCoach .tab').forEach(t => t.classList.remove('ativo'));
+  el.classList.add('ativo');
+  document.querySelectorAll('#painelCoach .section').forEach(s => s.classList.remove('ativo'));
+  document.getElementById('tab' + tab).classList.add('ativo');
+  const acao = { Atletas: carregarAtletas, Treinos: carregarTreinos, Mural: carregarMural, Feedbacks: carregarFeedbacks };
+  if (acao[tab]) acao[tab]();
+}
+
+// ===== COACH: DASHBOARD =====
+async function carregarDashboard() {
+  const el = document.getElementById('dashContent');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const res = await api('GET', '/coach/dashboard');
+  if (res.error) { el.innerHTML = erro(res.error); return; }
+  comunidadesCoach = res.comunidades || [];
+
+  el.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-n">${res.totalAtletas}</span>
+        <span class="stat-l">Atletas</span>
       </div>
-      <div class="aluno-compliance">
-        <div class="compliance-val" style="color:${cor[a.status]}">${a.conf}%</div>
-        <div class="compliance-lbl">conform</div>
+      <div class="stat-card">
+        <span class="stat-n">${res.comunidades?.length || 0}</span>
+        <span class="stat-l">Grupos</span>
       </div>
+      <div class="stat-card">
+        <span class="stat-n" style="font-size:18px">R$${(res.mensalidade||0).toFixed(2)}</span>
+        <span class="stat-l">/mês</span>
+      </div>
+    </div>
+    <div class="alert alert-info">
+      🏃 ${res.totalAtletas} atleta${res.totalAtletas!==1?'s':''} ativo${res.totalAtletas!==1?'s':''} — R$3,99 por atleta/mês
+    </div>
+    ${res.comunidades?.length ? `
+      <div class="card">
+        <div class="card-titulo">Seus Grupos</div>
+        ${res.comunidades.map(c=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-size:14px;font-weight:700">${c.nome}</div>
+              <div style="font-size:11px;color:var(--muted)">${c.membros} membro${c.membros!==1?'s':''}</div>
+            </div>
+            <a href="/comunidades.html" style="font-size:12px;color:var(--verde);font-weight:700">Ver grupo →</a>
+          </div>`).join('')}
+      </div>` : `<div class="alert alert-warn">⚠️ Crie grupos em <a href="/comunidades.html" style="color:var(--laranja)">Comunidades</a> para organizar atletas</div>`}
+    ${res.atletasVinculados?.length ? `
+      <div class="card">
+        <div class="card-titulo">Atletas Diretos (${res.totalVinculados})</div>
+        ${res.atletasVinculados.map(a=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="width:34px;height:34px;border-radius:50%;background:${cor(a.name)};color:#080B10;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px">${(a.name||'?').charAt(0).toUpperCase()}</div>
+            <div><div style="font-size:13px;font-weight:700">${a.name}</div><div style="font-size:11px;color:var(--muted)">${a.city||'—'}</div></div>
+          </div>`).join('')}
+      </div>` : ''}
+  `;
+}
+
+// ===== COACH: ATLETAS =====
+async function carregarAtletas() {
+  const el = document.getElementById('atletasContent');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const res = await api('GET', '/coach/atletas');
+  if (res.error) { el.innerHTML = erro(res.error); return; }
+  if (!res.atletas?.length) { el.innerHTML = vazio('👥','Nenhum atleta ainda.<br>Adicione pelo email ou crie grupos.'); return; }
+  el.innerHTML = res.atletas.map(a=>`
+    <div class="atleta-item">
+      <div class="atleta-av" style="background:${cor(a.nome||a.name)};color:#080B10">${((a.nome||a.name)||'?').charAt(0).toUpperCase()}</div>
+      <div class="atleta-info">
+        <div class="atleta-nome">${a.nome||a.name}</div>
+        <div class="atleta-meta">${a.cidade||a.city||'—'} · ${a.genero||a.gender||'—'}</div>
+      </div>
+      <span class="atleta-badge ${a.origem==='direto'?'badge-direto':'badge-grupo'}">${a.origem==='direto'?'Direto':'Grupo'}</span>
+      ${a.origem==='direto'?`<button class="btn-icon danger" onclick="removerAtleta('${a.id}',this)">✕</button>`:''}
     </div>`).join('');
 }
 
-function filtrarAlunos(btn, filtro) {
-  document.querySelectorAll('#coach-alunos .chip').forEach(c=>c.classList.remove('ativo'));
-  btn.classList.add('ativo');
-  renderAlunos(filtro);
+function abrirModalAtleta() {
+  document.getElementById('atletaEmail').value = '';
+  document.getElementById('modalAtleta').classList.add('open');
 }
 
-function renderMuralEl(containerId) {
-  const el = document.getElementById(containerId); if(!el) return;
-  el.innerHTML = muralPosts.map(p=>`
-    <div class="mural-post ${p.pin?'card-laranja':''}">
-      ${p.pin?'<div class="mural-pin-label">📌 Fixado</div>':''}
-      <div class="mural-autor">
-        <div class="mural-av" style="background:#00E67222;color:var(--verde)">${p.av}</div>
-        <div><div class="mural-nome">${p.autor} ${p.tipo}</div><div class="mural-data">${p.data}</div></div>
+async function adicionarAtleta() {
+  const email = document.getElementById('atletaEmail').value.trim();
+  if (!email) { toast('⚠️ Digite o email do atleta'); return; }
+  const res = await api('POST', '/coach/atletas', { email });
+  if (res.error) { toast('❌ ' + res.error); return; }
+  fecharModais();
+  toast(`✅ ${res.atleta.nome} adicionado!`);
+  carregarAtletas();
+  carregarDashboard();
+}
+
+async function removerAtleta(atletaId) {
+  if (!confirm('Remover este atleta?')) return;
+  const res = await api('DELETE', '/coach/atletas/' + atletaId);
+  if (res.error) { toast('❌ ' + res.error); return; }
+  toast('✅ Atleta removido');
+  carregarAtletas();
+  carregarDashboard();
+}
+
+// ===== COACH: TREINOS =====
+async function carregarTreinos() {
+  const el = document.getElementById('treinosContent');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const res = await api('GET', '/coach/treinos');
+  if (res.error) { el.innerHTML = erro(res.error); return; }
+  if (!res.treinos?.length) { el.innerHTML = vazio('🏃','Nenhum treino criado ainda.'); return; }
+  const dias = {segunda:'SEG',terca:'TER',quarta:'QUA',quinta:'QUI',sexta:'SEX',sabado:'SAB',domingo:'DOM'};
+  el.innerHTML = res.treinos.map(t=>`
+    <div class="treino-item">
+      <div class="treino-dia">
+        <div class="treino-dia-n">${t.diaSemana?dias[t.diaSemana]||t.diaSemana:'📅'}</div>
+        <div class="treino-hora">${t.horario}</div>
       </div>
-      <div class="mural-texto">${p.texto}</div>
-      <div class="mural-reacoes">
-        <div class="mural-reacao" onclick="this.classList.toggle('ativo')">👍 ${3+Math.floor(Math.random()*6)}</div>
-        <div class="mural-reacao" onclick="this.classList.toggle('ativo')">🔥 ${1+Math.floor(Math.random()*4)}</div>
-        <div class="mural-reacao" onclick="this.classList.toggle('ativo')">💬 Comentar</div>
+      <div class="treino-info">
+        <div class="treino-titulo">${t.titulo}</div>
+        <div class="treino-meta">${t.comunidade?.nome||''} ${t.local?'· '+t.local:''}</div>
       </div>
+      <button class="btn-icon danger" onclick="excluirTreino('${t.id}',this)" title="Excluir">🗑</button>
     </div>`).join('');
 }
 
-function renderBib() {
-  const el = document.getElementById('listaBiblioteca'); if(!el) return;
-  el.innerHTML = treinosBib.map(t=>`
-    <div class="treino-card">
-      <div class="treino-card-header">
-        <div class="treino-tipo-dot" style="background:${t.cor}"></div>
-        <div style="flex:1"><div class="treino-card-nome">${t.nome}</div><div style="font-size:11px;color:var(--muted)">${t.tipo} • ${t.dist} • ${t.dur} • ${t.pace}</div></div>
-        <button class="btn btn-verde btn-sm" onclick="abrirModalEnviar()">Enviar</button>
-      </div>
-      <div class="treino-card-footer"><span class="treino-alunos-count">📊 Usado ${t.usos}×</span><span class="treino-status enviado">✓ Ativo</span></div>
-    </div>`).join('');
-}
-
-function renderTreinos() {
-  const el = document.getElementById('listaTreinos'); if(!el) return;
-  el.innerHTML = treinosHist.map(t=>`
-    <div class="treino-card">
-      <div class="treino-card-header">
-        <div class="treino-tipo-dot" style="background:var(--verde)"></div>
-        <div style="flex:1"><div class="treino-card-nome">${t.nome}</div><div style="font-size:11px;color:var(--muted)">${t.data} • ${t.km} • ${t.total} alunos</div></div>
-      </div>
-      <div style="padding:0 16px 12px">
-        <div style="font-size:10px;color:var(--muted);margin-bottom:5px">Conformidade</div>
-        <div class="conform-bar"><div class="conform-fill ${t.conf<60?'baixo':t.conf<80?'medio':''}" style="width:${t.conf}%"></div></div>
-        <div style="font-size:10px;color:var(--muted);margin-top:4px">${t.enviados}/${t.total} concluíram • ${t.conf}%</div>
-      </div>
-      <div class="treino-card-footer"><span style="font-size:11px;color:var(--muted)">💬 ${t.feedbacks} feedbacks</span><span class="treino-status enviado">Enviado</span></div>
-    </div>`).join('');
-}
-
-function renderFeedbacks() {
-  const el = document.getElementById('feedbacksRecentes'); if(!el) return;
-  el.innerHTML = feedbacks.map(f=>`
-    <div class="card" style="display:flex;gap:10px;align-items:flex-start;padding:12px;margin-bottom:8px">
-      <div class="aluno-av" style="background:${f.cor}22;color:${f.cor};width:36px;height:36px;font-size:15px">${f.av}</div>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:700">${f.aluno} <span style="font-size:10px;color:var(--muted);font-weight:400">• ${f.treino} • ${f.data}</span></div>
-        <div style="font-size:12px;color:#94a3b8;margin-top:3px">${f.msg}</div>
-      </div>
-      <div style="font-size:24px">${f.feeling}</div>
-    </div>`).join('');
-}
-
-function renderCal() {
-  const el = document.getElementById('calAluno'); if(!el) return;
-  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const hoje=new Date(); const dow=hoje.getDay();
-  const inicio=new Date(hoje); inicio.setDate(hoje.getDate()-dow);
-  const st=['feito','feito','feito','feito','miss','feito','hoje'];
-  const dc=['#00E676','#00E676','#00E676','#00E676','#EF4444','#00E676','#F59E0B'];
-  el.innerHTML=dias.map((d,i)=>{
-    const dt=new Date(inicio); dt.setDate(inicio.getDate()+i);
-    return `<div class="cal-dia ${st[i]}"><div class="cal-lbl">${d}</div><div class="cal-n">${dt.getDate()}</div><div class="cal-dot" style="background:${dc[i]}"></div></div>`;
-  }).join('');
-}
-
-function renderSemana() {
-  const el = document.getElementById('listaSemanaAluno'); if(!el) return;
-  const s=[
-    {e:'🌊',n:'Rodagem Z2', d:'Seg',km:'8km', p:'6:20',f:'😊'},
-    {e:'⚡',n:'Tiros 1000m',d:'Ter',km:'10km',p:'5:00',f:'💀'},
-    {e:'🏃',n:'Corrida Fácil',d:'Qua',km:'6km',p:'6:30',f:'😎'},
-    {e:'🔥',n:'Limiar',      d:'Qui',km:'8km', p:'5:10',f:'😮‍💨'},
-    {e:'❌',n:'Não executou', d:'Sex',km:'—',   p:'—',   f:''},
-    {e:'⚡',n:'Intervalados 400m',d:'Dom',km:'6km',p:'4:52',f:'🚀'},
-  ];
-  el.innerHTML=s.map(t=>`
-    <div class="card" style="display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px">
-      <div style="font-size:20px">${t.e}</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:700">${t.n}</div><div style="font-size:10px;color:var(--muted)">${t.d}</div></div>
-      <div style="text-align:right"><div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;color:var(--verde)">${t.km}</div><div style="font-size:10px;color:var(--muted)">${t.p}</div></div>
-      ${t.f?`<div style="font-size:20px">${t.f}</div>`:''}
-    </div>`).join('');
-}
-
-function renderRanking() {
-  const el = document.getElementById('rankingLista'); if(!el) return;
-  const pos=['🥇','🥈','🥉'];
-  el.innerHTML = ranking.map((a,i)=>`
-    <div class="rank-item ${a.eu?'rank-eu':''}">
-      <div class="rank-pos">${i<3?pos[i]:i+1}</div>
-      <div class="rank-av" style="background:${a.cor}22;color:${a.cor}">${a.av}</div>
-      <div class="rank-info"><div class="rank-nome">${a.nome}${a.eu?' ← você':''}</div><div class="rank-detalhe">Conformidade: ${a.conf}%</div></div>
-      <div class="rank-pts"><div class="rank-pts-val">${a.km}km</div><div class="rank-pts-lbl">esta semana</div></div>
-    </div>`).join('');
-}
-
-function renderHistorico() {
-  const el = document.getElementById('historicoLista'); if(!el) return;
-  el.innerHTML = historicoA.map(h=>`
-    <div class="card" style="display:flex;align-items:center;gap:12px;padding:14px;margin-bottom:8px">
-      <div style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:20px">${h.e}</div>
-      <div style="flex:1"><div style="font-size:14px;font-weight:700">${h.n}</div><div style="font-size:11px;color:var(--muted)">${h.d}</div></div>
-      <div style="text-align:right"><div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--verde)">${h.km}</div><div style="font-size:10px;color:var(--muted)">${h.p}/km</div></div>
-      <div style="font-size:22px">${h.f}</div>
-    </div>`).join('');
-}
-
-function renderCheckAlunos() {
-  const el = document.getElementById('checkAlunos'); if(!el) return;
-  el.innerHTML = alunos.map(a=>`
-    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:10px;cursor:pointer">
-      <input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--verde)">
-      <div style="width:32px;height:32px;border-radius:50%;background:${a.cor}22;color:${a.cor};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900">${a.av}</div>
-      <span style="font-size:13px;font-weight:600;flex:1">${a.nome}</span>
-      <span style="font-size:10px;color:var(--muted)">G.${a.grupo}</span>
-    </label>`).join('');
-}
-
-// ============ AÇÕES ============
-function abrirModalNovoTreino() {
-  const d=new Date(); d.setDate(d.getDate()+1);
-  document.getElementById('nt_data').value=d.toISOString().split('T')[0];
-  document.getElementById('modalNovoTreino').classList.add('open');
-}
-
-function abrirModalEnviar() {
-  const d=new Date(); d.setDate(d.getDate()+1);
-  document.getElementById('envio_data').value=d.toISOString().split('T')[0];
-  renderCheckAlunos();
-  document.getElementById('modalEnviar').classList.add('open');
-}
-
-function fecharModais() {
-  document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));
+function abrirModalTreino() {
+  ['nt_nome','nt_desc','nt_local'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('nt_hora').value='06:00';
+  document.getElementById('nt_dia').value='';
+  const sel = document.getElementById('nt_comunidade');
+  sel.innerHTML = comunidadesCoach.length
+    ? comunidadesCoach.map(c=>`<option value="${c.slug}">${c.nome}</option>`).join('')
+    : '<option value="">Sem grupos criados</option>';
+  document.getElementById('modalTreino').classList.add('open');
 }
 
 async function salvarTreino() {
-  const token=localStorage.getItem('pace_token');
-  if(!token){toast('Faca login primeiro');return}
-  const n=document.getElementById('nt_nome').value||'Novo Treino';
-  const d=document.getElementById('nt_desc')?.value||'';
-  try{
-    const res=await fetch('/coach/treinos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({nome:n,descricao:d,tipo:'treino'})});
-    const data=await res.json();
-    if(data.success){fecharModais();toast('✅ "'+n+'" salvo!');}
-    else{toast('❌ '+(data.error||'Erro'));}
-  }catch(e){toast('❌ Erro de conexao')}
+  const nome = document.getElementById('nt_nome').value.trim();
+  if (!nome) { toast('⚠️ Nome do treino obrigatório'); return; }
+  const slug = document.getElementById('nt_comunidade').value;
+  const com = comunidadesCoach.find(c=>c.slug===slug);
+  const res = await api('POST', '/coach/treinos', {
+    nome,
+    descricao: document.getElementById('nt_desc').value,
+    diaSemana: document.getElementById('nt_dia').value||null,
+    horario: document.getElementById('nt_hora').value||'06:00',
+    local: document.getElementById('nt_local').value,
+    periodo: document.getElementById('nt_periodo').value||'manha',
+    comunidadeId: com?.id
+  });
+  if (res.error) { toast('❌ '+res.error); return; }
+  fecharModais(); toast('✅ Treino criado!'); carregarTreinos();
 }
 
-function confirmarEnvio() {
-  fecharModais();
-  toast('🚀 Treino enviado para os alunos selecionados!');
+async function excluirTreino(treinoId) {
+  if (!confirm('Excluir este treino?')) return;
+  const res = await api('DELETE', '/coach/treinos/'+treinoId);
+  if (res.error) { toast('❌ '+res.error); return; }
+  toast('🗑 Treino excluído'); carregarTreinos();
+}
+
+// ===== COACH: MURAL =====
+async function carregarMural() {
+  const el = document.getElementById('muralContent');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const res = await api('GET', '/coach/mural');
+  if (res.error||!res.posts?.length) { el.innerHTML = vazio('📣','Nenhuma publicação ainda.'); return; }
+  el.innerHTML = res.posts.map(p=>`
+    <div class="mural-item">
+      <div class="mural-header">
+        <div class="mural-av">${(p.autor?.name||'?').charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="mural-autor">${p.autor?.name||'Coach'}</div>
+          <div class="mural-data">${fmtData(p.criadoEm)} · ${p.comunidade?.nome||''}</div>
+        </div>
+        <span class="mural-tipo ${p.tipo==='aviso'?'tipo-aviso':'tipo-texto'}">${p.tipo}</span>
+      </div>
+      <div class="mural-texto">${p.conteudo}</div>
+    </div>`).join('');
 }
 
 async function postarMural() {
-  const token=localStorage.getItem('pace_token');
-  if(!token){toast('Faca login primeiro');return}
-  const txt=document.getElementById('muralTexto').value.trim();
-  if(!txt)return;
-  try{
-    const res=await fetch('/coach/mural',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({texto:txt,tipo:'aviso'})});
-    const data=await res.json();
-    if(data.success){
-      muralPosts.unshift({autor:'Coach Renisson',av:'R',data:'Agora',tipo:'📢',pin:false,texto:txt});
-      document.getElementById('muralTexto').value='';
-      renderMuralEl('listaMural');
-      toast('📣 Publicado no mural!');
-    }else{toast('❌ '+(data.error||'Erro'))}
-  }catch(e){toast('❌ Erro de conexao')}
+  const texto = document.getElementById('muralTexto').value.trim();
+  if (!texto) { toast('⚠️ Escreva algo'); return; }
+  const res = await api('POST', '/coach/mural', { texto, tipo: document.getElementById('muralTipo').value });
+  if (res.error) { toast('❌ '+res.error); return; }
+  document.getElementById('muralTexto').value='';
+  toast('📣 Publicado!'); carregarMural();
 }
 
-async function marcarConcluido() {
-  const token=localStorage.getItem('pace_token');
-  if(!token){toast('Faca login primeiro');return}
-  try{
-    const res=await fetch('/athlete/treino-concluido',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({treinoId:'manual'})});
-    const data=await res.json();
-    toast('✅ Treino concluído! Coach notificado. 🔥');
-  }catch(e){toast('✅ Treino concluído! 🔥')}
+// ===== COACH: FEEDBACKS =====
+async function carregarFeedbacks() {
+  const el = document.getElementById('feedbacksContent');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const res = await api('GET', '/coach/feedbacks');
+  if (res.error||!res.feedbacks?.length) { el.innerHTML = vazio('💬','Nenhum feedback dos atletas ainda.'); return; }
+  el.innerHTML = res.feedbacks.map(f=>`
+    <div class="mural-item">
+      <div class="mural-header">
+        <div class="mural-av" style="background:var(--bg3);color:var(--text)">${(f.autor?.name||'?').charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="mural-autor">${f.autor?.name||'Atleta'}</div>
+          <div class="mural-data">${fmtData(f.criadoEm)} · ${f.comunidade?.nome||''}</div>
+        </div>
+      </div>
+      <div class="mural-texto" style="font-size:20px">${f.conteudo}</div>
+    </div>`).join('');
+}
+
+// ===== ATLETA =====
+function mudarTabAtleta(tab, el) {
+  document.querySelectorAll('#tabsAtleta .tab').forEach(t=>t.classList.remove('ativo'));
+  el.classList.add('ativo');
+  document.querySelectorAll('#modoAtleta .section').forEach(s=>s.classList.remove('ativo'));
+  document.getElementById('tab'+tab).classList.add('ativo');
+  const acao = {Historico:carregarHistorico, MeuCoach:carregarMeuCoach};
+  if (acao[tab]) acao[tab]();
+}
+
+async function carregarHoje() {
+  const el = document.getElementById('hojeTreinosContent');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const res = await api('GET', '/athlete/treino-hoje');
+  if (res.error) { el.innerHTML = erro(res.error); return; }
+  if (!res.treinos?.length) { el.innerHTML = vazio('😴','Nenhum treino hoje.<br>Aproveite para descansar!'); return; }
+  el.innerHTML = res.treinos.map(t=>`
+    <div class="hoje-card">
+      <div class="hoje-hora">${t.horario}</div>
+      <div class="hoje-titulo">${t.titulo}</div>
+      <div class="hoje-grupo">${t.grupo}${t.local?' · '+t.local:''}</div>
+      ${t.descricao?`<div style="font-size:12px;color:var(--muted);margin-top:6px">${t.descricao}</div>`:''}
+      <div class="hoje-actions">
+        <button class="btn-sm btn-verde" onclick="marcarConcluido('${t.id}',this)">✅ Marcar como concluído</button>
+      </div>
+    </div>`).join('');
+}
+
+async function marcarConcluido(treinoId, btn) {
+  btn.disabled=true; btn.textContent='...';
+  const res = await api('POST', '/athlete/treino-concluido', { treinoId });
+  if (res.error) { toast('❌ '+res.error); btn.disabled=false; btn.textContent='✅ Marcar como concluído'; return; }
+  btn.textContent='✅ Concluído!'; btn.style.background='var(--bg3)'; btn.style.color='var(--verde)';
+  toast('🔥 Treino concluído! Coach notificado.');
 }
 
 function escolherCarinha(btn) {
@@ -781,60 +648,89 @@ function escolherCarinha(btn) {
   btn.classList.add('ativo');
 }
 
-function enviarFeedback() {
-  if(!document.querySelector('.carinha-btn.ativo')) { toast('⚠️ Selecione como você se sentiu!'); return; }
-  toast('💬 Feedback enviado para o Coach Renisson!');
+async function enviarFeedback() {
+  const btn = document.querySelector('.carinha-btn.ativo');
+  if (!btn) { toast('⚠️ Selecione como você se sentiu'); return; }
+  const res = await api('POST', '/athlete/feedback', { feeling: btn.dataset.v, comentario: document.getElementById('feedbackComentario').value.trim() });
+  if (res.error) { toast('❌ '+res.error); return; }
+  document.querySelectorAll('.carinha-btn').forEach(b=>b.classList.remove('ativo'));
+  document.getElementById('feedbackComentario').value='';
+  toast('💬 Feedback enviado!');
 }
 
-function soloChip(el, groupId) {
-  document.querySelectorAll('#'+groupId+' .chip').forEach(c=>c.classList.remove('ativo'));
-  el.classList.add('ativo');
+async function carregarHistorico() {
+  const el = document.getElementById('historicoContent');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const res = await api('GET', '/athlete/historico');
+  if (res.error||!res.checkins?.length) { el.innerHTML = vazio('📋','Nenhum treino concluído ainda.'); return; }
+  el.innerHTML = res.checkins.map(c=>`
+    <div class="atleta-item">
+      <div style="width:40px;height:40px;border-radius:10px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">✅</div>
+      <div class="atleta-info">
+        <div class="atleta-nome">${c.treino?.titulo||'Treino'}</div>
+        <div class="atleta-meta">${c.treino?.comunidade?.nome||''} · ${fmtData(c.data)}</div>
+      </div>
+    </div>`).join('');
 }
 
-function toggleChip(el) { el.classList.toggle('ativo'); }
-
-function toast(msg) {
-  const t=document.createElement('div');
-  t.textContent=msg;
-  t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(0,230,118,0.3);color:#fff;padding:12px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.5);max-width:90vw;text-align:center';
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),3000);
+async function carregarMeuCoach() {
+  const el = document.getElementById('meuCoachContent');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const res = await api('GET', '/athlete/meu-coach');
+  if (res.error||!res.coach) { el.innerHTML = vazio('🏅','Você não tem treinador vinculado.<br>Peça ao seu treinador para te adicionar pelo email.'); return; }
+  const c = res.coach;
+  el.innerHTML = `
+    <div class="card" style="text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--verde);color:#080B10;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;margin:0 auto 12px">${(c.nome||'?').charAt(0).toUpperCase()}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900">${c.nome}</div>
+      ${c.especialidade?`<div style="font-size:12px;color:var(--verde);margin-top:4px">${c.especialidade}</div>`:''}
+      ${c.bio?`<div style="font-size:13px;color:var(--muted);margin-top:10px;line-height:1.5">${c.bio}</div>`:''}
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+        ${c.whatsapp?`<a href="https://wa.me/55${c.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn-primary" style="display:block;text-align:center">💬 Falar no WhatsApp</a>`:''}
+        ${c.instagram?`<a href="https://instagram.com/${c.instagram.replace('@','')}" target="_blank" class="btn-secondary" style="display:block;text-align:center">📸 ${c.instagram}</a>`:''}
+      </div>
+    </div>`;
 }
 
+// ===== UTILS =====
+async function api(method, path, body) {
+  try {
+    const res = await fetch(API+path, {
+      method,
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: body?JSON.stringify(body):undefined
+    });
+    return await res.json();
+  } catch { return {error:'Erro de conexão'}; }
+}
+
+function fecharModais() {
+  document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));
+}
 document.querySelectorAll('.modal-overlay').forEach(m=>{
-  m.addEventListener('click',e=>{ if(e.target===m) fecharModais(); });
+  m.addEventListener('click',e=>{if(e.target===m)fecharModais();});
 });
 
-if(user.name) {
-  document.getElementById('coachAvatar').textContent=user.name.charAt(0).toUpperCase();
-  document.getElementById('coachNome').textContent='Coach '+user.name;
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.display='block';
+  clearTimeout(t._t); t._t=setTimeout(()=>t.style.display='none',3000);
 }
 
-// Init feedbacks no dashboard
-renderFeedbacks();
-
-// Carregar dados reais do backend
-async function carregarDashboardReal(){
-  const token=localStorage.getItem('pace_token');
-  if(!token)return;
-  try{
-    const res=await fetch('/coach/dashboard',{headers:{'Authorization':'Bearer '+token}});
-    const d=await res.json();
-    if(d.totalAlunos!==undefined){
-      var els=document.querySelectorAll('.stat-val');
-      if(els.length>=3){els[0].textContent=d.totalAlunos;els[2].textContent='R$'+d.mensalidade.toFixed(2)}
-    }
-  }catch(e){}
-  try{
-    const res2=await fetch('/athlete/treino-hoje',{headers:{'Authorization':'Bearer '+token}});
-    const t=await res2.json();
-    if(t.treinos&&t.treinos.length){
-      var el=document.getElementById('treinoHojeNome');
-      if(el)el.textContent=t.treinos[0].titulo+' - '+t.treinos[0].grupo;
-    }
-  }catch(e){}
+function fmtData(d) {
+  if(!d) return '—';
+  return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
 }
-carregarDashboardReal();
+
+const CORES=['#00E676','#00BCD4','#7C4DFF','#FF6D00','#E91E63','#FF9800','#2196F3','#4CAF50'];
+function cor(s) {
+  if(!s) return CORES[0];
+  let h=0; for(let i=0;i<s.length;i++) h=s.charCodeAt(i)+((h<<5)-h);
+  return CORES[Math.abs(h)%CORES.length];
+}
+
+function erro(msg) { return `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-txt">${msg}</div></div>`; }
+function vazio(icon,txt) { return `<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-txt">${txt}</div></div>`; }
 </script>
 </body>
 </html>
