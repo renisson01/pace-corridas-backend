@@ -5,9 +5,9 @@ process.on("unhandledRejection", e => { console.error("❌ ERRO FATAL:", e); });
 process.on("uncaughtException", e => { console.error("❌ CRASH:", e); });
 
 if (!process.env.DATABASE_URL) { console.error("❌ DATABASE_URL não configurada!"); process.exit(1); }
-if (!process.env.JWT_SECRET)      console.warn("⚠️  JWT_SECRET:", process.env.JWT_SECRET ? "OK len="+process.env.JWT_SECRET.length : "VAZIO");
+if (!process.env.JWT_SECRET)      if (!process.env.JWT_SECRET) console.warn("⚠️  JWT_SECRET não configurado");
 if (!process.env.ADMIN_KEY)       console.warn('⚠️  ADMIN_KEY não configurado — usando fallback INSEGURO!');
-if (!process.env.MP_ACCESS_TOKEN) console.warn("⚠️  MP_ACCESS_TOKEN:", process.env.MP_ACCESS_TOKEN ? "OK len="+process.env.MP_ACCESS_TOKEN.length : "VAZIO");
+if (!process.env.MP_ACCESS_TOKEN) if (!process.env.MP_ACCESS_TOKEN) console.warn("⚠️  MP_ACCESS_TOKEN não configurado");
 if (!process.env.ANTHROPIC_API_KEY) console.warn('⚠️  ANTHROPIC_API_KEY não configurado — IA desativada.');
 
 import Fastify from 'fastify';
