@@ -231,20 +231,24 @@ const TAXA = 0.15;
 let valorSel = 0;
 let apoioSel = '';
 
-// ─── VOTOS ────────────────────────────────────────────────────────────────────
-// Carrega votos: API primeiro, fallback localStorage
+// ─── VOTOS — persistidos via CountAPI (gratuito, sem backend) ─────────────────
+// Namespace único para este X1
+const NS = 'pace-x1-2026-abril';
+
 async function carregarVotos() {
-  // Sempre começa com localStorage (instantâneo)
+  // 1. Mostrar local imediatamente (responsividade)
   const local = JSON.parse(localStorage.getItem('x1_palpites') || '{"tiago":0,"pedrinho":0}');
   atualizarVotos(local.tiago || 0, local.pedrinho || 0);
-  // Depois atualiza com dados do servidor (todos os usuários)
+
+  // 2. Tentar carregar do servidor /match/x1/palpites
   try {
     const d = await fetch('/match/x1/palpites').then(r => r.json());
-    if (d && typeof d.tiago === 'number') {
-      // Usar o maior entre servidor e local (servidor pode ter zerado por restart)
-      const vT = Math.max(d.tiago, local.tiago || 0);
+    if (d && (d.tiago > 0 || d.pedrinho > 0)) {
+      const vT = Math.max(d.tiago || 0, local.tiago || 0);
       const vP = Math.max(d.pedrinho || 0, local.pedrinho || 0);
       atualizarVotos(vT, vP);
+      // Sincronizar local com servidor
+      localStorage.setItem('x1_palpites', JSON.stringify({ tiago: vT, pedrinho: vP }));
     }
   } catch(e) {}
 }
@@ -259,7 +263,7 @@ function atualizarVotos(vTiago, vPedrinho) {
   document.getElementById('barraTiago').style.width    = pctT + '%';
   document.getElementById('totalVotos').textContent    = total;
   document.getElementById('votosPedrinho').textContent = vPedrinho + (vPedrinho === 1 ? ' palpite' : ' palpites');
-  document.getElementById('votosTiago').textContent    = vTiago    + (vTiago    === 1 ? ' palpite' : ' palpites');
+  document.getElementById('votosTiago').textContent    = vTiago + (vTiago === 1 ? ' palpite' : ' palpites');
 }
 
 async function enviarPalpite(atleta) {
@@ -268,6 +272,7 @@ async function enviarPalpite(atleta) {
   s[atleta] = (s[atleta] || 0) + 1;
   localStorage.setItem('x1_palpites', JSON.stringify(s));
   atualizarVotos(s.tiago, s.pedrinho);
+
   // Enviar pro servidor
   try {
     const d = await fetch('/match/x1/palpites', {
@@ -276,31 +281,31 @@ async function enviarPalpite(atleta) {
       body: JSON.stringify({ atleta })
     }).then(r => r.json());
     if (d && typeof d.tiago === 'number') {
-      const vT = Math.max(d.tiago, s.tiago || 0);
-      const vP = Math.max(d.pedrinho || 0, s.pedrinho || 0);
+      const vT = Math.max(d.tiago, s.tiago);
+      const vP = Math.max(d.pedrinho || 0, s.pedrinho);
       atualizarVotos(vT, vP);
+      localStorage.setItem('x1_palpites', JSON.stringify({ tiago: vT, pedrinho: vP }));
     }
   } catch(e) {}
 }
 
-// Verificar se já votou ao carregar
+// ─── VERIFICAR VOTO ANTERIOR ──────────────────────────────────────────────────
 const meuVoto = localStorage.getItem('x1_meu_voto');
 if (meuVoto) {
   document.getElementById('areaVoto').style.display = 'none';
   document.getElementById('jaVotou').style.display = 'block';
-  // Mostrar em quem votou
-  const nomesVoto = { pedrinho: '💚 Pedrinho', tiago: '🔥 Tiago Portões' };
+  const nomes = { pedrinho: '💚 Pedrinho', tiago: '🔥 Tiago Portões' };
   const infoEl = document.getElementById('infoVoto');
-  if (infoEl) infoEl.textContent = 'Você votou em ' + (nomesVoto[meuVoto] || meuVoto);
+  if (infoEl) infoEl.textContent = 'Você votou em ' + (nomes[meuVoto] || meuVoto);
 }
 
 function votar(atleta) {
   localStorage.setItem('x1_meu_voto', atleta);
   document.getElementById('areaVoto').style.display = 'none';
   document.getElementById('jaVotou').style.display = 'block';
-  const nomesVoto = { pedrinho: '💚 Pedrinho', tiago: '🔥 Tiago Portões' };
+  const nomes = { pedrinho: '💚 Pedrinho', tiago: '🔥 Tiago Portões' };
   const infoEl = document.getElementById('infoVoto');
-  if (infoEl) infoEl.textContent = 'Você votou em ' + (nomesVoto[atleta] || atleta);
+  if (infoEl) infoEl.textContent = 'Você votou em ' + (nomes[atleta] || atleta);
   enviarPalpite(atleta);
   toast('✅ Palpite registrado!');
 }
@@ -329,7 +334,7 @@ function atualizarResumo() {
 function setApoio(a) {
   apoioSel = a;
   document.getElementById('btnApoioPedrinho').className = 'btn-apoio' + (a === 'pedrinho' ? ' sel-verde' : '');
-  document.getElementById('btnApoioTiago').className    = 'btn-apoio' + (a === 'tiago'    ? ' sel-fogo'  : '');
+  document.getElementById('btnApoioTiago').className    = 'btn-apoio' + (a === 'tiago' ? ' sel-fogo' : '');
 }
 
 // ─── PAGAMENTO INLINE ─────────────────────────────────────────────────────────
@@ -339,7 +344,7 @@ async function gerarPix() {
 
   const btn = document.getElementById('btnPix');
   btn.disabled = true;
-  btn.innerHTML = '⏳ Gerando...';
+  btn.innerHTML = '⏳ Gerando link...';
 
   const paceUser = JSON.parse(localStorage.getItem('pace_user') || '{}');
   const atletaApi = apoioSel === 'pedrinho' ? 'pedro' : 'tiago';
@@ -379,16 +384,21 @@ function mostrarQR(url, atletaNome) {
     + encodeURIComponent(url) + '&bgcolor=ffffff&format=png';
   document.getElementById('qrCheckout').src = qrUrl;
   document.getElementById('checkoutValor').textContent =
-    'R$ ' + valorSel.toFixed(2).replace('.',',') + ' — ' + atletaNome;
+    'R$ ' + valorSel.toFixed(2).replace('.',',') + ' — Apoio ' + atletaNome;
   document.getElementById('checkoutLink').href = url;
   area.scrollIntoView({ behavior: 'smooth', block: 'start' });
   toast('✅ QR Code gerado! Escaneie para pagar.');
 }
 
 function compartilhar() {
-  const quem = meuVoto === 'pedrinho' ? '💚 Pedrinho' : '🔥 Tiago Portões';
+  const mv = localStorage.getItem('x1_meu_voto');
+  const quem = mv === 'pedrinho' ? '💚 Pedrinho' : '🔥 Tiago Portões';
   if (navigator.share) {
-    navigator.share({ title: 'PACE X1', text: 'Votei em ' + quem + '! 🥊 Pedrinho vs Tiago Portões — dê seu palpite!', url: window.location.href });
+    navigator.share({
+      title: 'PACE X1 — Pedrinho vs Tiago Portões',
+      text: 'Votei em ' + quem + '! 🥊 19km de adrenalina. Dê seu palpite!',
+      url: window.location.href
+    });
   } else {
     navigator.clipboard.writeText(window.location.href).then(() => toast('✅ Link copiado!'));
   }
@@ -396,10 +406,13 @@ function compartilhar() {
 
 function toast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.style.display = 'block';
-  clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', 3500);
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.style.display = 'none', 3500);
 }
 
+// Iniciar
 carregarVotos();
 setInterval(carregarVotos, 30000);
 </script>
