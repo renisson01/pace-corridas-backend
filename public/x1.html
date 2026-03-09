@@ -164,6 +164,7 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
     <button class="btn-votar tiago" onclick="votar('tiago')">🔥 Tiago<br>vence!</button>
   </div>
   <div class="ja-votou" id="jaVotou">
+    <p id="infoVoto" style="font-size:12px;color:var(--verde);font-weight:700;margin-bottom:4px"></p>
     <p>✅ Palpite registrado! Compartilhe e chame mais torcedores!</p>
     <button class="btn-compartilhar" onclick="compartilhar()">📤 Compartilhar</button>
   </div>
@@ -230,65 +231,81 @@ const TAXA = 0.15;
 let valorSel = 0;
 let apoioSel = '';
 
-// ─── PALPITES ─────────────────────────────────────────────────────────────────
+// ─── VOTOS ────────────────────────────────────────────────────────────────────
+// Carrega votos: API primeiro, fallback localStorage
 async function carregarVotos() {
+  // Sempre começa com localStorage (instantâneo)
+  const local = JSON.parse(localStorage.getItem('x1_palpites') || '{"tiago":0,"pedrinho":0}');
+  atualizarVotos(local.tiago || 0, local.pedrinho || 0);
+  // Depois atualiza com dados do servidor (todos os usuários)
   try {
     const d = await fetch('/match/x1/palpites').then(r => r.json());
     if (d && typeof d.tiago === 'number') {
-      atualizarVotos(d.tiago, d.pedrinho || 0);
-      return;
+      // Usar o maior entre servidor e local (servidor pode ter zerado por restart)
+      const vT = Math.max(d.tiago, local.tiago || 0);
+      const vP = Math.max(d.pedrinho || 0, local.pedrinho || 0);
+      atualizarVotos(vT, vP);
     }
   } catch(e) {}
-  // fallback localStorage
-  const s = JSON.parse(localStorage.getItem('x1_palpites') || '{"tiago":0,"pedrinho":0}');
-  atualizarVotos(s.tiago || 0, s.pedrinho || 0);
 }
 
 function atualizarVotos(vTiago, vPedrinho) {
   const total = vTiago + vPedrinho;
   const pctP = total ? Math.round(vPedrinho / total * 100) : 50;
   const pctT = 100 - pctP;
-  document.getElementById('pctPedrinho').textContent  = pctP + '%';
-  document.getElementById('pctTiago').textContent     = pctT + '%';
+  document.getElementById('pctPedrinho').textContent   = pctP + '%';
+  document.getElementById('pctTiago').textContent      = pctT + '%';
   document.getElementById('barraPedrinho').style.width = pctP + '%';
   document.getElementById('barraTiago').style.width    = pctT + '%';
-  document.getElementById('totalVotos').textContent   = total;
+  document.getElementById('totalVotos').textContent    = total;
   document.getElementById('votosPedrinho').textContent = vPedrinho + (vPedrinho === 1 ? ' palpite' : ' palpites');
-  document.getElementById('votosTiago').textContent   = vTiago    + (vTiago    === 1 ? ' palpite' : ' palpites');
+  document.getElementById('votosTiago').textContent    = vTiago    + (vTiago    === 1 ? ' palpite' : ' palpites');
 }
 
 async function enviarPalpite(atleta) {
-  // Incrementar local imediatamente (UX responsivo)
+  // Atualizar local imediatamente
   const s = JSON.parse(localStorage.getItem('x1_palpites') || '{"tiago":0,"pedrinho":0}');
   s[atleta] = (s[atleta] || 0) + 1;
   localStorage.setItem('x1_palpites', JSON.stringify(s));
   atualizarVotos(s.tiago, s.pedrinho);
-  // Enviar para servidor
+  // Enviar pro servidor
   try {
     const d = await fetch('/match/x1/palpites', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ atleta })
     }).then(r => r.json());
-    if (d && typeof d.tiago === 'number') atualizarVotos(d.tiago, d.pedrinho || 0);
+    if (d && typeof d.tiago === 'number') {
+      const vT = Math.max(d.tiago, s.tiago || 0);
+      const vP = Math.max(d.pedrinho || 0, s.pedrinho || 0);
+      atualizarVotos(vT, vP);
+    }
   } catch(e) {}
 }
 
-// Verificar se já votou
-if (localStorage.getItem('x1_meu_voto')) {
+// Verificar se já votou ao carregar
+const meuVoto = localStorage.getItem('x1_meu_voto');
+if (meuVoto) {
   document.getElementById('areaVoto').style.display = 'none';
   document.getElementById('jaVotou').style.display = 'block';
+  // Mostrar em quem votou
+  const nomesVoto = { pedrinho: '💚 Pedrinho', tiago: '🔥 Tiago Portões' };
+  const infoEl = document.getElementById('infoVoto');
+  if (infoEl) infoEl.textContent = 'Você votou em ' + (nomesVoto[meuVoto] || meuVoto);
 }
 
 function votar(atleta) {
   localStorage.setItem('x1_meu_voto', atleta);
   document.getElementById('areaVoto').style.display = 'none';
   document.getElementById('jaVotou').style.display = 'block';
+  const nomesVoto = { pedrinho: '💚 Pedrinho', tiago: '🔥 Tiago Portões' };
+  const infoEl = document.getElementById('infoVoto');
+  if (infoEl) infoEl.textContent = 'Você votou em ' + (nomesVoto[atleta] || atleta);
   enviarPalpite(atleta);
   toast('✅ Palpite registrado!');
 }
 
-// ─── DOAÇÃO INLINE ────────────────────────────────────────────────────────────
+// ─── DOAÇÃO ───────────────────────────────────────────────────────────────────
 function setValor(v, btn) {
   valorSel = v;
   document.getElementById('inputValor').value = v;
@@ -315,16 +332,14 @@ function setApoio(a) {
   document.getElementById('btnApoioTiago').className    = 'btn-apoio' + (a === 'tiago'    ? ' sel-fogo'  : '');
 }
 
-// ─── PAGAMENTO INLINE via MP Bricks ──────────────────────────────────────────
-let mpBricksCarregado = false;
-
+// ─── PAGAMENTO INLINE ─────────────────────────────────────────────────────────
 async function gerarPix() {
   if (valorSel < 5)  { toast('⚠️ Valor mínimo: R$ 5,00'); return; }
   if (!apoioSel)     { toast('⚠️ Escolha quem você torce!'); return; }
 
   const btn = document.getElementById('btnPix');
   btn.disabled = true;
-  btn.textContent = '⏳ Gerando...';
+  btn.innerHTML = '⏳ Gerando...';
 
   const paceUser = JSON.parse(localStorage.getItem('pace_user') || '{}');
   const atletaApi = apoioSel === 'pedrinho' ? 'pedro' : 'tiago';
@@ -342,43 +357,38 @@ async function gerarPix() {
       })
     });
     const d = await r.json();
-
     btn.disabled = false;
-    btn.textContent = '📲 Gerar QR Code Pix';
+    btn.innerHTML = '📲 Gerar QR Code Pix';
 
     if (d.url) {
-      // Mostrar QR inline sem sair da página
-      mostrarCheckoutInline(d.url, atletaNome);
+      mostrarQR(d.url, atletaNome);
       return;
     }
     toast('⚠️ ' + (d.error || 'Erro ao gerar pagamento'));
   } catch(e) {
     btn.disabled = false;
-    btn.textContent = '📲 Gerar QR Code Pix';
+    btn.innerHTML = '📲 Gerar QR Code Pix';
     toast('⚠️ Erro de conexão. Tente novamente.');
   }
 }
 
-function mostrarCheckoutInline(url, atletaNome) {
+function mostrarQR(url, atletaNome) {
   const area = document.getElementById('checkoutArea');
   area.style.display = 'block';
-
-  // Gerar QR Code com a URL do MP
-  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url) + '&bgcolor=ffffff&format=png';
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='
+    + encodeURIComponent(url) + '&bgcolor=ffffff&format=png';
   document.getElementById('qrCheckout').src = qrUrl;
-  document.getElementById('checkoutValor').textContent = 'R$ ' + valorSel.toFixed(2).replace('.',',') + ' — Apoio ' + atletaNome;
+  document.getElementById('checkoutValor').textContent =
+    'R$ ' + valorSel.toFixed(2).replace('.',',') + ' — ' + atletaNome;
   document.getElementById('checkoutLink').href = url;
-  document.getElementById('checkoutLink').textContent = '💳 Abrir checkout completo';
-
   area.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  toast('✅ QR Code gerado!');
+  toast('✅ QR Code gerado! Escaneie para pagar.');
 }
 
 function compartilhar() {
-  const meuVoto = localStorage.getItem('x1_meu_voto');
   const quem = meuVoto === 'pedrinho' ? '💚 Pedrinho' : '🔥 Tiago Portões';
   if (navigator.share) {
-    navigator.share({ title: 'PACE X1', text: 'Votei em ' + quem + '! Pedrinho vs Tiago Portões 🥊 Dê seu palpite!', url: window.location.href });
+    navigator.share({ title: 'PACE X1', text: 'Votei em ' + quem + '! 🥊 Pedrinho vs Tiago Portões — dê seu palpite!', url: window.location.href });
   } else {
     navigator.clipboard.writeText(window.location.href).then(() => toast('✅ Link copiado!'));
   }
@@ -387,7 +397,7 @@ function compartilhar() {
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.style.display = 'block';
-  clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', 3200);
+  clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', 3500);
 }
 
 carregarVotos();
