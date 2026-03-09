@@ -3,25 +3,32 @@ import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
 
 const prisma = new PrismaClient();
-const MP_TOKEN = process.env.MP_ACCESS_TOKEN || '';
-if (!MP_TOKEN) console.warn('[MP] AVISO: MP_ACCESS_TOKEN não configurado!');
-
-const client = new MercadoPagoConfig({ accessToken: MP_TOKEN });
 const BASE_URL = process.env.BASE_URL || 'https://web-production-990e7.up.railway.app';
 const TAXA_PLATAFORMA = 0.15;
 const votosX1 = { pedro: 0, tiago: 0, doacoes: [] };
 
+// Lê o token em runtime (não no carregamento do módulo)
+function getMPClient() {
+  const token = process.env.MP_ACCESS_TOKEN || '';
+  if (!token) throw new Error('MP_ACCESS_TOKEN não configurado');
+  return new MercadoPagoConfig({ accessToken: token });
+}
+
+function mpConfigurado() {
+  return !!(process.env.MP_ACCESS_TOKEN || '');
+}
+
 export async function pagamentosRoutes(fastify) {
 
   fastify.post('/pagamentos/loja', async (req, reply) => {
-    if (!MP_TOKEN) return reply.code(503).send({ error: 'Pagamentos não configurados. Configure MP_ACCESS_TOKEN no Railway.' });
+    if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados. Configure MP_ACCESS_TOKEN no Railway.' });
     try {
       const { produtoId, tamanho, cor, quantidade = 1, compradorNome, compradorEmail, pedidoId } = req.body || {};
       if (!produtoId) return reply.code(400).send({ error: 'produtoId obrigatório' });
       const p = await prisma.produto.findUnique({ where: { id: produtoId } }).catch(() => null);
       if (!p) return reply.code(404).send({ error: 'Produto não encontrado' });
       const ref = pedidoId ? `loja-${pedidoId}` : `loja-${produtoId}-${Date.now()}`;
-      const preference = new Preference(client);
+      const preference = new Preference(getMPClient());
       const result = await preference.create({ body: { items: [{ id: p.id, title: `${p.nome}${tamanho ? ' — Tam. '+tamanho : ''}${cor ? ' / '+cor : ''}`, description: p.descricao || 'Produto PACE', quantity: parseInt(quantidade), unit_price: parseFloat(p.preco), currency_id: 'BRL', category_id: 'fashion' }], payer: { name: compradorNome || '', email: compradorEmail || '' }, payment_methods: { installments: 12 }, back_urls: { success: `${BASE_URL}/loja.html?pagamento=sucesso`, failure: `${BASE_URL}/loja.html?pagamento=erro`, pending: `${BASE_URL}/loja.html?pagamento=pendente` }, auto_return: 'approved', statement_descriptor: 'PACE CORRIDAS', external_reference: ref, notification_url: `${BASE_URL}/pagamentos/webhook` } });
       return { url: result.init_point, preferenceId: result.id, produto: p.nome, valor: p.preco, ref };
     } catch (e) {
@@ -31,7 +38,7 @@ export async function pagamentosRoutes(fastify) {
   });
 
   fastify.post('/pagamentos/doacao-x1', async (req, reply) => {
-    if (!MP_TOKEN) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
+    if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
     try {
       const { valor, atletaApoio, doadorNome, doadorEmail } = req.body || {};
       if (!valor || valor < 5) return reply.code(400).send({ error: 'Valor mínimo R$ 5,00' });
@@ -39,7 +46,7 @@ export async function pagamentosRoutes(fastify) {
       const valorTotal = parseFloat(valor);
       const valorAtleta = parseFloat((valorTotal * (1 - TAXA_PLATAFORMA)).toFixed(2));
       const atletaNome = atletaApoio === 'pedro' ? 'Pedrinho 19km' : 'Tiago Portões 17km';
-      const preference = new Preference(client);
+      const preference = new Preference(getMPClient());
       const result = await preference.create({ body: { items: [{ id: `x1-${Date.now()}`, title: `🏃 Apoio X1 — ${atletaNome}`, description: `Taxa PACE: ${TAXA_PLATAFORMA*100}%. Atleta recebe: R$ ${valorAtleta}`, quantity: 1, unit_price: valorTotal, currency_id: 'BRL', category_id: 'services' }], payer: { name: doadorNome || 'Torcedor', email: doadorEmail || '' }, payment_methods: { installments: 1 }, back_urls: { success: `${BASE_URL}/x1.html?doacao=sucesso&atleta=${atletaApoio}&valor=${valorTotal}`, failure: `${BASE_URL}/x1.html?doacao=erro`, pending: `${BASE_URL}/x1.html?doacao=pendente` }, auto_return: 'approved', statement_descriptor: 'PACE X1', external_reference: `x1-${atletaApoio}-${Date.now()}`, notification_url: `${BASE_URL}/pagamentos/webhook` } });
       return { url: result.init_point, preferenceId: result.id, valorTotal, valorAtleta, taxaPlataforma: parseFloat((valorTotal*TAXA_PLATAFORMA).toFixed(2)), atleta: atletaApoio, atletaNome };
     } catch (e) {
@@ -70,7 +77,7 @@ export async function pagamentosRoutes(fastify) {
     try {
       const { type, data } = req.body || {};
       if (type !== 'payment' || !data?.id) return;
-      const paymentApi = new Payment(client);
+      const paymentApi = new Payment(getMPClient());
       const payment = await paymentApi.get({ id: data.id });
       console.log('[WEBHOOK] Status:', payment.status, '| Ref:', payment.external_reference, '| R$', payment.transaction_amount);
       if (payment.status !== 'approved') return;
@@ -97,7 +104,12 @@ export async function pagamentosRoutes(fastify) {
   });
 
   fastify.get('/pagamentos/status', async (req, reply) => {
-    return { configurado: !!MP_TOKEN, modo: MP_TOKEN?.startsWith('APP_USR') ? 'producao' : MP_TOKEN?.includes('TEST') ? 'sandbox' : 'nao_configurado', linkDoacaoX1: 'https://link.mercadopago.com.br/rnestampace' };
+    const token = process.env.MP_ACCESS_TOKEN || '';
+    return {
+      configurado: !!token,
+      modo: token.startsWith('APP_USR') ? 'producao' : token.includes('TEST') ? 'sandbox' : 'nao_configurado',
+      linkDoacaoX1: 'https://link.mercadopago.com.br/rnestampace'
+    };
   });
 
   fastify.get('/pagamentos/admin/lista', async (req, reply) => {
