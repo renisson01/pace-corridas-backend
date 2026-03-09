@@ -26,7 +26,8 @@ import { scraperRoutes }         from './modules/scraper/scraper.routes.js';
 import { authRoutes }            from './modules/auth/auth.routes.js';
 import { organizerRoutes }       from './modules/organizer/organizer.routes.js';
 import { matchRoutes }
-import { coachRoutes }           from './modules/coach/coach.routes.js';           from './modules/match/match.routes.js';
+import { matchRoutes }           from './modules/match/match.routes.js';
+import { coachRoutes }           from './modules/coach/coach.routes.js';
 import { analyticsRoutes }       from './modules/analytics/analytics.routes.js';
 import { uploadRoutes }          from './modules/upload/upload.routes.js';
 import { socialRoutes }          from './modules/social/social.routes.js';
