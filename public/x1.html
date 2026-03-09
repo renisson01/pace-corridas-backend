@@ -101,6 +101,14 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 .nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 
 #toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(0,230,118,.3);color:#fff;padding:11px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;white-space:nowrap;display:none;max-width:90vw;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.checkout-area{display:none;margin:0 16px 16px;background:var(--bg2);border:1px solid rgba(0,230,118,.3);border-radius:18px;overflow:hidden}
+.checkout-inner{padding:20px;text-align:center}
+.checkout-titulo{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--verde);margin-bottom:4px}
+.checkout-valor{font-size:13px;color:var(--muted);margin-bottom:16px}
+.checkout-qr{width:200px;height:200px;border-radius:12px;background:white;padding:6px;margin:0 auto 14px;display:block}
+.checkout-instrucao{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.btn-checkout-link{display:block;width:100%;background:linear-gradient(135deg,#00E676,#00C853);color:#080B10;border:none;border-radius:12px;padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-align:center;text-decoration:none;margin-bottom:8px}
+.btn-checkout-fechar{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:10px;font-family:'Barlow',sans-serif;font-size:13px;width:100%}
 </style>
 </head>
 <body>
@@ -194,6 +202,18 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 
 </div>
 
+<!-- CHECKOUT INLINE -->
+<div class="checkout-area" id="checkoutArea">
+  <div class="checkout-inner">
+    <div class="checkout-titulo">📲 QR Code Pix gerado!</div>
+    <div class="checkout-valor" id="checkoutValor"></div>
+    <img class="checkout-qr" id="qrCheckout" src="" alt="QR Code Pix">
+    <div class="checkout-instrucao">Abra o app do seu banco, escaneie o QR Code e confirme o pagamento.<br>Ou clique no botão abaixo para pagar pelo navegador.</div>
+    <a class="btn-checkout-link" id="checkoutLink" href="#" target="_blank">💳 Abrir checkout completo</a>
+    <button class="btn-checkout-fechar" onclick="document.getElementById('checkoutArea').style.display='none'">Fechar</button>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
@@ -207,39 +227,21 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 
 <script>
 const TAXA = 0.15;
-const CHAVE_PIX = '42912886000190';
 let valorSel = 0;
 let apoioSel = '';
 
 // ─── PALPITES ─────────────────────────────────────────────────────────────────
-// Palpites ficam no servidor (rota /match/x1/palpites) para serem compartilhados
-// Se não disponível, usa localStorage como fallback local
 async function carregarVotos() {
   try {
     const d = await fetch('/match/x1/palpites').then(r => r.json());
     if (d && typeof d.tiago === 'number') {
-      atualizarVotos(d.tiago, d.pedrinho || d.pedro || 0);
+      atualizarVotos(d.tiago, d.pedrinho || 0);
       return;
     }
   } catch(e) {}
-  // Fallback: localStorage acumulado deste dispositivo
-  const salvo = JSON.parse(localStorage.getItem('x1_palpites_global') || '{"tiago":0,"pedrinho":0}');
-  atualizarVotos(salvo.tiago || 0, salvo.pedrinho || 0);
-}
-
-async function enviarPalpite(atleta) {
-  try {
-    await fetch('/match/x1/palpites', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ atleta })
-    });
-  } catch(e) {
-    // Se API não disponível, incrementar local
-    const salvo = JSON.parse(localStorage.getItem('x1_palpites_global') || '{"tiago":0,"pedrinho":0}');
-    salvo[atleta] = (salvo[atleta] || 0) + 1;
-    localStorage.setItem('x1_palpites_global', JSON.stringify(salvo));
-  }
+  // fallback localStorage
+  const s = JSON.parse(localStorage.getItem('x1_palpites') || '{"tiago":0,"pedrinho":0}');
+  atualizarVotos(s.tiago || 0, s.pedrinho || 0);
 }
 
 function atualizarVotos(vTiago, vPedrinho) {
@@ -255,6 +257,23 @@ function atualizarVotos(vTiago, vPedrinho) {
   document.getElementById('votosTiago').textContent   = vTiago    + (vTiago    === 1 ? ' palpite' : ' palpites');
 }
 
+async function enviarPalpite(atleta) {
+  // Incrementar local imediatamente (UX responsivo)
+  const s = JSON.parse(localStorage.getItem('x1_palpites') || '{"tiago":0,"pedrinho":0}');
+  s[atleta] = (s[atleta] || 0) + 1;
+  localStorage.setItem('x1_palpites', JSON.stringify(s));
+  atualizarVotos(s.tiago, s.pedrinho);
+  // Enviar para servidor
+  try {
+    const d = await fetch('/match/x1/palpites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ atleta })
+    }).then(r => r.json());
+    if (d && typeof d.tiago === 'number') atualizarVotos(d.tiago, d.pedrinho || 0);
+  } catch(e) {}
+}
+
 // Verificar se já votou
 if (localStorage.getItem('x1_meu_voto')) {
   document.getElementById('areaVoto').style.display = 'none';
@@ -265,11 +284,11 @@ function votar(atleta) {
   localStorage.setItem('x1_meu_voto', atleta);
   document.getElementById('areaVoto').style.display = 'none';
   document.getElementById('jaVotou').style.display = 'block';
-  enviarPalpite(atleta).then(() => carregarVotos());
+  enviarPalpite(atleta);
   toast('✅ Palpite registrado!');
 }
 
-// ─── DOAÇÃO ──────────────────────────────────────────────────────────────────
+// ─── DOAÇÃO INLINE ────────────────────────────────────────────────────────────
 function setValor(v, btn) {
   valorSel = v;
   document.getElementById('inputValor').value = v;
@@ -296,13 +315,20 @@ function setApoio(a) {
   document.getElementById('btnApoioTiago').className    = 'btn-apoio' + (a === 'tiago'    ? ' sel-fogo'  : '');
 }
 
+// ─── PAGAMENTO INLINE via MP Bricks ──────────────────────────────────────────
+let mpBricksCarregado = false;
+
 async function gerarPix() {
-  if (valorSel < 5)  { toast('⚠️ Valor mínimo: R&#36; 5,00'); return; }
+  if (valorSel < 5)  { toast('⚠️ Valor mínimo: R$ 5,00'); return; }
   if (!apoioSel)     { toast('⚠️ Escolha quem você torce!'); return; }
+
   const btn = document.getElementById('btnPix');
-  btn.disabled = true; btn.textContent = '⏳ Gerando link...';
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando...';
+
   const paceUser = JSON.parse(localStorage.getItem('pace_user') || '{}');
   const atletaApi = apoioSel === 'pedrinho' ? 'pedro' : 'tiago';
+  const atletaNome = apoioSel === 'pedrinho' ? 'Pedrinho' : 'Tiago Portões';
 
   try {
     const r = await fetch('/pagamentos/doacao-x1', {
@@ -316,39 +342,43 @@ async function gerarPix() {
       })
     });
     const d = await r.json();
+
+    btn.disabled = false;
+    btn.textContent = '📲 Gerar QR Code Pix';
+
     if (d.url) {
-      window.location.href = d.url;
+      // Mostrar QR inline sem sair da página
+      mostrarCheckoutInline(d.url, atletaNome);
       return;
     }
-  } catch(e) { /* fallback abaixo */ }
-
-  // Fallback: link fixo do MP (funciona mesmo sem token configurado)
-  // O usuario digita o valor manualmente na página do MP
-  btn.disabled = false; btn.textContent = '📲 Gerar QR Code Pix';
-  const atletaNome = apoioSel === 'pedrinho' ? 'Pedrinho' : 'Tiago Portoes';
-  const msg = encodeURIComponent('X1 PACE - Apoio ' + atletaNome + ' - R&#36;' + valorSel.toFixed(2));
-  window.open('https://link.mercadopago.com.br/rnestampace', '_blank');
-  toast('✅ Link MP aberto! Informe o valor: R&#36;' + valorSel.toFixed(2).replace('.',','));
+    toast('⚠️ ' + (d.error || 'Erro ao gerar pagamento'));
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '📲 Gerar QR Code Pix';
+    toast('⚠️ Erro de conexão. Tente novamente.');
+  }
 }
 
-function copiarPix() {
-  navigator.clipboard.writeText(CHAVE_PIX)
-    .then(() => toast('✅ Chave Pix copiada!'))
-    .catch(() => toast('Copie: ' + CHAVE_PIX));
-}
+function mostrarCheckoutInline(url, atletaNome) {
+  const area = document.getElementById('checkoutArea');
+  area.style.display = 'block';
 
-function confirmarPagamento() {
-  const nome = apoioSel === 'pedrinho' ? 'Pedrinho' : 'Tiago Portões';
-  toast('✅ Obrigado! R$ ' + (valorSel*(1-TAXA)).toFixed(2).replace('.',',') + ' para ' + nome + ' 💪');
-  document.getElementById('pixArea').style.display = 'none';
+  // Gerar QR Code com a URL do MP
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url) + '&bgcolor=ffffff&format=png';
+  document.getElementById('qrCheckout').src = qrUrl;
+  document.getElementById('checkoutValor').textContent = 'R$ ' + valorSel.toFixed(2).replace('.',',') + ' — Apoio ' + atletaNome;
+  document.getElementById('checkoutLink').href = url;
+  document.getElementById('checkoutLink').textContent = '💳 Abrir checkout completo';
+
+  area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  toast('✅ QR Code gerado!');
 }
 
 function compartilhar() {
   const meuVoto = localStorage.getItem('x1_meu_voto');
   const quem = meuVoto === 'pedrinho' ? '💚 Pedrinho' : '🔥 Tiago Portões';
-  const txt = 'Votei em ' + quem + ' no X1 das Ruas! 19km de adrenalina. Dê seu palpite! 🏃';
   if (navigator.share) {
-    navigator.share({ title: 'PACE X1 — Pedrinho vs Tiago', text: txt, url: window.location.href });
+    navigator.share({ title: 'PACE X1', text: 'Votei em ' + quem + '! Pedrinho vs Tiago Portões 🥊 Dê seu palpite!', url: window.location.href });
   } else {
     navigator.clipboard.writeText(window.location.href).then(() => toast('✅ Link copiado!'));
   }
@@ -361,7 +391,6 @@ function toast(msg) {
 }
 
 carregarVotos();
-// Atualizar votos a cada 30s enquanto na página
 setInterval(carregarVotos, 30000);
 </script>
 </body>
