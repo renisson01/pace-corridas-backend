@@ -544,6 +544,24 @@ export async function coachRoutes(fastify) {
     return { success: true, user };
   });
 
+  // Salvar tempos de prova do atleta
+  fastify.patch("/athlete/perfil-tempos", async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: "Login necessário" });
+    const { tempo5k, tempo10k, tempo21k, tempo42k } = req.body || {};
+    const user = await prisma.user.update({
+      where: { id: u.userId },
+      data: {
+        ...(tempo5k  && { tempo5k }),
+        ...(tempo10k && { tempo10k }),
+        ...(tempo21k && { tempo21k }),
+        ...(tempo42k && { tempo42k })
+      },
+      select: { tempo5k: true, tempo10k: true, tempo21k: true, tempo42k: true }
+    });
+    return { success: true, user };
+  });
+
   // Histórico de treinos do atleta
   fastify.get('/athlete/historico', async (req, reply) => {
     const u = auth(req);
