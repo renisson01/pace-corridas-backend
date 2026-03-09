@@ -68,6 +68,11 @@ model User {
   age           Int?
   fcMax         Int?
   fcRepouso     Int?
+  tempo5k       String?
+  tempo10k      String?
+  tempo21k      String?
+  tempo42k      String?
+  nivelAtleta   String?
   bio           String?
   photo         String?
   athleteId     String?   @unique
@@ -651,6 +656,12 @@ model TreinoEtapa {
   durMin      Int?     // duração em minutos
   distanciaM  Int?     // distância em metros
   zonaFC      Int?     // zona 1-5
+  zona          String?  // CCL, CCR_Z2, TROTE etc
+  zonaFCmin     Float?   // % FC mínimo ex: 65.0
+  zonaFCmax     Float?   // % FC máximo ex: 75.0
+  descRecup     String?  // "Parado 2min", "Caminhando 200m"
+  durRecupMin   Int?     // recuperação em minutos
+  distRecupM    Int?     // recuperação em metros
   paceMin     String?  // pace mínimo ex: "5:00"
   paceMax     String?  // pace máximo ex: "5:30"
   repeticoes  Int      @default(1)
