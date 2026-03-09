@@ -25,7 +25,6 @@ import { rankingRoutes }         from './modules/ranking/ranking.routes.js';
 import { scraperRoutes }         from './modules/scraper/scraper.routes.js';
 import { authRoutes }            from './modules/auth/auth.routes.js';
 import { organizerRoutes }       from './modules/organizer/organizer.routes.js';
-import { matchRoutes }
 import { matchRoutes }           from './modules/match/match.routes.js';
 import { coachRoutes }           from './modules/coach/coach.routes.js';
 import { analyticsRoutes }       from './modules/analytics/analytics.routes.js';
