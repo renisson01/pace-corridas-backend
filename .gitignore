@@ -5,7 +5,6 @@ dev.db-journal
 uploads/
 .env
 .env.local
-.env.production
 *.key
 *.pem
 secrets/
