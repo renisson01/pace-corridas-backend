@@ -199,6 +199,11 @@ a{text-decoration:none;color:inherit}
       <span class="ql">Calculadoras</span>
       <span class="qd">Pace e ritmo</span>
     </a>
+    <a href="/atleta.html" class="qcard" id="cardAtleta" style="display:none">
+      <span class="qi">🏃</span>
+      <span class="ql">Meu Treino</span>
+      <span class="qd">Treino de hoje</span>
+    </a>
   </div>
 </div>
 
@@ -245,8 +250,17 @@ window.addEventListener('scroll', () => document.getElementById('topbar').classL
 if (token && user.name) {
   document.getElementById('btnEntrar').style.display = 'none';
   document.getElementById('btnPerfil').style.display = 'flex';
-  document.getElementById('ctaPrincipal').href = '/treinador.html';
-  document.getElementById('ctaPrincipal').textContent = 'Meu Treinador →';
+  // Mostrar card "Meu Treino" para atletas logados
+  const cardAtleta = document.getElementById('cardAtleta');
+  if (cardAtleta) cardAtleta.style.display = 'flex';
+  // CTA principal baseado no tipo de usuário
+  if (user.role === 'COACH') {
+    document.getElementById('ctaPrincipal').href = '/treinador.html';
+    document.getElementById('ctaPrincipal').textContent = 'Meu Treinador →';
+  } else {
+    document.getElementById('ctaPrincipal').href = '/atleta.html';
+    document.getElementById('ctaPrincipal').textContent = 'Meu Treino Hoje →';
+  }
 }
 
 // STATS
