@@ -2,365 +2,402 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>PACE X1 — Desafio das Ruas</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;}
-body{background:#0a0f1a;font-family:system-ui,sans-serif;}
-.grad-fire{background:linear-gradient(135deg,#ff4500,#ff8c00,#ffd700);}
-.grad-green{background:linear-gradient(135deg,#22c55e,#16a34a);}
-.card-glass{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);}
-.pulse{animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.slide-up{animation:slideUp .5s ease;}
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-::-webkit-scrollbar{display:none;}
+:root{--verde:#00E676;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Barlow',sans-serif}
+
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(8,11,16,.97);border-bottom:1px solid var(--border)}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:1.5px}
+.live-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* BANNER */
+.x1-hero{margin:16px;background:linear-gradient(135deg,#0f0a00,#1a0500);border:1px solid rgba(255,109,0,.35);border-radius:20px;padding:24px 20px;position:relative;overflow:hidden;text-align:center}
+.x1-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(255,109,0,.1),transparent 60%)}
+.x1-hero-label{font-size:10px;font-weight:700;color:var(--laranja);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+.x1-hero-titulo{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.x1-hero-sub{font-size:13px;color:var(--muted)}
+
+/* ATLETAS */
+.atletas-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;padding:0 16px;margin-bottom:12px;align-items:center}
+.atleta-card{background:var(--bg2);border-radius:16px;padding:16px 12px;text-align:center;border:2px solid transparent;transition:all .3s}
+.atleta-card.a{border-color:rgba(255,109,0,.25)}
+.atleta-card.b{border-color:rgba(0,230,118,.25)}
+.atleta-foto{width:56px;height:56px;border-radius:14px;margin:0 auto 10px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:28px}
+.atleta-foto img{width:100%;height:100%;object-fit:cover}
+.atleta-nome{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;line-height:1.1}
+.atleta-dist{font-size:11px;font-weight:700;margin-top:2px}
+.atleta-ig{font-size:10px;color:var(--muted);margin-top:4px}
+.atleta-pct{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;margin-top:8px}
+.atleta-barra{height:4px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden}
+.atleta-barra-fill{height:100%;border-radius:2px;transition:width .8s}
+.vs-box{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--muted);text-align:center}
+.total-votos{margin:0 16px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.total-votos span:last-child{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--verde)}
+
+/* VOTAR */
+.votar-section{padding:0 16px;margin-bottom:20px}
+.votar-titulo{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;text-align:center}
+.votar-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-votar{padding:14px;border-radius:14px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;transition:all .2s;letter-spacing:.5px}
+.btn-votar:active{transform:scale(.97)}
+.btn-a{background:linear-gradient(135deg,#ff4500,#ff8c00);color:#000}
+.btn-b{background:linear-gradient(135deg,#00E676,#00C853);color:#000}
+.ja-votou{text-align:center;padding:14px;background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:14px;display:none}
+.ja-votou p{font-size:13px;color:var(--verde);font-weight:600;margin-bottom:8px}
+
+/* APOIO / DOAÇÃO */
+.doacao-card{margin:0 16px 16px;background:linear-gradient(135deg,rgba(0,230,118,.04),rgba(255,109,0,.04));border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.doacao-header{padding:16px 16px 12px;border-bottom:1px solid var(--border)}
+.doacao-titulo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px}
+.doacao-sub{font-size:12px;color:var(--muted);line-height:1.5}
+.doacao-body{padding:16px}
+.valores-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.btn-valor{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 4px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;transition:all .2s}
+.btn-valor.sel{background:var(--verde);color:#080B10;border-color:var(--verde)}
+.input-valor{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;outline:none;margin-bottom:10px;font-family:'Barlow',sans-serif}
+.input-valor:focus{border-color:var(--verde)}
+.resumo{background:var(--bg3);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none}
+.resumo-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+.resumo-row.total{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;color:var(--verde);padding-top:8px;margin-top:4px;border-top:1px solid var(--border)}
+.apoio-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.btn-apoio{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:11px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;transition:all .2s}
+.btn-apoio.sel-a{background:linear-gradient(135deg,#ff4500,#ff8c00);color:#000;border-color:transparent}
+.btn-apoio.sel-b{background:linear-gradient(135deg,#00E676,#00C853);color:#000;border-color:transparent}
+.btn-pix{width:100%;background:linear-gradient(135deg,#00E676,#00C853);color:#080B10;border:none;border-radius:12px;padding:14px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;transition:opacity .2s;letter-spacing:.5px}
+.btn-pix:disabled{opacity:.5}
+
+/* PIX */
+.pix-area{display:none;padding:16px;border-top:1px solid var(--border)}
+.pix-qr{background:var(--bg3);border-radius:14px;padding:16px;text-align:center}
+.pix-qr img{width:140px;height:140px;border-radius:10px;background:white;padding:4px;margin-bottom:12px}
+.pix-chave-row{display:flex;gap:8px;margin-top:8px}
+.pix-chave-input{flex:1;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:12px;text-align:center;outline:none}
+.btn-copiar{background:var(--verde);color:#080B10;border:none;border-radius:8px;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:6px 0 calc(10px + env(safe-area-inset-bottom))}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;color:var(--muted);transition:color .2s}
+.nav-item.ativo{color:var(--verde)}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(0,230,118,.3);color:#fff;padding:11px 18px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;white-space:nowrap;display:none;max-width:90vw;text-align:center}
 </style>
 </head>
-<body class="text-white min-h-screen pb-24">
+<body>
 
-<!-- HEADER -->
-<div class="px-4 pt-4 pb-2 flex items-center justify-between">
-  <a href="/" class="text-slate-400">← PACE</a>
-  <div class="flex items-center gap-2">
-    <div class="w-2 h-2 rounded-full bg-red-500 pulse"></div>
-    <span class="text-xs text-red-400 font-bold uppercase tracking-widest">AO VIVO EM BREVE</span>
-  </div>
+<div class="topbar">
+  <a href="/" class="logo">PACE</a>
+  <div class="live-badge"><div class="live-dot"></div>Ao Vivo</div>
 </div>
 
-<!-- BANNER X1 -->
-<div class="mx-4 mt-2 rounded-3xl overflow-hidden relative" style="background:linear-gradient(135deg,#0f0f1a,#1a0a0a,#0f0f1a);border:1px solid rgba(255,69,0,0.3);">
-  <!-- Cartaz placeholder — trocar por imagem real -->
-  <div class="relative p-6 text-center">
-    <div class="absolute inset-0 opacity-10" style="background:radial-gradient(circle at 50% 50%,#ff4500,transparent 70%);"></div>
-    <p class="text-xs text-orange-400 font-bold uppercase tracking-widest mb-2">⚡ DESAFIO X1 DAS RUAS</p>
-    <h1 class="text-3xl font-black leading-tight mb-1" style="text-shadow:0 0 30px rgba(255,69,0,0.5);">
-      TIAGO<br>
-      <span class="text-slate-500 text-xl">vs</span><br>
-      PEDRO
-    </h1>
-    <p class="text-sm text-slate-400 mt-2">17km <span class="text-slate-600 mx-2">×</span> 19km</p>
-    <div class="mt-3 inline-block px-4 py-1.5 rounded-full text-xs font-black" style="background:rgba(255,69,0,0.2);border:1px solid rgba(255,69,0,0.4);color:#ff6b35;">
-      📅 Em breve — fique atento!
-    </div>
-  </div>
+<!-- BANNER -->
+<div class="x1-hero">
+  <div class="x1-hero-label">⚡ X1 das Ruas — Desafio</div>
+  <div class="x1-hero-titulo" id="heroTitulo">🥊 DUELO</div>
+  <div class="x1-hero-sub" id="heroSub">Dois atletas, uma corrida. Vote e apoie!</div>
 </div>
 
 <!-- ATLETAS -->
-<div class="px-4 mt-4 grid grid-cols-2 gap-3 slide-up">
-
-  <!-- Tiago -->
-  <div class="card-glass rounded-3xl p-4 text-center" style="border-color:rgba(255,69,0,0.3);">
-    <div class="w-16 h-16 rounded-2xl mx-auto mb-3 overflow-hidden" style="background:linear-gradient(135deg,#ff4500,#ff8c00);">
-      <img src="https://unavatar.io/instagram/tiagolimadosportoes" class="w-full h-full object-cover" onerror="this.style.display='none'">
-    </div>
-    <p class="font-black text-sm leading-tight">Tiago Lima</p>
-    <p class="text-orange-400 font-bold text-xs mt-0.5">17km</p>
-    <a href="https://www.instagram.com/tiagolimadosportoes" target="_blank"
-      class="block mt-2 text-xs text-slate-400 hover:text-orange-400">@tiagolimadosportoes</a>
-    <div class="mt-3 bg-slate-800 rounded-full h-2">
-      <div id="bar-tiago" class="h-2 rounded-full transition-all duration-700" style="background:linear-gradient(90deg,#ff4500,#ff8c00);width:50%;"></div>
-    </div>
-    <p id="pct-tiago" class="text-orange-400 font-black text-lg mt-1">50%</p>
-    <p class="text-xs text-slate-500">dos palpites</p>
+<div class="atletas-grid">
+  <div class="atleta-card a">
+    <div class="atleta-foto" id="fotoA" style="background:linear-gradient(135deg,#ff4500,#ff8c00)">🔥</div>
+    <div class="atleta-nome" id="nomeA">—</div>
+    <div class="atleta-dist" style="color:var(--laranja)" id="distA">—</div>
+    <div class="atleta-ig" id="igA"></div>
+    <div class="atleta-pct" style="color:var(--laranja)" id="pctA">50%</div>
+    <div class="atleta-barra"><div class="atleta-barra-fill" id="barraA" style="background:linear-gradient(90deg,#ff4500,#ff8c00);width:50%"></div></div>
   </div>
-
-  <!-- Pedro -->
-  <div class="card-glass rounded-3xl p-4 text-center" style="border-color:rgba(34,197,94,0.3);">
-    <div class="w-16 h-16 rounded-2xl mx-auto mb-3 overflow-hidden" style="background:linear-gradient(135deg,#22c55e,#16a34a);">
-      <img src="https://unavatar.io/instagram/pedromacierb" class="w-full h-full object-cover" onerror="this.style.display='none'">
-    </div>
-    <p class="font-black text-sm leading-tight">Pedro Maciel</p>
-    <p class="text-green-400 font-bold text-xs mt-0.5">19km</p>
-    <a href="https://www.instagram.com/pedromacierb" target="_blank"
-      class="block mt-2 text-xs text-slate-400 hover:text-green-400">@pedromacierb</a>
-    <div class="mt-3 bg-slate-800 rounded-full h-2">
-      <div id="bar-pedro" class="h-2 rounded-full transition-all duration-700" style="background:linear-gradient(90deg,#22c55e,#4ade80);width:50%;"></div>
-    </div>
-    <p id="pct-pedro" class="text-green-400 font-black text-lg mt-1">50%</p>
-    <p class="text-xs text-slate-500">dos palpites</p>
+  <div class="vs-box">VS</div>
+  <div class="atleta-card b">
+    <div class="atleta-foto" id="fotoB" style="background:linear-gradient(135deg,#00E676,#00C853)">💪</div>
+    <div class="atleta-nome" id="nomeB">—</div>
+    <div class="atleta-dist" style="color:var(--verde)" id="distB">—</div>
+    <div class="atleta-ig" id="igB"></div>
+    <div class="atleta-pct" style="color:var(--verde)" id="pctB">50%</div>
+    <div class="atleta-barra"><div class="atleta-barra-fill" id="barraB" style="background:linear-gradient(90deg,#00E676,#00C853);width:50%"></div></div>
   </div>
 </div>
 
-<!-- TOTAL DE VOTOS -->
-<div class="mx-4 mt-3 card-glass rounded-2xl px-4 py-3 flex items-center justify-between">
-  <p class="text-sm text-slate-400">Total de palpites</p>
-  <p id="total-votos" class="font-black text-white">0</p>
+<div class="total-votos">
+  <span style="color:var(--muted)">Total de palpites</span>
+  <span id="totalVotos">0</span>
 </div>
 
-<!-- BOTÃO VOTAR -->
-<div class="px-4 mt-4">
-  <p class="text-xs text-slate-500 text-center mb-3">Em quem você acredita? Vote e torça!</p>
-  <div id="area-voto" class="grid grid-cols-2 gap-3">
-    <button onclick="votar('tiago')" class="py-4 rounded-2xl font-black text-sm active:scale-95 transition-all" style="background:linear-gradient(135deg,#ff4500,#ff8c00);color:black;">
-      🔥 Tiago vence!
-    </button>
-    <button onclick="votar('pedro')" class="grad-green py-4 rounded-2xl font-black text-sm text-black active:scale-95 transition-all">
-      💪 Pedro vence!
-    </button>
+<!-- VOTAR -->
+<div class="votar-section">
+  <div class="votar-titulo">Em quem você acredita?</div>
+  <div id="areaVoto" class="votar-btns">
+    <button class="btn-votar btn-a" id="btnVotarA" onclick="votar('a')">🔥 <span id="btnNomeA">Atleta A</span> vence!</button>
+    <button class="btn-votar btn-b" id="btnVotarB" onclick="votar('b')">💪 <span id="btnNomeB">Atleta B</span> vence!</button>
   </div>
-  <div id="ja-votou" class="hidden text-center py-3">
-    <p class="text-sm text-slate-400">✅ Você já votou! Compartilhe com seus amigos.</p>
-    <button onclick="compartilhar()" class="mt-2 text-xs grad-green text-black font-black px-6 py-2.5 rounded-xl">📤 Compartilhar</button>
+  <div class="ja-votou" id="jaVotou">
+    <p>✅ Palpite registrado! Compartilhe com seus amigos.</p>
+    <button onclick="compartilhar()" style="background:var(--verde);color:#080B10;border:none;border-radius:10px;padding:10px 20px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900">📤 Compartilhar</button>
   </div>
 </div>
 
-<!-- DOAÇÃO / APOIO -->
-<div class="mx-4 mt-6">
-  <div class="rounded-3xl overflow-hidden" style="background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(255,69,0,0.1));border:1px solid rgba(255,255,255,0.1);">
-    <div class="p-5">
-      <h2 class="font-black text-lg mb-1">💰 Apoie o atleta</h2>
-      <p class="text-xs text-slate-400 mb-4">100% da sua doação vai para o vencedor. A plataforma PACE cobra uma taxa de serviço de 15% sobre cada doação para manter a operação.</p>
+<!-- DOAÇÃO -->
+<div class="doacao-card">
+  <div class="doacao-header">
+    <div class="doacao-titulo">💰 Apoie o Atleta</div>
+    <div class="doacao-sub">100% da sua doação vai para o vencedor. A plataforma PACE retém 15% como taxa de serviço.</div>
+  </div>
+  <div class="doacao-body">
+    <div class="valores-grid">
+      <button class="btn-valor" onclick="setValor(10,this)">R$10</button>
+      <button class="btn-valor" onclick="setValor(20,this)">R$20</button>
+      <button class="btn-valor" onclick="setValor(50,this)">R$50</button>
+      <button class="btn-valor" onclick="setValor(100,this)">R$100</button>
+    </div>
+    <input class="input-valor" id="inputValor" type="number" min="5" placeholder="Ou digite outro valor (R$)" oninput="atualizarResumo()">
 
-      <!-- Valores rápidos -->
-      <p class="text-xs text-slate-500 font-bold mb-2">Escolha um valor:</p>
-      <div class="grid grid-cols-4 gap-2 mb-3">
-        <button onclick="setValor(10)"  class="valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95">R$10</button>
-        <button onclick="setValor(20)"  class="valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95">R$20</button>
-        <button onclick="setValor(50)"  class="valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95">R$50</button>
-        <button onclick="setValor(100)" class="valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95">R$100</button>
+    <div class="resumo" id="resumo">
+      <div class="resumo-row"><span style="color:var(--muted)">Sua doação</span><span id="rTotal">R$ 0,00</span></div>
+      <div class="resumo-row"><span style="color:var(--muted)">Taxa PACE (15%)</span><span style="color:var(--muted)" id="rTaxa">- R$ 0,00</span></div>
+      <div class="resumo-row total"><span>Vai para o vencedor</span><span id="rAtleta">R$ 0,00</span></div>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Você torce por:</div>
+    <div class="apoio-grid">
+      <button class="btn-apoio" id="btnApoioA" onclick="setApoio('a')">🔥 <span id="apoioNomeA">Atleta A</span></button>
+      <button class="btn-apoio" id="btnApoioB" onclick="setApoio('b')">💪 <span id="apoioNomeB">Atleta B</span></button>
+    </div>
+
+    <button class="btn-pix" id="btnPix" onclick="gerarPix()">📲 Gerar QR Code Pix</button>
+  </div>
+
+  <!-- PIX AREA -->
+  <div class="pix-area" id="pixArea">
+    <div class="pix-qr">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Escaneie o QR Code ou copie a chave Pix</div>
+      <img id="qrImg" src="" alt="QR Code Pix">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Valor: <strong id="valorPixTexto" style="color:var(--verde)">R$ 0,00</strong></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Chave Pix (CNPJ): ESTAMPACE LTDA</div>
+      <div class="pix-chave-row">
+        <input class="pix-chave-input" id="chavePix" value="42912886000190" readonly>
+        <button class="btn-copiar" onclick="copiarPix()">Copiar</button>
       </div>
-      <input id="valor-custom" type="number" placeholder="Ou digite outro valor (R$)" min="5"
-        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500 mb-3"
-        oninput="atualizarResumo()">
-
-      <!-- Resumo -->
-      <div id="resumo-doacao" class="hidden bg-slate-900 rounded-2xl p-3 mb-3 text-xs space-y-1.5">
-        <div class="flex justify-between text-slate-400"><span>Sua doação</span><span id="r-total">R$ 0,00</span></div>
-        <div class="flex justify-between text-slate-500"><span>Taxa plataforma PACE (15%)</span><span id="r-taxa" class="text-slate-500">- R$ 0,00</span></div>
-        <div class="flex justify-between font-black text-green-400 pt-1 border-t border-slate-800"><span>Vai para o vencedor</span><span id="r-atleta">R$ 0,00</span></div>
-      </div>
-
-      <!-- Para quem -->
-      <p class="text-xs text-slate-500 font-bold mb-2">Você torce por:</p>
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        <button onclick="setApoio('tiago')" id="apoio-tiago" class="apoio-btn py-3 rounded-xl text-sm font-bold border border-slate-700 text-slate-400 bg-slate-800">🔥 Tiago</button>
-        <button onclick="setApoio('pedro')" id="apoio-pedro" class="apoio-btn py-3 rounded-xl text-sm font-bold border border-slate-700 text-slate-400 bg-slate-800">💪 Pedro</button>
-      </div>
-
-      <button onclick="gerarPix()" id="btn-pix" class="w-full py-4 rounded-2xl font-black text-black text-sm active:scale-95 transition-all grad-green">
-        📲 Gerar QR Code Pix
-      </button>
-    </div>
-
-    <!-- PIX QR -->
-    <div id="pix-area" class="hidden px-5 pb-5">
-      <div class="bg-slate-900 rounded-2xl p-4 text-center">
-        <p class="text-xs text-slate-400 mb-3">Escaneie o QR Code ou copie a chave</p>
-        <div class="w-40 h-40 bg-white rounded-2xl mx-auto flex items-center justify-center mb-3">
-          <img id="qr-img" src="" class="w-36 h-36 rounded-xl">
-        </div>
-        <p class="text-xs text-slate-500 mb-2">Chave Pix (CNPJ):</p>
-        <div class="flex gap-2">
-          <input id="chave-pix" value="42912886000190" readonly
-            class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white text-center">
-          <button onclick="copiarPix()" class="grad-green text-black font-black text-xs px-3 py-2 rounded-xl">Copiar</button>
-        </div>
-        <p id="valor-pix-texto" class="text-green-400 font-black text-lg mt-3"></p>
-        <p class="text-xs text-slate-500">Após o pagamento, o vencedor recebe automaticamente</p>
-        <button onclick="confirmarPagamento()" class="mt-3 w-full py-3 rounded-xl font-black text-xs text-white" style="background:linear-gradient(135deg,#25d366,#128c7e);">
-          ✅ Já paguei — confirmar doação
-        </button>
-      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--muted)">Após pagar, clique para confirmar</div>
+      <button onclick="confirmarPagamento()" style="margin-top:8px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 20px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;width:100%">✅ Já paguei</button>
     </div>
   </div>
 </div>
 
-<!-- PLACAR AO VIVO -->
-<div class="mx-4 mt-4 mb-6 card-glass rounded-2xl p-4">
-  <div class="flex items-center justify-between mb-3">
-    <h3 class="font-black text-sm">💸 Doações recebidas</h3>
-    <span class="text-xs text-slate-500" id="total-arrecadado">R$ 0,00</span>
-  </div>
-  <div id="lista-doacoes" class="space-y-2 text-xs text-slate-400 text-center py-2">
-    Seja o primeiro a apoiar! 🏃
-  </div>
-</div>
-
-<nav class="fixed bottom-0 left-0 right-0 z-50" style="background:rgba(10,15,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);">
-  <div class="flex justify-around py-2">
-    <a href="/" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">🏠</span><span>Início</span></a>
-    <a href="/calendario.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">📅</span><span>Corridas</span></a>
-    <a href="/elite.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">🏆</span><span>Ranking</span></a>
-    <a href="/x1.html" class="flex flex-col items-center text-xs text-orange-400 py-1 px-2"><span class="text-xl">⚡</span><span class="font-bold">X1</span></a>
-    <a href="/ia.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">🏃</span><span>IA</span></a>
-    <a href="/perfil.html" class="flex flex-col items-center text-xs text-slate-500 py-1 px-2"><span class="text-xl">👤</span><span>Perfil</span></a>
-  </div>
+<nav class="bottom-nav">
+  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
+  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
+  <a href="/treinador.html" class="nav-item"><span class="nav-icon">📋</span><span class="nav-label">Treinador</span></a>
+  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
+  <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
 </nav>
+<div id="toast"></div>
 
 <script>
-const CHAVE_PIX = '42912886000190'; // CNPJ ESTAMPACE LTDA
-const TAXA = 0.15; // 50% taxa plataforma
-let valorSel = 0, apoioSel = '';
+const TAXA = 0.15;
+const CHAVE_PIX = '42912886000190';
+let valorSel = 0;
+let apoioSel = '';
+let dadosDuelo = { nomeA:'Tiago Lima', nomeB:'Pedro Maciel', igA:'tiagolimadosportoes', igB:'pedromacierb', distA:'17km', distB:'19km' };
 
-// Votos
-const votos = JSON.parse(localStorage.getItem('x1_votos') || '{"tiago":0,"pedro":0}');
+// Carregar votos reais do banco
+async function carregarVotos() {
+  try {
+    const d = await fetch('/pagamentos/x1/votos').then(r => r.json());
+    
+    // Preencher nomes se vierem da API
+    if (d.atletaA) dadosDuelo.nomeA = d.atletaA;
+    if (d.atletaB) dadosDuelo.nomeB = d.atletaB;
+    if (d.distanciaA) dadosDuelo.distA = d.distanciaA;
+    if (d.distanciaB) dadosDuelo.distB = d.distanciaB;
+    if (d.igA) dadosDuelo.igA = d.igA;
+    if (d.igB) dadosDuelo.igB = d.igB;
+
+    // Calcular percentuais
+    const votos = d.votos || {};
+    const chaves = Object.keys(votos);
+    const totalA = votos[chaves[0]] || 0;
+    const totalB = votos[chaves[1]] || 0;
+    const total = totalA + totalB;
+    const pctA = total ? Math.round(totalA/total*100) : 50;
+    const pctB = 100 - pctA;
+
+    atualizarUI(pctA, pctB, total);
+  } catch(e) {
+    // Se não tiver API, usar localStorage como fallback
+    const votos = JSON.parse(localStorage.getItem('x1_votos') || '{"a":0,"b":0}');
+    const total = votos.a + votos.b;
+    const pctA = total ? Math.round(votos.a/total*100) : 50;
+    atualizarUI(pctA, 100-pctA, total);
+  }
+  preencherNomes();
+}
+
+function preencherNomes() {
+  const d = dadosDuelo;
+  document.getElementById('heroTitulo').textContent = `🥊 ${d.nomeA.split(' ')[0].toUpperCase()} vs ${d.nomeB.split(' ')[0].toUpperCase()}`;
+  document.getElementById('heroSub').textContent = `${d.distA} vs ${d.distB} — Vote e apoie seu favorito!`;
+  document.getElementById('nomeA').textContent = d.nomeA;
+  document.getElementById('nomeB').textContent = d.nomeB;
+  document.getElementById('distA').textContent = d.distA;
+  document.getElementById('distB').textContent = d.distB;
+  if (d.igA) document.getElementById('igA').textContent = '@'+d.igA;
+  if (d.igB) document.getElementById('igB').textContent = '@'+d.igB;
+  document.getElementById('btnNomeA').textContent = d.nomeA.split(' ')[0];
+  document.getElementById('btnNomeB').textContent = d.nomeB.split(' ')[0];
+  document.getElementById('apoioNomeA').textContent = d.nomeA.split(' ')[0];
+  document.getElementById('apoioNomeB').textContent = d.nomeB.split(' ')[0];
+
+  // Foto via unavatar
+  if (d.igA) {
+    const fotoA = document.getElementById('fotoA');
+    fotoA.innerHTML = `<img src="https://unavatar.io/instagram/${d.igA}" onerror="this.parentElement.innerHTML='🔥'">`;
+  }
+  if (d.igB) {
+    const fotoB = document.getElementById('fotoB');
+    fotoB.innerHTML = `<img src="https://unavatar.io/instagram/${d.igB}" onerror="this.parentElement.innerHTML='💪'">`;
+  }
+}
+
+function atualizarUI(pctA, pctB, total) {
+  document.getElementById('pctA').textContent = pctA + '%';
+  document.getElementById('pctB').textContent = pctB + '%';
+  document.getElementById('barraA').style.width = pctA + '%';
+  document.getElementById('barraB').style.width = pctB + '%';
+  document.getElementById('totalVotos').textContent = total;
+}
+
+// Verificar se já votou
 const meuVoto = localStorage.getItem('x1_meu_voto');
 if (meuVoto) {
-  document.getElementById('area-voto').classList.add('hidden');
-  document.getElementById('ja-votou').classList.remove('hidden');
+  document.getElementById('areaVoto').style.display = 'none';
+  document.getElementById('jaVotou').style.display = 'block';
 }
-atualizarVotos();
 
 function votar(atleta) {
-  if (localStorage.getItem('x1_meu_voto')) return;
+  // Salvar no localStorage (funciona sem login)
+  const votos = JSON.parse(localStorage.getItem('x1_votos') || '{"a":0,"b":0}');
   votos[atleta]++;
   localStorage.setItem('x1_votos', JSON.stringify(votos));
   localStorage.setItem('x1_meu_voto', atleta);
-  document.getElementById('area-voto').classList.add('hidden');
-  document.getElementById('ja-votou').classList.remove('hidden');
-  atualizarVotos();
+  
+  document.getElementById('areaVoto').style.display = 'none';
+  document.getElementById('jaVotou').style.display = 'block';
+  
+  const total = votos.a + votos.b;
+  const pctA = Math.round(votos.a/total*100);
+  atualizarUI(pctA, 100-pctA, total);
+  toast('✅ Palpite registrado!');
 }
 
-function atualizarVotos() {
-  const total = votos.tiago + votos.pedro;
-  document.getElementById('total-votos').textContent = total;
-  const pT = total ? Math.round((votos.tiago/total)*100) : 50;
-  const pP = total ? Math.round((votos.pedro/total)*100) : 50;
-  document.getElementById('pct-tiago').textContent = pT+'%';
-  document.getElementById('pct-pedro').textContent = pP+'%';
-  document.getElementById('bar-tiago').style.width = pT+'%';
-  document.getElementById('bar-pedro').style.width = pP+'%';
-}
-
-function setValor(v) {
+function setValor(v, btn) {
   valorSel = v;
-  document.getElementById('valor-custom').value = v;
-  document.querySelectorAll('.valor-btn').forEach(b => {
-    b.className = 'valor-btn bg-slate-800 border border-slate-700 rounded-xl py-3 text-sm font-bold text-slate-300 active:scale-95';
-  });
-  event.target.className = 'valor-btn rounded-xl py-3 text-sm font-bold text-black active:scale-95 grad-green';
+  document.getElementById('inputValor').value = v;
+  document.querySelectorAll('.btn-valor').forEach(b => b.classList.remove('sel'));
+  if (btn) btn.classList.add('sel');
   atualizarResumo();
 }
 
 function atualizarResumo() {
-  const v = parseFloat(document.getElementById('valor-custom').value) || 0;
+  const v = parseFloat(document.getElementById('inputValor').value) || 0;
   valorSel = v;
-  if (v < 5) { document.getElementById('resumo-doacao').classList.add('hidden'); return; }
-  document.getElementById('resumo-doacao').classList.remove('hidden');
+  const resumo = document.getElementById('resumo');
+  if (v < 5) { resumo.style.display = 'none'; return; }
+  resumo.style.display = 'block';
   const taxa = v * TAXA;
   const atleta = v - taxa;
-  document.getElementById('r-total').textContent = 'R$ '+v.toFixed(2);
-  document.getElementById('r-taxa').textContent = '- R$ '+taxa.toFixed(2);
-  document.getElementById('r-atleta').textContent = 'R$ '+atleta.toFixed(2);
+  document.getElementById('rTotal').textContent = 'R$ ' + v.toFixed(2);
+  document.getElementById('rTaxa').textContent = '- R$ ' + taxa.toFixed(2);
+  document.getElementById('rAtleta').textContent = 'R$ ' + atleta.toFixed(2);
 }
 
 function setApoio(a) {
   apoioSel = a;
-  document.querySelectorAll('.apoio-btn').forEach(b => {
-    b.className = 'apoio-btn py-3 rounded-xl text-sm font-bold border border-slate-700 text-slate-400 bg-slate-800';
-  });
-  const cores = a === 'tiago'
-    ? 'apoio-btn py-3 rounded-xl text-sm font-bold border text-black'
-    : 'apoio-btn py-3 rounded-xl text-sm font-bold border text-black grad-green';
-  document.getElementById('apoio-'+a).className = cores + (a==='tiago' ? ' border-orange-500' : ' border-green-500');
-  if (a==='tiago') document.getElementById('apoio-tiago').style.background='linear-gradient(135deg,#ff4500,#ff8c00)';
+  document.getElementById('btnApoioA').className = 'btn-apoio' + (a==='a' ? ' sel-a' : '');
+  document.getElementById('btnApoioB').className = 'btn-apoio' + (a==='b' ? ' sel-b' : '');
 }
 
 async function gerarPix() {
-  // Redireciona para link MP sem valor fixo (usuário digita)
-  if (valorSel < 5) { alert('Valor mínimo: R$ 5,00'); return; }
-  if (!apoioSel) { alert('Escolha quem você torce!'); return; }
+  if (valorSel < 5) { toast('⚠️ Valor mínimo: R$ 5,00'); return; }
+  if (!apoioSel) { toast('⚠️ Escolha quem você torce!'); return; }
 
-  const btn = document.getElementById('btn-pix');
-  btn.textContent = '⏳ Gerando link...';
-  btn.disabled = true;
+  const btn = document.getElementById('btnPix');
+  btn.disabled = true; btn.textContent = '⏳ Gerando...';
+
+  const atletaNome = apoioSel === 'a' ? dadosDuelo.nomeA : dadosDuelo.nomeB;
+  const paceUser = JSON.parse(localStorage.getItem('pace_user') || '{}');
 
   try {
-    // Tentar gerar preferência MP com valor específico
     const r = await fetch('/pagamentos/doacao-x1', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         valor: valorSel,
-        atletaApoio: apoioSel,
-        doadorNome: localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')).name : 'Torcedor'
+        atletaApoio: apoioSel === 'a' ? 'tiago' : 'pedro',
+        doadorNome: paceUser.name || 'Torcedor',
+        doadorEmail: paceUser.email || ''
       })
     });
     const d = await r.json();
     if (d.url) {
       window.open(d.url, '_blank');
-      btn.textContent = '📲 Gerar QR Code Pix';
-      btn.disabled = false;
+      btn.disabled = false; btn.textContent = '📲 Gerar QR Code Pix';
       return;
     }
-  } catch(e) { console.warn('MP erro, mostrando Pix manual'); }
+  } catch(e) { /* fallback Pix manual */ }
 
-  // Fallback: link MP sem valor fixo
-  window.open('https://link.mercadopago.com.br/rnestampace', '_blank');
-  btn.textContent = '📲 Gerar QR Code Pix';
-  btn.disabled = false;
-
-  // Mostrar resumo
-  document.getElementById('pix-area').classList.remove('hidden');
-  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent('42912886000190') + '&format=png';
-  document.getElementById('qr-img').src = qrUrl;
-  document.getElementById('valor-pix-texto').textContent = 'R$ ' + valorSel.toFixed(2);
-}
-// Dummy para não duplicar
-function _gerarPix_old() {
-  if (valorSel < 5) { alert('Valor mínimo: R$ 5,00'); return; }
-  if (!apoioSel) { alert('Escolha quem você torce!'); return; }
-
-  // Gerar QR Code via API gratuita
-  const chave = CHAVE_PIX;
-  const nome = 'ESTAMPACE LTDA';
-  const cidade = 'ITABAIANA';
-  const valor = valorSel.toFixed(2);
-
-  // QR Code simples via qrserver
-  const texto = `PIX:${chave} R$${valor}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(chave)}&format=png`;
-
-  document.getElementById('qr-img').src = qrUrl;
-  document.getElementById('valor-pix-texto').textContent = `R$ ${valorSel.toFixed(2)}`;
-  document.getElementById('pix-area').classList.remove('hidden');
-  document.getElementById('pix-area').scrollIntoView({ behavior:'smooth' });
+  // Fallback: QR Code manual
+  btn.disabled = false; btn.textContent = '📲 Gerar QR Code Pix';
+  const pixArea = document.getElementById('pixArea');
+  pixArea.style.display = 'block';
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(CHAVE_PIX)}&format=png&bgcolor=ffffff`;
+  document.getElementById('qrImg').src = qrUrl;
+  document.getElementById('valorPixTexto').textContent = 'R$ ' + valorSel.toFixed(2);
+  pixArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function copiarPix() {
-  navigator.clipboard.writeText(CHAVE_PIX);
-  alert('✅ Chave Pix copiada!\n\nCNPJ: '+CHAVE_PIX+'\nNome: ESTAMPACE LTDA');
+  navigator.clipboard.writeText(CHAVE_PIX).then(() => {
+    toast('✅ Chave Pix copiada!');
+  }).catch(() => {
+    document.getElementById('chavePix').select();
+    toast('✅ Selecione e copie a chave');
+  });
 }
 
 function confirmarPagamento() {
-  const atleta = apoioSel === 'tiago' ? 'Tiago Lima' : 'Pedro Maciel';
-  const taxa = (valorSel * TAXA).toFixed(2);
+  const atletaNome = apoioSel === 'a' ? dadosDuelo.nomeA : dadosDuelo.nomeB;
   const paraAtleta = (valorSel * (1-TAXA)).toFixed(2);
-
-  // Salvar doação local
-  const doacoes = JSON.parse(localStorage.getItem('x1_doacoes')||'[]');
-  doacoes.push({ atleta: apoioSel, valor: valorSel, data: new Date().toISOString() });
-  localStorage.setItem('x1_doacoes', JSON.stringify(doacoes));
-
-  alert(`✅ Obrigado pelo apoio a ${atleta}!\n\nSua doação: R$ ${valorSel.toFixed(2)}\nTaxa plataforma: R$ ${taxa}\nVai para o vencedor: R$ ${paraAtleta}\n\nO vencedor será notificado após o X1! 🏃`);
-  renderizarDoacoes();
-}
-
-function renderizarDoacoes() {
-  const doacoes = JSON.parse(localStorage.getItem('x1_doacoes')||'[]');
-  if (!doacoes.length) return;
-  const total = doacoes.reduce((s,d)=>s+d.valor,0);
-  document.getElementById('total-arrecadado').textContent = 'R$ '+total.toFixed(2);
-  document.getElementById('lista-doacoes').innerHTML = doacoes.slice(-5).reverse().map(d=>
-    `<div class="flex justify-between items-center py-1.5 border-b border-slate-800">
-      <span>${d.atleta==='tiago'?'🔥 Tiago':'💪 Pedro'}</span>
-      <span class="text-green-400 font-bold">R$ ${d.valor.toFixed(2)}</span>
-    </div>`
-  ).join('');
+  toast(`✅ Obrigado! R$ ${paraAtleta} para ${atletaNome}!`);
+  document.getElementById('pixArea').style.display = 'none';
 }
 
 function compartilhar() {
+  const nomeA = dadosDuelo.nomeA.split(' ')[0];
+  const nomeB = dadosDuelo.nomeB.split(' ')[0];
   if (navigator.share) {
-    navigator.share({ title:'X1 das Ruas — PACE', text:'Vem dar seu palpite no X1! Tiago vs Pedro 🔥', url: window.location.href });
+    navigator.share({ title:'X1 das Ruas — PACE', text:`${nomeA} vs ${nomeB} 🔥 Dê seu palpite!`, url: window.location.href });
   } else {
     navigator.clipboard.writeText(window.location.href);
-    alert('Link copiado! Compartilhe com seus amigos 🏃');
+    toast('✅ Link copiado!');
   }
 }
 
-renderizarDoacoes();
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', 3000);
+}
+
+carregarVotos();
 </script>
 </body>
 </html>
