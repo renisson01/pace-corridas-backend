@@ -229,7 +229,7 @@ export async function coachRoutes(fastify) {
 
     const treinos = await prisma.treino.findMany({
       where: { comunidadeId: { in: comIds }, ativo: true },
-      include: { comunidade: { select: { nome: true, slug: true } }, _count: { select: { checkins: true } } },
+      include: { comunidade: { select: { nome: true, slug: true } }, etapas: { orderBy: { ordem: 'asc' } } },
       orderBy: { createdAt: 'desc' }
     });
 
@@ -244,7 +244,6 @@ export async function coachRoutes(fastify) {
     const { nome, descricao, diaSemana, horario, local, periodo, comunidadeId } = req.body || {};
     if (!nome) return reply.code(400).send({ error: 'Nome do treino obrigatório' });
 
-    // Pegar comunidade: se informada, verificar se é do coach; senão pegar a primeira
     let comId = comunidadeId;
     if (!comId) {
       const com = await prisma.comunidade.findFirst({ where: { criadorId: u.userId } });
@@ -269,6 +268,35 @@ export async function coachRoutes(fastify) {
     });
 
     return { success: true, treino };
+  });
+
+  // Salvar etapas do treino (substitui todas)
+  fastify.put('/coach/treinos/:treinoId/etapas', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Login necessário' });
+    const treino = await prisma.treino.findUnique({
+      where: { id: req.params.treinoId },
+      include: { comunidade: true }
+    });
+    if (!treino || treino.comunidade.criadorId !== u.userId) return reply.code(403).send({ error: 'Sem permissão' });
+    const { etapas } = req.body;
+    if (!Array.isArray(etapas)) return reply.code(400).send({ error: 'etapas deve ser array' });
+    await prisma.treinoEtapa.deleteMany({ where: { treinoId: req.params.treinoId } });
+    const novas = await prisma.treinoEtapa.createMany({
+      data: etapas.map((e, i) => ({
+        treinoId: req.params.treinoId,
+        ordem: i + 1,
+        tipo: e.tipo || 'base',
+        descricao: e.descricao || null,
+        durMin: e.durMin ? parseInt(e.durMin) : null,
+        distanciaM: e.distanciaM ? parseInt(e.distanciaM) : null,
+        zonaFC: e.zonaFC ? parseInt(e.zonaFC) : null,
+        paceMin: e.paceMin || null,
+        paceMax: e.paceMax || null,
+        repeticoes: e.repeticoes ? parseInt(e.repeticoes) : 1
+      }))
+    });
+    return { success: true, total: novas.count };
   });
 
   // Editar treino
@@ -486,6 +514,34 @@ export async function coachRoutes(fastify) {
       }
     });
     return { success: true };
+  });
+
+  // Atleta: buscar treino completo com etapas
+  fastify.get('/athlete/treino/:treinoId', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Login necessário' });
+    const treino = await prisma.treino.findUnique({
+      where: { id: req.params.treinoId },
+      include: { etapas: { orderBy: { ordem: 'asc' } }, comunidade: { select: { nome: true } } }
+    });
+    if (!treino) return reply.code(404).send({ error: 'Não encontrado' });
+    return treino;
+  });
+
+  // Atleta: salvar FC máxima e de repouso
+  fastify.patch('/athlete/perfil-fc', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Login necessário' });
+    const { fcMax, fcRepouso } = req.body || {};
+    const user = await prisma.user.update({
+      where: { id: u.userId },
+      data: {
+        ...(fcMax && { fcMax: parseInt(fcMax) }),
+        ...(fcRepouso && { fcRepouso: parseInt(fcRepouso) })
+      },
+      select: { fcMax: true, fcRepouso: true, age: true }
+    });
+    return { success: true, user };
   });
 
   // Histórico de treinos do atleta
