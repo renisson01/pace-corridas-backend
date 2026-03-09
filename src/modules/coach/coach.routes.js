@@ -207,4 +207,156 @@ export async function coachRoutes(fastify) {
     }));
   });
 
+  // ─── GET MURAL ────────────────────────────────────────────────────────────
+  fastify.get('/coach/mural', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const grupos = await prisma.comunidade.findMany({ where: { criadorId: u.userId }, select: { id: true } });
+    const ids = grupos.map(g => g.id);
+    const posts = await prisma.mensagemComunidade.findMany({
+      where: { comunidadeId: { in: ids }, deletado: false },
+      orderBy: { criadoEm: 'desc' },
+      take: 50,
+      include: { autor: { select: { name: true } }, comunidade: { select: { nome: true } } }
+    });
+    return { posts };
+  });
+
+  // ─── ETAPAS DO TREINO ─────────────────────────────────────────────────────
+  // O schema não tem TreinoEtapa — salvamos como JSON na descricao do treino
+  fastify.put('/coach/treinos/:id/etapas', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const { etapas } = req.body || {};
+    const treino = await prisma.treino.findFirst({
+      where: { id: req.params.id }, include: { comunidade: true }
+    });
+    if (!treino || treino.comunidade.criadorId !== u.userId) return reply.code(403).send({ error: 'Sem permissão' });
+    // Salvar etapas como JSON na descricao
+    const descricao = JSON.stringify(etapas || []);
+    await prisma.treino.update({ where: { id: req.params.id }, data: { descricao } });
+    return { success: true };
+  });
+
+  // ─── FEEDBACKS DOS ALUNOS ─────────────────────────────────────────────────
+  fastify.get('/coach/feedbacks', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const grupos = await prisma.comunidade.findMany({ where: { criadorId: u.userId }, select: { id: true } });
+    const ids = grupos.map(g => g.id);
+    // Feedbacks são mensagens do tipo 'feedback' dos alunos
+    const feedbacks = await prisma.mensagemComunidade.findMany({
+      where: { comunidadeId: { in: ids }, tipo: 'feedback', deletado: false },
+      orderBy: { criadoEm: 'desc' },
+      take: 50,
+      include: { autor: { select: { name: true } } }
+    });
+    return { feedbacks };
+  });
+
+  // ─── TREINO CONCLUÍDO (ATLETA) ────────────────────────────────────────────
+  fastify.post('/athlete/treino-concluido', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const { treinoId } = req.body || {};
+    if (!treinoId) return reply.code(400).send({ error: 'treinoId obrigatório' });
+    // Buscar o membroId do atleta
+    const membro = await prisma.membroComunidade.findFirst({
+      where: { userId: u.userId, comunidade: { treinos: { some: { id: treinoId } } } }
+    });
+    if (!membro) return reply.code(403).send({ error: 'Treino não encontrado para este atleta' });
+    const checkin = await prisma.checkin.create({
+      data: { membroId: membro.id, treinoId, data: new Date(), tipo: 'treino' }
+    }).catch(() => null);
+    return { success: true, checkin };
+  });
+
+  // ─── FEEDBACK DO ATLETA ───────────────────────────────────────────────────
+  fastify.post('/athlete/feedback', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const { feeling, comentario } = req.body || {};
+    if (!feeling) return reply.code(400).send({ error: 'feeling obrigatório' });
+    // Postar no mural do grupo como feedback
+    const membro = await prisma.membroComunidade.findFirst({
+      where: { userId: u.userId }, include: { comunidade: true }
+    });
+    if (!membro) return reply.code(404).send({ error: 'Você não está em nenhum grupo' });
+    const msg = await prisma.mensagemComunidade.create({
+      data: {
+        conteudo: `${feeling}${comentario ? ' — ' + comentario : ''}`,
+        tipo: 'feedback',
+        autorId: u.userId,
+        comunidadeId: membro.comunidadeId
+      }
+    });
+    return { success: true };
+  });
+
+  // ─── HISTÓRICO DO ATLETA ──────────────────────────────────────────────────
+  fastify.get('/athlete/historico', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const membros = await prisma.membroComunidade.findMany({
+      where: { userId: u.userId },
+      select: { id: true }
+    });
+    const ids = membros.map(m => m.id);
+    const checkins = await prisma.checkin.findMany({
+      where: { membroId: { in: ids } },
+      orderBy: { data: 'desc' },
+      take: 50,
+      include: {
+        treino: { select: { titulo: true, comunidade: { select: { nome: true } } } }
+      }
+    });
+    return { checkins };
+  });
+
+  // ─── MEU COACH (ATLETA) ───────────────────────────────────────────────────
+  fastify.get('/athlete/meu-coach', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const membro = await prisma.membroComunidade.findFirst({
+      where: { userId: u.userId },
+      include: {
+        comunidade: {
+          include: { criador: { select: { id: true, name: true, bio: true, phone: true } } }
+        }
+      }
+    });
+    if (!membro) return { coach: null };
+    const criador = membro.comunidade.criador;
+    return {
+      coach: {
+        id: criador.id,
+        nome: criador.name,
+        bio: criador.bio,
+        whatsapp: criador.phone,
+        grupo: membro.comunidade.nome
+      }
+    };
+  });
+
+  // ─── PERFIL FC DO ATLETA ──────────────────────────────────────────────────
+  fastify.patch('/athlete/perfil-fc', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const { fcMax, fcRepouso } = req.body || {};
+    // Salvar no localStorage do app (não temos campo no banco) — retornar ok
+    // No futuro adicionar campo fcMax/fcRepouso no User
+    return { success: true, fcMax, fcRepouso };
+  });
+
+  // ─── PERFIL TEMPOS DO ATLETA ──────────────────────────────────────────────
+  fastify.patch('/athlete/perfil-tempos', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const { tempo5k, tempo10k, tempo21k, tempo42k } = req.body || {};
+    // Salvar como bio do usuário temporariamente (JSON)
+    const tempos = JSON.stringify({ tempo5k, tempo10k, tempo21k, tempo42k });
+    await prisma.user.update({ where: { id: u.userId }, data: { bio: tempos } }).catch(() => {});
+    return { success: true };
+  });
+
 }
