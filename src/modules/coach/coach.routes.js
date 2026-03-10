@@ -336,7 +336,8 @@ export async function coachRoutes(fastify) {
   fastify.get('/athlete/treino-hoje', async (req, reply) => {
     const u = auth(req);
     if (!u) return reply.code(401).send({ error: 'Não autorizado' });
-    const diaHoje = String(new Date().getDay());
+    const DIAS = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
+    const diaHoje = DIAS[new Date().getDay()];
     const membros = await prisma.membroComunidade.findMany({
       where: { userId:u.userId, status:'ativo' },
       include: {
@@ -523,5 +524,42 @@ export async function coachRoutes(fastify) {
     });
     return { posts };
   });
+
+  // ═══ ALIAS: /coach/atletas → /coach/alunos (compatibilidade HTML) ══════
+  fastify.get('/coach/atletas', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const membros = await prisma.membroComunidade.findMany({
+      where: { comunidade: { criadorId: u.userId }, status: 'ativo' },
+      include: {
+        user: { select: { id:true,name:true,email:true,gender:true,city:true,state:true,tempo5k:true,fcMax:true } },
+        comunidade: { select: { id:true, nome:true } }
+      }
+    });
+    const coachPerfil = await prisma.coachProfile.findUnique({ where: { userId: u.userId } });
+    let diretos = [];
+    if (coachPerfil) {
+      const ca = await prisma.coachAtleta.findMany({
+        where: { coachId: coachPerfil.id, status: 'ativo' },
+        include: { atleta: { select: { id:true,name:true,email:true,gender:true,city:true,state:true,tempo5k:true,fcMax:true } } }
+      });
+      diretos = ca.map(d => ({
+        id:d.atleta.id, nome:d.atleta.name, email:d.atleta.email,
+        genero:d.atleta.gender, cidade:d.atleta.city, estado:d.atleta.state,
+        tempo5k:d.atleta.tempo5k, fcMax:d.atleta.fcMax,
+        grupo:null, grupoId:null, role:'atleta', membroId:null, origem:'direto', coachAtletaId:d.id
+      }));
+    }
+    const grupo = membros.map(m => ({
+      id:m.user.id, nome:m.user.name, email:m.user.email,
+      genero:m.user.gender, cidade:m.user.city, estado:m.user.state,
+      tempo5k:m.user.tempo5k, fcMax:m.user.fcMax,
+      grupo:m.comunidade.nome, grupoId:m.comunidade.id,
+      role:m.role, membroId:m.id, origem:'grupo'
+    }));
+    const ids = new Set(grupo.map(a => a.id));
+    return { atletas: [...grupo, ...diretos.filter(a => !ids.has(a.id))] };
+  });
+
 
 }

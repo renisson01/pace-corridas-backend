@@ -457,9 +457,12 @@ function renderTreino(t) {
   const durTotal  = etapas.reduce((acc, e) =>
     acc + (e.durMin ? parseInt(e.durMin) * (parseInt(e.repeticoes)||1) : 0), 0);
 
-  const diasSemana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const diaLabel = t.diaSemana !== undefined && t.diaSemana !== null
-    ? diasSemana[t.diaSemana] : '';
+  // diaSemana salvo como nome ('segunda','terca'...) ou número legado ('1','2'...)
+  const _DIAS_NOME = { domingo:'Dom', segunda:'Seg', terca:'Ter', quarta:'Qua', quinta:'Qui', sexta:'Sex', sabado:'Sáb' };
+  const _DIAS_NUM  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const diaLabel = t.diaSemana
+    ? (_DIAS_NOME[t.diaSemana] || _DIAS_NUM[parseInt(t.diaSemana)] || t.diaSemana)
+    : '';
 
   const jaFez = t.jaFez || false;
   const corPrimaria = '#00E676';

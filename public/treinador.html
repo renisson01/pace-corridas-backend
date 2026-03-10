@@ -510,7 +510,7 @@ async function carregarDashboard() {
       <div class="stat-card"><span class="stat-n">${res.comunidades?.length||0}</span><span class="stat-l">Grupos</span></div>
       <div class="stat-card"><span class="stat-n" style="font-size:16px">R$${(res.mensalidade||0).toFixed(2)}</span><span class="stat-l">/mês</span></div>
     </div>
-    <div class="alert alert-info">🏃 ${res.totalAtletas} atleta${res.totalAtletas!==1?'s':''} · R$3,99/atleta/mês</div>
+    <div class="alert alert-info">🏃 ${res.totalAtletas} atleta${res.totalAtletas!==1?'s':''} · R$23,94/atleta/mês</div>
     ${res.comunidades?.length ? `
     <div class="card">
       <div class="card-titulo">Grupos</div>
@@ -577,7 +577,8 @@ async function carregarTreinos() {
   const res = await api('GET', '/coach/treinos');
   if (res.error) { el.innerHTML = erro(res.error); return; }
   if (!res.treinos?.length) { el.innerHTML = vazio('📋', 'Nenhum treino criado ainda.'); return; }
-  const D = { segunda:'SEG',terca:'TER',quarta:'QUA',quinta:'QUI',sexta:'SEX',sabado:'SAB',domingo:'DOM' };
+  // Suporta nome ('segunda') e número legado ('1','2'...)
+  const D = { domingo:'DOM',segunda:'SEG',terca:'TER',quarta:'QUA',quinta:'QUI',sexta:'SEX',sabado:'SAB', '0':'DOM','1':'SEG','2':'TER','3':'QUA','4':'QUI','5':'SEX','6':'SAB' };
   el.innerHTML = res.treinos.map(t => {
     const nEt = t.etapas?.length || 0;
     return `<div class="treino-item">
@@ -695,52 +696,43 @@ function abrirModalTreino() {
 }
 
 async function salvarTreino() {
-  const nome = document.getElementById('nt_nome').value.trim();
-  if (!nome) { toast('⚠️ Nome obrigatório'); return; }
+  const titulo = document.getElementById('nt_nome').value.trim();
+  if (!titulo) { toast('⚠️ Nome obrigatório'); return; }
   const btn = document.getElementById('btnSalvarTreino');
   btn.disabled = true; btn.textContent = 'Salvando...';
   const slug = document.getElementById('nt_comunidade').value;
   const com = comunidadesCoach.find(c => c.slug === slug);
+  if (!com) { toast('⚠️ Selecione um grupo'); btn.disabled=false; btn.textContent='Salvar Treino'; return; }
 
-  const descAuto = etapas.map((e,i) => {
-    const t = TIPOS_ETAPA[e.zona];
-    const rep = e.repeticoes > 1 ? `${e.repeticoes}×` : '';
-    const dist = e.distanciaM ? `${e.distanciaM}m` : '';
-    const dur = e.durMin ? `${e.durMin}min` : '';
-    return `${i+1}. ${rep}${dist||dur} ${t?.label||e.zona}`;
-  }).join(' | ');
+  const etapasBody = etapas.map((e, i) => ({
+    tipo: e.zona === 'TROTE' ? 'aquecimento' : e.zona.startsWith('CCR') ? 'tiro' : 'base',
+    zona: e.zona,
+    ordem: i + 1,
+    descricao: e.descricao || null,
+    durMin: e.durMin ? parseInt(e.durMin) : null,
+    distanciaM: e.distanciaM ? parseInt(e.distanciaM) : null,
+    zonaFCmin: ZONAS[e.zona]?.fcMin || null,
+    zonaFCmax: ZONAS[e.zona]?.fcMax || null,
+    repeticoes: parseInt(e.repeticoes) || 1,
+    descRecup: e.descRecup || null,
+    durRecupMin: e.durRecupMin ? parseInt(e.durRecupMin) : null,
+    distRecupM: e.distRecupM ? parseInt(e.distRecupM) : null
+  }));
 
   const res = await api('POST', '/coach/treinos', {
-    nome, descricao: descAuto,
+    titulo,
     diaSemana: document.getElementById('nt_dia').value || null,
     horario: document.getElementById('nt_hora').value || '06:00',
-    local: document.getElementById('nt_local').value,
-    periodo: 'manha', comunidadeId: com?.id
+    local: document.getElementById('nt_local').value || null,
+    periodo: 'manha',
+    comunidadeId: com.id,
+    etapas: etapasBody  // ← etapas já no POST, sem segunda chamada
   });
 
   if (res.error) { toast('❌ ' + res.error); btn.disabled = false; btn.textContent = 'Salvar Treino'; return; }
 
-  if (etapas.length) {
-    await api('PUT', '/coach/treinos/' + res.treino.id + '/etapas', {
-      etapas: etapas.map((e, i) => ({
-        tipo: e.zona.toLowerCase().includes('trote') ? 'aquecimento' : e.zona.toLowerCase().includes('ccr') ? 'tiro' : 'base',
-        zona: e.zona,
-        ordem: i + 1,
-        descricao: e.descricao || null,
-        durMin: e.durMin ? parseInt(e.durMin) : null,
-        distanciaM: e.distanciaM ? parseInt(e.distanciaM) : null,
-        zonaFCmin: ZONAS[e.zona]?.fcMin || null,
-        zonaFCmax: ZONAS[e.zona]?.fcMax || null,
-        repeticoes: parseInt(e.repeticoes) || 1,
-        descRecup: e.descRecup || null,
-        durRecupMin: e.durRecupMin ? parseInt(e.durRecupMin) : null,
-        distRecupM: e.distRecupM ? parseInt(e.distRecupM) : null
-      }))
-    });
-  }
-
   fecharModais(); btn.disabled = false; btn.textContent = 'Salvar Treino';
-  toast(`✅ "${nome}" criado com ${etapas.length} etapa${etapas.length!==1?'s':''}!`);
+  toast(`✅ "${titulo}" criado com ${etapas.length} etapa${etapas.length!==1?'s':''}!`);
   carregarTreinos();
 }
 
