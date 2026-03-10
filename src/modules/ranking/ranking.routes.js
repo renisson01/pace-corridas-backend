@@ -59,6 +59,7 @@ export async function rankingRoutes(fastify) {
   fastify.get('/ranking/15km', async (req) => { return await rankingPorDistancia('15', req.query.genero); });
   fastify.get('/ranking/10km', async (req) => { return await rankingPorDistancia('10', req.query.genero); });
   fastify.get('/ranking/5km',  async (req) => { return await rankingPorDistancia('5',  req.query.genero); });
+  fastify.get('/ranking/3km',  async (req) => { return await rankingPorDistancia('3',  req.query.genero); });
 
   fastify.get('/ranking/stats', async () => {
     const [totalAtletas, totalResultados, totalCorridas] = await Promise.all([
