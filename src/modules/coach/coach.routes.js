@@ -372,8 +372,12 @@ export async function coachRoutes(fastify) {
     const u = auth(req);
     if (!u) return reply.code(401).send({ error: 'Não autorizado' });
     const { fcMax, fcRepouso } = req.body || {};
-    // Salvar no localStorage do app (não temos campo no banco) — retornar ok
-    // No futuro adicionar campo fcMax/fcRepouso no User
+    const data = {};
+    if (fcMax)     data.fcMax     = parseInt(fcMax);
+    if (fcRepouso) data.fcRepouso = parseInt(fcRepouso);
+    if (Object.keys(data).length) {
+      await prisma.user.update({ where: { id: u.userId }, data }).catch(() => {});
+    }
     return { success: true, fcMax, fcRepouso };
   });
 
@@ -382,10 +386,26 @@ export async function coachRoutes(fastify) {
     const u = auth(req);
     if (!u) return reply.code(401).send({ error: 'Não autorizado' });
     const { tempo5k, tempo10k, tempo21k, tempo42k } = req.body || {};
-    // Salvar como bio do usuário temporariamente (JSON)
-    const tempos = JSON.stringify({ tempo5k, tempo10k, tempo21k, tempo42k });
-    await prisma.user.update({ where: { id: u.userId }, data: { bio: tempos } }).catch(() => {});
+    const data = {};
+    if (tempo5k)  data.tempo5k  = tempo5k;
+    if (tempo10k) data.tempo10k = tempo10k;
+    if (tempo21k) data.tempo21k = tempo21k;
+    if (tempo42k) data.tempo42k = tempo42k;
+    if (Object.keys(data).length) {
+      await prisma.user.update({ where: { id: u.userId }, data }).catch(() => {});
+    }
     return { success: true };
+  });
+
+  // ─── PERFIL DO ATLETA (carregar dados salvos) ────────────────────────────
+  fastify.get('/athlete/perfil', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const user = await prisma.user.findUnique({
+      where: { id: u.userId },
+      select: { fcMax: true, fcRepouso: true, tempo5k: true, tempo10k: true, tempo21k: true, tempo42k: true, nivelAtleta: true }
+    });
+    return { perfil: user || {} };
   });
 
   // ─── MURAL DO ATLETA (ver posts do seu grupo) ────────────────────────────

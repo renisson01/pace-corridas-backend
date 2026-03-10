@@ -373,11 +373,23 @@ let treinoConcluidoId = null;
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   if (!token) { window.location.href = '/entrar.html'; return; }
   if (user.name) {
     document.getElementById('avatarTop').textContent = user.name.charAt(0).toUpperCase();
     document.getElementById('topNome').textContent = user.name.split(' ')[0];
+  }
+  // Carregar perfil do banco e mesclar com localStorage
+  const res = await req('GET', '/athlete/perfil');
+  if (res.perfil && Object.keys(res.perfil).length) {
+    const p = res.perfil;
+    if (p.fcMax)     perfil.fcMax     = String(p.fcMax);
+    if (p.fcRepouso) perfil.fcRepouso = String(p.fcRepouso);
+    if (p.tempo5k)   perfil.tempo5k   = p.tempo5k;
+    if (p.tempo10k)  perfil.tempo10k  = p.tempo10k;
+    if (p.tempo21k)  perfil.tempo21k  = p.tempo21k;
+    if (p.tempo42k)  perfil.tempo42k  = p.tempo42k;
+    localStorage.setItem('pace_perfil', JSON.stringify(perfil));
   }
   carregarHoje();
   carregarPerfilLocal();
