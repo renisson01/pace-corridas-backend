@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PACE — Perfil do Atleta</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#00E676;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Barlow',sans-serif}
+
+.topbar{height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;background:rgba(8,11,16,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.btn-back{background:transparent;border:none;color:var(--verde);font-size:20px;padding:4px;cursor:pointer}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:1px}
+
+/* Hero do atleta */
+.hero{background:linear-gradient(180deg,rgba(0,230,118,.06) 0%,transparent 100%);padding:20px 16px;border-bottom:1px solid var(--border)}
+.hero-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--verde),#00C853);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:#080B10;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.hero-info h1{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;line-height:1.1;margin-bottom:4px}
+.hero-info p{font-size:12px;color:var(--muted)}
+.nivel-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:4px}
+.nv-em{background:rgba(255,215,0,.15);color:#FFD700;border:1px solid rgba(255,215,0,.3)}
+.nv-en{background:rgba(255,109,0,.15);color:#FF6D00;border:1px solid rgba(255,109,0,.3)}
+.nv-er{background:rgba(59,130,246,.15);color:#60A5FA;border:1px solid rgba(59,130,246,.3)}
+.nv-se{background:rgba(0,230,118,.15);color:var(--verde);border:1px solid rgba(0,230,118,.3)}
+.nv-av{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center}
+.stat-n{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde);display:block;line-height:1}
+.stat-l{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:3px;display:block}
+
+/* Melhores tempos */
+.section{padding:14px 16px;border-bottom:1px solid var(--border)}
+.sec-titulo{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px;color:var(--verde)}
+.tempo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tempo-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px}
+.tempo-dist{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.tempo-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde);line-height:1}
+.tempo-sub{font-size:10px;color:var(--muted);margin-top:3px}
+
+/* Histórico */
+.prova-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.prova-nome{font-weight:700;font-size:13px;margin-bottom:4px;line-height:1.2}
+.prova-data{font-size:11px;color:var(--muted);margin-bottom:8px}
+.prova-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ps-box{background:var(--bg3);border-radius:8px;padding:6px;text-align:center}
+.ps-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;color:var(--verde);display:block;line-height:1}
+.ps-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px;display:block}
+.prova-extra{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.pe-tag{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 8px;font-size:10px;color:var(--muted)}
+.pe-tag strong{color:var(--text)}
+
+/* Vinculação */
+.vincular-box{margin:14px 16px;background:var(--bg2);border:1px solid rgba(0,230,118,.25);border-radius:14px;padding:16px}
+.vincular-titulo{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--verde);margin-bottom:6px}
+.vincular-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.btn-vincular{width:100%;background:linear-gradient(135deg,var(--verde),#00C853);color:#080B10;border:none;border-radius:12px;padding:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;cursor:pointer}
+.btn-vincular:disabled{opacity:.5}
+
+.loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:28px}
+.error-box{text-align:center;padding:40px 20px;color:var(--muted)}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:6px 0 calc(8px + env(safe-area-inset-bottom))}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;color:var(--muted)}
+.nav-item.ativo{color:var(--laranja)}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(0,230,118,.3);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;display:none;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="btn-back" onclick="history.back()">←</button>
+  <span class="topbar-title">Perfil do Atleta</span>
+</div>
+
+<div id="mainContent">
+  <div class="loading">⏳</div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
+  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
+  <a href="/treinador.html" class="nav-item"><span class="nav-icon">📋</span><span class="nav-label">Treinador</span></a>
+  <a href="/elite.html" class="nav-item ativo"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
+  <a href="/x1.html" class="nav-item"><span class="nav-icon">🥊</span><span class="nav-label">X1</span></a>
+</nav>
+<div id="toast"></div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const atletaId = params.get('id');
+
+function nivelCls(nivel) {
+  if (!nivel) return 'nv-av';
+  if (nivel.includes('Mundial')) return 'nv-em';
+  if (nivel.includes('Nacional')) return 'nv-en';
+  if (nivel.includes('Regional')) return 'nv-er';
+  if (nivel.includes('Sub')) return 'nv-se';
+  return 'nv-av';
+}
+
+function fmtData(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+async function carregar() {
+  if (!atletaId) {
+    document.getElementById('mainContent').innerHTML = '<div class="error-box"><p>❌ Atleta não encontrado</p><a href="/elite.html" style="color:var(--verde);font-size:13px">← Voltar ao ranking</a></div>';
+    return;
+  }
+  try {
+    const a = await fetch(`/atleta/${atletaId}`).then(r=>r.json());
+    if (a.error) throw new Error(a.error);
+    renderPerfil(a);
+  } catch(e) {
+    document.getElementById('mainContent').innerHTML = `<div class="error-box"><p>❌ ${e.message||'Erro ao carregar'}</p><a href="/elite.html" style="color:var(--verde);font-size:13px">← Voltar ao ranking</a></div>`;
+  }
+}
+
+function renderPerfil(a) {
+  const iniciais = a.name.split(' ').slice(0,2).map(n=>n[0]).join('');
+  const nc = nivelCls(a.nivel);
+  const paceUser = JSON.parse(localStorage.getItem('pace_user')||'{}');
+  const jaVinculado = a.linkedUserId;
+  const esteUsuario = paceUser.id && a.linkedUserId === paceUser.id;
+
+  // Melhores tempos
+  const melhores = Object.entries(a.melhoresPorDist||{});
+  const melhoresHtml = melhores.length ? `
+    <div class="section">
+      <p class="sec-titulo">⚡ Melhores Tempos</p>
+      <div class="tempo-grid">
+        ${melhores.map(([dist,p])=>`
+          <div class="tempo-card">
+            <div class="tempo-dist">${dist}</div>
+            <div class="tempo-val">${p.time||'—'}</div>
+            <div class="tempo-sub">${p.pace?p.pace+'/km':''} ${p.velocidade?'· '+p.velocidade:''}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
+  // Histórico de provas
+  const provasHtml = a.provas?.length ? `
+    <div class="section">
+      <p class="sec-titulo">🏁 Histórico de Provas (${a.provas.length})</p>
+      ${a.provas.map(p=>`
+        <div class="prova-card">
+          <div class="prova-nome">${p.raceName}</div>
+          <div class="prova-data">📅 ${fmtData(p.raceDate)} ${p.raceCity?'· 📍'+p.raceCity:''}</div>
+          <div class="prova-stats">
+            <div class="ps-box"><span class="ps-val">${p.time||'—'}</span><span class="ps-lbl">Tempo</span></div>
+            <div class="ps-box"><span class="ps-val">${p.pace||'—'}</span><span class="ps-lbl">Pace/km</span></div>
+            <div class="ps-box"><span class="ps-val">${p.velocidade||'—'}</span><span class="ps-lbl">Vel.</span></div>
+          </div>
+          <div class="prova-extra">
+            ${p.distance?`<span class="pe-tag">👟 <strong>${p.distance}</strong></span>`:''}
+            ${p.overallRank?`<span class="pe-tag">🏅 <strong>${p.overallRank}° geral</strong></span>`:''}
+            ${p.ageGroup?`<span class="pe-tag">🎂 <strong>${p.ageGroup}</strong></span>`:''}
+          </div>
+        </div>`).join('')}
+    </div>` : '';
+
+  // Box de vinculação
+  let vincularHtml = '';
+  if (!jaVinculado) {
+    vincularHtml = `
+      <div class="vincular-box">
+        <p class="vincular-titulo">🔗 Este perfil é seu?</p>
+        <p class="vincular-sub">Se você é <strong style="color:var(--text)">${a.name}</strong>, faça login e vincule este perfil à sua conta para adicionar fotos, completar seus dados e muito mais!</p>
+        <button class="btn-vincular" onclick="solicitarVinculacao('${a.id}','${a.name.replace(/'/g,"\\'")}')">
+          ✅ Sou eu! Vincular ao meu cadastro
+        </button>
+      </div>`;
+  } else if (esteUsuario) {
+    vincularHtml = `<div style="margin:14px 16px;background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:14px;padding:14px;text-align:center;font-size:13px;color:var(--verde);font-weight:600">✅ Perfil vinculado à sua conta</div>`;
+  }
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="hero">
+      <div class="hero-row">
+        <div class="avatar">${a.photo?`<img src="${a.photo}" alt="">`:`${iniciais}`}</div>
+        <div class="hero-info">
+          <h1>${a.name}</h1>
+          <p>${[a.equipe, a.city&&a.state?`${a.city}/${a.state}`:a.state||a.city||''].filter(Boolean).join(' · ')}</p>
+          <span class="nivel-badge ${nc}">${a.nivel||'🌱 Avançado'}</span>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><span class="stat-n">${a.totalRaces||0}</span><span class="stat-l">Provas</span></div>
+        <div class="stat-box"><span class="stat-n">${(a.totalPoints||0).toLocaleString('pt-BR')}</span><span class="stat-l">Pontos</span></div>
+        <div class="stat-box"><span class="stat-n">${a.gender==='M'?'👨':a.gender==='F'?'👩':'—'}</span><span class="stat-l">${a.age?a.age+' anos':'Gênero'}</span></div>
+      </div>
+    </div>
+    ${vincularHtml}
+    ${melhoresHtml}
+    ${provasHtml}
+    ${!a.provas?.length?'<div class="error-box"><p>Nenhuma prova registrada</p></div>':''}
+  `;
+}
+
+function solicitarVinculacao(atletaId, atletaNome) {
+  const paceUser = JSON.parse(localStorage.getItem('pace_user')||'{}');
+  if (!paceUser.id) {
+    toast('⚠️ Faça login primeiro!');
+    setTimeout(()=>location.href='/perfil.html', 1500);
+    return;
+  }
+  // Confirmar vinculação
+  const ok = confirm(`Confirmar: Você é ${atletaNome}?\n\nEsta ação vai vincular este perfil de atleta à sua conta.`);
+  if (!ok) return;
+  fetch(`/atleta/${atletaId}/vincular`, {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${paceUser.token||''}` },
+    body: JSON.stringify({ userId: paceUser.id })
+  }).then(r=>r.json()).then(d => {
+    if (d.ok) { toast('✅ Perfil vinculado com sucesso!'); setTimeout(()=>location.reload(), 1500); }
+    else toast('⚠️ ' + (d.error||'Erro ao vincular'));
+  }).catch(()=>toast('⚠️ Erro de conexão'));
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._t); t._t = setTimeout(()=>t.style.display='none', 3000);
+}
+
+carregar();
+</script>
+</body>
+</html>
