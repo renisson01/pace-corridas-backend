@@ -209,8 +209,12 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
     <div class="checkout-titulo">📲 QR Code Pix gerado!</div>
     <div class="checkout-valor" id="checkoutValor"></div>
     <img class="checkout-qr" id="qrCheckout" src="" alt="QR Code Pix">
-    <div class="checkout-instrucao">Abra o app do seu banco, escaneie o QR Code e confirme o pagamento.<br>Ou clique no botão abaixo para pagar pelo navegador.</div>
-    <a class="btn-checkout-link" id="checkoutLink" href="#" target="_blank">💳 Abrir checkout completo</a>
+    <div class="checkout-instrucao">Abra o app do seu banco e escaneie o QR Code.<br>Ou use o <strong style="color:var(--verde)">Pix Copia e Cola</strong> abaixo:</div>
+    <div class="pix-chave-row">
+      <input class="pix-chave-input" id="pixCopiaECola" type="text" readonly placeholder="Código Pix...">
+      <button class="btn-copiar" onclick="copiarPix()">📋 Copiar</button>
+    </div>
+    <a class="btn-checkout-link" id="checkoutLink" href="#" target="_blank" style="display:none">💳 Abrir link alternativo</a>
     <button class="btn-checkout-fechar" onclick="document.getElementById('checkoutArea').style.display='none'">Fechar</button>
   </div>
 </div>
@@ -365,8 +369,8 @@ async function gerarPix() {
     btn.disabled = false;
     btn.innerHTML = '📲 Gerar QR Code Pix';
 
-    if (d.url) {
-      mostrarQR(d.url, atletaNome);
+    if (d.qrCode) {
+      mostrarQR(d, atletaNome);
       return;
     }
     toast('⚠️ ' + (d.error || 'Erro ao gerar pagamento'));
@@ -377,17 +381,48 @@ async function gerarPix() {
   }
 }
 
-function mostrarQR(url, atletaNome) {
+function mostrarQR(d, atletaNome) {
   const area = document.getElementById('checkoutArea');
   area.style.display = 'block';
-  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='
-    + encodeURIComponent(url) + '&bgcolor=ffffff&format=png';
-  document.getElementById('qrCheckout').src = qrUrl;
+
+  // QR Code: preferir base64 do MP (mais confiável), fallback api.qrserver
+  const imgEl = document.getElementById('qrCheckout');
+  if (d.qrCodeBase64) {
+    imgEl.src = 'data:image/png;base64,' + d.qrCodeBase64;
+  } else {
+    imgEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='
+      + encodeURIComponent(d.qrCode) + '&bgcolor=ffffff&format=png';
+  }
+
+  // Copia e cola
+  const inputPix = document.getElementById('pixCopiaECola');
+  if (inputPix) inputPix.value = d.qrCode;
+
+  // Link alternativo
+  if (d.ticketUrl) {
+    const linkEl = document.getElementById('checkoutLink');
+    linkEl.href = d.ticketUrl;
+    linkEl.style.display = 'block';
+  }
+
   document.getElementById('checkoutValor').textContent =
     'R$ ' + valorSel.toFixed(2).replace('.',',') + ' — Apoio ' + atletaNome;
-  document.getElementById('checkoutLink').href = url;
   area.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  toast('✅ QR Code gerado! Escaneie para pagar.');
+  toast('✅ QR Code Pix gerado!');
+}
+
+function copiarPix() {
+  const codigo = document.getElementById('pixCopiaECola')?.value;
+  if (!codigo) return;
+  navigator.clipboard.writeText(codigo)
+    .then(() => toast('✅ Código Pix copiado!'))
+    .catch(() => {
+      // fallback manual
+      const el = document.getElementById('pixCopiaECola');
+      el.select();
+      document.execCommand('copy');
+      toast('✅ Código Pix copiado!');
+    });
 }
 
 function compartilhar() {

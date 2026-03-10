@@ -46,9 +46,45 @@ export async function pagamentosRoutes(fastify) {
       const valorTotal = parseFloat(valor);
       const valorAtleta = parseFloat((valorTotal * (1 - TAXA_PLATAFORMA)).toFixed(2));
       const atletaNome = atletaApoio === 'pedro' ? 'Pedrinho 19km' : 'Tiago Portões 17km';
-      const preference = new Preference(getMPClient());
-      const result = await preference.create({ body: { items: [{ id: `x1-${Date.now()}`, title: `🏃 Apoio X1 — ${atletaNome}`, description: `Taxa PACE: ${TAXA_PLATAFORMA*100}%. Atleta recebe: R$ ${valorAtleta}`, quantity: 1, unit_price: valorTotal, currency_id: 'BRL', category_id: 'services' }], payer: { name: doadorNome || 'Torcedor', email: doadorEmail || '' }, payment_methods: { installments: 1 }, back_urls: { success: `${BASE_URL}/x1.html?doacao=sucesso&atleta=${atletaApoio}&valor=${valorTotal}`, failure: `${BASE_URL}/x1.html?doacao=erro`, pending: `${BASE_URL}/x1.html?doacao=pendente` }, auto_return: 'approved', statement_descriptor: 'PACE X1', external_reference: `x1-${atletaApoio}-${Date.now()}`, notification_url: `${BASE_URL}/pagamentos/webhook` } });
-      return { url: result.init_point, preferenceId: result.id, valorTotal, valorAtleta, taxaPlataforma: parseFloat((valorTotal*TAXA_PLATAFORMA).toFixed(2)), atleta: atletaApoio, atletaNome };
+      const externalRef = `x1-${atletaApoio}-${Date.now()}`;
+
+      // Gerar pagamento Pix real com copia e cola
+      const paymentApi = new Payment(getMPClient());
+      const result = await paymentApi.create({ body: {
+        transaction_amount: valorTotal,
+        description: `Apoio X1 — ${atletaNome}`,
+        payment_method_id: 'pix',
+        external_reference: externalRef,
+        notification_url: `${BASE_URL}/pagamentos/webhook`,
+        payer: {
+          email: doadorEmail || 'torcedor@pacecorridas.com.br',
+          first_name: doadorNome || 'Torcedor',
+        }
+      }});
+
+      const pixData = result?.point_of_interaction?.transaction_data;
+      const qrCode = pixData?.qr_code;         // código copia e cola
+      const qrCodeBase64 = pixData?.qr_code_base64; // imagem base64
+      const ticketUrl = result?.transaction_details?.external_resource_url || '';
+
+      if (!qrCode) {
+        console.error('[MP DOACAO PIX] Sem qr_code na resposta:', JSON.stringify(result));
+        return reply.code(500).send({ error: 'Pix não gerado. Tente novamente.' });
+      }
+
+      return {
+        ok: true,
+        paymentId: result.id,
+        qrCode,          // copia e cola
+        qrCodeBase64,    // imagem QR (base64 png)
+        ticketUrl,       // link alternativo
+        valorTotal,
+        valorAtleta,
+        taxaPlataforma: parseFloat((valorTotal * TAXA_PLATAFORMA).toFixed(2)),
+        atleta: atletaApoio,
+        atletaNome,
+        externalRef
+      };
     } catch (e) {
       console.error('[MP DOACAO]', e.message);
       return reply.code(500).send({ error: e.message });
