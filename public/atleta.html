@@ -2,135 +2,754 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Perfil do Atleta — PACE BRAZIL</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PACE — Meu Treino</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#00E676;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
-*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;
+  --bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;
+  --border:#1F2937;--text:#F1F5F9;--muted:#64748B
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;overflow-x:hidden}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
-.topbar{display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(8,11,16,0.98);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.back{color:var(--verde);text-decoration:none;font-size:20px}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
-.profile-header{background:linear-gradient(135deg,#0d2818,#065f46);padding:30px 18px;text-align:center}
-.avatar{width:80px;height:80px;border-radius:50%;background:var(--verde);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:#080B10;margin:0 auto 12px}
-.nome{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900}
-.info{color:rgba(255,255,255,0.7);font-size:13px;margin-top:4px}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
-.stat{padding:16px 8px;text-align:center;border-right:1px solid var(--border)}
-.stat:last-child{border-right:none}
-.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)}
-.stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
-.section{padding:16px 18px}
-.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.result-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.result-card .race-info{flex:1}
-.result-card .race-name{font-weight:700;font-size:14px;margin-bottom:2px}
-.result-card .race-meta{font-size:11px;color:var(--muted)}
-.result-card .time-info{text-align:right}
-.result-card .time{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde)}
-.result-card .pace{font-size:11px;color:var(--muted)}
-.result-card .rank{font-size:11px;color:var(--verde);font-weight:700}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;margin:2px}
-.badge-gold{background:rgba(255,215,0,0.15);color:#FFD700}
-.badge-silver{background:rgba(192,192,192,0.15);color:#C0C0C0}
-.badge-bronze{background:rgba(205,127,50,0.15);color:#CD7F32}
-.badge-green{background:rgba(0,230,118,0.1);color:var(--verde)}
-.empty{text-align:center;padding:40px;color:var(--muted)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,11,16,0.98);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0;z-index:100}
-.bottom-nav a{color:var(--muted);text-decoration:none;font-size:10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Barlow',sans-serif}
+input,select,textarea{-webkit-appearance:none;appearance:none;font-family:'Barlow',sans-serif}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(8,11,16,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px}
+.avatar-top{width:32px;height:32px;border-radius:50%;background:var(--verde);color:#080B10;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;flex-shrink:0}
+main{padding-top:52px}
+
+/* TABS */
+.tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:52px;z-index:50;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:12px 18px;font-size:12px;font-weight:700;color:var(--muted);border:none;border-bottom:2px solid transparent;background:none;transition:all .2s;white-space:nowrap;cursor:pointer}
+.tab.ativo{color:var(--verde);border-bottom-color:var(--verde)}
+.section{display:none;padding:16px}
+.section.ativo{display:block}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.card-titulo{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center}
+.stat-n{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--verde);display:block;line-height:1}
+.stat-l{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;display:block}
+.alert{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;margin-bottom:10px;font-size:13px;font-weight:600}
+.alert-info{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);color:var(--verde)}
+.alert-warn{background:rgba(255,109,0,.06);border:1px solid rgba(255,109,0,.2);color:#FF9040}
+
+/* TREINO DO DIA */
+.hoje-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.hoje-header{padding:16px;border-bottom:1px solid var(--border)}
+.hoje-tipo-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.hoje-titulo{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:4px}
+.hoje-sub{font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap}
+.hoje-sub span{display:flex;align-items:center;gap:4px}
+.hoje-etapas{padding:12px 16px}
+.hoje-etapa{display:flex;gap:12px;padding:11px 12px;border-radius:10px;margin-bottom:6px}
+.hoje-etapa-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;min-width:22px;padding-top:1px}
+.hoje-etapa-info{flex:1;min-width:0}
+.hoje-etapa-tipo{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.hoje-etapa-desc{font-size:13px;margin-top:3px;line-height:1.45;color:var(--text)}
+.hoje-etapa-pace{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:900;margin-top:5px}
+.hoje-etapa-vel{font-size:11px;color:var(--muted);margin-top:1px}
+.hoje-etapa-fc{font-size:11px;margin-top:2px;font-weight:600}
+.hoje-etapa-rep{font-size:11px;font-weight:700;margin-top:3px;color:var(--laranja)}
+.hoje-etapa-tempo{font-size:11px;color:var(--muted);margin-top:2px}
+.hoje-resumo{display:flex;gap:16px;padding:12px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg3)}
+.hoje-resumo-item{text-align:center;flex:1}
+.hoje-resumo-v{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--verde);display:block}
+.hoje-resumo-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.hoje-actions{padding:12px 16px;display:flex;gap:8px}
+
+/* SEM TREINO */
+.sem-treino{text-align:center;padding:40px 20px}
+.sem-treino-icon{font-size:56px;margin-bottom:12px}
+.sem-treino-titulo{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:6px}
+.sem-treino-sub{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* FEEDBACK */
+.carinha-grid{display:flex;gap:8px;margin-top:8px}
+.carinha-btn{flex:1;font-size:22px;padding:10px 4px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;transition:all .2s;text-align:center}
+.carinha-btn.ativo{border-color:var(--verde);background:rgba(0,230,118,.1);transform:scale(1.08)}
+
+/* HISTÓRICO */
+.hist-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.hist-icone{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.15)}
+.hist-info{flex:1;min-width:0}
+.hist-nome{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.hist-badge{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;color:var(--verde);flex-shrink:0}
+
+/* PERFIL DE PERFORMANCE */
+.perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.perf-campo{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.perf-campo label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px}
+.perf-input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;font-size:15px;font-family:'Barlow Condensed',sans-serif;font-weight:700;outline:none;transition:border-color .2s}
+.perf-input:focus{border-color:var(--verde)}
+.perf-input::placeholder{color:var(--muted);font-weight:400;font-size:13px}
+.zona-tabela{margin-top:4px}
+.zona-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;margin-bottom:4px}
+.zona-cod{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;min-width:58px}
+.zona-barra{height:4px;border-radius:2px;width:30px}
+.zona-nome-col{font-size:11px;flex:1;min-width:0}
+.zona-pct{font-size:10px;color:var(--muted)}
+.zona-pace-col{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;min-width:88px;text-align:right}
+.zona-vel-col{font-size:10px;color:var(--muted);min-width:64px;text-align:right}
+.zona-fc-col{font-size:10px;min-width:60px;text-align:right}
+
+/* MEU COACH */
+.coach-card{text-align:center;padding:24px 16px}
+.coach-av-big{width:72px;height:72px;border-radius:50%;background:var(--verde);color:#080B10;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;margin:0 auto 12px}
+
+/* BUTTONS */
+.btn-primary{background:var(--verde);color:#080B10;border:none;border-radius:10px;padding:13px 20px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;width:100%;letter-spacing:.5px;transition:opacity .2s}
+.btn-primary:active{opacity:.8}
+.btn-primary:disabled{opacity:.4}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;width:100%;transition:all .2s}
+.btn-sm{padding:8px 14px;font-size:12px;border-radius:8px;border:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+.btn-sm:active{opacity:.7}
+.btn-sm:disabled{opacity:.4}
+.btn-verde{background:var(--verde);color:#080B10}
+.btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-laranja{background:var(--laranja);color:#fff}
+
+/* FORM */
+.input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;outline:none;transition:border-color .2s}
+.input:focus{border-color:var(--verde)}
+.input::placeholder{color:var(--muted)}
+.textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;outline:none;resize:none;min-height:70px;transition:border-color .2s}
+.textarea:focus{border-color:var(--verde)}
+label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px}
+.form-group{margin-bottom:12px}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:6px 0 calc(10px + env(safe-area-inset-bottom))}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;color:var(--muted);transition:color .2s}
+.nav-item.ativo{color:var(--verde)}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* UTILS */
+.loading{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.spinner{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:32px 20px;color:var(--muted)}
+.empty-icon{font-size:40px;margin-bottom:10px}
+.empty-txt{font-size:14px;line-height:1.6}
+.divider{height:1px;background:var(--border);margin:12px 0}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid rgba(0,230,118,.3);color:#fff;padding:11px 18px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5);max-width:90vw;text-align:center;display:none}
+.tag{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:700;display:inline-block}
+.tag-verde{background:rgba(0,230,118,.1);color:var(--verde);border:1px solid rgba(0,230,118,.2)}
+.tag-cinza{background:rgba(100,116,139,.1);color:var(--muted);border:1px solid var(--border)}
+.tag-laranja{background:rgba(255,109,0,.1);color:#FF9040;border:1px solid rgba(255,109,0,.2)}
 </style>
 </head>
 <body>
+
+<!-- TOPBAR -->
 <div class="topbar">
-  <a href="javascript:history.back()" class="back">←</a>
-  <a href="/" class="logo">PACE</a>
-  <span style="font-size:14px;font-weight:700;margin-left:auto">👤 Atleta</span>
+  <span class="logo">PACE</span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--muted)" id="topNome"></div>
+    <div class="avatar-top" id="avatarTop">?</div>
+  </div>
 </div>
-<div class="profile-header">
-  <div class="avatar" id="avatar">?</div>
-  <div class="nome" id="nome">Carregando...</div>
-  <div class="info" id="info"></div>
+
+<main>
+
+<!-- TABS -->
+<div class="tabs" id="mainTabs">
+  <button class="tab ativo" onclick="mudarTab('Hoje',this)">🏃 Hoje</button>
+  <button class="tab" onclick="mudarTab('Historico',this)">📋 Histórico</button>
+  <button class="tab" onclick="mudarTab('Perfil',this)">⚡ Meu Perfil</button>
+  <button class="tab" onclick="mudarTab('Coach',this)">🏅 Meu Coach</button>
 </div>
-<div class="stats-grid">
-  <div class="stat"><div class="stat-val" id="st-pts">-</div><div class="stat-lbl">Pontos</div></div>
-  <div class="stat"><div class="stat-val" id="st-provas">-</div><div class="stat-lbl">Provas</div></div>
-  <div class="stat"><div class="stat-val" id="st-km">-</div><div class="stat-lbl">Km total</div></div>
-  <div class="stat"><div class="stat-val" id="st-pace">-</div><div class="stat-lbl">Pace med</div></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: HOJE                                  -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section ativo" id="tabHoje">
+  <div id="hojeContent"><div class="loading"><div class="spinner"></div>Carregando treino...</div></div>
+
+  <!-- FEEDBACK -->
+  <div id="feedbackCard" style="display:none" class="card">
+    <div class="card-titulo">💬 Como foi o treino?</div>
+    <div class="carinha-grid">
+      <button class="carinha-btn" data-v="😫" onclick="escolherCarinha(this)">😫</button>
+      <button class="carinha-btn" data-v="😓" onclick="escolherCarinha(this)">😓</button>
+      <button class="carinha-btn" data-v="😊" onclick="escolherCarinha(this)">😊</button>
+      <button class="carinha-btn" data-v="🔥" onclick="escolherCarinha(this)">🔥</button>
+      <button class="carinha-btn" data-v="💪" onclick="escolherCarinha(this)">💪</button>
+    </div>
+    <div class="form-group" style="margin-top:10px">
+      <textarea class="textarea" id="feedbackComentario" placeholder="Comentário opcional..."></textarea>
+    </div>
+    <button class="btn-primary" onclick="enviarFeedback()">Enviar Feedback</button>
+  </div>
 </div>
-<div id="badges" class="section" style="display:none">
-  <div class="sec-title">🏅 Conquistas</div>
-  <div id="badges-list"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: HISTÓRICO                             -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="tabHistorico">
+  <div id="historicoContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
 </div>
-<div class="section">
-  <div class="sec-title">📋 Resultados</div>
-  <div id="resultados"><div class="empty">⏳ Carregando...</div></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: PERFIL DE PERFORMANCE                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="tabPerfil">
+
+  <div class="card">
+    <div class="card-titulo">⏱ Meus Tempos de Prova</div>
+    <div class="perf-grid">
+      <div class="perf-campo">
+        <label>5 km</label>
+        <input class="perf-input" id="p_5k" placeholder="mm:ss" maxlength="8" oninput="atualizarZonas()">
+      </div>
+      <div class="perf-campo">
+        <label>10 km</label>
+        <input class="perf-input" id="p_10k" placeholder="mm:ss" maxlength="8" oninput="atualizarZonas()">
+      </div>
+      <div class="perf-campo">
+        <label>21 km</label>
+        <input class="perf-input" id="p_21k" placeholder="h:mm:ss" maxlength="9" oninput="atualizarZonas()">
+      </div>
+      <div class="perf-campo">
+        <label>42 km</label>
+        <input class="perf-input" id="p_42k" placeholder="h:mm:ss" maxlength="9" oninput="atualizarZonas()">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">❤️ Frequência Cardíaca</div>
+    <div class="perf-grid">
+      <div class="perf-campo">
+        <label>FC Máxima</label>
+        <input class="perf-input" id="p_fcmax" type="number" placeholder="ex: 185" oninput="atualizarZonas()">
+      </div>
+      <div class="perf-campo">
+        <label>FC Repouso</label>
+        <input class="perf-input" id="p_fcrepouso" type="number" placeholder="ex: 58">
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">
+      FC Máxima estimada pela fórmula: 220 − sua idade. Use a medida real se tiver.
+    </div>
+  </div>
+
+  <button class="btn-primary" id="btnSalvarPerfil" onclick="salvarPerfil()" style="margin-bottom:16px">
+    Salvar Perfil
+  </button>
+
+  <!-- TABELA DE ZONAS -->
+  <div id="zonasCard" style="display:none" class="card">
+    <div class="card-titulo">📊 Suas Zonas de Treino — Método Marciano Barros</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Calculado com base no seu tempo de 5km</div>
+    <div id="zonasList" class="zona-tabela"></div>
+  </div>
+
+  <!-- CALCULADORA RÁPIDA -->
+  <div class="card" style="margin-top:4px">
+    <div class="card-titulo">🧮 Calculadora de Pace</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Qual seria seu pace numa prova?</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select class="input" id="calc_zona" style="flex:1" onchange="calcularPace()">
+        <option value="">Selecione a zona</option>
+        <option value="TROTE">Trote Aquec/Desaq</option>
+        <option value="CCL">CCL — 65–75%</option>
+        <option value="CCM">CCM — 76–84%</option>
+        <option value="CCM2">CCM Alvo 2 — 85%</option>
+        <option value="CCR">CCR — 85–100%</option>
+        <option value="CCR_Z1">CCR Z1 — 101–105%</option>
+        <option value="CCR_Z2">CCR Z2 — 106–110%</option>
+        <option value="CCR_Z3">CCR Z3 — 111–115%</option>
+        <option value="CCR_Z4">CCR Z4 — 116–120%</option>
+      </select>
+      <select class="input" id="calc_dist" style="flex:1" onchange="calcularPace()">
+        <option value="5">5 km</option>
+        <option value="10">10 km</option>
+        <option value="21">21 km</option>
+        <option value="42">42 km</option>
+      </select>
+    </div>
+    <div id="calcResultado" style="display:none;margin-top:10px;padding:12px;background:var(--bg3);border-radius:10px;border:1px solid rgba(0,230,118,.2)">
+      <div id="calcPace" style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--verde)"></div>
+      <div id="calcVel" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
+      <div id="calcTempo" style="font-size:13px;font-weight:700;margin-top:6px"></div>
+    </div>
+  </div>
+
 </div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: MEU COACH                             -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="tabCoach">
+  <div id="coachContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+</div>
+
+</main>
+
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <a href="/"><span style="font-size:18px">🏠</span>Início</a>
-  <a href="/corridas-abertas.html"><span style="font-size:18px">🏁</span>Corridas</a>
-  <a href="/treinador.html"><span style="font-size:18px">🏃</span>Treinador</a>
-  <a href="/elite.html"><span style="font-size:18px">🏆</span>Ranking</a>
-  <a href="/comunidades.html"><span style="font-size:18px">👥</span>Comunidade</a>
+  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
+  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
+  <a href="/atleta.html" class="nav-item ativo"><span class="nav-icon">🏃</span><span class="nav-label">Treino</span></a>
+  <a href="/ranking.html" class="nav-item"><span class="nav-icon">⚡</span><span class="nav-label">Elite</span></a>
+  <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
 </nav>
+
+<div id="toast"></div>
+
 <script>
-const id=new URLSearchParams(location.search).get('id');
-if(!id){document.getElementById('nome').textContent='Atleta não encontrado';throw new Error('no id')}
-async function carregar(){
-  try{
-    const res=await fetch('/users/'+id+'/profile');
-    const a=await res.json();
-    if(a.error){
-      const r2=await fetch('/ranking?limit=5000');
-      const all=await r2.json();
-      const found=all.find(x=>x.id===id);
-      if(found){
-        document.getElementById('avatar').textContent=found.name.charAt(0);
-        document.getElementById('nome').textContent=found.name;
-        const infoParts=[];
-        if(found.gender) infoParts.push(found.gender==='M'?'👨 Masculino':'👩 Feminino');
-        if(found.state) infoParts.push('📍 '+found.state);
-        if(found.equipe) infoParts.push('🏃 '+found.equipe);
-        document.getElementById('info').textContent=infoParts.join(' · ');
-        document.getElementById('st-pts').textContent=found.totalPoints||0;
-        document.getElementById('st-provas').textContent=found.totalRaces||0;
-      }
-    }
-    const resResults=await fetch('/results?athleteId='+id);
-    let results=[];
-    try{results=await resResults.json();if(!Array.isArray(results))results=[];}catch(e){results=[];}
-    if(!results.length){
-      const r3=await fetch('/races');
-      const races=await r3.json();
-      for(const race of races){
-        const rr=await fetch('/results/race/'+race.id);
-        const rd=await rr.json();
-        const mine=rd.filter(x=>x.athleteId===id);
-        results.push(...mine.map(m=>({...m,race})));
-      }
-    }
-    if(results.length){
-      let totalKm=0;
-      let totalMinutes=0;
-      const html=results.map(r=>{
-        const race=r.race||{};
-        const dist=r.distance||'';
-        const km=parseFloat(dist.replace(/[^0-9.]/g,''))||0;
-        totalKm+=km;
-        const parts=(r.pace||'').split(':').map(Number);
-        if(parts.length===2) totalMinutes+=parts[0]+parts[1]/60;
-        const rankBadge=r.genderRank<=3?['badge-gold','badge-silver','badge-bronze'][r.genderRank-1]:'badge-green';
-        return '<div class="result-card"><div class="race-info"><div class="race-name">'+(race.name||'Corrida')+'</div><div class="race-meta">'+dist+' · '+(race.city||'')+' · '+(r.ageGroup||'')+'</div>'+(r.genderRank<=5?'<span class="badge '+rankBadge+'">'+(r.genderRank<=3?['🥇','🥈','🥉'][r.genderRank-1]:'🏅')+' '+r.genderRank+'° geral · '+r.points+' pts</span>':'<span class="badge badge-green">✅ '+r.points+' pt</span>')+'</div><div class="time-info"><div class="time">'+(r.time||'-')+'</div><div class="pace">pace '+(r.pace||'-')+'/km</div></div></div>';
-      }).join('');
-      document.getElementById('resultados').innerHTML=html;
-      document.getElementById('st-km').textContent=totalKm.toFixed(0);
-      if(results.length>0&&totalMinutes>0) document.getElementById('st-pace').textContent=(totalMinutes/results.length).toFixed(1)+"'";
-    }else{
-      document.getElementById('resultados').innerHTML='<div class="empty">Sem resultados ainda</div>';
-    }
-  }catch(e){console.error(e)}
+// ═══════════════════════════════════════════════
+// ZONAS — MÉTODO MARCIANO BARROS
+// Validado contra planilha real (ref: 5km=15:45)
+// ═══════════════════════════════════════════════
+const ZONAS = {
+  TROTE:  { nome:'Trote Aquec/Desaq', pct:'50–64%',   fMin:2.00, fMax:1.56, fcMin:50,  fcMax:64,  cor:'#3B82F6', label:'Aquecimento e desaquecimento leve' },
+  CCL:    { nome:'CCL',               pct:'65–75%',   fMin:1.54, fMax:1.33, fcMin:65,  fcMax:75,  cor:'#22C55E', label:'Corrida contínua leve — resistência aeróbica' },
+  CCM:    { nome:'CCM',               pct:'76–84%',   fMin:1.31, fMax:1.17, fcMin:76,  fcMax:84,  cor:'#84CC16', label:'Corrida contínua média — limiar aeróbico' },
+  CCM2:   { nome:'CCM Alvo 2',        pct:'85%',      fMin:1.17, fMax:1.17, fcMin:85,  fcMax:85,  cor:'#EAB308', label:'Corrida no limiar anaeróbico' },
+  CCR:    { nome:'CCR',               pct:'85–100%',  fMin:1.16, fMax:1.05, fcMin:85,  fcMax:100, cor:'#F97316', label:'Corrida rápida — ritmo de prova' },
+  CCR_Z1: { nome:'CCR Z1',            pct:'101–105%', fMin:1.04, fMax:0.952,fcMin:101, fcMax:105, cor:'#EF4444', label:'Tiro acima do ritmo de prova' },
+  CCR_Z2: { nome:'CCR Z2',            pct:'106–110%', fMin:0.94, fMax:0.91, fcMin:106, fcMax:110, cor:'#DC2626', label:'Tiro intenso — 1km, 2km' },
+  CCR_Z3: { nome:'CCR Z3',            pct:'111–115%', fMin:0.898,fMax:0.868,fcMin:111, fcMax:115, cor:'#9333EA', label:'Tiro muito intenso — 400m, 600m' },
+  CCR_Z4: { nome:'CCR Z4',            pct:'116–120%', fMin:0.857,fMax:0.833,fcMin:116, fcMax:120, cor:'#7C3AED', label:'Sprint máximo — 100m, 200m' },
+};
+
+function tempoSeg(str) {
+  if (!str) return 0;
+  const p = str.trim().split(':').map(Number);
+  if (p.length === 3) return p[0]*3600 + p[1]*60 + p[2];
+  if (p.length === 2) return p[0]*60 + p[1];
+  return 0;
 }
-carregar();
+function segPace(s) {
+  if (!s || s <= 0) return '--:--';
+  const m = Math.floor(s/60), ss = Math.round(s%60);
+  return `${m}:${ss<10?'0':''}${ss}`;
+}
+function calcZona(zona, t5kStr, fcMax) {
+  const z = ZONAS[zona];
+  if (!z) return null;
+  const t5k = tempoSeg(t5kStr);
+  if (!t5k) return null;
+  const p5k = t5k/5;
+  const pMin = p5k*z.fMin, pMax = p5k*z.fMax;
+  const vMin = parseFloat((3600/pMin).toFixed(1)), vMax = parseFloat((3600/pMax).toFixed(1));
+  const fcAMin = fcMax ? Math.round(fcMax*z.fcMin/100) : null;
+  const fcAMax = fcMax ? Math.round(fcMax*z.fcMax/100) : null;
+  return { paceMin:segPace(pMin), paceMax:segPace(pMax), vMin, vMax, fcAMin, fcAMax };
+}
+function estimarTempo(distM, zona, t5kStr) {
+  const t5k = tempoSeg(t5kStr);
+  const z = ZONAS[zona];
+  if (!t5k || !z) return null;
+  const p5k = t5k/5;
+  const pMin = p5k*z.fMin, pMax = p5k*z.fMax;
+  const tMin = (distM/1000)*pMax, tMax = (distM/1000)*pMin;
+  const fmt = s => { const m=Math.floor(s/60),ss=Math.round(s%60); return m>0?`${m}'${ss<10?'0':''}${ss}"`:`${ss}"`; };
+  return `${fmt(tMin)}–${fmt(tMax)}`;
+}
+
+// ═══════════════════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════════════════
+const API = '';
+const token = localStorage.getItem('pace_token');
+const user  = JSON.parse(localStorage.getItem('pace_user') || '{}');
+let perfil  = JSON.parse(localStorage.getItem('pace_perfil') || '{}');
+let treinoConcluidoId = null;
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  if (!token) { window.location.href = '/entrar.html'; return; }
+  if (user.name) {
+    document.getElementById('avatarTop').textContent = user.name.charAt(0).toUpperCase();
+    document.getElementById('topNome').textContent = user.name.split(' ')[0];
+  }
+  carregarHoje();
+  carregarPerfilLocal();
+});
+
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+function mudarTab(nome, el) {
+  document.querySelectorAll('#mainTabs .tab').forEach(t => t.classList.remove('ativo'));
+  el.classList.add('ativo');
+  document.querySelectorAll('main .section').forEach(s => s.classList.remove('ativo'));
+  document.getElementById('tab'+nome).classList.add('ativo');
+  if (nome === 'Historico') carregarHistorico();
+  if (nome === 'Coach') carregarCoach();
+}
+
+// ═══════════════════════════════════════════════
+// TAB HOJE — TREINO DO DIA
+// ═══════════════════════════════════════════════
+async function carregarHoje() {
+  const el = document.getElementById('hojeContent');
+  el.innerHTML = loading();
+  const res = await req('GET', '/athlete/treino-hoje');
+
+  if (res.error) {
+    el.innerHTML = `
+      <div class="sem-treino">
+        <div class="sem-treino-icon">😴</div>
+        <div class="sem-treino-titulo">Nenhum treino hoje</div>
+        <div class="sem-treino-sub">Descanse e volte amanhã!<br>Ou fale com seu coach se achar que é um erro.</div>
+      </div>`;
+    return;
+  }
+
+  const treinos = res.treinos || [];
+  if (!treinos.length) {
+    el.innerHTML = `
+      <div class="sem-treino">
+        <div class="sem-treino-icon">🏖️</div>
+        <div class="sem-treino-titulo">Dia de descanso!</div>
+        <div class="sem-treino-sub">Nenhum treino programado para hoje.<br>Aproveite para recuperar e hidrate bem! 💧</div>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = treinos.map(t => renderTreino(t)).join('');
+}
+
+function renderTreino(t) {
+  const t5k    = perfil.tempo5k  || '';
+  const fcMax  = parseInt(perfil.fcMax) || 0;
+  const temPerfil = !!t5k;
+
+  // Tentar parsear etapas do JSON
+  let etapas = [];
+  if (t.etapas && Array.isArray(t.etapas)) {
+    etapas = t.etapas;
+  } else if (typeof t.descricao === 'string' && t.descricao.startsWith('[')) {
+    try { etapas = JSON.parse(t.descricao); } catch {}
+  }
+
+  const distTotal = etapas.reduce((acc, e) =>
+    acc + (e.distanciaM ? parseInt(e.distanciaM) * (parseInt(e.repeticoes)||1) : 0), 0);
+  const durTotal  = etapas.reduce((acc, e) =>
+    acc + (e.durMin ? parseInt(e.durMin) * (parseInt(e.repeticoes)||1) : 0), 0);
+
+  const diasSemana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const diaLabel = t.diaSemana !== undefined && t.diaSemana !== null
+    ? diasSemana[t.diaSemana] : '';
+
+  const jaFez = t.jaFez || false;
+  const corPrimaria = '#00E676';
+
+  const etapasHtml = etapas.length ? etapas.map((e, i) => {
+    const zona = e.zona || 'CCL';
+    const z    = ZONAS[zona];
+    const cor  = z?.cor || corPrimaria;
+    const calc = temPerfil ? calcZona(zona, t5k, fcMax) : null;
+    const rep  = parseInt(e.repeticoes) > 1 ? ` ×${e.repeticoes}` : '';
+    const dist = e.distanciaM ? `${e.distanciaM}m` : '';
+    const dur  = e.durMin ? `${e.durMin}min` : '';
+    const tempo= dist && temPerfil ? estimarTempo(parseInt(e.distanciaM), zona, t5k) : null;
+    const recup= e.descRecup ? `<div style="font-size:11px;color:var(--muted);margin-top:3px;font-style:italic">↩ Recuperação: ${e.descRecup}</div>` : '';
+
+    return `<div class="hoje-etapa" style="background:${cor}0D;border:1px solid ${cor}25">
+      <div class="hoje-etapa-num" style="color:${cor}">${i+1}</div>
+      <div class="hoje-etapa-info">
+        <div class="hoje-etapa-tipo" style="color:${cor}">${z?.nome||zona}${rep}
+          <span style="font-weight:400;text-transform:none;font-size:10px;color:var(--muted)"> ${z?.pct||''}</span>
+        </div>
+        ${(dist||dur) ? `<div class="hoje-etapa-desc">${[dist,dur].filter(Boolean).join(' · ')}${e.descricao?' — '+e.descricao:''}</div>` :
+          e.descricao ? `<div class="hoje-etapa-desc">${e.descricao}</div>` : ''}
+        ${calc ? `
+          <div class="hoje-etapa-pace" style="color:${cor}">${calc.paceMin} a ${calc.paceMax}/km</div>
+          <div class="hoje-etapa-vel">${calc.vMin} a ${calc.vMax} km/h${calc.fcAMin?` · FC: ${calc.fcAMin}–${calc.fcAMax} bpm`:''}</div>
+          ${tempo ? `<div class="hoje-etapa-tempo">⏱ ${tempo} por série</div>` : ''}
+        ` : `<div style="margin-top:6px;font-size:11px;color:var(--muted)">
+          ⚙️ <a href="javascript:void(0)" onclick="mudarTab('Perfil',document.querySelectorAll('#mainTabs .tab')[2])" style="color:var(--verde)">Cadastre seu 5km</a> para ver o pace personalizado
+        </div>`}
+        ${recup}
+      </div>
+    </div>`;
+  }).join('') : `<div style="padding:10px;font-size:13px;color:var(--muted)">${t.descricao||'Siga as orientações do seu treinador.'}</div>`;
+
+  return `
+  <div class="hoje-card">
+    <div class="hoje-header">
+      <div class="hoje-tipo-badge" style="background:rgba(0,230,118,.12);color:var(--verde);border:1px solid rgba(0,230,118,.25)">
+        ${diaLabel ? diaLabel+' · ' : ''}${t.horario||''}
+      </div>
+      <div class="hoje-titulo">${t.titulo||'Treino do Dia'}</div>
+      <div class="hoje-sub">
+        ${t.comunidade?.nome ? `<span>👥 ${t.comunidade.nome}</span>` : ''}
+        ${t.local ? `<span>📍 ${t.local}</span>` : ''}
+        ${jaFez ? `<span class="tag tag-verde">✅ Concluído</span>` : ''}
+      </div>
+    </div>
+    ${distTotal || durTotal ? `
+    <div class="hoje-resumo">
+      ${distTotal ? `<div class="hoje-resumo-item"><span class="hoje-resumo-v">${(distTotal/1000).toFixed(1)}<span style="font-size:14px">km</span></span><span class="hoje-resumo-l">Distância</span></div>` : ''}
+      ${durTotal ? `<div class="hoje-resumo-item"><span class="hoje-resumo-v">${durTotal}<span style="font-size:14px">min</span></span><span class="hoje-resumo-l">Duração</span></div>` : ''}
+      ${etapas.length ? `<div class="hoje-resumo-item"><span class="hoje-resumo-v">${etapas.length}</span><span class="hoje-resumo-l">Etapas</span></div>` : ''}
+    </div>` : ''}
+    <div class="hoje-etapas">${etapasHtml}</div>
+    <div class="hoje-actions">
+      ${jaFez
+        ? `<button class="btn-sm btn-outline" style="flex:1" disabled>✅ Já concluído</button>`
+        : `<button class="btn-sm btn-verde" style="flex:2" id="btnConcluir_${t.id}" onclick="marcarConcluido('${t.id}',this)">✅ Marcar como concluído</button>`
+      }
+    </div>
+  </div>`;
+}
+
+async function marcarConcluido(id, btn) {
+  btn.disabled = true;
+  btn.textContent = '...';
+  const res = await req('POST', '/athlete/treino-concluido', { treinoId: id });
+  if (res.error) {
+    toast('❌ ' + res.error);
+    btn.disabled = false;
+    btn.textContent = '✅ Marcar como concluído';
+    return;
+  }
+  btn.textContent = '✅ Feito!';
+  btn.style.background = 'var(--bg3)';
+  btn.style.color = 'var(--verde)';
+  btn.style.border = '1px solid rgba(0,230,118,.3)';
+  treinoConcluidoId = id;
+  document.getElementById('feedbackCard').style.display = 'block';
+  document.getElementById('feedbackCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  toast('🔥 Treino concluído! Como você se sentiu?');
+}
+
+function escolherCarinha(btn) {
+  document.querySelectorAll('.carinha-btn').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+}
+
+async function enviarFeedback() {
+  const btn = document.querySelector('.carinha-btn.ativo');
+  if (!btn) { toast('⚠️ Selecione como se sentiu'); return; }
+  const comentario = document.getElementById('feedbackComentario').value.trim();
+  await req('POST', '/athlete/feedback', { feeling: btn.dataset.v, comentario });
+  document.getElementById('feedbackCard').style.display = 'none';
+  toast('💬 Feedback enviado para seu coach!');
+}
+
+// ═══════════════════════════════════════════════
+// TAB HISTÓRICO
+// ═══════════════════════════════════════════════
+async function carregarHistorico() {
+  const el = document.getElementById('historicoContent');
+  el.innerHTML = loading();
+  const res = await req('GET', '/athlete/historico');
+  if (res.error) { el.innerHTML = erro(res.error); return; }
+  if (!res.checkins?.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-txt">Nenhum treino concluído ainda.<br>Complete seu primeiro treino para ver aqui!</div></div>`;
+    return;
+  }
+
+  // Agrupar por mês
+  const porMes = {};
+  res.checkins.forEach(c => {
+    const d = new Date(c.data);
+    const k = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    if (!porMes[k]) porMes[k] = [];
+    porMes[k].push(c);
+  });
+
+  el.innerHTML = Object.entries(porMes).map(([mes, lista]) => `
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px">${mes} · ${lista.length} treino${lista.length!==1?'s':''}</div>
+    ${lista.map(c => {
+      const d = new Date(c.data);
+      const diaLabel = d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+      return `
+      <div class="hist-item">
+        <div class="hist-icone">✅</div>
+        <div class="hist-info">
+          <div class="hist-nome">${c.treino?.titulo||'Treino'}</div>
+          <div class="hist-meta">${c.treino?.comunidade?.nome||''} · ${diaLabel}</div>
+        </div>
+        <span class="tag tag-verde">OK</span>
+      </div>`;
+    }).join('')}
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════
+// TAB PERFIL
+// ═══════════════════════════════════════════════
+function carregarPerfilLocal() {
+  if (perfil.tempo5k)   document.getElementById('p_5k').value      = perfil.tempo5k;
+  if (perfil.tempo10k)  document.getElementById('p_10k').value     = perfil.tempo10k;
+  if (perfil.tempo21k)  document.getElementById('p_21k').value     = perfil.tempo21k;
+  if (perfil.tempo42k)  document.getElementById('p_42k').value     = perfil.tempo42k;
+  if (perfil.fcMax)     document.getElementById('p_fcmax').value    = perfil.fcMax;
+  if (perfil.fcRepouso) document.getElementById('p_fcrepouso').value= perfil.fcRepouso;
+  atualizarZonas();
+}
+
+function atualizarZonas() {
+  const t5k   = document.getElementById('p_5k').value;
+  const fcMax = parseInt(document.getElementById('p_fcmax').value) || 0;
+  const card  = document.getElementById('zonasCard');
+  const lista = document.getElementById('zonasList');
+  if (!t5k || !tempoSeg(t5k)) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  lista.innerHTML = Object.entries(ZONAS).map(([cod, z]) => {
+    const c = calcZona(cod, t5k, fcMax);
+    if (!c) return '';
+    return `
+    <div class="zona-row" style="background:${z.cor}0D;border:1px solid ${z.cor}20">
+      <span class="zona-cod" style="color:${z.cor}">${cod.replace('_',' ')}</span>
+      <div class="zona-barra" style="background:${z.cor};opacity:.6"></div>
+      <div class="zona-nome-col">
+        <div style="font-weight:600;font-size:11px">${z.nome}</div>
+        <div class="zona-pct">${z.pct}</div>
+      </div>
+      <span class="zona-pace-col" style="color:${z.cor}">${c.paceMin}–${c.paceMax}/km</span>
+      <span class="zona-vel-col">${c.vMin}–${c.vMax}</span>
+      ${fcMax ? `<span class="zona-fc-col" style="color:${z.cor}">${c.fcAMin}–${c.fcAMax}</span>` : ''}
+    </div>`;
+  }).join('');
+
+  calcularPace();
+}
+
+function calcularPace() {
+  const zona  = document.getElementById('calc_zona').value;
+  const dist  = parseFloat(document.getElementById('calc_dist').value);
+  const t5k   = document.getElementById('p_5k').value;
+  const res   = document.getElementById('calcResultado');
+  if (!zona || !t5k || !tempoSeg(t5k)) { res.style.display = 'none'; return; }
+  const c = calcZona(zona, t5k, 0);
+  if (!c) { res.style.display = 'none'; return; }
+  const t5kSeg = tempoSeg(t5k);
+  const z = ZONAS[zona];
+  const pMed = (t5kSeg/5) * ((z.fMin+z.fMax)/2);
+  const tTotal = dist * pMed;
+  const hh = Math.floor(tTotal/3600), mm=Math.floor((tTotal%3600)/60), ss=Math.round(tTotal%60);
+  const tempoStr = hh>0 ? `${hh}h${mm<10?'0':''}${mm}'${ss<10?'0':''}${ss}"` : `${mm}'${ss<10?'0':''}${ss}"`;
+  document.getElementById('calcPace').textContent = `${c.paceMin} a ${c.paceMax} /km`;
+  document.getElementById('calcVel').textContent  = `${c.vMin} a ${c.vMax} km/h`;
+  document.getElementById('calcTempo').textContent= `⏱ Tempo estimado ${dist}km: ${tempoStr}`;
+  res.style.display = 'block';
+}
+
+async function salvarPerfil() {
+  const btn = document.getElementById('btnSalvarPerfil');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  perfil = {
+    tempo5k:   document.getElementById('p_5k').value,
+    tempo10k:  document.getElementById('p_10k').value,
+    tempo21k:  document.getElementById('p_21k').value,
+    tempo42k:  document.getElementById('p_42k').value,
+    fcMax:     document.getElementById('p_fcmax').value,
+    fcRepouso: document.getElementById('p_fcrepouso').value,
+  };
+  localStorage.setItem('pace_perfil', JSON.stringify(perfil));
+  // Sincronizar com servidor
+  if (perfil.fcMax)     await req('PATCH', '/athlete/perfil-fc',     { fcMax: parseInt(perfil.fcMax), fcRepouso: parseInt(perfil.fcRepouso)||null });
+  if (perfil.tempo5k)   await req('PATCH', '/athlete/perfil-tempos', { tempo5k: perfil.tempo5k, tempo10k: perfil.tempo10k, tempo21k: perfil.tempo21k, tempo42k: perfil.tempo42k });
+  btn.disabled = false; btn.textContent = 'Salvar Perfil';
+  toast('✅ Perfil salvo! Treinos agora mostram seu pace.');
+  atualizarZonas();
+}
+
+// ═══════════════════════════════════════════════
+// TAB MEU COACH
+// ═══════════════════════════════════════════════
+async function carregarCoach() {
+  const el = document.getElementById('coachContent');
+  el.innerHTML = loading();
+  const res = await req('GET', '/athlete/meu-coach');
+  if (res.error || !res.coach) {
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🏅</div>
+        <div class="empty-txt">Você ainda não tem um treinador vinculado.<br>Peça ao seu coach para te adicionar ao grupo.</div>
+      </div>`;
+    return;
+  }
+  const c = res.coach;
+  el.innerHTML = `
+    <div class="card coach-card">
+      <div class="coach-av-big">${(c.nome||'?').charAt(0).toUpperCase()}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900">${c.nome}</div>
+      ${c.especialidade?`<div style="font-size:12px;color:var(--verde);margin-top:4px;font-weight:700">${c.especialidade}</div>`:''}
+      ${c.grupo?`<div style="font-size:11px;color:var(--muted);margin-top:4px">Grupo: ${c.grupo}</div>`:''}
+      ${c.bio?`<div style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;text-align:left;padding:12px;background:var(--bg3);border-radius:10px">${c.bio}</div>`:''}
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+        ${c.whatsapp?`<a href="https://wa.me/55${c.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:8px">💬 Chamar no WhatsApp</a>`:''}
+        ${c.instagram?`<a href="https://instagram.com/${c.instagram.replace('@','')}" target="_blank" class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:8px">📸 Ver Instagram ${c.instagram}</a>`:''}
+      </div>
+    </div>
+    <div class="card" style="margin-top:4px">
+      <div class="card-titulo">📣 Mural do Grupo</div>
+      <div id="muralAtleta"><div class="loading"><div class="spinner"></div>Carregando mural...</div></div>
+    </div>`;
+  carregarMuralAtleta();
+}
+
+async function carregarMuralAtleta() {
+  const el = document.getElementById('muralAtleta');
+  if (!el) return;
+  const res = await req('GET', '/athlete/mural');
+  if (res.error || !res.posts?.length) {
+    el.innerHTML = `<div style="font-size:13px;color:var(--muted);text-align:center;padding:12px">Nenhuma publicação ainda.</div>`;
+    return;
+  }
+  el.innerHTML = res.posts.map(p => `
+    <div style="padding:12px;background:var(--bg3);border-radius:10px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--verde);color:#080B10;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px">${(p.autor?.name||'?').charAt(0).toUpperCase()}</div>
+        <div>
+          <div style="font-size:12px;font-weight:700">${p.autor?.name||'Coach'}</div>
+          <div style="font-size:10px;color:var(--muted)">${fmtData(p.criadoEm)}</div>
+        </div>
+      </div>
+      <div style="font-size:13px;line-height:1.5">${p.conteudo}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+async function req(method, path, body) {
+  try {
+    const r = await fetch(API+path, {
+      method,
+      headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    return await r.json();
+  } catch { return { error: 'Erro de conexão' }; }
+}
+
+function fmtData(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('pt-BR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', 3200);
+}
+
+function loading() { return '<div class="loading"><div class="spinner"></div>Carregando...</div>'; }
+function erro(m)   { return `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-txt">${m}</div></div>`; }
 </script>
 </body>
 </html>

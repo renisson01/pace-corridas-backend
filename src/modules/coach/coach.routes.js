@@ -359,4 +359,23 @@ export async function coachRoutes(fastify) {
     return { success: true };
   });
 
+  // ─── MURAL DO ATLETA (ver posts do seu grupo) ────────────────────────────
+  fastify.get('/athlete/mural', async (req, reply) => {
+    const u = auth(req);
+    if (!u) return reply.code(401).send({ error: 'Não autorizado' });
+    const membro = await prisma.membroComunidade.findFirst({
+      where: { userId: u.userId },
+      select: { comunidadeId: true }
+    });
+    if (!membro) return { posts: [] };
+    const posts = await prisma.mensagemComunidade.findMany({
+      where: { comunidadeId: membro.comunidadeId, deletado: false },
+      orderBy: { criadoEm: 'desc' },
+      take: 30,
+      include: { autor: { select: { name: true } } }
+    });
+    return { posts };
+  });
+
+
 }
