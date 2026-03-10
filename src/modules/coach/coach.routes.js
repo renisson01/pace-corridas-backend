@@ -24,16 +24,19 @@ export async function coachRoutes(fastify) {
         treinos: { where: { ativo: true }, select: { id:true, titulo:true, diaSemana:true, horario:true } }
       }
     });
-    const totalAlunos = grupos.reduce((s, g) => s + g._count.membros, 0);
+    const totalAtletas = grupos.reduce((s, g) => s + g._count.membros, 0);
+    const comunidades  = grupos.map(g => ({
+      id: g.id, nome: g.nome, slug: g.slug,
+      membros: g._count.membros, treinos: g._count.treinos,
+      proximosTreinos: g.treinos
+    }));
     return {
-      totalAlunos,
+      totalAtletas,
+      totalAlunos: totalAtletas, // compatibilidade
       totalGrupos: grupos.length,
-      mensalidade: Math.round(totalAlunos * 23.94 * 100) / 100,
-      grupos: grupos.map(g => ({
-        id: g.id, nome: g.nome, slug: g.slug,
-        membros: g._count.membros, treinos: g._count.treinos,
-        proximosTreinos: g.treinos
-      }))
+      mensalidade: Math.round(totalAtletas * 23.94 * 100) / 100,
+      grupos: comunidades,
+      comunidades  // treinador.html usa res.comunidades
     };
   });
 
@@ -48,12 +51,13 @@ export async function coachRoutes(fastify) {
         comunidade: { select: { id:true, nome:true } }
       }
     });
-    return membros.map(m => ({
+    const atletas = membros.map(m => ({
       id: m.user.id, nome: m.user.name, email: m.user.email,
       genero: m.user.gender, cidade: m.user.city, estado: m.user.state,
       grupo: m.comunidade.nome, grupoId: m.comunidade.id,
       role: m.role, membroId: m.id
     }));
+    return { atletas };
   });
 
   // CRIAR TREINO NO GRUPO (CORRIGIDO: antes criava sem comunidadeId)
@@ -70,7 +74,7 @@ export async function coachRoutes(fastify) {
       data: {
         comunidadeId, titulo,
         descricao: descricao || '',
-        diaSemana: diaSemana || null,
+        diaSemana: diaSemana != null && diaSemana !== '' ? String(diaSemana) : null,
         horario, local: local || null,
         recorrente: recorrente !== false,
         periodo: periodo || 'treino',
@@ -135,36 +139,61 @@ export async function coachRoutes(fastify) {
     };
   });
 
-  // TREINO DO DIA - ATLETA (CORRIGIDO: campo membroId correto no Checkin)
+  // TREINO DO DIA - ATLETA
   fastify.get('/athlete/treino-hoje', async (req, reply) => {
     const u = auth(req);
     if (!u) return reply.code(401).send({ error: 'Não autorizado' });
-    const dias = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
-    const diaHoje = dias[new Date().getDay()];
+
+    // diaSemana salvo como String do número: '0'=Dom, '1'=Seg, ..., '6'=Sáb
+    const diaHoje = String(new Date().getDay());
+
     const membros = await prisma.membroComunidade.findMany({
       where: { userId: u.userId, status: 'ativo' },
       include: {
         comunidade: {
           include: {
-            treinos: { where: { ativo: true, diaSemana: diaHoje } },
+            // Buscar treinos do dia OU treinos sem dia específico (recorrente sem dia = sempre)
+            treinos: {
+              where: {
+                ativo: true,
+                OR: [
+                  { diaSemana: diaHoje },
+                  { diaSemana: null, recorrente: true }
+                ]
+              }
+            },
             criador: { select: { name: true } }
           }
         }
       }
     });
-    const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+    const hoje  = new Date(); hoje.setHours(0,0,0,0);
     const amanha = new Date(hoje); amanha.setDate(amanha.getDate()+1);
     const treinosHoje = [];
+
     for (const m of membros) {
       for (const t of m.comunidade.treinos) {
         const jaFez = await prisma.checkin.findFirst({
           where: { membroId: m.id, treinoId: t.id, data: { gte: hoje, lt: amanha } }
         }).catch(() => null);
+
+        // Tentar parsear etapas do campo descricao se for JSON
+        let etapas = [];
+        if (t.descricao?.startsWith('[')) {
+          try { etapas = JSON.parse(t.descricao); } catch {}
+        }
+
         treinosHoje.push({
-          id: t.id, titulo: t.titulo, descricao: t.descricao,
+          id: t.id, titulo: t.titulo,
+          descricao: etapas.length ? null : (t.descricao || null),
+          etapas,
           horario: t.horario, local: t.local,
-          grupo: m.comunidade.nome, treinador: m.comunidade.criador.name,
-          membroId: m.id, jaFezCheckin: !!jaFez
+          diaSemana: t.diaSemana,
+          comunidade: { nome: m.comunidade.nome },
+          treinador: m.comunidade.criador.name,
+          membroId: m.id,
+          jaFez: !!jaFez
         });
       }
     }
