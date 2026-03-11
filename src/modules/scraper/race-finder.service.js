@@ -154,7 +154,7 @@ async function scraperTicketSports(estados = ESTADOS) {
 
     try {
       // Página de listagem por estado
-      const url = `https://www.ticketsports.com.br/corrida-de-rua?estado=${estado}`;
+      const url = `https://www.ticketsports.com.br/Calendario/Todos-os-organizadores/Corrida-de-rua/${estado}/Todas-as-cidades/0`;
       addLog(`📄 TS | ${estado}`);
 
       const { data: html } = await axios.get(url, { headers: HEADERS, timeout: 20000 });
