@@ -230,8 +230,8 @@ async function doRegister() {
     if(res.success) {
       localStorage.setItem('pace_token', res.token);
       localStorage.setItem('pace_user', JSON.stringify(res.user));
-      bip39Atual = res.bip39Words;
-      mostrarBIP39(res.bip39Words);
+      msg.innerHTML = '<span class="text-green-400">✅ Conta criada! Bem-vindo, '+res.user.name+'!</span>';
+      setTimeout(() => { window.location = '/'; }, 1500);
     } else {
       msg.innerHTML = '<span class="text-red-400">❌ '+res.error+'</span>';
     }
@@ -263,14 +263,13 @@ function confirmarBIP39() {
 
 async function doRecover() {
   const email = document.getElementById('recEmail').value;
-  const bip39Words = document.getElementById('recBIP39').value;
   const novaSenha = document.getElementById('recSenha').value;
   const msg = document.getElementById('recoverMsg');
   msg.innerHTML = '⏳ Verificando...';
   try {
-    const res = await fetch('/auth/recover', {
+    const res = await fetch('/auth/recover-email', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email, bip39Words, novaSenha })
+      body: JSON.stringify({ email, novaSenha })
     }).then(r=>r.json());
     msg.innerHTML = res.success
       ? '<span class="text-green-400">✅ '+res.message+' Faça login!</span>'

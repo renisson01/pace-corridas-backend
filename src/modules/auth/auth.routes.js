@@ -106,6 +106,22 @@ export async function authRoutes(fastify) {
     } catch(e) { return reply.code(401).send({ error: e.message }); }
   });
 
+
+  // Recuperação simples por email (sem BIP39)
+  fastify.post('/auth/recover-email', async (req, reply) => {
+    try {
+      const { email, novaSenha } = req.body;
+      if (!email || !novaSenha) return reply.code(400).send({ error: 'Email e nova senha obrigatórios' });
+      const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+      if (!user) return reply.code(400).send({ error: 'E-mail não encontrado' });
+      const { valida, erros } = validarSenha(novaSenha);
+      if (!valida) return reply.code(400).send({ error: 'Senha fraca: ' + erros.join(', ') });
+      const passwordHash = await bcrypt.hash(novaSenha, 10);
+      await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+      return { success: true, message: 'Senha alterada com sucesso!' };
+    } catch(e) { console.error('RECOVER ERROR:', e); return reply.code(500).send({ error: e.message }); }
+  });
+
   // PaceMatch - dar like
   fastify.post('/auth/like/:targetId', async (req, reply) => {
     try {
