@@ -471,19 +471,4 @@ export async function comunidadeRoutes(fastify) {
       return { ranking };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
-
-  // ═══════════════════════════════════════════════════════
-  // COMPATIBILIDADE — manter /comunidades funcionando
-  // ═══════════════════════════════════════════════════════
-  fastify.get('/comunidades', async (req, reply) => {
-    return reply.redirect('/grupos');
-  });
-  fastify.get('/assessorias', async (req, reply) => {
-    const data = await prisma.comunidade.findMany({
-      where: { tipo: 'assessoria', ativa: true },
-      include: { _count: { select: { membros: true } } },
-      orderBy: { createdAt: 'desc' }
-    }).catch(() => []);
-    return { assessorias: data, grupos: data };
-  });
 }
