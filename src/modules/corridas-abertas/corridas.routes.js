@@ -4,7 +4,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
-import { runScraperCorridas, scraperStatus } from '../../scraper/race-finder.service.js';
+import { runScraperCorridas, scraperStatus } from '../scraper/race-finder.service.js';
 import cron from 'node-cron';
 
 const prisma = new PrismaClient();
