@@ -427,6 +427,60 @@ export async function iaRoutes(fastify) {
     }).catch(()=>[]);
     return dados;
   });
+
+  fastify.get('/ia/status', async (req, reply) => {
+    const u = getUser(req);
+    if (!u) return { ativa: false, isPremium: false };
+    const userDb = await prisma.user.findUnique({
+      where: { id: u.userId },
+      select: { isPremium:true, premiumUntil:true, name:true, tempo5k:true, fcMax:true, nivelAtleta:true }
+    });
+    const isPremium = userDb?.isPremium && (!userDb.premiumUntil || new Date(userDb.premiumUntil) > new Date());
+    return {
+      ativa: !!process.env.ANTHROPIC_API_KEY, isPremium,
+      nome: userDb?.name, nivel: userDb?.nivelAtleta || 'iniciante',
+      recursos: { chat:true, planilhaSemanal:isPremium, msgsHora: isPremium ? 60 : 5 }
+    };
+  });
+
+  fastify.post('/ia/planilha', async (req, reply) => {
+    const u = getUser(req);
+    if (!u) return reply.code(401).send({ error: 'Login necessario' });
+    const userDb = await prisma.user.findUnique({
+      where: { id: u.userId },
+      select: { isPremium:true, premiumUntil:true, name:true, tempo5k:true, tempo10k:true, fcMax:true, fcRepouso:true, nivelAtleta:true, city:true, state:true }
+    });
+    const isPremium = userDb?.isPremium && (!userDb.premiumUntil || new Date(userDb.premiumUntil) > new Date());
+    if (!isPremium) return reply.code(403).send({ error: 'Exclusivo Premium!', isPremium: false });
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) return reply.code(500).send({ error: 'IA indisponivel' });
+    const { objetivo, observacoes } = req.body || {};
+    let zonasTexto = '';
+    if (userDb?.fcMax) {
+      const fc = userDb.fcMax, fr = userDb.fcRepouso || Math.round(fc*0.35), res = fc - fr;
+      const z = (a,b) => `${Math.round(fr+res*a)}-${Math.round(fr+res*b)}bpm`;
+      zonasTexto = `FC max:${fc} repouso:${fr} | Z1:${z(.50,.64)} Z2:${z(.65,.75)} Z3:${z(.76,.84)} Z4:${z(.85,1)} Z5:${z(1.01,1.10)}`;
+    }
+    let pacesTexto = '';
+    if (userDb?.tempo5k) {
+      const [m,s] = userDb.tempo5k.split(':').map(Number);
+      const pb = (m*60+(s||0))/5;
+      const f = (v) => `${Math.floor(v/60)}:${Math.round(v%60).toString().padStart(2,'0')}`;
+      pacesTexto = `Trote:${f(pb*1.45)} CCL:${f(pb*1.20)} CCM:${f(pb*1.08)} CCR:${f(pb*.97)} Z1:${f(pb*.89)} Z2:${f(pb*.84)}`;
+    }
+    const prompt = `Gere planilha semanal completa.\nAtleta: ${userDb?.name}, ${userDb?.city}/${userDb?.state}\nNivel: ${userDb?.nivelAtleta||'iniciante'}\n5km: ${userDb?.tempo5k||'?'}\n${zonasTexto}\nPaces: ${pacesTexto}\nObjetivo: ${objetivo||'Melhorar performance'}\nObs: ${observacoes||''}\n\nGere 7 dias detalhados com paces e zonas FC exatos calculados acima.`;
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+        body: JSON.stringify({ model:'claude-opus-4-5', max_tokens:3000, system:'Voce e a melhor treinadora de corrida do Brasil. Gera planilhas profissionais detalhadas.', messages:[{role:'user',content:prompt}] })
+      });
+      const data = await res.json();
+      return { success:true, planilha: data.content?.[0]?.text || 'Erro', isPremium:true };
+    } catch(e) { return reply.code(500).send({ error: 'Erro ao gerar planilha' }); }
+  });
+
+
 }
 
 async function atualizarPerfil(userId, msg, perfilAtual) {
