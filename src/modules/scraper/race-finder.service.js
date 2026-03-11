@@ -153,8 +153,8 @@ async function scraperTicketSports(estados = ESTADOS) {
     scraperStatus.progresso = { atual: ESTADOS.indexOf(estado)+1, total: ESTADOS.length, fase: `Ticket Sports — ${estado}` };
 
     try {
-      // Página de listagem por estado
-      const url = `https://www.ticketsports.com.br/Calendario/Todos-os-organizadores/Corrida-de-rua/${estado}/Todas-as-cidades/0`;
+      // Busca via Google Custom Search / search do próprio site
+      const url = `https://www.ticketsports.com.br/Busca?q=corrida+de+rua+${estado}&modalidade=corrida-de-rua`;
       addLog(`📄 TS | ${estado}`);
 
       const { data: html } = await axios.get(url, { headers: HEADERS, timeout: 20000 });
@@ -189,9 +189,7 @@ async function scraperTicketSports(estados = ESTADOS) {
       if (encontrados === 0) {
         // Ticket Sports usa vários padrões de card — tentar múltiplos seletores
         const seletores = [
-          '.event-card', '.card-evento', '[class*="EventCard"]',
-          '[class*="event-card"]', 'article', '.ts-card',
-          '[data-testid*="event"]', '.product-card'
+          'a[href^="/e/"]'
         ];
 
         for (const sel of seletores) {
@@ -211,7 +209,7 @@ async function scraperTicketSports(estados = ESTADOS) {
 
             if (!link) return;
 
-            const urlEv = link.startsWith('http') ? link : `https://www.ticketsports.com.br${link}`;
+            const urlEv = link.startsWith('http') ? link : `https://beta.ticketsports.com.br${link}`;
             const nome = $el.find('h2,h3,h4,[class*="title"],[class*="name"]').first().text().trim() ||
                          $el.find('strong').first().text().trim();
 
