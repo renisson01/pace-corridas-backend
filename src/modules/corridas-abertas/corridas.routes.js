@@ -56,4 +56,15 @@ export async function corridasAbertasRoutes(fastify) {
     const corrida = await prisma.corridaAberta.update({ where: { id }, data: updateData });
     return corrida;
   });
+
+  // LIMPAR TODAS AS CORRIDAS (admin)
+  fastify.delete('/corridas-abertas/limpar-todas', async (req, reply) => {
+    const adminKey = req.headers['x-admin-key'];
+    if (adminKey !== process.env.ADMIN_KEY) {
+      return reply.code(403).send({ error: 'Acesso negado' });
+    }
+    const deletados = await prisma.corridaAberta.deleteMany({});
+    return { success: true, deletados: deletados.count };
+  });
+
 }
