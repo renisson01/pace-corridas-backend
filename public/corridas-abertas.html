@@ -2,87 +2,705 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Corridas Abertas — PACE BRAZIL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PACE — Corridas Abertas</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh}
-.header{background:linear-gradient(135deg,#92400e,#f59e0b);padding:20px;text-align:center}
-.header h1{font-size:1.8rem}
-.header p{opacity:.8;font-size:.85rem}
-.container{max-width:600px;margin:0 auto;padding:16px}
-.filtros{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.filtros select{background:#1a1a2e;color:#fff;border:1px solid #333;padding:8px 12px;border-radius:8px;font-size:.85rem}
-.corrida-card{background:#1a1a2e;border-radius:14px;padding:16px;margin-bottom:12px;border-left:4px solid #f59e0b}
-.corrida-card h3{font-size:1.05rem;margin-bottom:6px}
-.corrida-card .meta{display:flex;gap:10px;flex-wrap:wrap;font-size:.8rem;color:#888;margin-bottom:10px}
-.corrida-card .meta span{display:flex;align-items:center;gap:3px}
-.dist-tags{display:flex;gap:6px;margin-bottom:12px}
-.dist-tag{background:#f59e0b22;color:#f59e0b;padding:3px 10px;border-radius:14px;font-size:.75rem;font-weight:600}
-.btn-inscrever{display:inline-block;background:#f59e0b;color:#000;padding:8px 20px;border-radius:20px;text-decoration:none;font-weight:700;font-size:.85rem}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#111;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #333}
-.bottom-nav a{color:#666;text-decoration:none;font-size:.7rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+:root {
+  --bg:    #07070f;
+  --bg2:   #0c0c1a;
+  --bg3:   #111122;
+  --card:  #13132a;
+  --card2: #181830;
+  --b:     #1e1e3a;
+  --b2:    #28284a;
+  --neon:  #00ffaa;
+  --neon2: #00cc88;
+  --orange:#ff6b35;
+  --red:   #ff3b5c;
+  --blue:  #4c9eff;
+  --yellow:#ffd60a;
+  --text:  #eeeef8;
+  --dim:   #8888aa;
+  --f: 'Barlow', sans-serif;
+  --fd: 'Barlow Condensed', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100vh;overflow-x:hidden}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:56px;
+  background:rgba(7,7,15,.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 16px;gap:10px}
+.logo{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:3px;color:var(--neon);text-decoration:none}
+.topbar-title{font-family:var(--fd);font-size:17px;font-weight:700;flex:1;text-align:center;letter-spacing:.5px}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--bg3);border:1px solid var(--b);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;text-decoration:none;
+  transition:all .2s;flex-shrink:0;color:var(--text)}
+.icon-btn:hover{border-color:var(--neon);color:var(--neon)}
+
+/* SEARCH */
+.search-wrap{padding:68px 16px 12px;background:var(--bg)}
+.search-row{display:flex;gap:8px;margin-bottom:10px}
+.search-box{flex:1;background:var(--bg3);border:1.5px solid var(--b);color:var(--text);
+  padding:11px 14px 11px 40px;border-radius:14px;font-size:15px;font-family:var(--f);transition:border .2s;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238888aa' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:13px center}
+.search-box:focus{outline:none;border-color:var(--neon)}
+.search-box::placeholder{color:var(--dim)}
+.btn-filtro{background:var(--bg3);border:1.5px solid var(--b);color:var(--dim);
+  padding:11px 14px;border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:6px;transition:all .2s}
+.btn-filtro.on,.btn-filtro:hover{border-color:var(--neon);color:var(--neon)}
+
+/* CHIPS */
+.chips-scroll{overflow-x:auto;padding:0 16px 10px;display:flex;gap:8px;scrollbar-width:none}
+.chips-scroll::-webkit-scrollbar{display:none}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:20px;
+  font-size:12px;font-weight:700;border:1.5px solid var(--b);color:var(--dim);
+  cursor:pointer;transition:all .2s;white-space:nowrap;background:var(--bg3);flex-shrink:0}
+.chip.on{border-color:var(--neon);color:var(--neon);background:rgba(0,255,170,.07)}
+.chip:hover{border-color:var(--b2);color:var(--text)}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:0;border-top:1px solid var(--b);border-bottom:1px solid var(--b);
+  background:var(--bg2);overflow-x:auto;scrollbar-width:none}
+.stats-bar::-webkit-scrollbar{display:none}
+.stat-item{flex:1;min-width:70px;padding:10px 8px;text-align:center;border-right:1px solid var(--b)}
+.stat-item:last-child{border-right:none}
+.stat-n{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--neon);display:block}
+.stat-l{font-size:10px;color:var(--dim);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+
+/* LISTA */
+.corridas-list{padding:12px 14px 80px}
+
+/* CORRIDA CARD */
+.corrida-card{background:var(--card);border:1.5px solid var(--b);border-radius:18px;
+  overflow:hidden;margin-bottom:10px;cursor:pointer;transition:all .25s;position:relative}
+.corrida-card:hover{border-color:var(--b2);transform:translateY(-2px)}
+.corrida-card:active{transform:scale(.98)}
+
+.card-img{width:100%;height:130px;object-fit:cover;display:block}
+.card-img-placeholder{height:100px;display:flex;align-items:center;justify-content:center;
+  font-size:48px;background:linear-gradient(135deg,var(--bg3),var(--card2))}
+
+.card-body{padding:14px 16px}
+.card-estado-badge{display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  background:rgba(0,255,170,.08);border:1px solid rgba(0,255,170,.2);color:var(--neon);
+  padding:3px 8px;border-radius:6px;margin-bottom:8px}
+.card-nome{font-family:var(--fd);font-size:18px;font-weight:800;line-height:1.2;
+  margin-bottom:6px;letter-spacing:.3px}
+.card-meta{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.meta-item{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--dim);font-weight:500}
+.meta-item b{color:var(--text);font-weight:600}
+.card-dists{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.dist-badge{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;
+  background:rgba(76,158,255,.1);border:1px solid rgba(76,158,255,.2);color:var(--blue)}
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.preco-label{font-size:13px;color:var(--dim)}
+.preco-val{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--neon)}
+.preco-gratis{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--neon)}
+.btn-inscrever{background:var(--neon);color:#000;border:none;padding:10px 18px;border-radius:12px;
+  font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;letter-spacing:.3px;
+  display:flex;align-items:center;gap:6px;text-decoration:none;font-family:var(--fd)}
+.btn-inscrever:hover{background:var(--neon2);transform:scale(1.03)}
+.fav-btn{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:10px;
+  background:rgba(7,7,15,.7);backdrop-filter:blur(10px);border:1px solid var(--b);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;
+  transition:all .2s;z-index:2}
+.fav-btn.on{background:rgba(255,59,92,.15);border-color:rgba(255,59,92,.3)}
+
+/* PRAZO CHIP */
+.prazo-chip{display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;margin-left:auto}
+.prazo-urgente{background:rgba(255,59,92,.12);border:1px solid rgba(255,59,92,.25);color:var(--red)}
+.prazo-ok{background:rgba(255,214,10,.1);border:1px solid rgba(255,214,10,.2);color:var(--yellow)}
+.prazo-longe{background:rgba(0,255,170,.07);border:1px solid rgba(0,255,170,.15);color:var(--neon)}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 24px;color:var(--dim)}
+.empty-ico{font-size:56px;margin-bottom:14px}
+.empty-ttl{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px}
+.empty-sub{font-size:14px;line-height:1.6}
+
+/* SKELETON */
+.skl{background:linear-gradient(90deg,var(--bg3) 25%,var(--card) 50%,var(--bg3) 75%);
+  background-size:200% 100%;animation:shim 1.5s infinite;border-radius:18px}
+@keyframes shim{0%{background-position:200%}100%{background-position:-200%}}
+
+/* LOAD MORE */
+.load-more-wrap{text-align:center;padding:8px 0 20px}
+.btn-load-more{background:var(--bg3);border:1.5px solid var(--b);color:var(--dim);
+  padding:12px 28px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;
+  transition:all .2s;font-family:var(--f)}
+.btn-load-more:hover{border-color:var(--neon);color:var(--neon)}
+
+/* BOTTOM NAV */
+.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(7,7,15,.96);backdrop-filter:blur(20px);
+  border-top:1px solid var(--b);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:10px 4px 8px;cursor:pointer;color:var(--dim);border:none;background:none;
+  font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;gap:3px;transition:color .2s}
+.bnav-btn .ico{font-size:20px;transition:all .2s}
+.bnav-btn.on{color:var(--neon)}
+.bnav-btn.on .ico{filter:drop-shadow(0 0 6px var(--neon));transform:translateY(-2px)}
+
+/* MODAL DETALHE */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex;align-items:flex-end}
+.modal-sheet{background:var(--bg2);border:1px solid var(--b);border-radius:24px 24px 0 0;
+  width:100%;max-height:90vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom)}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--b2);margin:14px auto 0}
+.modal-img{width:100%;height:180px;object-fit:cover}
+.modal-img-ph{height:120px;display:flex;align-items:center;justify-content:center;font-size:64px;background:var(--bg3)}
+.modal-body{padding:18px 20px 24px}
+.modal-nome{font-family:var(--fd);font-size:24px;font-weight:900;line-height:1.15;margin-bottom:12px}
+.modal-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.info-box{background:var(--bg3);border:1px solid var(--b);border-radius:12px;padding:12px}
+.info-box-ico{font-size:20px;margin-bottom:4px}
+.info-box-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px}
+.info-box-val{font-size:14px;font-weight:700}
+.modal-dists{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.modal-dist{padding:6px 14px;border-radius:10px;font-size:14px;font-weight:700;
+  background:rgba(76,158,255,.1);border:1px solid rgba(76,158,255,.25);color:var(--blue)}
+.modal-desc{font-size:14px;color:var(--dim);line-height:1.7;margin-bottom:16px}
+.btn-inscrever-full{display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--neon);color:#000;border:none;padding:16px;border-radius:16px;
+  font-size:16px;font-weight:800;cursor:pointer;width:100%;text-decoration:none;
+  font-family:var(--fd);letter-spacing:.5px;transition:all .2s}
+.btn-inscrever-full:hover{background:var(--neon2)}
+.modal-fonte{text-align:center;font-size:11px;color:var(--dim);margin-top:10px}
+.modal-close{position:absolute;top:60px;right:16px;width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:none;color:var(--text);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+
+/* PAINEL FILTRO */
+.filtro-panel{display:none;background:var(--bg2);border-top:1px solid var(--b);padding:16px}
+.filtro-panel.open{display:block}
+.filtro-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.filtro-sel{background:var(--bg3);border:1.5px solid var(--b);color:var(--text);
+  padding:10px 12px;border-radius:12px;font-size:14px;font-family:var(--f);width:100%}
+.filtro-sel:focus{outline:none;border-color:var(--neon)}
+.btn-aplicar{background:var(--neon);color:#000;border:none;padding:12px;border-radius:12px;
+  font-size:14px;font-weight:800;cursor:pointer;width:100%;font-family:var(--fd)}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:999;pointer-events:none}
+.toast{background:var(--card);border:1px solid var(--b2);border-radius:12px;
+  padding:10px 18px;font-size:13px;font-weight:600;color:var(--neon);
+  opacity:0;transform:translateY(8px);transition:all .3s;white-space:nowrap}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.corrida-card{animation:fadeUp .3s ease both}
+
+@media(min-width:600px){
+  .modal-overlay{align-items:center}
+  .modal-sheet{border-radius:20px;max-width:500px;margin:auto}
+}
 </style>
 </head>
 <body>
-<div class="header">
-  <h1>🏁 Corridas Abertas</h1>
-  <p>Encontre sua próxima corrida e inscreva-se</p>
-</div>
-<div class="container">
-  <div class="filtros">
-    <select id="filtroEstado" onchange="carregar()">
-      <option value="">Todos os estados</option>
-      <option value="SE">Sergipe</option><option value="BA">Bahia</option>
-      <option value="SP">São Paulo</option><option value="RJ">Rio de Janeiro</option>
-      <option value="MG">Minas Gerais</option><option value="PE">Pernambuco</option>
-      <option value="CE">Ceará</option><option value="AL">Alagoas</option>
-    </select>
-    <select id="filtroDist" onchange="carregar()">
-      <option value="">Todas distâncias</option>
-      <option value="5km">5km</option><option value="10km">10km</option>
-      <option value="21km">Meia Maratona</option><option value="42km">Maratona</option>
-    </select>
+
+<header class="topbar">
+  <a href="/atleta.html" class="icon-btn">←</a>
+  <span class="topbar-title">🏁 Corridas Abertas</span>
+  <div class="icon-btn" id="adminBtn" style="display:none;font-size:13px" onclick="abrirAdmin()">⚙️</div>
+</header>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-row">
+    <input class="search-box" id="searchInput" placeholder="Buscar corrida, cidade, estado..." 
+      oninput="debounceSearch()">
+    <button class="btn-filtro" id="filtroBtn" onclick="toggleFiltro()">⚙️ Filtros</button>
   </div>
-  <div id="lista">Carregando corridas...</div>
+
+  <!-- PAINEL DE FILTROS -->
+  <div class="filtro-panel" id="filtroPanel">
+    <div class="filtro-row">
+      <select class="filtro-sel" id="filtroEstado">
+        <option value="">Todos os estados</option>
+        <option value="SE">Sergipe</option>
+        <option value="SP">São Paulo</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="RS">Rio Grande do Sul</option>
+        <option value="PR">Paraná</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="CE">Ceará</option>
+        <option value="BA">Bahia</option>
+        <option value="PE">Pernambuco</option>
+        <option value="GO">Goiás</option>
+        <option value="DF">Distrito Federal</option>
+        <option value="AL">Alagoas</option>
+        <option value="MA">Maranhão</option>
+        <option value="PA">Pará</option>
+        <option value="MT">Mato Grosso</option>
+        <option value="MS">Mato Grosso do Sul</option>
+        <option value="RN">Rio Grande do Norte</option>
+        <option value="PB">Paraíba</option>
+        <option value="PI">Piauí</option>
+        <option value="ES">Espírito Santo</option>
+        <option value="AM">Amazonas</option>
+      </select>
+      <select class="filtro-sel" id="filtroMes">
+        <option value="">Todos os meses</option>
+        <option value="3">Março</option>
+        <option value="4">Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+    </div>
+    <div class="filtro-row">
+      <select class="filtro-sel" id="filtroDistancia">
+        <option value="">Todas distâncias</option>
+        <option value="3km">3km</option>
+        <option value="5km">5km</option>
+        <option value="10km">10km</option>
+        <option value="15km">15km</option>
+        <option value="21km">21km (Meia)</option>
+        <option value="42km">42km (Maratona)</option>
+      </select>
+      <select class="filtro-sel" id="filtroOrder">
+        <option value="data">Por data</option>
+        <option value="preco">Menor preço</option>
+      </select>
+    </div>
+    <button class="btn-aplicar" onclick="aplicarFiltros()">🔍 Aplicar Filtros</button>
+  </div>
 </div>
-<nav class="bottom-nav">
-  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
-  <a href="/corridas-abertas.html" class="nav-item ativo"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
-  <a href="/treinador.html" class="nav-item"><span class="nav-icon">🏃</span><span class="nav-label">Treinador</span></a>
-  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
-  <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
+
+<!-- CHIPS RÁPIDOS -->
+<div class="chips-scroll" id="chipsEstado">
+  <div class="chip on" data-est="" onclick="setEstadoChip(this,'')">🇧🇷 Todos</div>
+  <div class="chip" data-est="SE" onclick="setEstadoChip(this,'SE')">📍 Sergipe</div>
+  <div class="chip" data-est="SP" onclick="setEstadoChip(this,'SP')">📍 São Paulo</div>
+  <div class="chip" data-est="RJ" onclick="setEstadoChip(this,'RJ')">📍 Rio</div>
+  <div class="chip" data-est="MG" onclick="setEstadoChip(this,'MG')">📍 MG</div>
+  <div class="chip" data-est="RS" onclick="setEstadoChip(this,'RS')">📍 RS</div>
+  <div class="chip" data-est="CE" onclick="setEstadoChip(this,'CE')">📍 CE</div>
+  <div class="chip" data-est="BA" onclick="setEstadoChip(this,'BA')">📍 BA</div>
+  <div class="chip" data-est="PR" onclick="setEstadoChip(this,'PR')">📍 PR</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item"><span class="stat-n" id="statTotal">—</span><span class="stat-l">Corridas</span></div>
+  <div class="stat-item"><span class="stat-n" id="statEstados">—</span><span class="stat-l">Estados</span></div>
+  <div class="stat-item"><span class="stat-n" id="statMes">—</span><span class="stat-l">Este mês</span></div>
+  <div class="stat-item"><span class="stat-n" id="statGratis">—</span><span class="stat-l">Gratuitas</span></div>
+</div>
+
+<!-- LISTA -->
+<div class="corridas-list" id="corridasList">
+  <div class="skl" style="height:160px;margin-bottom:10px"></div>
+  <div class="skl" style="height:160px;margin-bottom:10px"></div>
+  <div class="skl" style="height:160px;margin-bottom:10px"></div>
+</div>
+
+<div class="load-more-wrap" id="loadMoreWrap" style="display:none">
+  <button class="btn-load-more" onclick="loadMore()">Carregar mais corridas</button>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottomnav">
+  <button class="bnav-btn on" onclick="">
+    <span class="ico">🏁</span>Corridas
+  </button>
+  <button class="bnav-btn" onclick="window.location.href='/comunidade.html'">
+    <span class="ico">👥</span>Grupos
+  </button>
+  <button class="bnav-btn" onclick="window.location.href='/atleta.html'">
+    <span class="ico">🏠</span>Início
+  </button>
+  <button class="bnav-btn" onclick="window.location.href='/atleta.html#ia'">
+    <span class="ico">🤖</span>IA
+  </button>
+  <button class="bnav-btn" onclick="window.location.href='/atleta.html#perfil'">
+    <span class="ico">👤</span>Perfil
+  </button>
 </nav>
+
+<!-- MODAL DETALHE -->
+<div class="modal-overlay" id="modalDetalhe">
+  <div class="modal-sheet" id="modalContent">
+    <div class="modal-handle"></div>
+    <div id="modalInner"></div>
+  </div>
+  <button class="modal-close" onclick="fecharModal()">✕</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap"><div class="toast" id="toast"></div></div>
+
 <script>
-async function carregar() {
-  const estado = document.getElementById('filtroEstado').value;
-  const dist = document.getElementById('filtroDist').value;
-  let url = '/corridas-abertas?';
-  if (estado) url += 'estado=' + estado + '&';
-  if (dist) url += 'distancia=' + dist + '&';
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    const lista = document.getElementById('lista');
-    if (!data.length) { lista.innerHTML = '<p style="text-align:center;color:#666;padding:40px">Nenhuma corrida encontrada. Em breve teremos mais!</p>'; return; }
-    lista.innerHTML = data.map(c => {
-      const dt = new Date(c.data);
-      const dataStr = dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-      const dists = c.distancias.split(',').map(d => '<span class="dist-tag">'+d.trim()+'</span>').join('');
-      return `<div class="corrida-card">
-        <h3>${c.nome}</h3>
-        <div class="meta">
-          <span>📅 ${dataStr}</span>
-          <span>📍 ${c.cidade}/${c.estado}</span>
-          ${c.preco ? '<span>💰 R$ '+c.preco.toFixed(2)+'</span>' : '<span>💚 Gratuita</span>'}
-        </div>
-        <div class="dist-tags">${dists}</div>
-        <span class="btn-inscrever" style="opacity:0.5;cursor:default">Em breve</span>
-      </div>`;
-    }).join('');
-  } catch(e) { console.error(e); }
+// ══════════════════════════════════
+// ESTADO
+// ══════════════════════════════════
+const TOKEN = localStorage.getItem('pace_token');
+const ME = JSON.parse(localStorage.getItem('pace_user') || '{}');
+const ADMIN_KEY = '3b77d62cb40acbbe091abf119204cd5fd3371c47e68e47cf9698088a1d1a18d6';
+
+let filtros = { estado: '', mes: '', distancia: '', busca: '', orderBy: 'data' };
+let pagina = 1;
+let totalPaginas = 1;
+let favoritados = new Set();
+let searchTimer = null;
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+async function init() {
+  carregarStats();
+  carregarCorridas(true);
+  if (TOKEN) carregarFavoritos();
+  
+  // Detectar estado do usuário se disponível
+  const user = JSON.parse(localStorage.getItem('pace_user') || '{}');
+  if (user.state) {
+    filtros.estado = user.state;
+    document.querySelectorAll('#chipsEstado .chip').forEach(c => {
+      c.classList.toggle('on', c.dataset.est === user.state);
+    });
+    document.getElementById('filtroEstado').value = user.state;
+  }
 }
-carregar();
+
+// ══════════════════════════════════
+// API
+// ══════════════════════════════════
+async function api(path, opts = {}) {
+  const res = await fetch(path, {
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN||''}`, ...opts.headers },
+    ...opts
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+// ══════════════════════════════════
+// CARREGAR CORRIDAS
+// ══════════════════════════════════
+async function carregarCorridas(reset = false) {
+  if (reset) { pagina = 1; }
+
+  const params = new URLSearchParams({ page: pagina, limit: 20, orderBy: filtros.orderBy });
+  if (filtros.estado) params.set('estado', filtros.estado);
+  if (filtros.mes) params.set('mes', filtros.mes);
+  if (filtros.distancia) params.set('distancia', filtros.distancia.replace('km',''));
+  if (filtros.busca) params.set('busca', filtros.busca);
+
+  const el = document.getElementById('corridasList');
+
+  if (reset) {
+    el.innerHTML = `<div class="skl" style="height:160px;margin-bottom:10px"></div>
+                    <div class="skl" style="height:160px;margin-bottom:10px"></div>
+                    <div class="skl" style="height:160px;margin-bottom:10px"></div>`;
+  }
+
+  try {
+    const data = await api(`/corridas-abertas?${params}`);
+    const corridas = data.corridas || [];
+    totalPaginas = data.paginas || 1;
+
+    if (reset) el.innerHTML = '';
+
+    if (!corridas.length && reset) {
+      el.innerHTML = `<div class="empty">
+        <div class="empty-ico">🏁</div>
+        <div class="empty-ttl">Nenhuma corrida encontrada</div>
+        <div class="empty-sub">Tente outro filtro ou aguarde o buscador encontrar novas corridas na sua região.</div>
+      </div>`;
+      document.getElementById('loadMoreWrap').style.display = 'none';
+      return;
+    }
+
+    corridas.forEach((c, i) => {
+      const card = criarCard(c, i);
+      el.appendChild(card);
+    });
+
+    document.getElementById('loadMoreWrap').style.display = pagina < totalPaginas ? 'flex' : 'none';
+
+  } catch(e) {
+    if (reset) el.innerHTML = `<div class="empty"><div class="empty-ico">😬</div><div class="empty-ttl">Erro ao carregar</div><div class="empty-sub">${e.message}</div></div>`;
+  }
+}
+
+function loadMore() {
+  pagina++;
+  carregarCorridas(false);
+}
+
+// ══════════════════════════════════
+// CRIAR CARD
+// ══════════════════════════════════
+function criarCard(c, idx) {
+  const div = document.createElement('div');
+  div.className = 'corrida-card';
+  div.style.animationDelay = `${idx * 0.04}s`;
+
+  const dataObj = new Date(c.data);
+  const diasRestantes = Math.ceil((dataObj - new Date()) / 86400000);
+  const dataFmt = dataObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const isFav = favoritados.has(c.id);
+
+  let prazoBadge = '';
+  if (diasRestantes <= 7) prazoBadge = `<span class="prazo-chip prazo-urgente">🔥 ${diasRestantes}d</span>`;
+  else if (diasRestantes <= 30) prazoBadge = `<span class="prazo-chip prazo-ok">⏳ ${diasRestantes}d</span>`;
+  else prazoBadge = `<span class="prazo-chip prazo-longe">📅 ${diasRestantes}d</span>`;
+
+  const dists = (c.distancias || '').split(',').filter(d => d.trim()).map(d =>
+    `<span class="dist-badge">${d.trim()}</span>`).join('');
+
+  const precoHtml = !c.preco || c.preco === 0
+    ? `<span class="preco-gratis">💚 Gratuita</span>`
+    : `<div><div class="preco-label">A partir de</div><div class="preco-val">R$ ${c.preco.toFixed(2).replace('.',',')}</div></div>`;
+
+  const imgHtml = c.imageUrl
+    ? `<img class="card-img" src="${c.imageUrl}" alt="${c.nome}" onerror="this.parentElement.innerHTML='<div class=\\'card-img-placeholder\\'>🏁</div>'">`
+    : `<div class="card-img-placeholder">🏁</div>`;
+
+  div.innerHTML = `
+    ${imgHtml}
+    <button class="fav-btn ${isFav ? 'on' : ''}" onclick="toggleFav(event,'${c.id}',this)" title="Favoritar">
+      ${isFav ? '❤️' : '🤍'}
+    </button>
+    <div class="card-body">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span class="card-estado-badge">📍 ${c.cidade || c.estado}/${c.estado}</span>
+        ${prazoBadge}
+      </div>
+      <div class="card-nome">${c.nome}</div>
+      <div class="card-meta">
+        <div class="meta-item">📅 <b>${dataFmt}</b></div>
+        ${c.organizador ? `<div class="meta-item">👤 ${c.organizador}</div>` : ''}
+        <div class="meta-item">🔗 ${c.fonte || 'manual'}</div>
+      </div>
+      ${dists ? `<div class="card-dists">${dists}</div>` : ''}
+      <div class="card-footer">
+        ${precoHtml}
+        <button class="btn-inscrever" onclick="abrirDetalhe('${c.id}')">
+          Ver Detalhes →
+        </button>
+      </div>
+    </div>`;
+
+  div.addEventListener('click', e => {
+    if (!e.target.closest('.fav-btn') && !e.target.closest('.btn-inscrever')) {
+      abrirDetalhe(c.id);
+    }
+  });
+
+  return div;
+}
+
+// ══════════════════════════════════
+// DETALHE / MODAL
+// ══════════════════════════════════
+async function abrirDetalhe(id) {
+  document.getElementById('modalDetalhe').classList.add('open');
+  document.getElementById('modalInner').innerHTML = `<div style="text-align:center;padding:40px;color:var(--dim)">Carregando...</div>`;
+
+  try {
+    const c = await api(`/corridas-abertas/${id}`);
+    const dataFmt = new Date(c.data).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const diasRestantes = Math.ceil((new Date(c.data) - new Date()) / 86400000);
+    const dists = (c.distancias || '').split(',').filter(d => d.trim()).map(d =>
+      `<span class="modal-dist">${d.trim()}</span>`).join('');
+
+    const precoHtml = !c.preco || c.preco === 0
+      ? `<div class="info-box-val" style="color:var(--neon)">💚 Gratuita</div>`
+      : `<div class="info-box-val">R$ ${c.preco.toFixed(2).replace('.',',')}</div>`;
+
+    document.getElementById('modalInner').innerHTML = `
+      ${c.imageUrl ? `<img class="modal-img" src="${c.imageUrl}" alt="${c.nome}">` : '<div class="modal-img-ph">🏁</div>'}
+      <div class="modal-body">
+        <div class="modal-nome">${c.nome}</div>
+
+        <div class="modal-info-grid">
+          <div class="info-box">
+            <div class="info-box-ico">📅</div>
+            <div class="info-box-label">Data</div>
+            <div class="info-box-val">${dataFmt}</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-ico">⏳</div>
+            <div class="info-box-label">Faltam</div>
+            <div class="info-box-val" style="color:${diasRestantes <= 7 ? 'var(--red)' : diasRestantes <= 30 ? 'var(--yellow)' : 'var(--neon)'}">${diasRestantes} dias</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-ico">📍</div>
+            <div class="info-box-label">Local</div>
+            <div class="info-box-val">${c.cidade || '—'}/${c.estado}</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-ico">💰</div>
+            <div class="info-box-label">Inscrição</div>
+            ${precoHtml}
+          </div>
+        </div>
+
+        ${dists ? `<div class="modal-dists">${dists}</div>` : ''}
+        ${c.descricao ? `<div class="modal-desc">${c.descricao}</div>` : ''}
+        ${c.organizador ? `<div class="modal-desc">👤 Organização: <b>${c.organizador}</b></div>` : ''}
+        ${c.horarioLargada ? `<div class="modal-desc">🕐 Largada: <b>${c.horarioLargada}</b></div>` : ''}
+
+        <a href="${c.linkInscricao}" target="_blank" class="btn-inscrever-full">
+          🏁 Ir para Inscrição
+        </a>
+        <div class="modal-fonte">via ${c.fonte || 'PACE'} · Link direto para a página de inscrição</div>
+      </div>`;
+
+  } catch(e) {
+    document.getElementById('modalInner').innerHTML = `<div style="padding:40px;text-align:center;color:var(--dim)">Erro ao carregar</div>`;
+  }
+}
+
+function fecharModal() {
+  document.getElementById('modalDetalhe').classList.remove('open');
+}
+document.getElementById('modalDetalhe').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalDetalhe')) fecharModal();
+});
+
+// ══════════════════════════════════
+// STATS
+// ══════════════════════════════════
+async function carregarStats() {
+  try {
+    const [all, mesAtual, gratis] = await Promise.all([
+      api('/corridas-abertas?limit=1'),
+      api(`/corridas-abertas?mes=${new Date().getMonth()+1}&limit=1`),
+      api('/corridas-abertas?limit=1'),
+    ]);
+    const estats = await api('/corridas-abertas/stats/estados').catch(() => ({ estados: [] }));
+    document.getElementById('statTotal').textContent = all.total || '—';
+    document.getElementById('statEstados').textContent = estats.estados?.length || '—';
+    document.getElementById('statMes').textContent = mesAtual.total || '—';
+    document.getElementById('statGratis').textContent = '—';
+  } catch {}
+}
+
+// ══════════════════════════════════
+// FAVORITOS
+// ══════════════════════════════════
+async function carregarFavoritos() {
+  try {
+    const data = await api('/corridas-abertas/meus/favoritos');
+    (data.corridas || []).forEach(c => favoritados.add(c.id));
+  } catch {}
+}
+
+async function toggleFav(e, id, btn) {
+  e.stopPropagation();
+  if (!TOKEN) { toast('Login necessário para favoritar'); return; }
+  try {
+    const data = await api(`/corridas-abertas/${id}/favoritar`, { method: 'POST' });
+    if (data.favoritado) { favoritados.add(id); btn.innerHTML = '❤️'; btn.classList.add('on'); toast('❤️ Favoritado!'); }
+    else { favoritados.delete(id); btn.innerHTML = '🤍'; btn.classList.remove('on'); toast('Removido dos favoritos'); }
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+// ══════════════════════════════════
+// FILTROS
+// ══════════════════════════════════
+function toggleFiltro() {
+  const p = document.getElementById('filtroPanel');
+  const btn = document.getElementById('filtroBtn');
+  p.classList.toggle('open');
+  btn.classList.toggle('on', p.classList.contains('open'));
+}
+
+function aplicarFiltros() {
+  filtros.estado = document.getElementById('filtroEstado').value;
+  filtros.mes = document.getElementById('filtroMes').value;
+  filtros.distancia = document.getElementById('filtroDistancia').value;
+  filtros.orderBy = document.getElementById('filtroOrder').value;
+  toggleFiltro();
+  // Sincronizar chips
+  document.querySelectorAll('#chipsEstado .chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.est === filtros.estado);
+  });
+  carregarCorridas(true);
+}
+
+function setEstadoChip(el, estado) {
+  document.querySelectorAll('#chipsEstado .chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  filtros.estado = estado;
+  document.getElementById('filtroEstado').value = estado;
+  carregarCorridas(true);
+}
+
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    filtros.busca = document.getElementById('searchInput').value;
+    carregarCorridas(true);
+  }, 400);
+}
+
+// ══════════════════════════════════
+// ADMIN
+// ══════════════════════════════════
+function abrirAdmin() {
+  const url = prompt('Rodar scraper agora? Digite o estado (ex: SE) ou deixe vazio para todos:', '');
+  if (url === null) return;
+  fetch('/corridas-abertas/scraper/rodar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
+    body: JSON.stringify({ estados: url ? [url.toUpperCase()] : null })
+  }).then(r => r.json()).then(d => {
+    toast(d.success ? '🚀 Scraper iniciado!' : '❌ ' + (d.error || 'Erro'));
+    if (d.success) setTimeout(() => verificarProgresso(), 3000);
+  });
+}
+
+async function verificarProgresso() {
+  try {
+    const data = await fetch('/corridas-abertas/scraper/status', {
+      headers: { 'x-admin-key': ADMIN_KEY }
+    }).then(r => r.json());
+    if (data.rodando) {
+      toast(`⏳ ${data.progresso?.fase || 'Buscando...'}`);
+      setTimeout(() => verificarProgresso(), 5000);
+    } else {
+      toast(`✅ Scraper concluído! ${data.totalAtivo} corridas`);
+      carregarCorridas(true); carregarStats();
+    }
+  } catch {}
+}
+
+// Mostrar botão admin se for admin
+if (ME.isAdmin || localStorage.getItem('pace_admin')) {
+  document.getElementById('adminBtn').style.display = 'flex';
+}
+
+// ══════════════════════════════════
+// TOAST
+// ══════════════════════════════════
+function toast(msg, dur = 2800) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => el.classList.remove('show'), dur);
+}
+
+// ══════════════════════════════════
+// START
+// ══════════════════════════════════
+init();
 </script>
 </body>
 </html>
