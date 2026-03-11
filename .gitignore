@@ -8,3 +8,5 @@ uploads/
 *.key
 *.pem
 secrets/
+.env
+.env.production
