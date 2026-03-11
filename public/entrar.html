@@ -144,7 +144,7 @@
 </div>
 
 <script>
-let bip39Atual = '';
+
 
 function showTab(tab) {
   ['login','register','recover'].forEach(t => {
@@ -240,26 +240,11 @@ async function doRegister() {
   }
 }
 
-function mostrarBIP39(words) {
-  const lista = words.split(' ');
-  document.getElementById('bip39Words').innerHTML =
-    lista.map((w,i) => `
-      <div class="bg-slate-700 rounded-lg p-2 text-center">
-        <span class="text-slate-500 text-xs">${i+1}</span>
-        <p class="font-mono font-bold text-sm text-green-400">${w}</p>
-      </div>`).join('');
-  document.getElementById('bip39Modal').classList.remove('hidden');
-}
 
-function copiarBIP39() {
-  navigator.clipboard.writeText(bip39Atual);
-  alert('✅ Copiado! Cole em um lugar seguro.');
-}
 
-function confirmarBIP39() {
-  document.getElementById('bip39Modal').classList.add('hidden');
-  window.location = '/';
-}
+
+
+
 
 async function doRecover() {
   const email = document.getElementById('recEmail').value;
