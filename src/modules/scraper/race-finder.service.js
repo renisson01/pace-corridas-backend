@@ -343,6 +343,89 @@ export async function scraperIguanaSports() {
   return total;
 }
 
+
+// ─── SCRAPER: SPORTSCHRONO (Sergipe!) ────────────────────────
+export async function scraperSportschrono() {
+  addLog('Iniciando SportsChronos (SE)...');
+  let total = 0;
+  try {
+    const { data: html } = await axios.get('https://www.sportschrono.com.br/calendario-eventos', { headers: HEADERS, timeout: 15000 });
+    const $ = cheerio.load(html);
+    // Formato da tabela: "DD/MM/YYYY  Nome do Evento" em células td
+    $('td').each((i, el) => {
+      const texto = $(el).text().trim();
+      const linhas = texto.split('\n').map(l => l.trim()).filter(Boolean);
+      linhas.forEach(linha => {
+        const m = linha.match(/^(\d{2}\/\d{2}\/\d{4})\s+(.+)$/);
+        if (!m) return;
+        const dataEv = parseData(m[1]);
+        if (!dataEv || dataEv < new Date()) return;
+        const nome = m[2].trim();
+        if (nome.length < 4) return;
+        salvar({
+          nome, data: dataEv,
+          cidade: 'Sergipe', estado: 'SE',
+          distancias: extrairDistancias(nome),
+          urlInscricao: 'https://www.sportschrono.com.br/eventos',
+          plataforma: 'sportschrono',
+        }).then(r => { if(r) total++; }).catch(()=>{});
+      });
+    });
+    // Também tentar eventos individuais com link
+    $('a[href*="/evento"]').each((i, el) => {
+      const $el = $(el);
+      const link = $el.attr('href') || '';
+      const nome = $el.text().trim();
+      if (!nome || nome.length < 4 || !link) return;
+      const urlEv = link.startsWith('http') ? link : `https://www.sportschrono.com.br${link}`;
+      salvar({
+        nome, cidade: 'Sergipe', estado: 'SE',
+        distancias: extrairDistancias(nome),
+        urlInscricao: urlEv,
+        plataforma: 'sportschrono',
+      }).then(r => { if(r) total++; }).catch(()=>{});
+    });
+  } catch(e) { addLog(`SportsChronos erro: ${e.message}`); }
+  addLog(`SportsChronos concluido: ${total} corridas (SE)`);
+  return total;
+}
+
+// ─── SCRAPER: TBH ESPORTES (MG - Belo Horizonte) ─────────────
+export async function scraperTbhEsportes() {
+  addLog('Iniciando TBH Esportes (MG)...');
+  let total = 0;
+  try {
+    const { data: html } = await axios.get('https://www.tbhesportes.com.br/eventos-2026/', { headers: HEADERS, timeout: 15000 });
+    const $ = cheerio.load(html);
+    // TBH usa WordPress — links para posts de eventos
+    $('a[href*="tbhesportes.com.br"]').each((i, el) => {
+      const $el = $(el);
+      const link = $el.attr('href') || '';
+      if (!link.includes('tbhesportes.com.br') || link.includes('/page/') || link === 'https://www.tbhesportes.com.br/eventos-2026/') return;
+      const nomeRaw = $el.text().trim() || $el.find('h2,h3,strong').first().text().trim();
+      const nome = nomeRaw.replace(/\s+/g,' ').trim();
+      if (!nome || nome.length < 4) return;
+      // Extrair data do texto próximo
+      const texto = $el.parent().text() + ' ' + $el.parent().parent().text();
+      const dataTexto = texto.match(/\d{1,2}\s+de\s+\w+\s+de\s+\d{4}/i)?.[0] ||
+                        texto.match(/\d{2}\/\d{2}\/\d{4}/)?.[0] || '';
+      const dataEv = parseData(dataTexto);
+      if (dataEv && dataEv < new Date()) return;
+      const img = $el.find('img').first().attr('src') || $el.parent().find('img').first().attr('src') || '';
+      salvar({
+        nome, data: dataEv,
+        cidade: 'Belo Horizonte', estado: 'MG',
+        distancias: extrairDistancias(nome + ' ' + texto),
+        urlInscricao: link,
+        plataforma: 'tbhesportes',
+        foto: img.startsWith('http') ? img : null,
+      }).then(r => { if(r) total++; }).catch(()=>{});
+    });
+  } catch(e) { addLog(`TBH Esportes erro: ${e.message}`); }
+  addLog(`TBH Esportes concluido: ${total} corridas (MG)`);
+  return total;
+}
+
 export async function runScraperCorridas() {
   if (scraperStatus.rodando) return { error: 'Scraper ja rodando' };
 
@@ -358,6 +441,8 @@ export async function runScraperCorridas() {
     const r6 = await scraperIngresso84();
     const r7 = await scraperAssessocor();
     const r8 = await scraperIguanaSports();
+    const r9 = await scraperSportschrono();
+    const r10 = await scraperTbhEsportes();
     const r3 = await scraperCronotag();
     const r4 = await scraperSporttimer();
     await encerrarPassadas();
