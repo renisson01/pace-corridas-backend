@@ -34,6 +34,19 @@ const HEADERS = {
   'Accept-Language': 'pt-BR,pt;q=0.9',
 };
 
+
+// Limitar concorrência para não sobrecarregar o banco
+async function runPool(tasks, concurrency = 5) {
+  const results = [];
+  for (let i = 0; i < tasks.length; i += concurrency) {
+    const batch = tasks.slice(i, i + concurrency);
+    const r = await Promise.all(batch.map(t => t()));
+    results.push(...r);
+    await new Promise(res => setTimeout(res, 200));
+  }
+  return results;
+}
+
 // ─── UTILS ─────────────────────────────────────────────────────
 function parseData(texto) {
   if (!texto) return null;
@@ -389,7 +402,7 @@ export async function scraperCronotag() {
       const dataEv = parseData(dataTexto);
       promises.push(salvar({ nome, data: dataEv, cidade, estado, distancias: extrairDistancias(nome), urlInscricao: link, plataforma: 'cronotag', foto: img.startsWith('http') ? img : img ? 'https://www.cronotag.com.br/v2/'+img : null }).then(r => { if(r) total++; }).catch(()=>{}));
     });
-    await Promise.all(promises);
+    await runPool(promises);
     addLog(`CRONOtag concluido: ${total} corridas`);
   } catch(e) { addLog(`CRONOtag erro: ${e.message}`); }
   return total;
@@ -423,7 +436,7 @@ export async function scraperSporttimer() {
       const estado = /goiânia|goiás|anápolis|catalão|caldas/i.test(nome) ? 'GO' : 'MG';
       promises.push(salvar({ nome, data: dataEv, cidade: '', estado, distancias: extrairDistancias(nome), urlInscricao: link.startsWith('http') ? link : 'https://www.sporttimer.com.br', plataforma: 'sporttimer' }).then(r => { if(r) total++; }).catch(()=>{}));
     });
-    await Promise.all(promises);
+    await runPool(promises);
     addLog(`SportTimer concluido: ${total} corridas`);
   } catch(e) { addLog(`SportTimer erro: ${e.message}`); }
   return total;
