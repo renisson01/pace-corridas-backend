@@ -158,7 +158,8 @@ async function carregarProdutos(){
   try{
     const url=categoriaAtual?`/loja/produtos?categoria=${categoriaAtual}`:'/loja/produtos';
     const res=await fetch(url);
-    produtos=await res.json();
+    const d=await res.json();
+    produtos=Array.isArray(d)?d:(d.produtos||d.data||[]);
     renderProdutos(produtos);
   }catch(e){
     document.getElementById('grid').innerHTML='<div class="empty"><div class="empty-icon">😕</div><h3>Erro ao carregar</h3><p>Verifique sua conexão</p></div>';

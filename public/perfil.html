@@ -261,7 +261,7 @@ function setTab(tab) {
 
 async function salvarPerfil() {
   try {
-    const r = await fetch('/auth/update', {
+    const r = await fetch('/auth/me', {
       method: 'PATCH',
       headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
       body: JSON.stringify({

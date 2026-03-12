@@ -92,7 +92,7 @@ async function publicar() {
   btn.disabled = true;
 
   try {
-    const r = await fetch('/social/posts', {
+    const r = await fetch('/posts', {
       method: 'POST',
       headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
       body: JSON.stringify({ content: texto, tipo: tipoAtual, imageUrl: img || null })
@@ -117,7 +117,7 @@ async function publicar() {
 async function curtir(postId, btn) {
   if (!token) { window.location.href='/entrar.html'; return; }
   try {
-    const r = await fetch(`/social/posts/${postId}/like`, {
+    const r = await fetch(`/posts/${postId}/like`, {
       method:'POST', headers:{'Authorization':'Bearer '+token}
     });
     const d = await r.json();
@@ -127,7 +127,7 @@ async function curtir(postId, btn) {
 
 async function carregarFeed() {
   try {
-    const r = await fetch('/social/posts?limit=20', { headers: token ? {'Authorization':'Bearer '+token} : {} });
+    const r = await fetch('/posts?limit=20', { headers: token ? {'Authorization':'Bearer '+token} : {} });
     const posts = await r.json();
     const feed = document.getElementById('feed');
 
