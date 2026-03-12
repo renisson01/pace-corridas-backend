@@ -132,38 +132,23 @@ export async function scraperTicketSports() {
         if (!link || link.length < 4) return;
 
         const urlEv = `https://beta.ticketsports.com.br${link.split('?')[0]}`;
-        const texto = $el.text().replace(/\s+/g, ' ').trim();
 
-        // Nome: remover textos de status como "Inscrições abertas"
-        const linhas = texto.split(/  +|\n/)
-          .map(t => t.trim())
-          .filter(t => t.length > 3 && !t.includes('Inscrições') && !t.includes('abertas') && !t.includes('encerradas'));
-
-        const nome = linhas.find(t =>
-          t.length > 5 &&
-          !/^\d{1,2}\/\d{1,2}/.test(t) &&
-          !/^[A-Z]{2}$/.test(t)
-        ) || '';
+        // Estrutura confirmada: child[2]=nome, child[4]=data, child[5]=local
+        const filhos = $el.children('div');
+        const nome   = filhos.eq(2).text().trim().replace('...','').trim();
+        const dataTxt= filhos.eq(4).text().trim();
+        const local  = filhos.eq(5).text().trim();
+        const img    = $el.find('img').first().attr('src') || '';
 
         if (!nome || nome.length < 4) return;
 
-        // Filtrar só corridas
-        const ehCorrida = /corrid|maraton|trail|run|\b5k\b|\b10k\b|\b21k\b|\b42k\b|night.?run|sprint/i.test(nome + link);
-        if (!ehCorrida) return;
-
-        // Data
-        const dataTexto = linhas.find(t => /\d{1,2}\/\d{1,2}/.test(t)) || '';
-        const dataEv = parseData(dataTexto);
-
-        // Local — padrão "Cidade, UF"
-        const localTexto = linhas.find(t => /,\s*[A-Z]{2}$/.test(t.trim())) || '';
-        const partes = localTexto.split(',').map(p => p.trim());
+        const partes  = local.split(',').map(p => p.trim());
         const cidadeEv = partes[0] || '';
-        const estadoEv = (partes[1] || '').trim().slice(0,2).toUpperCase();
+        const estadoEv = (partes[1] || '').slice(0,2).toUpperCase();
 
         if (!estadoEv || !ESTADOS.includes(estadoEv)) return;
 
-        const img = $el.find('img').first().attr('src') || '';
+        const dataEv = parseData(dataTxt);
 
         salvar({
           nome, data: dataEv,
