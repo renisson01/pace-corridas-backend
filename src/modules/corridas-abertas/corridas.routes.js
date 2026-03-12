@@ -188,7 +188,6 @@ export async function corridasAbertasRoutes(fastify) {
     if (adminKey !== process.env.ADMIN_KEY) return reply.code(403).send({ error: 'Acesso negado' });
     return { logs: scraperStatus.logs, rodando: scraperStatus.rodando };
   });
-}
 
   // ─── ADMIN: ENRIQUECER IMAGENS ────────────────────────────
   fastify.post('/corridas-abertas/enrich/imagens', async (req, reply) => {
@@ -228,3 +227,4 @@ export async function corridasAbertasRoutes(fastify) {
 
     return { success: true, total: corridas.length, msg: `Enriquecendo ${corridas.length} corridas em background` };
   });
+}
