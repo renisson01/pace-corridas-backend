@@ -251,6 +251,8 @@ export async function runScraperCorridas() {
     const r1 = await scraperTicketSports();
     await sleep(2000);
     const r2 = await scraperSympla();
+    const r3 = await scraperCronotag();
+    const r4 = await scraperSporttimer();
     await encerrarPassadas();
 
     const total = await prisma.corridaAberta.count({
@@ -268,4 +270,67 @@ export async function runScraperCorridas() {
     scraperStatus.rodando = false;
     scraperStatus.progresso = { atual: 0, total: 0, fase: 'Concluido' };
   }
+}
+
+// ─── SCRAPER: CRONOTAG (MG) ────────────────────────────────────
+export async function scraperCronotag() {
+  addLog('Iniciando CRONOtag...');
+  let total = 0;
+  try {
+    const { data: html } = await axios.get('https://www.cronotag.com.br/v2/eventos.php', { headers: HEADERS, timeout: 20000 });
+    const $ = cheerio.load(html);
+    const promises = [];
+    $('a[href*="detalhe_evento"]').each((i, el) => {
+      const $el = $(el).closest('div');
+      const nome = $el.find('h4,h3,strong').first().text().trim().replace(/\uFFFD/g,'');
+      const textoCompleto = $el.text().replace(/\s+/g,' ').trim();
+      const dataTexto = textoCompleto.match(/\d{2}\/\d{2}\/\d{4}/)?.[0] || '';
+      const localTexto = textoCompleto.match(/[\wÀ-ú\s]+ - [A-Z]{2}/)?.[0] || '';
+      const link = 'https://www.cronotag.com.br/v2/' + ($(el).attr('href') || '');
+      const img = $el.find('img').first().attr('src') || '';
+      if (!nome || nome.length < 4) return;
+      const partes = localTexto.split(' - ');
+      const cidade = partes[0]?.trim() || '';
+      const estado = partes[1]?.trim().slice(0,2).toUpperCase() || 'MG';
+      const dataEv = parseData(dataTexto);
+      promises.push(salvar({ nome, data: dataEv, cidade, estado, distancias: extrairDistancias(nome), urlInscricao: link, plataforma: 'cronotag', foto: img.startsWith('http') ? img : img ? 'https://www.cronotag.com.br/v2/'+img : null }).then(r => { if(r) total++; }).catch(()=>{}));
+    });
+    await Promise.all(promises);
+    addLog(`CRONOtag concluido: ${total} corridas`);
+  } catch(e) { addLog(`CRONOtag erro: ${e.message}`); }
+  return total;
+}
+
+// ─── SCRAPER: SPORTTIMER (GO/MG) ──────────────────────────────
+export async function scraperSporttimer() {
+  addLog('Iniciando SportTimer...');
+  let total = 0;
+  try {
+    const { data: html } = await axios.get('https://www.sporttimer.com.br/site/calendario.php', { headers: HEADERS, timeout: 20000 });
+    const $ = cheerio.load(html);
+    let mesAtual = '';
+    const anoAtual = new Date().getFullYear();
+    const promises = [];
+    $('h4,h5').each((i, el) => {
+      const texto = $(el).text().trim();
+      // Detectar cabeçalho de mês
+      if (/^(Janeiro|Fevereiro|Março|Abril|Maio|Junho|Julho|Agosto|Setembro|Outubro|Novembro|Dezembro)/i.test(texto)) {
+        mesAtual = texto; return;
+      }
+      // Linha de evento: "DD/M - NOME DO EVENTO"
+      const m = texto.match(/^(\d{1,2})\/(\d{1,2})\s*-\s*(.+)/);
+      if (!m) return;
+      const dia = m[1].padStart(2,'0'), mes = m[2].padStart(2,'0'), nome = m[3].trim();
+      if (nome.length < 4) return;
+      const dataEv = new Date(`${anoAtual}-${mes}-${dia}T12:00:00Z`);
+      if (dataEv < new Date()) return;
+      const link = $(el).find('a').attr('href') || 'https://www.sporttimer.com.br';
+      // SportTimer é focado em GO e MG
+      const estado = /goiânia|goiás|anápolis|catalão|caldas/i.test(nome) ? 'GO' : 'MG';
+      promises.push(salvar({ nome, data: dataEv, cidade: '', estado, distancias: extrairDistancias(nome), urlInscricao: link.startsWith('http') ? link : 'https://www.sporttimer.com.br', plataforma: 'sporttimer' }).then(r => { if(r) total++; }).catch(()=>{}));
+    });
+    await Promise.all(promises);
+    addLog(`SportTimer concluido: ${total} corridas`);
+  } catch(e) { addLog(`SportTimer erro: ${e.message}`); }
+  return total;
 }

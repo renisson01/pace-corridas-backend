@@ -189,3 +189,42 @@ export async function corridasAbertasRoutes(fastify) {
     return { logs: scraperStatus.logs, rodando: scraperStatus.rodando };
   });
 }
+
+  // ─── ADMIN: ENRIQUECER IMAGENS ────────────────────────────
+  fastify.post('/corridas-abertas/enrich/imagens', async (req, reply) => {
+    const adminKey = req.headers['x-admin-key'];
+    if (adminKey !== process.env.ADMIN_KEY) return reply.code(403).send({ error: 'Acesso negado' });
+
+    const PLACEHOLDER = 'https://cdn.ticketsports.com.br/ticketagora/site/evento-ticket-agora-2x.png';
+    const corridas = await prisma.corridaAberta.findMany({
+      where: { OR: [{ imageUrl: null }, { imageUrl: PLACEHOLDER }] },
+      select: { id: true, nome: true, linkInscricao: true }
+    });
+
+    // Roda em background
+    (async () => {
+      const axios = (await import('axios')).default;
+      const cheerio = await import('cheerio');
+      let ok = 0;
+      for (const c of corridas) {
+        try {
+          const { data: html } = await axios.get(c.linkInscricao, {
+            headers: { 'User-Agent': 'Mozilla/5.0 Chrome/120.0.0.0 Safari/537.36' },
+            timeout: 12000
+          });
+          const $ = cheerio.load(html);
+          const img = $('meta[property="og:image"]').attr('content') ||
+                      $('meta[name="twitter:image"]').attr('content') || '';
+          if (img && img !== PLACEHOLDER && img.startsWith('http')) {
+            await prisma.corridaAberta.update({ where: { id: c.id }, data: { imageUrl: img } });
+            ok++;
+            console.log(`[Enrich] ✅ ${c.nome.slice(0,30)} → imagem atualizada`);
+          }
+          await new Promise(r => setTimeout(r, 1500));
+        } catch(e) { console.log(`[Enrich] ❌ ${c.nome.slice(0,25)}: ${e.message.slice(0,40)}`); }
+      }
+      console.log(`[Enrich] 🏁 ${ok}/${corridas.length} imagens atualizadas`);
+    })();
+
+    return { success: true, total: corridas.length, msg: `Enriquecendo ${corridas.length} corridas em background` };
+  });
