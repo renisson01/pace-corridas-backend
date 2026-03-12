@@ -159,3 +159,16 @@ export async function authRoutes(fastify) {
   });
 }
 // já dentro do arquivo - adicionar depois do GET /auth/me via sed
+
+  // Admin: setar premium
+  fastify.post('/auth/admin/set-premium', async (req, reply) => {
+    const key = req.headers['x-admin-key'];
+    if (key !== (process.env.ADMIN_KEY || '3b77d62cb40acbbe091abf119204cd5fd3371c47e68e47cf9698088a1d1a18d6')) return reply.code(403).send({ error: 'Negado' });
+    const { email, isPremium, premiumUntil } = req.body;
+    const u = await prisma.user.update({
+      where: { email },
+      data: { isPremium: isPremium ?? true, premiumUntil: premiumUntil ? new Date(premiumUntil) : null }
+    });
+    return { success: true, email: u.email, isPremium: u.isPremium };
+  });
+}
