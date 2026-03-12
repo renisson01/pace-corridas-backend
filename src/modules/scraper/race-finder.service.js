@@ -239,6 +239,97 @@ async function encerrarPassadas() {
 }
 
 // ─── RUNNER PRINCIPAL ──────────────────────────────────────────
+
+// ─── SCRAPER: INGRESSO84 (RN e Nordeste) ─────────────────────
+export async function scraperIngresso84() {
+  addLog('Iniciando Ingresso84...');
+  let total = 0;
+  try {
+    for (let pg = 1; pg <= 4; pg++) {
+      const url = `https://www.ingresso84.com.br/eventos${pg > 1 ? `/p/${pg}` : ''}`;
+      addLog(`Ingresso84 pagina ${pg}...`);
+      const { data: html } = await axios.get(url, { headers: HEADERS, timeout: 15000 });
+      const $ = cheerio.load(html);
+      let found = 0;
+      $('a[href*="/evento/"]').each((i, el) => {
+        const $el = $(el);
+        const nome = $el.find('h4, h3, strong').first().text().trim().replace(/\*+/g,'').trim();
+        if (!nome || nome.length < 4) return;
+        const link = $el.attr('href') || '';
+        const urlEv = link.startsWith('http') ? link : `https://www.ingresso84.com.br${link}`;
+        const dataTexto = $el.text().match(/\d{1,2} de \w+ de \d{4}/)?.[0] || $el.text().match(/\d{2}\/\d{2}\/\d{4}/)?.[0] || '';
+        const localTexto = $el.text().match(/[A-Z\u00C0-\u00FF\s]+ - [A-Z]{2}/)?.[0] || '';
+        const partes = localTexto.split(' - ');
+        const cidade = partes[0]?.trim() || '';
+        const estado = partes[1]?.trim().slice(0,2).toUpperCase() || 'RN';
+        if (!ESTADOS.includes(estado)) return;
+        const img = $el.find('img').first().attr('src') || '';
+        const fotoUrl = img.startsWith('http') ? img : img ? `https://www.ingresso84.com.br${img}` : null;
+        salvar({ nome, data: parseData(dataTexto), cidade, estado, distancias: extrairDistancias(nome), urlInscricao: urlEv, plataforma: 'ingresso84', foto: fotoUrl }).then(r => { if(r) { total++; found++; } }).catch(()=>{});
+      });
+      addLog(`Ingresso84 pg${pg}: ${found} corridas`);
+      if (found === 0) break;
+      await new Promise(r => setTimeout(r, 1500));
+    }
+  } catch(e) { addLog(`Ingresso84 erro: ${e.message}`); }
+  addLog(`Ingresso84 concluido: ${total} corridas`);
+  return total;
+}
+
+// ─── SCRAPER: ASSESSOCOR (PR e Sul/Sudeste) ──────────────────
+export async function scraperAssessocor() {
+  addLog('Iniciando Assessocor...');
+  let total = 0;
+  try {
+    const { data: html } = await axios.get('https://www.assessocor.online/eventos', { headers: HEADERS, timeout: 15000 });
+    const $ = cheerio.load(html);
+    $('a[href*="/evento/"]').each((i, el) => {
+      const $el = $(el);
+      const nome = $el.find('h2, h3, h4').last().text().trim();
+      if (!nome || nome.length < 4) return;
+      const link = $el.attr('href') || '';
+      const urlEv = link.startsWith('http') ? link : `https://www.assessocor.online${link}`;
+      const texto = $el.text();
+      const dataTexto = texto.match(/\d{2}\/\d{2}\/\d{4}/)?.[0] || '';
+      const img = $el.find('img').first().attr('src') || '';
+      const fotoUrl = img.startsWith('http') ? img : img ? `https://www.assessocor.online${img}` : null;
+      // Assessocor tem eventos principalmente no PR e Sul
+      const estadoMatch = texto.match(/\b(PR|SC|RS|SP|RJ|MG|GO|BA|CE|PE|SE|AL|MA|PA|MT|MS|DF|ES|RN|PB|PI|TO|RO|AC|AP|AM|RR)\b/);
+      const estado = estadoMatch?.[1] || 'PR';
+      const cidadeMatch = texto.match(/([A-Z\u00C0-\u00FF][a-z\u00C0-\u00FF\s]+)\s*\/\s*[A-Z]{2}/);
+      const cidade = cidadeMatch?.[1]?.trim() || '';
+      salvar({ nome, data: parseData(dataTexto), cidade, estado, distancias: extrairDistancias(nome), urlInscricao: urlEv, plataforma: 'assessocor', foto: fotoUrl }).then(r => { if(r) total++; }).catch(()=>{});
+    });
+  } catch(e) { addLog(`Assessocor erro: ${e.message}`); }
+  addLog(`Assessocor concluido: ${total} corridas`);
+  return total;
+}
+
+// ─── SCRAPER: IGUANA SPORTS (SP) ─────────────────────────────
+export async function scraperIguanaSports() {
+  addLog('Iniciando Iguana Sports...');
+  let total = 0;
+  try {
+    const { data: html } = await axios.get('https://iguanasports.com.br/blogs/calendario-corridas-de-rua', { headers: HEADERS, timeout: 15000 });
+    const $ = cheerio.load(html);
+    $('a[href*="/blogs/calendario-corridas-de-rua/"]').each((i, el) => {
+      const $el = $(el);
+      const link = $el.attr('href') || '';
+      if (link === '/blogs/calendario-corridas-de-rua' || link.length < 5) return;
+      const urlEv = link.startsWith('http') ? link : `https://iguanasports.com.br${link}`;
+      const nome = $el.find('h3, h2, strong').first().text().trim() || $el.text().trim();
+      if (!nome || nome.length < 4) return;
+      const texto = $el.closest('article, .card, [class*="event"]').text() || $el.parent().parent().text() || '';
+      const dataTexto = texto.match(/\d{1,2}\s+\w{3}\s+\d{4}/)?.[0] || texto.match(/\d{2}\/\d{2}\/\d{4}/)?.[0] || '';
+      const img = $el.find('img').first().attr('src') || $el.closest('article,[class*="card"]').find('img').first().attr('src') || '';
+      const distancias = ($el.parent().text().match(/\d+(?:K|km)/gi) || []).join(', ');
+      salvar({ nome, data: parseData(dataTexto), cidade: 'São Paulo', estado: 'SP', distancias: distancias || extrairDistancias(nome), urlInscricao: urlEv, plataforma: 'iguanasports', foto: img.startsWith('http') ? img : null }).then(r => { if(r) total++; }).catch(()=>{});
+    });
+  } catch(e) { addLog(`Iguana Sports erro: ${e.message}`); }
+  addLog(`Iguana Sports concluido: ${total} corridas`);
+  return total;
+}
+
 export async function runScraperCorridas() {
   if (scraperStatus.rodando) return { error: 'Scraper ja rodando' };
 
@@ -251,6 +342,9 @@ export async function runScraperCorridas() {
     const r1 = await scraperTicketSports();
     await sleep(2000);
     const r2 = await scraperSympla();
+    const r6 = await scraperIngresso84();
+    const r7 = await scraperAssessocor();
+    const r8 = await scraperIguanaSports();
     const r3 = await scraperCronotag();
     const r4 = await scraperSporttimer();
     await encerrarPassadas();
