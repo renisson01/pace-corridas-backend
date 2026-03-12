@@ -1039,11 +1039,12 @@ function carregarSemana() {
 // ═══════════════════════════════════════
 async function carregarCorridasProximas() {
   try {
-    const data = await api('/races?limit=3');
-    const corridas = data.races || data.data || [];
+    const estado = user.state || '';
+    const data = await api('/corridas-abertas?limit=3' + (estado ? '&estado='+estado : ''));
+    const corridas = data.corridas || data.races || data.data || [];
     if (!corridas.length) throw new Error('vazio');
     document.getElementById('corridasProximas').innerHTML = corridas.slice(0,3).map(c => {
-      const d = new Date(c.date || c.dataEvento || Date.now()+86400000*30);
+      const d = new Date(c.data || c.date || c.dataEvento || Date.now()+86400000*30);
       return `
         <div class="corrida-row">
           <div class="corrida-date">
@@ -1052,10 +1053,10 @@ async function carregarCorridasProximas() {
           </div>
           <div class="corrida-divider"></div>
           <div class="corrida-info">
-            <div class="corrida-nome">${c.name||c.nome||'Corrida'}</div>
-            <div class="corrida-local">📍 ${c.city||c.cidade||''} ${c.state||c.estado||''}</div>
+            <div class="corrida-nome">${c.nome||c.name||'Corrida'}</div>
+            <div class="corrida-local">📍 ${c.cidade||c.city||''} ${c.estado||c.state||''}</div>
           </div>
-          <div class="corrida-dist">${c.distance||c.distancia||'--'}</div>
+          <div class="corrida-dist">${c.distancias||c.distance||c.distancia||'--'}</div>
         </div>
       `;
     }).join('');
@@ -1075,8 +1076,8 @@ async function carregarCorridasProximas() {
 // ═══════════════════════════════════════
 async function carregarAtividades() {
   try {
-    const data = await api('/gps/historico?limit=5');
-    const atividades = data.atividades || data.data || [];
+    const data = await api('/gps/atividades?limit=5');
+    const atividades = data.atividades || data.activities || data.data || [];
     if (!atividades.length) throw new Error('vazio');
     document.getElementById('atividadesList').innerHTML = atividades.map(a => `
       <div class="atividade-card">
@@ -1129,8 +1130,14 @@ async function carregarConquistas() {
     { tipo:'maratona', titulo:'Maratonista', icone:'👑', pts:500 },
   ];
   try {
-    const data = await api('/ranking/conquistas');
-    const desbloqueadas = new Set((data.conquistas||[]).map(c=>c.tipo));
+    const data = await api('/gps/stats');
+    const desbloqueadas = new Set();
+    const stats = data.stats || data;
+    if ((stats.totalKm||0) >= 5) desbloqueadas.add('primeiro_5k');
+    if ((stats.totalKm||0) >= 10) desbloqueadas.add('primeiro_10k');
+    if ((stats.totalAtividades||0) >= 7) desbloqueadas.add('consistente');
+    if ((stats.totalKm||0) >= 21) desbloqueadas.add('meia_maratona');
+    if ((stats.totalKm||0) >= 42) desbloqueadas.add('maratona');
     document.getElementById('conquistasList').innerHTML = todas.map(c => `
       <div class="conquista-card ${desbloqueadas.has(c.tipo)?'desbloqueada':'bloqueada'}">
         <div class="conquista-icon">${c.icone}</div>
@@ -1181,19 +1188,19 @@ async function carregarRanking() {
 // ═══════════════════════════════════════
 async function carregarFeed() {
   try {
-    const data = await api('/social/feed?limit=5');
-    const posts = data.posts || data.data || [];
+    const data = await api('/posts?limit=5');
+    const posts = data.posts || data.items || data.data || [];
     if (!posts.length) throw new Error('vazio');
     document.getElementById('feedList').innerHTML = posts.map(p => `
       <div class="post-card">
         <div class="post-header">
-          <div class="post-avatar">${(p.autor||p.user?.name||'?')[0].toUpperCase()}</div>
+          <div class="post-avatar">${(p.autor||p.user?.name||p.nome||'?')[0].toUpperCase()}</div>
           <div>
-            <div class="post-user">${p.autor||p.user?.name||'Atleta'}</div>
+            <div class="post-user">${p.autor||p.user?.name||p.nome||'Atleta'}</div>
             <div class="post-time">${new Date(p.criadoEm||p.createdAt).toLocaleString('pt-BR',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})}</div>
           </div>
         </div>
-        <div class="post-content">${p.conteudo||p.content||''}</div>
+        <div class="post-content">${p.conteudo||p.content||p.texto||''}</div>
         <div class="post-actions">
           <div class="post-action" onclick="this.classList.toggle('liked')">❤️ ${p.likes||0}</div>
           <div class="post-action">💬 Comentar</div>

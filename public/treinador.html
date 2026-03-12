@@ -1380,15 +1380,68 @@ function atualizarZonasAtleta() {
 }
 
 async function salvarTreino() {
-  showToast('Treino salvo com sucesso!');
-  etapas = [];
-  renderEtapas();
-  document.getElementById('etapasEmpty').style.display = 'block';
-  atualizarPreview();
+  const atletaId = document.getElementById('treinoAtleta').value;
+  const titulo = document.getElementById('treinoTitulo').value.trim();
+  const data = document.getElementById('treinoData').value;
+  const horario = document.getElementById('treinoHorario').value;
+  const local = document.getElementById('treinoLocal').value;
+  const tipo = document.getElementById('treinoTipo').value;
+  const distancia = document.getElementById('treinoDistancia').value;
+  const semana = document.getElementById('treinoSemana').value;
+  const obs = document.getElementById('treinoObs').value;
+
+  if (!atletaId) { showToast('Selecione um atleta!', 'error'); return; }
+  if (!titulo) { showToast('Informe o título do treino!', 'error'); return; }
+  if (!data) { showToast('Informe a data do treino!', 'error'); return; }
+
+  const btn = document.getElementById('btnSalvarTreino');
+  if (btn) { btn.disabled = true; btn.textContent = 'Salvando...'; }
+
+  try {
+    const res = await api('/coach/treinos', {
+      method: 'POST',
+      body: JSON.stringify({
+        atletaId, titulo, data, horario, local, tipo,
+        distancia: distancia ? parseFloat(distancia) : null,
+        semana, observacoes: obs,
+        etapas: etapas
+      })
+    });
+    if (res.error || res.statusCode >= 400) throw new Error(res.error || res.message);
+    showToast('✅ Treino salvo com sucesso!');
+    etapas = [];
+    renderEtapas();
+    document.getElementById('etapasEmpty').style.display = 'block';
+    document.getElementById('treinoTitulo').value = '';
+    document.getElementById('treinoData').value = '';
+    document.getElementById('treinoObs').value = '';
+    document.getElementById('treinoAtleta').value = '';
+    atualizarPreview();
+    carregarAtletas();
+  } catch(e) {
+    showToast('Erro ao salvar treino: ' + (e.message||'tente novamente'), 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Salvar Treino'; }
+  }
 }
 
-function salvarComoModelo() {
-  showToast('Salvo na biblioteca como modelo!');
+async function salvarComoModelo() {
+  const titulo = document.getElementById('treinoTitulo').value.trim();
+  if (!titulo) { showToast('Informe o título antes de salvar como modelo!', 'error'); return; }
+  try {
+    await api('/coach/treinos', {
+      method: 'POST',
+      body: JSON.stringify({
+        titulo, tipo: document.getElementById('treinoTipo').value,
+        distancia: document.getElementById('treinoDistancia').value || null,
+        observacoes: document.getElementById('treinoObs').value,
+        etapas, isModelo: true
+      })
+    });
+    showToast('✅ Salvo na biblioteca!');
+  } catch(e) {
+    showToast('Erro ao salvar modelo', 'error');
+  }
 }
 
 // ══════════════════════════════════════════
@@ -1559,16 +1612,44 @@ function abrirChat(id, nome) {
   document.getElementById('chatMessages').innerHTML = '<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">Início da conversa</div><div class="empty-sub">Envie uma mensagem para '+nome+'</div></div>';
 }
 
-function enviarMensagem() {
+async function enviarMensagem() {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
   if (!msg || !chatAtletaId) return;
   input.value = '';
   const msgs = document.getElementById('chatMessages');
   if (msgs.querySelector('.empty-state')) msgs.innerHTML = '';
-  msgs.innerHTML += `<div class="msg sent">${msg}<div class="msg-time">${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div></div>`;
+  const hora = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  msgs.innerHTML += `<div class="msg sent">${msg}<div class="msg-time">${hora}</div></div>`;
   msgs.scrollTop = msgs.scrollHeight;
-  showToast('Mensagem enviada!');
+  try {
+    await api('/coach/atletas/' + chatAtletaId, {
+      method: 'PATCH',
+      body: JSON.stringify({ ultimaMensagem: msg, ultimaMensagemEm: new Date().toISOString() })
+    });
+  } catch(e) {}
+}
+
+async function abrirChat(id, nome) {
+  chatAtletaId = id;
+  document.getElementById('chatAtletaNome').textContent = nome;
+  const msgs = document.getElementById('chatMessages');
+  msgs.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const res = await api('/coach/atletas/' + id);
+    const atleta = res.atleta || res;
+    const hist = atleta.historicoMensagens || [];
+    if (!hist.length) throw new Error('vazio');
+    msgs.innerHTML = hist.map(m => `
+      <div class="msg ${m.de === user.id ? 'sent' : 'received'}">${m.texto}
+        <div class="msg-time">${new Date(m.criadoEm).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>`).join('');
+  } catch {
+    msgs.innerHTML = `<div class="empty-state"><div class="empty-icon">💬</div>
+      <div class="empty-title">Início da conversa</div>
+      <div class="empty-sub">Envie uma mensagem para ${nome}</div></div>`;
+  }
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
 // ══════════════════════════════════════════
@@ -1614,46 +1695,104 @@ function updateSemanaLabel() {
     fim.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
 }
 
-function navegarSemana(dir) { semanaOffset += dir; updateSemanaLabel(); }
+function navegarSemana(dir) {
+  semanaOffset += dir;
+  updateSemanaLabel();
+  const id = document.getElementById('planAtleta')?.value;
+  if (id) carregarPlanilhaAtleta();
+}
 
-function carregarPlanilhaAtleta() {
+async function carregarPlanilhaAtleta() {
   const id = document.getElementById('planAtleta').value;
   if (!id) return;
   const a = atletasData.find(x => x.id === id);
+  const container = document.getElementById('planilhaSemanaView');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div> Carregando planilha...</div>';
+
+  let treinos = [];
+  try {
+    const res = await api('/coach/planilha/' + id + '?semana=' + semanaOffset);
+    treinos = res.treinos || res.planilha || [];
+  } catch(e) {}
+
   const diasNomes = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
-  const tiposPadrao = ['Contínuo','Intervalado','Contínuo','Intervalado','Contínuo','Longão','Descanso'];
-  document.getElementById('planilhaSemanaView').innerHTML = `
+  const diasDatas = [];
+  const hoje = new Date();
+  const inicioSemana = new Date(hoje);
+  inicioSemana.setDate(hoje.getDate() - hoje.getDay() + 1 + semanaOffset * 7);
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(inicioSemana);
+    d.setDate(inicioSemana.getDate() + i);
+    diasDatas.push(d);
+  }
+
+  container.innerHTML = `
     <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
-      <div><span style="font-weight:700">${a?.nome||'Atleta'}</span> <span style="color:var(--muted);font-size:13px">· Planilha Semanal</span></div>
-      <button class="btn btn-green btn-sm" onclick="showPage('criar-treino')">+ Adicionar Dia</button>
+      <div><span style="font-weight:700">${a?.nome||'Atleta'}</span> <span style="color:var(--muted);font-size:13px">· Planilha Semanal · ${treinos.length} treino${treinos.length!==1?'s':''}</span></div>
+      <button class="btn btn-green btn-sm" onclick="showPage('criar-treino')">+ Treino</button>
     </div>
-    ${diasNomes.map((dia,i)=>`
-      <div class="planilha-dia" onclick="this.classList.toggle('open')">
-        <div class="planilha-dia-header">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div style="font-family:var(--display);font-size:18px;width:36px">${dia.substring(0,3).toUpperCase()}</div>
-            <div>
-              <div style="font-size:13px;font-weight:600">${tiposPadrao[i]}</div>
-              <div style="font-size:11px;color:var(--muted)">${i<6?'Clique para expandir':'Descanso'}</div>
+    ${diasNomes.map((dia, i) => {
+      const dataStr = diasDatas[i].toISOString().split('T')[0];
+      const treinosDia = treinos.filter(t => t.data && t.data.startsWith(dataStr));
+      const isHoje = diasDatas[i].toDateString() === hoje.toDateString();
+      return `
+        <div class="planilha-dia ${treinosDia.length ? 'has-treino' : ''}" onclick="this.classList.toggle('open')">
+          <div class="planilha-dia-header" style="${isHoje ? 'background:rgba(0,230,118,0.07)' : ''}">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="font-family:var(--display);font-size:18px;width:36px;color:${isHoje?'var(--green)':'inherit'}">${dia.substring(0,3).toUpperCase()}</div>
+              <div>
+                <div style="font-size:11px;color:var(--muted)">${diasDatas[i].toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}${isHoje?' · HOJE':''}</div>
+                <div style="font-size:13px;font-weight:600">${treinosDia.length ? treinosDia[0].titulo : (i===6?'Descanso':'Sem treino')}</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              ${treinosDia.length ? `<span class="zona-tag zona-ccl">${treinosDia[0].tipo||'Treino'}</span>` : (i<6 ? '' : '')}
+              <span style="color:var(--muted);font-size:12px">›</span>
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            ${i<6?`<span class="zona-tag zona-ccl">CCL</span>`:``}
-            <span style="color:var(--muted);font-size:12px">›</span>
+          <div class="planilha-dia-body">
+            ${treinosDia.length ? treinosDia.map(t => `
+              <div style="margin-bottom:8px;padding:10px;background:var(--bg2);border-radius:8px">
+                <div style="font-size:13px;font-weight:700;margin-bottom:4px">${t.titulo}</div>
+                ${t.horario?`<div style="font-size:11px;color:var(--muted)">⏰ ${t.horario} ${t.local?'· 📍'+t.local:''}</div>`:''}
+                ${t.distancia?`<div style="font-size:11px;color:var(--green);font-weight:600;margin-top:4px">📏 ${t.distancia}km</div>`:''}
+                ${t.observacoes?`<div style="font-size:11px;color:var(--muted);margin-top:6px">📝 ${t.observacoes}</div>`:''}
+                ${(t.etapas||[]).length ? `
+                  <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
+                    ${t.etapas.map((e,ei)=>`<div style="font-size:11px;color:var(--text);padding:4px 8px;background:var(--bg3);border-radius:6px;display:flex;gap:6px">
+                      <span style="color:var(--green);font-weight:700">${ei+1}.</span>
+                      <span>${e.repeticoes>1?e.repeticoes+'x ':''} ${e.tipo||''} ${e.distM?e.distM+'m':e.durMin?e.durMin+'min':''}</span>
+                      <span style="color:var(--muted)">${e.zona||''} ${e.paceMin?'· '+e.paceMin:''}</span>
+                    </div>`).join('')}
+                  </div>
+                ` : ''}
+                <div style="margin-top:8px;display:flex;gap:6px">
+                  <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();deletarTreino('${t.id}')">🗑️ Excluir</button>
+                </div>
+              </div>
+            `).join('') : `
+              <div style="text-align:center;padding:12px;color:var(--muted);font-size:13px">
+                ${i===6 ? '🛋️ Dia de descanso' : 'Nenhum treino para este dia'}
+                ${i<6 ? `<br><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="event.stopPropagation();showPage('criar-treino')">+ Criar treino</button>` : ''}
+              </div>
+            `}
           </div>
         </div>
-        <div class="planilha-dia-body">
-          ${i<6?`
-          <div class="empty-state" style="padding:16px">
-            <div style="font-size:13px;color:var(--muted)">Nenhum treino cadastrado para ${dia}</div>
-            <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="event.stopPropagation();showPage('criar-treino')">+ Criar treino</button>
-          </div>`:`
-          <div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">🛋️ Dia de descanso e recuperação</div>
-          `}
-        </div>
-      </div>
-    `).join('')}
+      `;
+    }).join('')}
   `;
+}
+
+async function deletarTreino(id) {
+  if (!confirm('Excluir este treino?')) return;
+  try {
+    await api('/coach/treinos/' + id, { method: 'DELETE' });
+    showToast('Treino excluído!');
+    carregarPlanilhaAtleta();
+  } catch(e) {
+    showToast('Erro ao excluir', 'error');
+  }
 }
 
 // ══════════════════════════════════════════
