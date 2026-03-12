@@ -96,10 +96,10 @@ export async function authRoutes(fastify) {
     try {
       const token = req.headers.authorization?.replace('Bearer ','');
       const payload = jwt.verify(token, JWT_SECRET);
-      const { city, state, age, phone } = req.body;
+      const { city, state, age, phone, tempo5k, fcMax, fcRepouso, peso, altura, nivelExperiencia } = req.body;
       const user = await prisma.user.update({
         where: { id: payload.userId },
-        data: { city: city||null, state: state||null, age: age||null, phone: phone||null },
+        data: { city:city||null, state:state||null, age:age||null, phone:phone||null, tempo5k:tempo5k||null, fcMax:fcMax||null, fcRepouso:fcRepouso||null, peso:peso||null, altura:altura||null, nivelExperiencia:nivelExperiencia||null },
         select: { id:true, email:true, name:true, city:true, state:true, gender:true, age:true, isPremium:true }
       });
       return { success: true, user };
