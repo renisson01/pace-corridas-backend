@@ -157,8 +157,6 @@ export async function authRoutes(fastify) {
       return theyLikeMe.map(l => ({ partner: l.fromUser, matchedAt: l.createdAt }));
     } catch(e) { return reply.code(401).send({ error: e.message }); }
   });
-}
-// já dentro do arquivo - adicionar depois do GET /auth/me via sed
 
   // Admin: setar premium
   fastify.post('/auth/admin/set-premium', async (req, reply) => {
