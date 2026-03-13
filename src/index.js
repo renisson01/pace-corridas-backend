@@ -135,5 +135,6 @@ setInterval(async () => {
 
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
   if (err) { console.error('❌', err); process.exit(1); }
+console.log("[DEBUG ENV]", Object.keys(process.env).filter(k => ["JWT_SECRET","MP_ACCESS_TOKEN","ADMIN_KEY","ANTHROPIC_API_KEY","DATABASE_URL","RAILWAY_ENVIRONMENT_NAME"].includes(k)));
   console.log('🏃 PACE BRAZIL v3.0 online na porta ' + (process.env.PORT || 3000));
 });
