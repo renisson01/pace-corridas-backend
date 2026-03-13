@@ -14,3 +14,4 @@ secrets/
 debug_*.mjs
 enrich_*.mjs
 total
+*.sh

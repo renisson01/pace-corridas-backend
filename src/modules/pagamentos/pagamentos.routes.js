@@ -136,7 +136,214 @@ export async function pagamentosRoutes(fastify) {
         await prisma.pagamentoRegistro.upsert({ where: { paymentId: String(data.id) }, create: { paymentId: String(data.id), tipo: 'x1', atletaRef, valor, doadorNome, doadorEmail, ref, status: 'aprovado' }, update: { status: 'aprovado' } }).catch(() => {});
         console.log('[WEBHOOK] ✅ X1 doação:', atletaRef, 'R$', valor);
       }
+
+      // === COACH ADESÃO ===
+      if (ref.startsWith('coach-adesao-')) {
+        const userId = ref.split('-')[2];
+        const perfil = await prisma.coachProfile.findUnique({ where: { userId } }).catch(() => null);
+        if (perfil) {
+          await prisma.coachSubscription.upsert({
+            where: { coachId: perfil.id },
+            create: { coachId: perfil.id, signupFeePaid: true, status: 'ativo' },
+            update: { signupFeePaid: true, status: 'ativo' }
+          }).catch(() => {});
+        }
+        await prisma.pagamentoRegistro.upsert({
+          where: { paymentId: String(data.id) },
+          create: { paymentId: String(data.id), tipo: 'coach-adesao', valor, doadorEmail, ref, status: 'aprovado' },
+          update: { status: 'aprovado' }
+        }).catch(() => {});
+        console.log('[WEBHOOK] ✅ Coach adesão paga:', userId);
+      }
+
+      // === COACH MENSALIDADE ===
+      if (ref.startsWith('coach-mensal-')) {
+        const userId = ref.split('-')[2];
+        const perfil = await prisma.coachProfile.findUnique({ where: { userId }, include: { atletas: { where: { status: 'ativo' } } } }).catch(() => null);
+        if (perfil) {
+          await prisma.coachSubscription.upsert({
+            where: { coachId: perfil.id },
+            create: { coachId: perfil.id, signupFeePaid: true, athleteCount: perfil.atletas?.length || 0, monthlyValue: valor, status: 'ativo' },
+            update: { athleteCount: perfil.atletas?.length || 0, monthlyValue: valor, status: 'ativo' }
+          }).catch(() => {});
+        }
+        await prisma.pagamentoRegistro.upsert({
+          where: { paymentId: String(data.id) },
+          create: { paymentId: String(data.id), tipo: 'coach-mensal', valor, doadorEmail, ref, status: 'aprovado' },
+          update: { status: 'aprovado' }
+        }).catch(() => {});
+        console.log('[WEBHOOK] ✅ Coach mensalidade paga:', userId, 'R$', valor);
+      }
+
+      // === PREMIUM (IA TREINADORA) ===
+      if (ref.startsWith('premium-')) {
+        const userId = ref.split('-')[1];
+        const premiumUntil = new Date();
+        premiumUntil.setDate(premiumUntil.getDate() + 30);
+        await prisma.user.update({
+          where: { id: userId },
+          data: { isPremium: true, premiumUntil }
+        }).catch(() => {});
+        await prisma.pagamentoRegistro.upsert({
+          where: { paymentId: String(data.id) },
+          create: { paymentId: String(data.id), tipo: 'premium', valor, doadorEmail, ref, status: 'aprovado' },
+          update: { status: 'aprovado' }
+        }).catch(() => {});
+        console.log('[WEBHOOK] ✅ Premium ativado:', userId, 'até', premiumUntil.toISOString());
+      }
+
     } catch (e) { console.error('[WEBHOOK ERROR]', e.message); }
+  });
+
+  
+  // =====================================================
+  // PAGAMENTOS DE ASSINATURA — COACH + PREMIUM
+  // =====================================================
+
+  // POST /pagamentos/coach/adesao — taxa de adesão R$99,90
+  fastify.post('/pagamentos/coach/adesao', async (req, reply) => {
+    if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
+    const jwt = await import('jsonwebtoken');
+    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace2026'); } catch { return null; } })();
+    if (!u) return reply.code(401).send({ error: 'Login necessário' });
+
+    try {
+      // Verificar se já pagou adesão
+      const perfil = await prisma.coachProfile.findUnique({ where: { userId: u.userId }, include: { subscription: true } });
+      if (perfil?.subscription?.signupFeePaid) {
+        return reply.code(400).send({ error: 'Adesão já foi paga!', signupFeePaid: true });
+      }
+
+      const externalRef = `coach-adesao-${u.userId}-${Date.now()}`;
+      const paymentApi = new Payment(getMPClient());
+      const result = await paymentApi.create({ body: {
+        transaction_amount: 99.90,
+        description: 'PACE BRAZIL — Adesão Treinador',
+        payment_method_id: 'pix',
+        external_reference: externalRef,
+        notification_url: `${BASE_URL}/pagamentos/webhook`,
+        payer: { email: req.body?.email || 'treinador@pacecorridas.com.br' }
+      }});
+
+      const pixData = result?.point_of_interaction?.transaction_data;
+      if (!pixData?.qr_code) return reply.code(500).send({ error: 'Pix não gerado.' });
+
+      return {
+        ok: true,
+        tipo: 'coach-adesao',
+        valor: 99.90,
+        paymentId: result.id,
+        qrCode: pixData.qr_code,
+        qrCodeBase64: pixData.qr_code_base64,
+        externalRef
+      };
+    } catch (e) {
+      console.error('[MP COACH ADESAO]', e.message);
+      return reply.code(500).send({ error: e.message });
+    }
+  });
+
+  // POST /pagamentos/coach/mensalidade — R$3,99 x atletas ativos
+  fastify.post('/pagamentos/coach/mensalidade', async (req, reply) => {
+    if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
+    const jwt = await import('jsonwebtoken');
+    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace2026'); } catch { return null; } })();
+    if (!u) return reply.code(401).send({ error: 'Login necessário' });
+
+    try {
+      const perfil = await prisma.coachProfile.findUnique({
+        where: { userId: u.userId },
+        include: { atletas: { where: { status: 'ativo' } }, subscription: true }
+      });
+
+      if (!perfil) return reply.code(404).send({ error: 'Perfil de treinador não encontrado' });
+      if (!perfil.subscription?.signupFeePaid) {
+        return reply.code(400).send({ error: 'Pague a taxa de adesão primeiro!', signupFeePaid: false });
+      }
+
+      const atletasAtivos = perfil.atletas.length;
+      if (atletasAtivos === 0) return reply.code(400).send({ error: 'Nenhum atleta ativo vinculado.' });
+
+      const valor = Math.round(atletasAtivos * 3.99 * 100) / 100;
+      const externalRef = `coach-mensal-${u.userId}-${atletasAtivos}a-${Date.now()}`;
+
+      const paymentApi = new Payment(getMPClient());
+      const result = await paymentApi.create({ body: {
+        transaction_amount: valor,
+        description: `PACE — Mensalidade Treinador (${atletasAtivos} atletas)`,
+        payment_method_id: 'pix',
+        external_reference: externalRef,
+        notification_url: `${BASE_URL}/pagamentos/webhook`,
+        payer: { email: req.body?.email || 'treinador@pacecorridas.com.br' }
+      }});
+
+      const pixData = result?.point_of_interaction?.transaction_data;
+      if (!pixData?.qr_code) return reply.code(500).send({ error: 'Pix não gerado.' });
+
+      return {
+        ok: true,
+        tipo: 'coach-mensalidade',
+        atletasAtivos,
+        valorPorAtleta: 3.99,
+        valorTotal: valor,
+        paymentId: result.id,
+        qrCode: pixData.qr_code,
+        qrCodeBase64: pixData.qr_code_base64,
+        externalRef
+      };
+    } catch (e) {
+      console.error('[MP COACH MENSAL]', e.message);
+      return reply.code(500).send({ error: e.message });
+    }
+  });
+
+  // POST /pagamentos/premium — IA Treinadora R$29,90/mês
+  fastify.post('/pagamentos/premium', async (req, reply) => {
+    if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
+    const jwt = await import('jsonwebtoken');
+    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace2026'); } catch { return null; } })();
+    if (!u) return reply.code(401).send({ error: 'Login necessário' });
+
+    try {
+      const user = await prisma.user.findUnique({ where: { id: u.userId }, select: { isPremium: true, premiumUntil: true, email: true, name: true } });
+      
+      // Verificar se já é premium válido
+      if (user?.isPremium && user?.premiumUntil && new Date(user.premiumUntil) > new Date()) {
+        const diasRestantes = Math.ceil((new Date(user.premiumUntil) - new Date()) / (1000*60*60*24));
+        return reply.code(400).send({ error: `Você já é Premium! Faltam ${diasRestantes} dias.`, isPremium: true, premiumUntil: user.premiumUntil });
+      }
+
+      const externalRef = `premium-${u.userId}-${Date.now()}`;
+      const paymentApi = new Payment(getMPClient());
+      const result = await paymentApi.create({ body: {
+        transaction_amount: 29.90,
+        description: 'PACE BRAZIL — IA Treinadora Premium (30 dias)',
+        payment_method_id: 'pix',
+        external_reference: externalRef,
+        notification_url: `${BASE_URL}/pagamentos/webhook`,
+        payer: {
+          email: user?.email || req.body?.email || 'atleta@pacecorridas.com.br',
+          first_name: user?.name || 'Atleta'
+        }
+      }});
+
+      const pixData = result?.point_of_interaction?.transaction_data;
+      if (!pixData?.qr_code) return reply.code(500).send({ error: 'Pix não gerado.' });
+
+      return {
+        ok: true,
+        tipo: 'premium',
+        valor: 29.90,
+        periodo: '30 dias',
+        paymentId: result.id,
+        qrCode: pixData.qr_code,
+        qrCodeBase64: pixData.qr_code_base64,
+        externalRef
+      };
+    } catch (e) {
+      console.error('[MP PREMIUM]', e.message);
+      return reply.code(500).send({ error: e.message });
+    }
   });
 
   fastify.get('/pagamentos/status', async (req, reply) => {

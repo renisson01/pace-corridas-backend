@@ -10,18 +10,28 @@ export async function integracoesRoutes(fastify) {
   fastify.get('/integracoes/status', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
-    const ativs = await prisma.atividadeGPS.groupBy({
-      by: ['fonte'], where: { userId: u.userId }, _count: true
-    }).catch(() => []);
+    const [ativs, tokens] = await Promise.all([
+      prisma.atividadeGPS.groupBy({
+        by: ['fonte'], where: { userId: u.userId }, _count: true
+      }).catch(() => []),
+      prisma.integracaoToken.findMany({
+        where: { userId: u.userId, ativo: true },
+        select: { provider: true, athleteName: true, updatedAt: true }
+      }).catch(() => [])
+    ]);
     const fontes = {};
     ativs.forEach(a => { fontes[a.fonte || 'manual'] = a._count; });
+    const conectados = {};
+    tokens.forEach(t => { conectados[t.provider] = { conectado: true, nome: t.athleteName, ultimaSync: t.updatedAt }; });
     return {
-      strava:  !!fontes['strava'],
-      garmin:  !!fontes['garmin'],
-      polar:   !!fontes['polar'],
-      amazfit: false, huawei: false, apple: false,
+      strava:  conectados.strava || { conectado: false },
+      garmin:  conectados.garmin || { conectado: false },
+      polar:   conectados.polar || { conectado: false },
+      amazfit: { conectado: false }, huawei: { conectado: false }, apple: { conectado: false },
       atividades: fontes,
-      mensagem: 'Conecte seus apps para sincronizar treinos automaticamente'
+      mensagem: tokens.length > 0
+        ? `${tokens.length} app(s) conectado(s). Sincronize para importar treinos!`
+        : 'Conecte seus apps para sincronizar treinos automaticamente'
     };
   });
 
@@ -56,10 +66,27 @@ export async function integracoesRoutes(fastify) {
       const data = await res.json();
       if (!data.access_token) return reply.redirect('/atleta.html?erro=strava_auth');
       // Salvar token no campo phone temporariamente (sem alterar schema)
-      await prisma.user.update({
-        where: { id: userId },
-        data: { bio: `strava_token:${data.access_token}|athlete:${data.athlete?.id}` }
-      }).catch(() => {});
+      // Salvar token na tabela própria (não sobrescreve bio)
+      await prisma.integracaoToken.upsert({
+        where: { userId_provider: { userId, provider: 'strava' } },
+        create: {
+          userId,
+          provider: 'strava',
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token || null,
+          expiresAt: data.expires_at ? new Date(data.expires_at * 1000) : null,
+          athleteId: String(data.athlete?.id || ''),
+          athleteName: data.athlete?.firstname || '',
+          scope: 'read,activity:read_all',
+        },
+        update: {
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token || null,
+          expiresAt: data.expires_at ? new Date(data.expires_at * 1000) : null,
+          athleteId: String(data.athlete?.id || ''),
+          athleteName: data.athlete?.firstname || '',
+        }
+      }).catch((e) => console.error('[STRAVA TOKEN SAVE]', e.message));
       return reply.redirect('/atleta.html?integrado=strava&nome=' + encodeURIComponent(data.athlete?.firstname || ''));
     } catch(e) { return reply.redirect('/atleta.html?erro=strava_erro'); }
   });
@@ -68,10 +95,11 @@ export async function integracoesRoutes(fastify) {
   fastify.post('/integracoes/strava/sync', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
-    const user = await prisma.user.findUnique({ where: { id: u.userId }, select: { bio: true } });
-    const tokenMatch = user?.bio?.match(/strava_token:([^\|]+)/);
-    if (!tokenMatch) return reply.code(400).send({ error: 'Strava não conectado. Conecte primeiro.' });
-    const token = tokenMatch[1];
+    const integracao = await prisma.integracaoToken.findUnique({
+      where: { userId_provider: { userId: u.userId, provider: 'strava' } }
+    }).catch(() => null);
+    if (!integracao?.accessToken) return reply.code(400).send({ error: 'Strava não conectado. Conecte primeiro.' });
+    const token = integracao.accessToken;
     try {
       const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=30', {
         headers: { 'Authorization': `Bearer ${token}` }

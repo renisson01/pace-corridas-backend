@@ -115,6 +115,7 @@ model User {
   gruposCriados       GrupoTreino[]
   coachProfile        CoachProfile?
   coachesQueTeino     CoachAtleta[]    @relation("AtletasDoCoach")
+  integracoes     IntegracaoToken[]
 }
 
 model Like {
@@ -491,7 +492,6 @@ model AtividadeGPS {
   stravaId      String?  @unique
   user          User     @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())
-  user          User     @relation(fields: [userId], references: [id])
 }
 
 model CorridaAberta {
@@ -670,4 +670,22 @@ model TreinoEtapa {
   repeticoes  Int      @default(1)
   createdAt   DateTime @default(now())
   treino      Treino   @relation(fields: [treinoId], references: [id])
+}
+
+// ==================== INTEGRAÇÕES (STRAVA/GARMIN/POLAR) ====================
+model IntegracaoToken {
+  id            String   @id @default(cuid())
+  userId        String
+  provider      String   // strava | garmin | polar
+  accessToken   String
+  refreshToken  String?
+  expiresAt     DateTime?
+  athleteId     String?  // ID do atleta no provider
+  athleteName   String?
+  scope         String?
+  ativo         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+  @@unique([userId, provider])
 }

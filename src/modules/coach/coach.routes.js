@@ -195,6 +195,7 @@ export async function coachRoutes(fastify) {
         comunidade = await prisma.comunidade.create({
           data: {
             nome: `Equipe do Treinador`,
+            slug: `coach-${u.userId}`,
             descricao: 'Equipe gerenciada pelo painel do treinador',
             adminId: u.userId,
             cidade: '',

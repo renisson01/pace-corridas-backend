@@ -6,19 +6,21 @@ const prisma = new PrismaClient();
 const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
 
 const userIaRequests = new Map();
-const IA_RATE_LIMIT  = 20;
+const IA_RATE_LIMIT_FREE = 5;
+const IA_RATE_LIMIT_PREMIUM = 60;
 const IA_RATE_WINDOW = 60 * 60 * 1000;
 
-function checkIaRateLimit(userId) {
+function checkIaRateLimit(userId, isPremium = false) {
+  const limit = isPremium ? IA_RATE_LIMIT_PREMIUM : IA_RATE_LIMIT_FREE;
   const now = Date.now();
   const entry = userIaRequests.get(userId);
   if (!entry || now - entry.windowStart > IA_RATE_WINDOW) {
     userIaRequests.set(userId, { count: 1, windowStart: now });
-    return { ok: true, restantes: IA_RATE_LIMIT - 1 };
+    return { ok: true, restantes: limit - 1 };
   }
-  if (entry.count >= IA_RATE_LIMIT) return { ok: false, restantes: 0 };
+  if (entry.count >= limit) return { ok: false, restantes: 0 };
   entry.count++;
-  return { ok: true, restantes: IA_RATE_LIMIT - entry.count };
+  return { ok: true, restantes: limit - entry.count };
 }
 
 function getUser(req) {
@@ -161,7 +163,10 @@ export async function iaRoutes(fastify) {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
 
-    const rate = checkIaRateLimit(u.userId);
+    // Verificar se é Premium
+    const userDb = await prisma.user.findUnique({ where: { id: u.userId }, select: { isPremium: true, premiumUntil: true } }).catch(() => null);
+    const isPremium = userDb?.isPremium && (!userDb.premiumUntil || new Date(userDb.premiumUntil) > new Date());
+    const rate = checkIaRateLimit(u.userId, isPremium);
     if (!rate.ok) return reply.code(429).send({ error: 'Limite de mensagens atingido. Tente em 1 hora.', restantes: 0 });
 
     const { mensagem, contextoLoja } = req.body || {};
@@ -439,7 +444,7 @@ export async function iaRoutes(fastify) {
     return {
       ativa: !!process.env.ANTHROPIC_API_KEY, isPremium,
       nome: userDb?.name, nivel: userDb?.nivelAtleta || 'iniciante',
-      recursos: { chat:true, planilhaSemanal:isPremium, msgsHora: isPremium ? 60 : 5 }
+      recursos: { chat:true, planilhaSemanal:isPremium, analiseCompleta:isPremium, chancePodio:isPremium, msgsHora: isPremium ? 60 : 5 }
     };
   });
 
@@ -473,7 +478,7 @@ export async function iaRoutes(fastify) {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
-        body: JSON.stringify({ model:'claude-opus-4-5', max_tokens:3000, system:'Voce e a melhor treinadora de corrida do Brasil. Gera planilhas profissionais detalhadas.', messages:[{role:'user',content:prompt}] })
+        body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:3000, system:'Voce e a melhor treinadora de corrida do Brasil. Gera planilhas profissionais detalhadas.', messages:[{role:'user',content:prompt}] })
       });
       const data = await res.json();
       return { success:true, planilha: data.content?.[0]?.text || 'Erro', isPremium:true };
