@@ -949,6 +949,32 @@ input:checked + .slider:before { transform: translateX(16px); background: var(--
             <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%" onclick="copiarLink()">📋 Copiar Link</button>
           </div>
 
+          <!-- ASSINATURA -->
+          <div class="card" style="margin-bottom:16px;border-color:var(--green);position:relative;overflow:hidden" id="subscriptionCard">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--blue))"></div>
+            <div class="card-header"><div class="card-title">💳 Minha Assinatura</div></div>
+            <div id="subscriptionInfo" style="margin-bottom:14px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                <div>
+                  <div style="font-size:14px;font-weight:700" id="subStatus">Carregando...</div>
+                  <div style="font-size:12px;color:var(--muted)" id="subDetail"></div>
+                </div>
+                <div id="subBadge"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="subStats">
+                <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
+                  <div style="font-family:var(--display);font-size:24px;color:var(--green)" id="subAtletas">0</div>
+                  <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Atletas</div>
+                </div>
+                <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
+                  <div style="font-family:var(--display);font-size:24px;color:var(--yellow)" id="subValor">R$0</div>
+                  <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Mensalidade</div>
+                </div>
+              </div>
+            </div>
+            <div id="subActions"></div>
+          </div>
+
           <div class="card">
             <div class="card-header"><div class="card-title">⚙️ Configurações</div></div>
             <div style="display:flex;flex-direction:column;gap:14px">
@@ -1899,6 +1925,131 @@ window.showPage = function(id) {
 // Data treino default = hoje
 const hoje = new Date();
 document.getElementById('treinoData').value = hoje.toISOString().split('T')[0];
+
+// ══════════════════════════════════════════
+// ASSINATURA DO TREINADOR
+// ══════════════════════════════════════════
+async function carregarAssinatura() {
+  try {
+    const perfil = await apiFetch('/coach/perfil');
+    const sub = perfil?.perfil?.subscription;
+    const atletas = perfil?.perfil?.atletas?.filter(a => a.status === 'ativo') || [];
+    const count = atletas.length;
+    const valor = (count * 3.99).toFixed(2);
+
+    document.getElementById('subAtletas').textContent = count;
+    document.getElementById('subValor').textContent = 'R$' + valor;
+
+    if (!sub || !sub.signupFeePaid) {
+      document.getElementById('subStatus').textContent = 'Pendente';
+      document.getElementById('subDetail').textContent = 'Taxa de adesão necessária';
+      document.getElementById('subBadge').innerHTML = '<span style="background:rgba(255,23,68,0.15);color:var(--red);padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700">INATIVO</span>';
+      document.getElementById('subActions').innerHTML = `
+        <div style="background:var(--bg3);border-radius:10px;padding:14px;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">Taxa de Adesão Única</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px">R$ 99,90 — pagamento único para ativar sua conta de treinador</div>
+          <button class="btn btn-green" style="width:100%" onclick="pagarAdesao()">💳 Pagar Adesão R$ 99,90</button>
+        </div>`;
+    } else {
+      document.getElementById('subStatus').textContent = 'Ativo';
+      document.getElementById('subDetail').textContent = count + ' atletas × R$3,99 = R$' + valor + '/mês';
+      document.getElementById('subBadge').innerHTML = '<span style="background:rgba(0,230,118,0.15);color:var(--green);padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700">ATIVO ✓</span>';
+      if (count > 0) {
+        document.getElementById('subActions').innerHTML = `
+          <button class="btn btn-green" style="width:100%" onclick="pagarMensalidade()">💳 Pagar Mensalidade R$ ${valor}</button>`;
+      } else {
+        document.getElementById('subActions').innerHTML = `
+          <div style="text-align:center;padding:10px;color:var(--muted);font-size:13px">Adicione atletas para gerar mensalidade</div>`;
+      }
+    }
+  } catch(e) {
+    document.getElementById('subStatus').textContent = 'Erro ao carregar';
+  }
+}
+
+async function pagarAdesao() {
+  const btn = event.target;
+  btn.textContent = '⏳ Gerando Pix...'; btn.disabled = true;
+  try {
+    const r = await apiFetch('/pagamentos/coach/adesao', {
+      method: 'POST', body: JSON.stringify({ email: user.email })
+    });
+    btn.textContent = '💳 Pagar Adesão R$ 99,90'; btn.disabled = false;
+    if (r.error) { showToast(r.error, 'error'); return; }
+    mostrarPixCoach(r, 'Adesão Treinador', 'R$ 99,90');
+  } catch {
+    btn.textContent = '💳 Pagar Adesão R$ 99,90'; btn.disabled = false;
+    showToast('Erro ao gerar pagamento', 'error');
+  }
+}
+
+async function pagarMensalidade() {
+  const btn = event.target;
+  btn.textContent = '⏳ Gerando Pix...'; btn.disabled = true;
+  try {
+    const r = await apiFetch('/pagamentos/coach/mensalidade', {
+      method: 'POST', body: JSON.stringify({ email: user.email })
+    });
+    btn.textContent = '💳 Pagar Mensalidade'; btn.disabled = false;
+    if (r.error) { showToast(r.error, 'error'); return; }
+    mostrarPixCoach(r, 'Mensalidade (' + r.atletasAtivos + ' atletas)', 'R$ ' + r.valorTotal?.toFixed(2));
+  } catch {
+    btn.textContent = '💳 Pagar Mensalidade'; btn.disabled = false;
+    showToast('Erro ao gerar pagamento', 'error');
+  }
+}
+
+function mostrarPixCoach(d, titulo, valor) {
+  document.getElementById('modalPixCoach')?.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modalPixCoach';
+  modal.className = 'modal-overlay open';
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+
+  modal.innerHTML = `
+    <div class="modal" style="max-width:420px">
+      <div class="modal-header">
+        <div class="modal-title">💳 ${titulo}</div>
+        <button class="btn-close" onclick="document.getElementById('modalPixCoach').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="text-align:center">
+        <div style="font-family:var(--display);font-size:32px;color:var(--green);margin-bottom:4px">${valor}</div>
+        <div style="color:var(--muted);font-size:13px;margin-bottom:20px">Pagamento via Pix</div>
+
+        ${d.qrCodeBase64 ? `<img src="data:image/png;base64,${d.qrCodeBase64}" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;margin-bottom:16px" alt="QR Code">` : ''}
+
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:16px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Pix Copia e Cola</div>
+          <div style="font-size:11px;color:var(--green);word-break:break-all;max-height:50px;overflow:auto" id="pixCoachCode">${d.qrCode || ''}</div>
+        </div>
+
+        <button class="btn btn-green" style="width:100%" onclick="copiarPixCoach()">📋 Copiar Código Pix</button>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted)">Ativação automática após confirmação do Pix</div>
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+}
+
+function copiarPixCoach() {
+  const code = document.getElementById('pixCoachCode')?.textContent;
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => showToast('Código Pix copiado!')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = code; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove();
+    showToast('Código Pix copiado!');
+  });
+}
+
+// Carregar assinatura ao abrir perfil
+const _origShowPage = showPage;
+showPage = function(id) {
+  _origShowPage(id);
+  if (id === 'perfil') carregarAssinatura();
+};
+
 </script>
 </body>
 </html>

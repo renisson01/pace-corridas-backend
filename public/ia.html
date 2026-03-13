@@ -110,7 +110,7 @@ textarea::placeholder{color:var(--muted)}
     <div class="ia-avatar">🤖</div>
     <div class="ia-info">
       <div class="ia-name">PACE IA</div>
-      <div class="ia-status"><div class="dot"></div><span class="status-txt">Online agora</span></div>
+      <div class="ia-status"><div class="dot"></div><span class="status-txt" id="iaStatusTxt">Online agora</span></div>
     </div>
     <div class="header-btns">
       <div class="hbtn" onclick="abrirAnalise()" title="Análise completa">📊</div>
@@ -246,7 +246,18 @@ async function enviar(){
     tel.remove();busy=false;
     document.getElementById('sbtn').disabled=false;
     if(d.error){
-      if(r.status===429)addMsg('Limite de mensagens atingido. Volte em 1 hora! 💚','ia');
+      if(r.status===429){
+        addMsg('Você atingiu o limite gratuito (5 msgs/hora). Assine o Premium por R$29,90/mês e tenha 60 msgs/hora + planilha personalizada! 💚','ia');
+        // Adicionar botão de upgrade
+        const lastMsg = document.querySelector('.msgs .msg.ia:last-child .bubble');
+        if(lastMsg){
+          const btn = document.createElement('button');
+          btn.style.cssText='display:block;margin-top:10px;background:linear-gradient(135deg,#ff6b00,#ff9f00);color:#000;border:none;padding:10px 20px;border-radius:20px;font-weight:700;font-size:13px;cursor:pointer;width:100%';
+          btn.textContent='⭐ Assinar Premium R$29,90/mês';
+          btn.onclick=()=>window.location.href='/atleta.html#premium';
+          lastMsg.appendChild(btn);
+        }
+      }
       else if(r.status===401){localStorage.removeItem('token');sessionStorage.setItem('pace_redirect','/ia.html');location.href='/entrar.html';}
       else addMsg('Erro: '+d.error,'ia');
       return;
@@ -317,6 +328,23 @@ function tradNivel(n){return{iniciante:'Iniciante',intermediario:'Intermediário
 function fmt(t){if(!t)return'';return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');}
 
 checkAuth();
+
+// Verificar status premium
+async function checkPremiumStatus() {
+  try {
+    const r = await fetch(API+'/ia/status', {headers:{'Authorization':'Bearer '+token}});
+    const d = await r.json();
+    const stEl = document.getElementById('iaStatusTxt');
+    if (d.isPremium && stEl) {
+      stEl.innerHTML = '⭐ Premium — 60 msgs/hora';
+      stEl.style.color = '#ff9f00';
+    }
+    if (d.recursos?.msgsHora) {
+      document.getElementById('rest').innerHTML = '<span>' + d.recursos.msgsHora + '</span> msgs/hora';
+    }
+  } catch {}
+}
+if (token) checkPremiumStatus();
 </script>
 </body>
 </html>

@@ -1685,7 +1685,74 @@ function editarRecord(dist) {
 }
 
 function assinarPremium() {
-  window.location.href = '/loja.html';
+  const btn = document.querySelector('.btn-premium');
+  if (btn) { btn.textContent = '⏳ Gerando Pix...'; btn.disabled = true; }
+
+  fetch('/pagamentos/premium', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ email: user.email })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (btn) { btn.textContent = '⭐ Assinar por R$29,90/mês'; btn.disabled = false; }
+    if (d.error) { showToast('❌ ' + d.error); return; }
+    mostrarPixModal(d);
+  })
+  .catch(e => {
+    if (btn) { btn.textContent = '⭐ Assinar por R$29,90/mês'; btn.disabled = false; }
+    showToast('❌ Erro ao gerar pagamento');
+  });
+}
+
+function mostrarPixModal(d) {
+  // Remove modal anterior se existir
+  document.getElementById('pixModal')?.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'pixModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)';
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+
+  modal.innerHTML = \`
+    <div style="background:var(--card,#171726);border:1px solid var(--border,#242438);border-radius:24px;max-width:400px;width:100%;padding:28px 24px;text-align:center;position:relative;animation:fadeUp 0.3s ease">
+      <div style="font-size:48px;margin-bottom:8px">⭐</div>
+      <div style="font-family:var(--display,'Barlow Condensed',sans-serif);font-size:24px;font-weight:900;margin-bottom:4px">PACE Premium</div>
+      <div style="color:var(--muted2,#8888aa);font-size:14px;margin-bottom:20px">R$ 29,90 / mês</div>
+
+      \${d.qrCodeBase64 ? \`<img src="data:image/png;base64,\${d.qrCodeBase64}" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;margin-bottom:16px" alt="QR Pix">\` : ''}
+
+      <div style="background:var(--bg3,#141422);border:1px solid var(--border,#242438);border-radius:12px;padding:12px;margin-bottom:16px">
+        <div style="font-size:11px;color:var(--muted2,#8888aa);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Pix Copia e Cola</div>
+        <div style="font-size:11px;color:var(--neon,#00ffaa);word-break:break-all;max-height:60px;overflow:auto;line-height:1.4" id="pixCode">\${d.qrCode || ''}</div>
+      </div>
+
+      <button onclick="copiarPix()" style="width:100%;background:var(--neon,#00ffaa);color:#000;border:none;padding:14px;border-radius:14px;font-family:var(--display,'Barlow Condensed',sans-serif);font-size:18px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px">📋 Copiar Código Pix</button>
+
+      <div style="font-size:12px;color:var(--muted2,#8888aa);line-height:1.5">
+        Após o pagamento, seu Premium é ativado<br>automaticamente em até 2 minutos!
+      </div>
+
+      <button onclick="this.closest('#pixModal').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted,#5a5a7a);font-size:24px;cursor:pointer">✕</button>
+    </div>
+  \`;
+
+  document.body.appendChild(modal);
+}
+
+function copiarPix() {
+  const code = document.getElementById('pixCode')?.textContent;
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('✅ Código Pix copiado!');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = code; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    ta.remove();
+    showToast('✅ Código Pix copiado!');
+  });
 }
 
 function logout() {
