@@ -907,11 +907,21 @@ function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + id)?.classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => {
-    if (b.getAttribute('onclick')?.includes("'"+id+"'")) b.classList.add('active');
-  });
+  // ativar btn correto
+  const btnDireto = document.getElementById('btn-' + id);
+  if (btnDireto) {
+    btnDireto.classList.add('active');
+  } else {
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      if (b.getAttribute('onclick')?.includes("'" + id + "'")) b.classList.add('active');
+    });
+  }
   if (id === 'perfil') preencherFormPerfil();
   if (id === 'ia') iniciarIA();
+  // lazy load
+  if (id === 'corridas' && !todasCorridasPage.length) carregarCorridasPage(true);
+  if (id === 'ranking') carregarRankingPage();
+  if (id === 'comunidade') { carregarMeusGrupos(); carregarExplorarGrupos(); }
 }
 
 function showToast(msg) {
@@ -1773,23 +1783,7 @@ function filtrarGruposLocal(busca) {
 // ═══════════════════════════════════════
 // PATCH showPage — carregar ao trocar aba
 // ═══════════════════════════════════════
-const _showPageOriginal = showPage;
-function showPage(id) {
-  _showPageOriginal(id);
-  // atualizar nav
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  const btn = document.getElementById('btn-' + id);
-  if (btn) btn.classList.add('active');
-  // lazy load por aba
-  if (id === 'corridas') {
-    if (!todasCorridasPage.length) carregarCorridasPage(true);
-  } else if (id === 'ranking') {
-    carregarRankingPage();
-  } else if (id === 'comunidade') {
-    carregarMeusGrupos();
-    carregarExplorarGrupos();
-  }
-}
+
 
 </script>
 </body>
