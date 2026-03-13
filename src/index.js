@@ -42,7 +42,6 @@ import { corridasAbertasRoutes } from './modules/corridas-abertas/corridas.route
 import { amigoPaceRoutes }       from './modules/amigo-pace/amigo-pace.routes.js';
 import { predictionRoutes } from './modules/prediction/prediction.routes.js';
 import { integracoesRoutes }    from './modules/integracoes/integracoes.routes.js';
-import { integracoesRoutes }   from './modules/integracoes/integracoes.routes.js';
 import { leagueRoutes } from './modules/league/league.routes.js';
 import { passportRoutes } from './modules/passport/passport.routes.js';
 import { subscriptionRoutes } from './modules/subscription/subscription.routes.js';
