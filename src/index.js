@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-if (!process.env.RAILWAY_ENVIRONMENT) config({ path: ".env" });
+if (!process.env.RAILWAY_ENVIRONMENT_NAME) config({ path: ".env" });
 
 process.on("unhandledRejection", e => { console.error("❌ ERRO FATAL:", e); });
 process.on("uncaughtException", e => { console.error("❌ CRASH:", e); });
