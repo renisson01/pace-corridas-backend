@@ -627,13 +627,38 @@ body::after {
 
 <!-- ── COMUNIDADE ─────────────────────── -->
 <div class="page" id="page-comunidade">
+  <!-- BUSCA -->
+  <div style="padding:14px 16px 0">
+    <input class="field-input" id="buscaGrupo" placeholder="🔍 Buscar grupos, assessorias, clubes..." 
+      oninput="filtrarGruposLocal(this.value)" 
+      style="width:100%;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--text);font-size:14px">
+  </div>
+  <!-- FILTROS -->
+  <div style="display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none">
+    <button class="chip active" onclick="setFiltroGrupo(this,'')">Todos</button>
+    <button class="chip" onclick="setFiltroGrupo(this,'assessoria')">🏃 Assessorias</button>
+    <button class="chip" onclick="setFiltroGrupo(this,'clube')">🤝 Clubes</button>
+    <button class="chip" onclick="setFiltroGrupo(this,'grupo')">👥 Grupos</button>
+  </div>
+  <!-- MEUS GRUPOS -->
   <div class="section">
     <div class="section-header">
-      <div class="section-title">👥 Feed</div>
+      <div class="section-title">Meus Grupos</div>
+      <div class="section-link" onclick="carregarMeusGrupos()">Atualizar</div>
     </div>
-    <div id="feedList">
-      <div style="height:120px;border-radius:16px;margin-bottom:12px" class="skeleton"></div>
-      <div style="height:120px;border-radius:16px;margin-bottom:12px" class="skeleton"></div>
+    <div id="meusGruposList">
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+    </div>
+  </div>
+  <!-- EXPLORAR -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Explorar</div>
+    </div>
+    <div id="explorarGruposList">
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
     </div>
   </div>
 </div>
@@ -711,30 +736,135 @@ body::after {
 </div>
 
 <!-- BOTTOM NAV -->
+<!-- ── CORRIDAS ABERTAS ───────────────── -->
+<div class="page" id="page-corridas">
+  <div style="padding:14px 16px 0;display:flex;gap:8px">
+    <input class="field-input" id="buscaCorridaInput" placeholder="🔍 Buscar corrida ou cidade..." 
+      oninput="filtrarCorridasLocal(this.value)"
+      style="flex:1;padding:11px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--text);font-size:14px">
+  </div>
+  <!-- chips estado -->
+  <div id="estadoChips" style="display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none">
+    <button class="chip active" onclick="filtroEstadoCorrida('',this)">Todos</button>
+    <button class="chip" onclick="filtroEstadoCorrida('SE',this)">SE</button>
+    <button class="chip" onclick="filtroEstadoCorrida('BA',this)">BA</button>
+    <button class="chip" onclick="filtroEstadoCorrida('SP',this)">SP</button>
+    <button class="chip" onclick="filtroEstadoCorrida('MG',this)">MG</button>
+    <button class="chip" onclick="filtroEstadoCorrida('RJ',this)">RJ</button>
+    <button class="chip" onclick="filtroEstadoCorrida('PR',this)">PR</button>
+    <button class="chip" onclick="filtroEstadoCorrida('GO',this)">GO</button>
+    <button class="chip" onclick="filtroEstadoCorrida('RN',this)">RN</button>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏁 Inscrições Abertas</div>
+      <div class="section-link" id="corridasCount" style="color:var(--neon);font-weight:700"></div>
+    </div>
+    <div id="corridasPageList">
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+    </div>
+    <button id="loadMoreCorridasBtn" onclick="loadMaisCorridas()" 
+      style="display:none;width:100%;padding:12px;margin-top:8px;background:var(--card);border:1px solid var(--border2);color:var(--neon);border-radius:12px;font-weight:700;cursor:pointer">
+      Carregar mais corridas
+    </button>
+  </div>
+</div>
+
+<!-- ── RANKING ─────────────────────────── -->
+<div class="page" id="page-ranking">
+  <!-- tabs distância -->
+  <div style="display:flex;gap:6px;overflow-x:auto;padding:14px 16px 0;scrollbar-width:none">
+    <button class="chip active" onclick="mudaDistRanking('5k',this)">5 KM</button>
+    <button class="chip" onclick="mudaDistRanking('10k',this)">10 KM</button>
+    <button class="chip" onclick="mudaDistRanking('21k',this)">Meia</button>
+    <button class="chip" onclick="mudaDistRanking('42k',this)">Maratona</button>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title" id="rankingTitulo">🏆 Ranking 5 KM</div>
+    </div>
+    <div id="rankingFullList">
+      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
+      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
+      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
+      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
+      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
+    </div>
+  </div>
+  <!-- Meu resultado -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📊 Meus Resultados</div>
+    </div>
+    <div id="meusResultadosList">
+      <div class="skeleton" style="height:60px;border-radius:12px;margin-bottom:8px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIS ────────────────────────────── -->
+<div class="page" id="page-mais">
+  <div class="section">
+    <div class="section-title" style="margin-bottom:16px">Menu</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="/treinador.html" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;text-decoration:none;color:var(--text);transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(0,255,170,.08);border-radius:10px">📋</div>
+        <div><div style="font-weight:700;font-size:15px">Painel do Treinador</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Gerenciar atletas e planilhas</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </a>
+      <a href="/loja.html" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;text-decoration:none;color:var(--text);transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,107,53,.08);border-radius:10px">👕</div>
+        <div><div style="font-weight:700;font-size:15px">Loja EstamPace</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Camisetas premium R$99,90</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </a>
+      <button onclick="showPage('gps')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,.08);border-radius:10px">📍</div>
+        <div><div style="font-weight:700;font-size:15px">GPS & Atividades</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Registrar corridas e treinos</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </button>
+      <button onclick="showPage('historico')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(0,200,255,.08);border-radius:10px">📈</div>
+        <div><div style="font-weight:700;font-size:15px">Histórico</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Ver evolução e estatísticas</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </button>
+      <button onclick="showPage('perfil')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(139,92,246,.08);border-radius:10px">👤</div>
+        <div><div style="font-weight:700;font-size:15px">Meu Perfil</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Editar dados e records pessoais</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </button>
+    </div>
+  </div>
+  <div class="section">
+    <button class="btn-outline btn-danger" onclick="logout()" style="width:100%">🚪 Sair da conta</button>
+  </div>
+</div>
+
 <nav class="bottom-nav">
-  <button class="nav-btn active" onclick="showPage('hoje')">
+  <button class="nav-btn active" onclick="showPage('hoje')" id="btn-hoje">
     <div class="nav-icon">🏠</div>
-    <div class="nav-label">Hoje</div>
+    <div class="nav-label">Início</div>
   </button>
-  <button class="nav-btn" onclick="showPage('gps')">
-    <div class="nav-icon">📍</div>
-    <div class="nav-label">GPS</div>
+  <button class="nav-btn" onclick="showPage('corridas')" id="btn-corridas">
+    <div class="nav-icon">🏁</div>
+    <div class="nav-label">Corridas</div>
   </button>
-  <button class="nav-btn" onclick="showPage('historico')">
-    <div class="nav-icon">📈</div>
-    <div class="nav-label">Histórico</div>
-  </button>
-  <button class="nav-btn" onclick="showPage('ia')">
+  <button class="nav-btn" onclick="showPage('ia')" id="btn-ia">
     <div class="nav-icon">🤖</div>
     <div class="nav-label">IA</div>
   </button>
-  <button class="nav-btn" onclick="showPage('comunidade')">
-    <div class="nav-icon">👥</div>
-    <div class="nav-label">Social</div>
+  <button class="nav-btn" onclick="showPage('ranking')" id="btn-ranking">
+    <div class="nav-icon">🏆</div>
+    <div class="nav-label">Ranking</div>
   </button>
-  <button class="nav-btn" onclick="showPage('perfil')">
-    <div class="nav-icon">👤</div>
-    <div class="nav-label">Perfil</div>
+  <button class="nav-btn" onclick="showPage('comunidade')" id="btn-comunidade">
+    <div class="nav-icon">👥</div>
+    <div class="nav-label">Grupos</div>
+  </button>
+  <button class="nav-btn" onclick="showPage('mais')" id="btn-mais">
+    <div class="nav-icon">☰</div>
+    <div class="nav-label">Mais</div>
   </button>
 </nav>
 
@@ -1408,6 +1538,259 @@ function logout() {
   localStorage.removeItem('pace_user');
   window.location.href = '/entrar.html';
 }
+
+
+// ═══════════════════════════════════════
+// CORRIDAS PAGE — completo
+// ═══════════════════════════════════════
+let todasCorridasPage = [];
+let corridasPagina = 1;
+let corridasEstadoFiltro = '';
+
+async function carregarCorridasPage(reset = true) {
+  if (reset) { corridasPagina = 1; todasCorridasPage = []; }
+  const el = document.getElementById('corridasPageList');
+  if (!el) return;
+  if (reset) el.innerHTML = '<div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>'.repeat(5);
+
+  try {
+    const estado = corridasEstadoFiltro || user.state || '';
+    const params = new URLSearchParams({ page: corridasPagina, limit: 20, orderBy: 'data' });
+    if (estado) params.set('estado', estado);
+    const data = await api('/corridas-abertas?' + params);
+    const corridas = data.corridas || [];
+    const total = data.total || corridas.length;
+    const totalPags = data.paginas || 1;
+
+    document.getElementById('corridasCount').textContent = total + ' corridas';
+
+    if (reset) el.innerHTML = '';
+    if (!corridas.length && reset) {
+      el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted2)"><div style="font-size:48px;margin-bottom:12px">🏁</div><div style="font-weight:700">Nenhuma corrida encontrada</div><div style="font-size:13px;margin-top:6px">Tente outro estado ou filtro</div></div>';
+      return;
+    }
+
+    corridas.forEach(c => {
+      const d = new Date(c.data || c.date || Date.now() + 86400000 * 30);
+      const div = document.createElement('div');
+      div.className = 'corrida-row';
+      div.onclick = () => abrirCorridaDetalhe(c);
+      div.innerHTML = `
+        <div class="corrida-date">
+          <div class="corrida-date-dia">${d.getDate()}</div>
+          <div class="corrida-date-mes">${d.toLocaleString('pt-BR',{month:'short'})}</div>
+        </div>
+        <div class="corrida-divider"></div>
+        <div class="corrida-info" style="flex:1">
+          <div class="corrida-nome">${c.nome || c.name || 'Corrida'}</div>
+          <div class="corrida-local">📍 ${c.cidade || c.city || ''} ${c.estado ? '· ' + c.estado : ''}</div>
+          ${c.distancias ? '<div style="font-size:11px;color:var(--neon);font-weight:700;margin-top:2px">📏 ' + c.distancias + '</div>' : ''}
+        </div>
+        ${c.linkInscricao ? '<div style="font-size:11px;background:rgba(0,255,170,.1);color:var(--neon);padding:4px 10px;border-radius:20px;font-weight:700;white-space:nowrap">Inscreva-se</div>' : ''}
+      `;
+      el.appendChild(div);
+    });
+    todasCorridasPage = [...todasCorridasPage, ...corridas];
+    const btn = document.getElementById('loadMoreCorridasBtn');
+    if (btn) btn.style.display = corridasPagina < totalPags ? 'block' : 'none';
+  } catch(e) {
+    if (reset) document.getElementById('corridasPageList').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted2)">Erro ao carregar corridas. Tente novamente.</div>';
+  }
+}
+
+function loadMaisCorridas() {
+  corridasPagina++;
+  carregarCorridasPage(false);
+}
+
+function filtroEstadoCorrida(estado, btn) {
+  corridasEstadoFiltro = estado;
+  document.querySelectorAll('#estadoChips .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  carregarCorridasPage(true);
+}
+
+function filtrarCorridasLocal(busca) {
+  const el = document.getElementById('corridasPageList');
+  if (!busca) { carregarCorridasPage(true); return; }
+  const b = busca.toLowerCase();
+  const filtradas = todasCorridasPage.filter(c =>
+    (c.nome||c.name||'').toLowerCase().includes(b) ||
+    (c.cidade||c.city||'').toLowerCase().includes(b) ||
+    (c.estado||'').toLowerCase().includes(b)
+  );
+  if (!el) return;
+  el.innerHTML = filtradas.length ? filtradas.map(c => {
+    const d = new Date(c.data || Date.now() + 86400000 * 30);
+    return `<div class="corrida-row" onclick="abrirCorridaDetalhe(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+      <div class="corrida-date">
+        <div class="corrida-date-dia">${d.getDate()}</div>
+        <div class="corrida-date-mes">${d.toLocaleString('pt-BR',{month:'short'})}</div>
+      </div>
+      <div class="corrida-divider"></div>
+      <div class="corrida-info" style="flex:1">
+        <div class="corrida-nome">${c.nome||'Corrida'}</div>
+        <div class="corrida-local">📍 ${c.cidade||''} ${c.estado ? '· '+c.estado : ''}</div>
+      </div>
+    </div>`;
+  }).join('') : '<div style="padding:20px;text-align:center;color:var(--muted2)">Nenhuma corrida encontrada para "' + busca + '"</div>';
+}
+
+function abrirCorridaDetalhe(c) {
+  const d = new Date(c.data || c.date || Date.now());
+  const dataFmt = d.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  showToast(`🏁 ${c.nome || 'Corrida'} — ${dataFmt}`);
+  if (c.linkInscricao) {
+    setTimeout(() => {
+      if (confirm('Abrir página de inscrição?')) window.open(c.linkInscricao, '_blank');
+    }, 500);
+  }
+}
+
+// ═══════════════════════════════════════
+// RANKING PAGE
+// ═══════════════════════════════════════
+let distRanking = '5k';
+
+async function carregarRankingPage() {
+  const el = document.getElementById('rankingFullList');
+  if (!el) return;
+  el.innerHTML = '<div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>'.repeat(5);
+
+  try {
+    const data = await api('/ranking/' + distRanking + '?limit=20');
+    const items = data.ranking || data.data || [];
+    const meuId = user.id || user.userId;
+    const cores = ['gold','silver','bronze'];
+    document.getElementById('rankingTitulo').textContent = '🏆 Ranking ' + distRanking.toUpperCase().replace('K',' KM');
+
+    el.innerHTML = items.length ? items.map((r, i) => `
+      <div class="ranking-row ${r.userId === meuId ? 'style="background:rgba(0,255,170,.05);border-radius:12px"' : ''}">
+        <div class="ranking-pos ${r.userId === meuId ? 'me' : (cores[i] || '')}">${i + 1}</div>
+        <div class="ranking-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${(r.nome||r.name||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.nome||r.name||'Atleta'} ${r.userId === meuId ? '<span style="color:var(--neon);font-size:11px">(você)</span>' : ''}</div>
+          <div style="font-size:11px;color:var(--muted2)">${r.cidade||''} ${r.estado ? '· '+r.estado : ''}</div>
+        </div>
+        <div style="font-family:var(--display);font-size:16px;font-weight:700;color:var(--neon);white-space:nowrap">${r.tempo||r['tempo'+distRanking]||'--'}</div>
+      </div>
+    `).join('') : '<div style="padding:40px;text-align:center;color:var(--muted2)">Nenhum resultado ainda.<br>Seja o primeiro! 🏆</div>';
+  } catch(e) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted2)">Erro ao carregar ranking</div>';
+  }
+  carregarMeusResultados();
+}
+
+async function carregarMeusResultados() {
+  const el = document.getElementById('meusResultadosList');
+  if (!el) return;
+  try {
+    const data = await api('/results/me');
+    const res = data.results || data.data || [];
+    el.innerHTML = res.length ? res.slice(0,5).map(r => `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+        <div style="font-size:24px">${r.posicaoGeral === 1 ? '🥇' : r.posicaoGeral === 2 ? '🥈' : r.posicaoGeral === 3 ? '🥉' : '🏅'}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:14px">${r.corridaNome || r.raceName || 'Corrida'}</div>
+          <div style="font-size:11px;color:var(--muted2)">${r.distancia||''} · ${r.data ? new Date(r.data).toLocaleDateString('pt-BR') : ''}</div>
+        </div>
+        <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--neon)">${r.tempo||r.chipTime||'--'}</div>
+      </div>
+    `).join('') : '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px">Nenhum resultado cadastrado ainda.<br><a href="/meu-resultado.html" style="color:var(--neon);font-weight:700">+ Enviar resultado</a></div>';
+  } catch {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted2);font-size:13px"><a href="/meu-resultado.html" style="color:var(--neon);font-weight:700">+ Enviar meu resultado</a></div>';
+  }
+}
+
+function mudaDistRanking(dist, btn) {
+  distRanking = dist;
+  document.querySelectorAll('#page-ranking .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  carregarRankingPage();
+}
+
+// ═══════════════════════════════════════
+// COMUNIDADE PAGE — grupos reais
+// ═══════════════════════════════════════
+let todosGrupos = [];
+let filtroTipoGrupo = '';
+
+async function carregarMeusGrupos() {
+  const el = document.getElementById('meusGruposList');
+  if (!el) return;
+  try {
+    const data = await api('/grupos/meus');
+    const grupos = data.grupos || [];
+    el.innerHTML = grupos.length ? grupos.map(g => grupoCardHTML(g, true)).join('') :
+      '<div style="padding:16px;text-align:center;color:var(--muted2);font-size:13px">Você ainda não participa de nenhum grupo.<br>Explore abaixo!</div>';
+  } catch {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted2);font-size:13px">Erro ao carregar grupos</div>';
+  }
+}
+
+async function carregarExplorarGrupos() {
+  const el = document.getElementById('explorarGruposList');
+  if (!el) return;
+  try {
+    const params = new URLSearchParams({ limit: 20 });
+    if (filtroTipoGrupo) params.set('tipo', filtroTipoGrupo);
+    const busca = document.getElementById('buscaGrupo')?.value;
+    if (busca) params.set('busca', busca);
+    const data = await api('/grupos?' + params);
+    const grupos = data.grupos || [];
+    el.innerHTML = grupos.length ? grupos.map(g => grupoCardHTML(g, false)).join('') :
+      '<div style="padding:40px;text-align:center;color:var(--muted2)">Nenhum grupo encontrado</div>';
+    todosGrupos = grupos;
+  } catch {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted2)">Erro ao carregar grupos</div>';
+  }
+}
+
+function grupoCardHTML(g, meu) {
+  const tipos = { assessoria:'🏃', clube:'🤝', grupo:'👥' };
+  return `<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="window.location.href='/comunidade.html'">
+    <div style="width:44px;height:44px;border-radius:12px;background:rgba(0,255,170,.08);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${tipos[g.tipo]||'👥'}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome||'Grupo'}</div>
+      <div style="font-size:11px;color:var(--muted2);margin-top:2px">${g.membros||0} membros · ${g.tipo||'grupo'}</div>
+    </div>
+    ${meu ? '<div style="font-size:11px;color:var(--neon);font-weight:700">✓ Membro</div>' : '<div style="font-size:11px;color:var(--muted2);font-weight:600">Entrar ›</div>'}
+  </div>`;
+}
+
+function setFiltroGrupo(btn, tipo) {
+  filtroTipoGrupo = tipo;
+  document.querySelectorAll('#page-comunidade .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  carregarExplorarGrupos();
+}
+
+function filtrarGruposLocal(busca) {
+  clearTimeout(window._filtroTimer);
+  window._filtroTimer = setTimeout(carregarExplorarGrupos, 400);
+}
+
+// ═══════════════════════════════════════
+// PATCH showPage — carregar ao trocar aba
+// ═══════════════════════════════════════
+const _showPageOriginal = showPage;
+function showPage(id) {
+  _showPageOriginal(id);
+  // atualizar nav
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('btn-' + id);
+  if (btn) btn.classList.add('active');
+  // lazy load por aba
+  if (id === 'corridas') {
+    if (!todasCorridasPage.length) carregarCorridasPage(true);
+  } else if (id === 'ranking') {
+    carregarRankingPage();
+  } else if (id === 'comunidade') {
+    carregarMeusGrupos();
+    carregarExplorarGrupos();
+  }
+}
+
 </script>
 </body>
 </html>
