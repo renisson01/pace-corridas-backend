@@ -90,6 +90,37 @@ app.get('/sw.js', async (req, reply) => {
   catch { reply.send(''); }
 });
 
+
+// ═══ GUARD: Treinador só para coaches ═══
+import jwt_guard from 'jsonwebtoken';
+app.addHook('onRequest', async (req, reply) => {
+  if (req.url === '/treinador.html') {
+    try {
+      const token = req.headers.cookie?.match(/pace_token=([^;]+)/)?.[1]
+        || req.headers.authorization?.replace('Bearer ', '');
+      if (!token) return; // deixa carregar, JS redireciona
+      const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
+      const decoded = jwt_guard.verify(token, JWT);
+      // Verificar no banco se é coach
+      const { PrismaClient: PC } = await import('@prisma/client');
+      const p = new PC();
+      const user = await p.user.findUnique({ where: { id: decoded.userId }, select: { isCoach: true } });
+      await p.$disconnect();
+      if (user && !user.isCoach) {
+        return reply.code(403).type('text/html').send(
+          '<html><body style="background:#04060b;color:#eee;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center">' +
+          '<div><div style="font-size:48px;margin-bottom:16px">🔒</div>' +
+          '<h2 style="color:#ff6b00;margin-bottom:8px">Acesso Exclusivo para Treinadores</h2>' +
+          '<p style="color:#8899bb;margin-bottom:24px">Esta area e exclusiva para treinadores cadastrados.</p>' +
+          '<a href="/entrar.html?role=coach" style="background:#ff6b00;color:#000;padding:14px 32px;border-radius:14px;font-weight:800;text-decoration:none;font-size:16px">Quero ser Treinador PACE</a>' +
+          '<br><br><a href="/atleta.html" style="color:#8899bb;font-size:14px">Voltar para area do atleta</a>' +
+          '</div></body></html>'
+        );
+      }
+    } catch {}
+  }
+});
+
 try {
   await app.register(authRoutes);
   await app.register(raceRoutes);
