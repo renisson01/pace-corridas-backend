@@ -166,7 +166,8 @@ export async function coachRoutes(fastify) {
         select: { id: true, raceName: true, distance: true, time: true, pace: true, createdAt: true }
       }).catch(() => []);
 
-      return { atleta, resultados };
+      const atividades = await prisma.atividadeGPS.findMany({ where: { userId: atleta.id }, orderBy: { iniciadoEm: 'desc' }, take: 5, select: { id:true, tipo:true, distanciaKm:true, duracaoSeg:true, paceMedio:true, titulo:true, fonte:true, iniciadoEm:true } }).catch(() => []);
+      return { atleta, resultados, atividades };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 

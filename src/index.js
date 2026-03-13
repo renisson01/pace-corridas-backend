@@ -41,6 +41,8 @@ import { gpsRoutes }             from './modules/gps/gps.routes.js';
 import { corridasAbertasRoutes } from './modules/corridas-abertas/corridas.routes.js';
 import { amigoPaceRoutes }       from './modules/amigo-pace/amigo-pace.routes.js';
 import { predictionRoutes } from './modules/prediction/prediction.routes.js';
+import { integracoesRoutes }    from './modules/integracoes/integracoes.routes.js';
+import { integracoesRoutes }   from './modules/integracoes/integracoes.routes.js';
 import { leagueRoutes } from './modules/league/league.routes.js';
 import { passportRoutes } from './modules/passport/passport.routes.js';
 import { subscriptionRoutes } from './modules/subscription/subscription.routes.js';
@@ -60,8 +62,8 @@ await app.register(rateLimit, {
 
 const htmlCache = {};
 const pages = [
-  'index','entrar','perfil','calendario','resultados','social','elite','x1',
-  'pacematch','organizador','stats','faixas','calculadoras','usuario',
+  'index','entrar','perfil','calendario','resultados','social','elite',
+  'pacematch','organizador','stats','faixas','calculadoras',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
   'ia','ia-avatar','admin-pedidos','scraper','importar-resultado',
   'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador'
@@ -112,6 +114,7 @@ try {
   await app.register(corridasAbertasRoutes);
   await app.register(amigoPaceRoutes);
   await app.register(predictionRoutes);
+  await app.register(integracoesRoutes);
   await app.register(leagueRoutes);
   await app.register(passportRoutes);
   await app.register(subscriptionRoutes);
