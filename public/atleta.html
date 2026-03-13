@@ -819,9 +819,14 @@ body::after {
         <div><div style="font-weight:700;font-size:15px">Loja EstamPace</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Camisetas premium R$99,90</div></div>
         <div style="margin-left:auto;color:var(--muted)">›</div>
       </a>
-      <button onclick="showPage('gps')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
-        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,.08);border-radius:10px">📍</div>
-        <div><div style="font-weight:700;font-size:15px">GPS & Atividades</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Registrar corridas e treinos</div></div>
+      <button onclick="showPage('enviar-resultado')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,215,0,.08);border-radius:10px">🏅</div>
+        <div><div style="font-weight:700;font-size:15px">Enviar Resultado</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Registrar tempo em corrida oficial</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </button>
+      <button onclick="showPage('integracoes')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,.08);border-radius:10px">⌚</div>
+        <div><div style="font-weight:700;font-size:15px">Relógio & Apps</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Strava, Garmin, Polar, Apple Watch...</div></div>
         <div style="margin-left:auto;color:var(--muted)">›</div>
       </button>
       <button onclick="showPage('historico')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
@@ -838,6 +843,146 @@ body::after {
   </div>
   <div class="section">
     <button class="btn-outline btn-danger" onclick="logout()" style="width:100%">🚪 Sair da conta</button>
+  </div>
+</div>
+
+<!-- ── ENVIAR RESULTADO ──────────────────── -->
+<div class="page" id="page-enviar-resultado">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏅 Enviar Resultado</div>
+    </div>
+    <div class="form-card">
+      <div class="form-card-title">Dados da Prova</div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Nome da Corrida *</label>
+        <input type="text" class="field-input" id="envNomeProva" placeholder="Ex: Corrida da Amizade" style="width:100%">
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Distância *</label>
+          <select class="field-input" id="envDistancia" style="width:100%">
+            <option value="3km">3 km</option>
+            <option value="5km" selected>5 km</option>
+            <option value="10km">10 km</option>
+            <option value="15km">15 km</option>
+            <option value="21km">Meia (21km)</option>
+            <option value="42km">Maratona (42km)</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Tempo (chip) *</label>
+          <input type="text" class="field-input" id="envTempo" placeholder="Ex: 9:40" style="width:100%">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Data da Prova</label>
+          <input type="date" class="field-input" id="envData" style="width:100%">
+        </div>
+        <div>
+          <label class="field-label">Posição Geral</label>
+          <input type="number" class="field-input" id="envPosicao" placeholder="Ex: 5" style="width:100%">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Cidade</label>
+          <input type="text" class="field-input" id="envCidade" placeholder="Ex: Itabaiana" style="width:100%">
+        </div>
+        <div>
+          <label class="field-label">Estado</label>
+          <input type="text" class="field-input" id="envEstado" placeholder="SE" maxlength="2" style="width:100%">
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Link do Resultado (opcional)</label>
+        <input type="url" class="field-input" id="envLink" placeholder="https://..." style="width:100%">
+      </div>
+    </div>
+    <div style="background:rgba(0,255,170,.06);border:1px solid rgba(0,255,170,.15);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--muted2);line-height:1.6">
+      📋 Seu resultado será revisado em até 24h e aparecerá no ranking após aprovação.
+    </div>
+    <button class="btn-save" onclick="enviarResultado()" style="width:100%">🏅 Enviar Resultado</button>
+    <button class="btn-outline" onclick="showPage('ranking')" style="width:100%;margin-top:8px">← Ver Ranking</button>
+  </div>
+</div>
+
+<!-- ── INTEGRAÇÕES ──────────────────────── -->
+<div class="page" id="page-integracoes">
+  <div class="section">
+    <div class="section-label" style="font-size:11px;font-weight:700;color:var(--neon);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Conectar Apps e Relógios</div>
+    <div class="section-title" style="font-family:var(--display);font-size:26px;font-weight:900;margin-bottom:6px">⌚ Suas Integrações</div>
+    <p style="font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6">Conecte seu relógio ou app favorito para sincronizar treinos automaticamente com o PACE.</p>
+
+    <!-- Strava -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#FC4C02;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🟠</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Strava</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">Sincronizar corridas e KMs automaticamente</div>
+      </div>
+      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Strava')">Em breve</div>
+    </div>
+
+    <!-- Garmin -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#007CC3;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🔵</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Garmin Connect</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">GPS, FC, VO2 máx e planilhas avançadas</div>
+      </div>
+      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Garmin')">Em breve</div>
+    </div>
+
+    <!-- Polar -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#D0011B;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🔴</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Polar Flow</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">FC, zonas de treino e recuperação</div>
+      </div>
+      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Polar')">Em breve</div>
+    </div>
+
+    <!-- Apple Watch -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#1C1C1E;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⌚</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Apple Watch</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">HealthKit, corridas e atividades iOS</div>
+      </div>
+      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Apple Watch')">Em breve</div>
+    </div>
+
+    <!-- Amazfit -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#FF6900;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🟡</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Amazfit / Zepp</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">Relógios acessíveis com GPS preciso</div>
+      </div>
+      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Amazfit')">Em breve</div>
+    </div>
+
+    <!-- Huawei -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#CF0A2C;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🔺</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Huawei Health</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">Watch GT e Band series</div>
+      </div>
+      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Huawei')">Em breve</div>
+    </div>
+
+    <div style="background:rgba(0,255,170,.05);border:1px solid rgba(0,255,170,.1);border-radius:12px;padding:14px;text-align:center;margin-top:8px">
+      <div style="font-size:13px;color:var(--muted2);margin-bottom:8px">Qual integração você mais quer? Vote:</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button onclick="votarIntegracao('Strava')" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer">🟠 Strava</button>
+        <button onclick="votarIntegracao('Garmin')" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer">🔵 Garmin</button>
+        <button onclick="votarIntegracao('Amazfit')" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer">🟡 Amazfit</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1668,7 +1813,7 @@ async function carregarRankingPage() {
   el.innerHTML = '<div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>'.repeat(5);
 
   try {
-    const data = await api('/ranking/' + distRanking + '?limit=20');
+    const data = await api('/ranking/' + distRanking.replace('k','km') + '?limit=20');
     const items = data.ranking || data.data || [];
     const meuId = user.id || user.userId;
     const cores = ['gold','silver','bronze'];
@@ -1695,7 +1840,7 @@ async function carregarMeusResultados() {
   const el = document.getElementById('meusResultadosList');
   if (!el) return;
   try {
-    const data = await api('/results/me');
+    const data = await api('/resultados/meus-enviados');
     const res = data.results || data.data || [];
     el.innerHTML = res.length ? res.slice(0,5).map(r => `
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
@@ -1784,6 +1929,66 @@ function filtrarGruposLocal(busca) {
 // PATCH showPage — carregar ao trocar aba
 // ═══════════════════════════════════════
 
+
+
+// ═══════════════════════════════════════
+// ENVIAR RESULTADO
+// ═══════════════════════════════════════
+async function enviarResultado() {
+  const nomeProva = document.getElementById('envNomeProva')?.value?.trim();
+  const distancia = document.getElementById('envDistancia')?.value;
+  const tempo = document.getElementById('envTempo')?.value?.trim();
+  const data = document.getElementById('envData')?.value;
+  const posicao = document.getElementById('envPosicao')?.value;
+  const cidade = document.getElementById('envCidade')?.value?.trim();
+  const estado = document.getElementById('envEstado')?.value?.trim().toUpperCase();
+  const link = document.getElementById('envLink')?.value?.trim();
+
+  if (!nomeProva) { showToast('⚠️ Informe o nome da corrida'); return; }
+  if (!tempo) { showToast('⚠️ Informe o tempo'); return; }
+
+  const btn = document.querySelector('#page-enviar-resultado .btn-save');
+  if (btn) { btn.textContent = '⏳ Enviando...'; btn.disabled = true; }
+
+  try {
+    const res = await api('/resultados/enviar-manual', {
+      method: 'POST',
+      body: JSON.stringify({
+        nomeProva, distancia, tempoInformado: tempo,
+        dataProva: data || new Date().toISOString().split('T')[0],
+        posicaoGeral: posicao ? parseInt(posicao) : null,
+        cidade: cidade || user.city || '',
+        estado: estado || user.state || '',
+        linkResultado: link || ''
+      })
+    });
+    showToast('🏅 Resultado enviado! Revisão em até 24h');
+    // Limpar form
+    ['envNomeProva','envTempo','envData','envPosicao','envCidade','envEstado','envLink'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setTimeout(() => showPage('ranking'), 2000);
+  } catch(e) {
+    showToast('❌ Erro ao enviar. Tente novamente.');
+  } finally {
+    if (btn) { btn.textContent = '🏅 Enviar Resultado'; btn.disabled = false; }
+  }
+}
+
+// ═══════════════════════════════════════
+// INTEGRAÇÕES
+// ═══════════════════════════════════════
+function integracaoBreve(nome) {
+  showToast(`⏳ ${nome} em breve! Estamos desenvolvendo.`);
+}
+function votarIntegracao(nome) {
+  showToast(`✅ Voto registrado para ${nome}! Obrigado.`);
+  // futuramente chamar API para registrar voto
+}
+
+// Preencher cidade/estado no form de enviar resultado com dados do usuário
+const _showPageOrigEnv = showPage;
 
 </script>
 </body>
