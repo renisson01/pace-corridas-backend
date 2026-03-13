@@ -600,7 +600,7 @@ body::after {
   <div class="section">
     <div class="section-header">
       <div class="section-title">🥇 Ranking Local</div>
-      <div class="section-link">Ver completo</div>
+      <div class="section-link" onclick="showPage('ranking')">Ver completo</div>
     </div>
     <div class="ranking-mini" id="rankingMini">
       <div style="height:180px;border-radius:16px" class="skeleton"></div>
@@ -1196,7 +1196,7 @@ async function carregarCorridasProximas() {
             <div class="corrida-nome">${c.nome||c.name||'Corrida'}</div>
             <div class="corrida-local">📍 ${c.cidade||c.city||''} ${c.estado||c.state||''}</div>
           </div>
-          <div class="corrida-dist">${c.distancias||c.distance||c.distancia||'--'}</div>
+          <div style="color:var(--neon);font-size:20px;font-weight:700">${c.distancias||c.distance||c.distancia||'--'}</div>
         </div>
       `;
     }).join('');
@@ -1301,7 +1301,7 @@ async function carregarConquistas() {
 // ═══════════════════════════════════════
 async function carregarRanking() {
   try {
-    const data = await api('/ranking?tipo=5k&limit=5');
+    const data = await api('/ranking/5k?limit=5');
     const items = data.ranking || data.data || [];
     const meuId = user.id;
     const cores = ['gold','silver','bronze'];
