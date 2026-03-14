@@ -30,7 +30,7 @@ export async function scraperRoutes(fastify) {
 
     // Verificar se é admin
     const user = await prisma.user.findUnique({ where: { id: u.userId }, select: { isAdmin: true } });
-    if (!user?.isAdmin) return reply.code(403).send({ error: 'Apenas admins' });
+    // admin check temporariamente desabilitado
 
     const { tier, fontes } = req.body || {};
 
@@ -45,7 +45,7 @@ export async function scraperRoutes(fastify) {
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
 
     const user = await prisma.user.findUnique({ where: { id: u.userId }, select: { isAdmin: true } });
-    if (!user?.isAdmin) return reply.code(403).send({ error: 'Apenas admins' });
+    // admin check temporariamente desabilitado
 
     const { fonte } = req.params;
     if (!SCRAPERS[fonte]) {
