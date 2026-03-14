@@ -204,7 +204,7 @@ export async function pagamentosRoutes(fastify) {
   fastify.post('/pagamentos/coach/adesao', async (req, reply) => {
     if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
     const jwt = await import('jsonwebtoken');
-    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace2026'); } catch { return null; } })();
+    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace-secret-2026'); } catch { return null; } })();
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
 
     try {
@@ -247,7 +247,7 @@ export async function pagamentosRoutes(fastify) {
   fastify.post('/pagamentos/coach/mensalidade', async (req, reply) => {
     if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
     const jwt = await import('jsonwebtoken');
-    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace2026'); } catch { return null; } })();
+    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace-secret-2026'); } catch { return null; } })();
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
 
     try {
@@ -301,7 +301,7 @@ export async function pagamentosRoutes(fastify) {
   fastify.post('/pagamentos/premium', async (req, reply) => {
     if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
     const jwt = await import('jsonwebtoken');
-    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace2026'); } catch { return null; } })();
+    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace-secret-2026'); } catch { return null; } })();
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
 
     try {
