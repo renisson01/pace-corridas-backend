@@ -45,6 +45,7 @@ import { integracoesRoutes }    from './modules/integracoes/integracoes.routes.j
 import { leagueRoutes } from './modules/league/league.routes.js';
 import { passportRoutes } from './modules/passport/passport.routes.js';
 import { subscriptionRoutes } from './modules/subscription/subscription.routes.js';
+import { cobaiaRoutes } from './modules/cobaia/cobaia.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = Fastify({ logger: false });
@@ -65,7 +66,7 @@ const pages = [
   'pacematch','organizador','stats','faixas','calculadoras',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
   'ia','ia-avatar','admin-pedidos','scraper','importar-resultado',
-  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador'
+  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador','cobaia'
 ];
 
 for (const pg of pages) {
@@ -148,6 +149,7 @@ try {
   await app.register(leagueRoutes);
   await app.register(passportRoutes);
   await app.register(subscriptionRoutes);
+  await app.register(cobaiaRoutes);
   console.log('✅ Todas as rotas registradas (v3.0 PACE BRAZIL)');
 } catch(e) {
   console.error('❌ ERRO ao registrar rotas:', e.message);

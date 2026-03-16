@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACE COBAIA — Protocolo 60 Dias</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding-bottom:80px; }
+.header { background:linear-gradient(135deg,#0a0f1a 0%,#1a0f00 100%); padding:20px 16px; border-bottom:2px solid #F7931A; }
+.header h1 { color:#F7931A; font-size:24px; font-weight:900; letter-spacing:2px; }
+.header .sub { color:#8899bb; font-size:13px; margin-top:4px; }
+.dia-badge { display:inline-block; background:#F7931A; color:#000; font-weight:900; padding:4px 12px; border-radius:20px; font-size:14px; margin-top:8px; }
+.streak-badge { display:inline-block; background:#27AE60; color:#fff; font-weight:700; padding:4px 12px; border-radius:20px; font-size:13px; margin-left:8px; }
+
+.section { padding:16px; }
+.section-title { color:#F7931A; font-size:16px; font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+.card { background:#0d1117; border:1px solid #1e2d3d; border-radius:14px; padding:16px; margin-bottom:12px; }
+.card-dark { background:#080c14; }
+
+/* Quick Actions */
+.actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px; margin-top:16px; }
+.action-btn { background:#0d1117; border:1px solid #1e2d3d; border-radius:14px; padding:16px 12px; text-align:center; cursor:pointer; transition:all 0.2s; }
+.action-btn:active { transform:scale(0.96); background:#1a2332; }
+.action-btn .icon { font-size:28px; margin-bottom:6px; }
+.action-btn .label { font-size:12px; color:#8899bb; font-weight:600; }
+
+/* Metrics Grid */
+.metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.metric { text-align:center; padding:12px 8px; background:#080c14; border-radius:10px; }
+.metric .value { font-size:22px; font-weight:900; color:#F7931A; }
+.metric .label { font-size:11px; color:#667788; margin-top:2px; }
+
+/* Checkin Form */
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; color:#8899bb; font-size:12px; font-weight:600; margin-bottom:4px; text-transform:uppercase; }
+.form-group input, .form-group select, .form-group textarea {
+  width:100%; background:#080c14; border:1px solid #1e2d3d; color:#e2e8f0;
+  padding:10px 12px; border-radius:10px; font-size:15px; outline:none;
+}
+.form-group input:focus { border-color:#F7931A; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.btn-primary { background:#F7931A; color:#000; font-weight:800; border:none; padding:14px; border-radius:12px; width:100%; font-size:16px; cursor:pointer; margin-top:10px; }
+.btn-primary:active { background:#e8850f; }
+.btn-secondary { background:#1e2d3d; color:#e2e8f0; font-weight:600; border:none; padding:12px; border-radius:10px; width:100%; font-size:14px; cursor:pointer; margin-top:8px; }
+
+/* Toggle */
+.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; }
+.toggle { width:50px; height:28px; background:#1e2d3d; border-radius:14px; position:relative; cursor:pointer; transition:background 0.3s; }
+.toggle.on { background:#F7931A; }
+.toggle::after { content:''; position:absolute; top:3px; left:3px; width:22px; height:22px; background:#fff; border-radius:50%; transition:left 0.3s; }
+.toggle.on::after { left:25px; }
+
+/* Rating */
+.rating { display:flex; gap:6px; margin-top:4px; }
+.rating-btn { width:36px; height:36px; border-radius:50%; background:#1e2d3d; border:none; color:#8899bb; font-weight:700; font-size:14px; cursor:pointer; }
+.rating-btn.active { background:#F7931A; color:#000; }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:100; align-items:flex-end; justify-content:center; }
+.modal-overlay.show { display:flex; }
+.modal { background:#0d1117; border-top:2px solid #F7931A; border-radius:20px 20px 0 0; width:100%; max-width:500px; max-height:85vh; overflow-y:auto; padding:24px 16px 40px; }
+.modal h2 { color:#F7931A; font-size:18px; margin-bottom:16px; }
+.modal-close { float:right; background:none; border:none; color:#667788; font-size:24px; cursor:pointer; }
+
+/* Timeline */
+.timeline-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #0a1020; }
+.timeline-dot { width:10px; height:10px; border-radius:50%; background:#F7931A; margin-top:5px; flex-shrink:0; }
+.timeline-dot.green { background:#27AE60; }
+.timeline-dot.blue { background:#2980B9; }
+.timeline-dot.red { background:#E74C3C; }
+.timeline-content { flex:1; }
+.timeline-content .time { font-size:11px; color:#667788; }
+.timeline-content .text { font-size:14px; color:#c0ccdd; margin-top:2px; }
+
+/* Nav */
+.nav { position:fixed; bottom:0; left:0; right:0; background:#0a0f1a; border-top:1px solid #1e2d3d; display:flex; z-index:50; }
+.nav a { flex:1; text-align:center; padding:8px 0; text-decoration:none; color:#556677; font-size:10px; font-weight:600; }
+.nav a.active { color:#F7931A; }
+.nav a .nav-icon { font-size:20px; display:block; margin-bottom:2px; }
+
+.loading { text-align:center; padding:40px; color:#667788; }
+.empty { text-align:center; padding:20px; color:#445566; font-size:14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧬 PACE COBAIA</h1>
+  <div class="sub">Protocolo de Otimização Biológica — 60 Dias</div>
+  <div>
+    <span class="dia-badge" id="diaBadge">DIA 1/60</span>
+    <span class="streak-badge" id="streakBadge">🔥 0 dias</span>
+  </div>
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="actions">
+  <div class="action-btn" onclick="abrirModal('checkin')">
+    <div class="icon">📊</div>
+    <div class="label">CHECK-IN DIÁRIO</div>
+  </div>
+  <div class="action-btn" onclick="abrirModal('alimentacao')">
+    <div class="icon">🍽️</div>
+    <div class="label">ALIMENTAÇÃO</div>
+  </div>
+  <div class="action-btn" onclick="abrirModal('sauna')">
+    <div class="icon">🔥</div>
+    <div class="label">SAUNA</div>
+  </div>
+  <div class="action-btn" onclick="abrirModal('agenda')">
+    <div class="icon">📅</div>
+    <div class="label">AGENDA</div>
+  </div>
+</div>
+
+<!-- MÉTRICAS RESUMO -->
+<div class="section">
+  <div class="section-title">📈 Resumo do Protocolo</div>
+  <div class="metrics" id="metricas">
+    <div class="metric"><div class="value" id="mKm">-</div><div class="label">KM TOTAL</div></div>
+    <div class="metric"><div class="value" id="mTreinos">-</div><div class="label">TREINOS</div></div>
+    <div class="metric"><div class="value" id="mSaunas">-</div><div class="label">SAUNAS</div></div>
+    <div class="metric"><div class="value" id="mExames">-</div><div class="label">EXAMES</div></div>
+    <div class="metric"><div class="value" id="mSono">-</div><div class="label">SONO MÉD</div></div>
+    <div class="metric"><div class="value" id="mHumor">-</div><div class="label">HUMOR MÉD</div></div>
+  </div>
+</div>
+
+<!-- HOJE -->
+<div class="section">
+  <div class="section-title">📋 Hoje</div>
+  <div class="card" id="hojeContent">
+    <div class="loading">Carregando...</div>
+  </div>
+</div>
+
+<!-- TIMELINE RECENTE -->
+<div class="section">
+  <div class="section-title">⏱️ Últimos Registros</div>
+  <div class="card card-dark" id="timeline">
+    <div class="loading">Carregando...</div>
+  </div>
+</div>
+
+<!-- ==================== MODAIS ==================== -->
+
+<!-- MODAL CHECK-IN -->
+<div class="modal-overlay" id="modalCheckin">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('checkin')">&times;</button>
+    <h2>📊 Check-in Diário</h2>
+    <div class="form-row">
+      <div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="cPeso" placeholder="72.5"></div>
+      <div class="form-group"><label>FC Repouso</label><input type="number" id="cFcRep" placeholder="55"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Horas de sono</label><input type="number" step="0.5" id="cSono" placeholder="7.5"></div>
+      <div class="form-group"><label>Qualidade sono (1-5)</label>
+        <div class="rating" id="rSono"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Hora dormir</label><input type="time" id="cDormir"></div>
+      <div class="form-group"><label>Hora acordar</label><input type="time" id="cAcordar"></div>
+    </div>
+    <div class="form-group"><label>Humor (1-10)</label><div class="rating" id="rHumor"></div></div>
+    <div class="form-group"><label>Energia (1-10)</label><div class="rating" id="rEnergia"></div></div>
+    <div class="toggle-row">
+      <span style="color:#8899bb;font-weight:600">💊 Vyvanse hoje?</span>
+      <div class="toggle" id="tVyvanse" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="form-group"><label>Notas</label><textarea id="cNotas" rows="2" placeholder="Como se sente hoje..."></textarea></div>
+    <button class="btn-primary" onclick="salvarCheckin()">SALVAR CHECK-IN</button>
+  </div>
+</div>
+
+<!-- MODAL ALIMENTAÇÃO -->
+<div class="modal-overlay" id="modalAlimentacao">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('alimentacao')">&times;</button>
+    <h2>🍽️ Registrar Refeição</h2>
+    <div class="form-group"><label>Refeição</label>
+      <select id="aRefeicao"><option value="cafe">Café da manhã</option><option value="almoco">Almoço</option><option value="janta">Jantar</option><option value="snack">Lanche</option><option value="pos-treino">Pós-treino</option></select>
+    </div>
+    <div class="form-group"><label>O que comeu</label><textarea id="aDesc" rows="3" placeholder="3 ovos, banana, café..."></textarea></div>
+    <div class="form-group"><label>Horário</label><input type="time" id="aHorario"></div>
+    <button class="btn-primary" onclick="salvarAlimentacao()">REGISTRAR</button>
+  </div>
+</div>
+
+<!-- MODAL SAUNA -->
+<div class="modal-overlay" id="modalSauna">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('sauna')">&times;</button>
+    <h2>🔥 Sessão de Sauna</h2>
+    <div class="form-group"><label>Protocolo</label>
+      <select id="sProtocolo"><option value="pos-treino">Pós-treino</option><option value="longevidade">Longevidade (HSP)</option><option value="sono">Sono/Relaxamento</option><option value="contraste">Contraste (quente+frio)</option><option value="descanso">Dia de descanso</option></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Duração (min)</label><input type="number" id="sDuracao" placeholder="30"></div>
+      <div class="form-group"><label>Temp média °C</label><input type="number" id="sTemp" placeholder="50"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>FC antes</label><input type="number" id="sFcAntes" placeholder="60"></div>
+      <div class="form-group"><label>FC depois</label><input type="number" id="sFcDepois" placeholder="85"></div>
+    </div>
+    <div class="form-group"><label>Sensação (1-10)</label><div class="rating" id="rSauna"></div></div>
+    <button class="btn-primary" onclick="salvarSauna()">REGISTRAR SESSÃO</button>
+  </div>
+</div>
+
+<!-- MODAL AGENDA -->
+<div class="modal-overlay" id="modalAgenda">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('agenda')">&times;</button>
+    <h2>📅 Adicionar à Agenda</h2>
+    <div class="form-group"><label>Tipo</label>
+      <select id="gTipo"><option value="treino">Treino</option><option value="consulta">Consulta médica</option><option value="medicacao">Medicação</option><option value="sauna">Sauna</option><option value="exame">Exame</option><option value="outro">Outro</option></select>
+    </div>
+    <div class="form-group"><label>Título</label><input type="text" id="gTitulo" placeholder="Ex: Longão 10km"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Horário</label><input type="time" id="gHorario"></div>
+      <div class="form-group"><label>Duração (min)</label><input type="number" id="gDuracao" placeholder="60"></div>
+    </div>
+    <div class="form-group"><label>Descrição</label><textarea id="gDesc" rows="2" placeholder="Detalhes..."></textarea></div>
+    <button class="btn-primary" onclick="salvarAgenda()">ADICIONAR</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <a href="/"><span class="nav-icon">🏠</span>INÍCIO</a>
+  <a href="/corridas-abertas.html"><span class="nav-icon">🏁</span>CORRIDAS</a>
+  <a href="/ia.html"><span class="nav-icon">🤖</span>IA</a>
+  <a href="/cobaia.html" class="active"><span class="nav-icon">🧬</span>COBAIA</a>
+  <a href="/atleta.html"><span class="nav-icon">👤</span>PERFIL</a>
+</div>
+
+<script>
+const API = window.location.origin;
+const TOKEN = localStorage.getItem('pace_token');
+const headers = { 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN };
+
+// Rating helpers
+function criarRating(containerId, max) {
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  for(let i=1;i<=max;i++){
+    const btn = document.createElement('button');
+    btn.className = 'rating-btn';
+    btn.textContent = i;
+    btn.onclick = () => {
+      el.querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      el.dataset.value = i;
+    };
+    el.appendChild(btn);
+  }
+}
+criarRating('rSono', 5);
+criarRating('rHumor', 10);
+criarRating('rEnergia', 10);
+criarRating('rSauna', 10);
+
+function abrirModal(nome) { document.getElementById('modal'+nome.charAt(0).toUpperCase()+nome.slice(1)).classList.add('show'); }
+function fecharModal(nome) { document.getElementById('modal'+nome.charAt(0).toUpperCase()+nome.slice(1)).classList.remove('show'); }
+
+// ==================== SALVAR DADOS ====================
+async function salvarCheckin() {
+  const body = {
+    peso: parseFloat(document.getElementById('cPeso').value) || null,
+    fcRepouso: parseInt(document.getElementById('cFcRep').value) || null,
+    horasSono: parseFloat(document.getElementById('cSono').value) || null,
+    qualidadeSono: parseInt(document.getElementById('rSono').dataset.value) || null,
+    horasDormir: document.getElementById('cDormir').value || null,
+    horasAcordar: document.getElementById('cAcordar').value || null,
+    humor: parseInt(document.getElementById('rHumor').dataset.value) || null,
+    energia: parseInt(document.getElementById('rEnergia').dataset.value) || null,
+    vyvanse: document.getElementById('tVyvanse').classList.contains('on'),
+    notas: document.getElementById('cNotas').value || null,
+  };
+  try {
+    const r = await fetch(API+'/cobaia/checkin', { method:'POST', headers, body:JSON.stringify(body) });
+    const d = await r.json();
+    if(d.success) { alert('Check-in salvo!'); fecharModal('checkin'); carregarDados(); }
+    else alert('Erro: '+d.error);
+  } catch(e) { alert('Erro: '+e.message); }
+}
+
+async function salvarAlimentacao() {
+  const body = {
+    refeicao: document.getElementById('aRefeicao').value,
+    descricao: document.getElementById('aDesc').value,
+    horario: document.getElementById('aHorario').value || null,
+  };
+  if(!body.descricao) return alert('Descreva o que comeu!');
+  try {
+    const r = await fetch(API+'/cobaia/alimentacao', { method:'POST', headers, body:JSON.stringify(body) });
+    const d = await r.json();
+    if(d.success) { alert('Registrado!'); fecharModal('alimentacao'); carregarDados(); }
+    else alert('Erro: '+d.error);
+  } catch(e) { alert('Erro: '+e.message); }
+}
+
+async function salvarSauna() {
+  const body = {
+    protocolo: document.getElementById('sProtocolo').value,
+    duracaoMin: parseInt(document.getElementById('sDuracao').value) || 0,
+    tempMedia: parseFloat(document.getElementById('sTemp').value) || null,
+    fcAntes: parseInt(document.getElementById('sFcAntes').value) || null,
+    fcDepois: parseInt(document.getElementById('sFcDepois').value) || null,
+    sensacao: parseInt(document.getElementById('rSauna').dataset.value) || null,
+  };
+  if(!body.duracaoMin) return alert('Informe a duração!');
+  try {
+    const r = await fetch(API+'/cobaia/sauna', { method:'POST', headers, body:JSON.stringify(body) });
+    const d = await r.json();
+    if(d.success) { alert('Sessão registrada!'); fecharModal('sauna'); carregarDados(); }
+    else alert('Erro: '+d.error);
+  } catch(e) { alert('Erro: '+e.message); }
+}
+
+async function salvarAgenda() {
+  const body = {
+    tipo: document.getElementById('gTipo').value,
+    titulo: document.getElementById('gTitulo').value,
+    descricao: document.getElementById('gDesc').value || null,
+    horario: document.getElementById('gHorario').value || null,
+    duracao: parseInt(document.getElementById('gDuracao').value) || null,
+  };
+  if(!body.titulo) return alert('Informe o título!');
+  try {
+    const r = await fetch(API+'/cobaia/agenda', { method:'POST', headers, body:JSON.stringify(body) });
+    const d = await r.json();
+    if(d.success) { alert('Adicionado!'); fecharModal('agenda'); carregarDados(); }
+    else alert('Erro: '+d.error);
+  } catch(e) { alert('Erro: '+e.message); }
+}
+
+// ==================== CARREGAR DASHBOARD ====================
+async function carregarDados() {
+  try {
+    const r = await fetch(API+'/cobaia/dashboard', { headers });
+    const d = await r.json();
+
+    document.getElementById('diaBadge').textContent = 'DIA '+d.diaProtocolo+'/60';
+    document.getElementById('streakBadge').textContent = '🔥 '+d.streak+' dias';
+    document.getElementById('mKm').textContent = d.totais.kmTotal;
+    document.getElementById('mTreinos').textContent = d.totais.treinosFeitos;
+    document.getElementById('mSaunas').textContent = d.totais.sessSauna;
+    document.getElementById('mExames').textContent = d.totais.examesFeitos;
+
+    // Médias
+    const sonoArr = d.diarios.filter(x=>x.horasSono).map(x=>x.horasSono);
+    const humorArr = d.diarios.filter(x=>x.humor).map(x=>x.humor);
+    document.getElementById('mSono').textContent = sonoArr.length ? (sonoArr.reduce((a,b)=>a+b,0)/sonoArr.length).toFixed(1)+'h' : '-';
+    document.getElementById('mHumor').textContent = humorArr.length ? (humorArr.reduce((a,b)=>a+b,0)/humorArr.length).toFixed(1) : '-';
+
+    // Hoje
+    const hoje = document.getElementById('hojeContent');
+    const hj = d.agendaHoje || [];
+    const rf = d.alimentacaoHoje || [];
+    let hojeHtml = '';
+    if(hj.length || rf.length) {
+      if(rf.length) hojeHtml += '<div style="margin-bottom:10px"><b style="color:#F7931A">🍽️ Refeições:</b><br>'+rf.map(r=>'<span style="color:#8899bb">'+r.refeicao+':</span> '+r.descricao).join('<br>')+'</div>';
+      if(hj.length) hojeHtml += '<div><b style="color:#F7931A">📅 Agenda:</b><br>'+hj.map(a=>'<span style="color:'+(a.completado?'#27AE60':'#8899bb')+'">['+(a.completado?'✓':'○')+'] '+a.titulo+(a.horario?' às '+a.horario:'')+'</span>').join('<br>')+'</div>';
+    } else {
+      hojeHtml = '<div class="empty">Nenhum registro hoje ainda. Use os botões acima!</div>';
+    }
+    hoje.innerHTML = hojeHtml;
+
+    // Timeline
+    const tl = document.getElementById('timeline');
+    const items = [];
+    d.diarios.slice(-5).reverse().forEach(x => items.push({ time:new Date(x.data).toLocaleDateString('pt-BR'), text:'Check-in: '+(x.peso?x.peso+'kg ':'')+( x.horasSono?x.horasSono+'h sono ':'')+( x.vyvanse?'💊 Vyvanse':''), color:'' }));
+    d.treinos.slice(0,5).forEach(x => items.push({ time:new Date(x.iniciadoEm).toLocaleDateString('pt-BR'), text:'🏃 '+x.distanciaKm+'km - pace '+x.paceMedio, color:'green' }));
+    d.saunas.slice(0,3).forEach(x => items.push({ time:new Date(x.data).toLocaleDateString('pt-BR'), text:'🔥 Sauna '+x.protocolo+' '+x.duracaoMin+'min', color:'red' }));
+
+    if(items.length) {
+      tl.innerHTML = items.map(i=>'<div class="timeline-item"><div class="timeline-dot '+i.color+'"></div><div class="timeline-content"><div class="time">'+i.time+'</div><div class="text">'+i.text+'</div></div></div>').join('');
+    } else {
+      tl.innerHTML = '<div class="empty">Registre seus dados para ver a timeline!</div>';
+    }
+
+  } catch(e) { console.error(e); }
+}
+
+// Iniciar
+if(!TOKEN) { window.location.href = '/entrar.html'; }
+else { carregarDados(); }
+</script>
+</body>
+</html>

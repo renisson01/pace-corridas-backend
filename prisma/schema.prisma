@@ -116,6 +116,11 @@ model User {
   coachProfile        CoachProfile?
   coachesQueTeino     CoachAtleta[]    @relation("AtletasDoCoach")
   integracoes     IntegracaoToken[]
+  cobaiaDiarios      CobaiaDiario[]
+  cobaiaAlimentacao  CobaiaAlimentacao[]
+  cobaiaAgenda       CobaiaAgenda[]
+  cobaiaSaunas       CobaiaSauna[]
+  cobaiaExames       CobaiaExame[]
 }
 
 model Like {
@@ -688,4 +693,89 @@ model IntegracaoToken {
   updatedAt     DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [id])
   @@unique([userId, provider])
+}
+
+// ==================== PROTOCOLO COBAIA ====================
+model CobaiaDiario {
+  id            String   @id @default(cuid())
+  userId        String
+  data          DateTime
+  peso          Float?
+  gorduraPct    Float?
+  massaMagra    Float?
+  hrvMedia      Float?
+  fcRepouso     Int?
+  horasSono     Float?
+  qualidadeSono Int?     // 1-5
+  horasDormir   String?  // ex: "22:30"
+  horasAcordar  String?  // ex: "06:30"
+  humor         Int?     // 1-10
+  energia       Int?     // 1-10
+  vyvanse       Boolean  @default(false)
+  notas         String?
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
+  @@unique([userId, data])
+}
+
+model CobaiaAlimentacao {
+  id          String   @id @default(cuid())
+  userId      String
+  data        DateTime
+  refeicao    String   // cafe | almoco | janta | snack | pos-treino
+  descricao   String
+  fotoUrl     String?
+  caloriasEst Int?
+  proteinaEst Float?
+  carbEst     Float?
+  gorduraEst  Float?
+  horario     String?  // ex: "12:30"
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model CobaiaAgenda {
+  id          String   @id @default(cuid())
+  userId      String
+  data        DateTime
+  tipo        String   // treino | consulta | medicacao | sauna | exame | outro
+  titulo      String
+  descricao   String?
+  horario     String?
+  duracao     Int?     // minutos
+  completado  Boolean  @default(false)
+  notas       String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model CobaiaSauna {
+  id          String   @id @default(cuid())
+  userId      String
+  data        DateTime
+  protocolo   String   // pos-treino | longevidade | sono | contraste | descanso
+  duracaoMin  Int
+  tempMedia   Float?
+  fcAntes     Int?
+  fcDepois    Int?
+  sensacao    Int?     // 1-10
+  notas       String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model CobaiaExame {
+  id           String   @id @default(cuid())
+  userId       String
+  data         DateTime
+  tipoExame    String   // hemograma | lipidograma | hormonal | inflamatorio | vitaminas | metabolico
+  marcador     String   // ex: "Vitamina D", "PCR", "Testosterona"
+  valor        Float
+  unidade      String   // ex: "ng/mL", "mg/L"
+  refMin       Float?
+  refMax       Float?
+  status       String?  // otimo | normal | atencao | critico
+  notas        String?
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
 }
