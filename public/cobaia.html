@@ -339,7 +339,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
   <a href="/corridas-abertas.html"><span class="ni">🏁</span>CORRIDAS</a>
   <a href="/ia.html"><span class="ni">🤖</span>IA</a>
   <a href="/cobaia.html" class="active"><span class="ni">🧬</span>COBAIA</a>
-  <a href="/atleta.html"><span class="ni">👤</span>PERFIL</a>
+  <a href="/exames.html"><span class="ni">🩸</span>EXAMES</a>
 </div>
 
 <script>
@@ -417,7 +417,7 @@ function paceToMin(pace) {
 function calcBioAge(data) {
   // Estimativa simplificada de idade biológica
   // Baseada em: VO2max, sono, consistência, peso
-  let age = 30; // idade cronológica estimada
+  let age = 31; // idade cronológica estimada
   let bioAge = age;
   
   // VO2max (VDOT 63.9 ~ VO2max 63) = reduz ~3 anos
@@ -500,8 +500,8 @@ function renderCharts(data) {
     data:{
       labels: ['Início','Sem 2','Sem 4','Sem 6','Sem 8 (Meta)'],
       datasets:[
-        { label:'Idade Cronológica', data:[30,30,30,30,30], borderColor:'#E74C3C', borderDash:[5,5], pointRadius:0 },
-        { label:'Idade Biológica (projeção)', data:[27,26.5,26,25.5,25], borderColor:'#27AE60', backgroundColor:'#27AE6022', fill:true, tension:0.3 }
+        { label:'Idade Cronológica', data:[31,31,31,31,31], borderColor:'#E74C3C', borderDash:[5,5], pointRadius:0 },
+        { label:'Idade Biológica (projeção)', data:[26,25.5,25,24.5,24], borderColor:'#27AE60', backgroundColor:'#27AE6022', fill:true, tension:0.3 }
       ]
     },
     options:{ responsive:true, plugins:{legend:{labels:{color:'#8899bb',font:{size:10}}}}, scales:{ y:{ticks:{color:'#667788'}, grid:{color:'#1e2d3d'}}, x:{ticks:{color:'#667788'}, grid:{display:false}} } }
@@ -532,7 +532,7 @@ function renderTreinos(treinos) {
 function renderBioAge(data) {
   const bio = calcBioAge(data);
   document.getElementById('bioAgeNumber').textContent = bio.bioAge;
-  document.getElementById('bioAgeDiff').textContent = (bio.bioAge < 30 ? '↓ ' + (30 - bio.bioAge).toFixed(1) + ' anos abaixo da cronológica' : 'Calculando...');
+  document.getElementById('bioAgeDiff').textContent = (bio.bioAge < 31 ? '↓ ' + (31 - bio.bioAge).toFixed(1) + ' anos abaixo da cronológica' : 'Calculando...');
   
   const factors = document.getElementById('bioFactors');
   factors.innerHTML = [
