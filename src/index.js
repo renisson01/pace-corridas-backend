@@ -160,11 +160,13 @@ try {
 // Keep-alive: evita que o banco durma no Railway
 // Keep-alive: usa o prisma global em vez de criar instância nova
 import { PrismaClient } from '@prisma/client';
-const keepAlivePrisma = new PrismaClient();
+// Keep-alive com conexão temporária (evita too many clients)
 setInterval(async () => {
-  try { await keepAlivePrisma.$queryRaw`SELECT 1`; }
-  catch(e) { console.warn('[KEEP-ALIVE] Reconectando...'); }
-}, 4 * 60 * 1000);
+  const tmp = new PrismaClient();
+  try { await tmp.$queryRaw`SELECT 1`; }
+  catch(e) { console.warn('[KEEP-ALIVE] erro'); }
+  finally { await tmp.$disconnect().catch(()=>{}); }
+}, 5 * 60 * 1000);
 
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
   if (err) { console.error('❌', err); process.exit(1); }
