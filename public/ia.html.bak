@@ -345,39 +345,6 @@ async function checkPremiumStatus() {
   } catch {}
 }
 if (token) checkPremiumStatus();
-
-// === CARREGAR HISTORICO AO ABRIR ===
-async function carregarHistorico() {
-  try {
-    const r = await fetch(API + '/ia/historico', { headers: { 'Authorization': 'Bearer ' + TOKEN } });
-    const d = await r.json();
-    if (d.mensagens && d.mensagens.length > 0) {
-      const chatBox = document.getElementById('chatMessages') || document.getElementById('chat-messages') || document.getElementById('mensagens') || document.querySelector('.chat-messages') || document.querySelector('[class*="chat"]');
-      if (chatBox) {
-        chatBox.innerHTML = '';
-        d.mensagens.forEach(m => {
-          const div = document.createElement('div');
-          if (m.role === 'user') {
-            div.className = 'msg-user';
-            div.style.cssText = 'text-align:right;margin:8px 0;';
-            div.innerHTML = '<div style="display:inline-block;background:#1a3a2a;color:#e2e8f0;padding:10px 14px;border-radius:14px 14px 4px 14px;max-width:85%;text-align:left;font-size:14px;">' + m.content.replace(/\n/g,'<br>') + '</div>';
-          } else {
-            div.className = 'msg-ia';
-            div.style.cssText = 'text-align:left;margin:8px 0;';
-            let content = m.content.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/##\s?(.*?)(<br>)/g,'<h4 style="color:#F7931A;margin:8px 0 4px;">$1</h4>');
-            div.innerHTML = '<div style="display:inline-block;background:#0d1117;border:1px solid #1e2d3d;color:#c0ccdd;padding:10px 14px;border-radius:14px 14px 14px 4px;max-width:90%;text-align:left;font-size:14px;line-height:1.5;">' + content + '</div>';
-          }
-          chatBox.appendChild(div);
-        });
-        chatBox.scrollTop = chatBox.scrollHeight;
-        console.log('Historico carregado:', d.mensagens.length, 'mensagens');
-      }
-    }
-  } catch(e) { console.log('Erro ao carregar historico:', e); }
-}
-// Carregar ao abrir
-if (TOKEN) { setTimeout(carregarHistorico, 500); }
-
 </script>
 </body>
 </html>
