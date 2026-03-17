@@ -91,6 +91,35 @@ export async function integracoesRoutes(fastify) {
     } catch(e) { return reply.redirect('/atleta.html?erro=strava_erro'); }
   });
 
+  
+// === AUTO REFRESH STRAVA TOKEN ===
+async function refreshStravaToken(integracao) {
+  if (!integracao.refreshToken) return null;
+  try {
+    const res = await fetch('https://www.strava.com/oauth/token', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id: process.env.STRAVA_CLIENT_ID,
+        client_secret: process.env.STRAVA_CLIENT_SECRET,
+        refresh_token: integracao.refreshToken,
+        grant_type: 'refresh_token'
+      })
+    });
+    const data = await res.json();
+    if (!data.access_token) return null;
+    await prisma.integracaoToken.update({
+      where: { id: integracao.id },
+      data: {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token || integracao.refreshToken,
+        expiresAt: data.expires_at ? new Date(data.expires_at * 1000) : null
+      }
+    });
+    console.log('[STRAVA] Token renovado');
+    return data.access_token;
+  } catch(e) { console.error('[STRAVA REFRESH]', e.message); return null; }
+}
+
   // Strava — sincronizar atividades
   fastify.post('/integracoes/strava/sync', async (req, reply) => {
     const u = getUser(req);
@@ -99,7 +128,12 @@ export async function integracoesRoutes(fastify) {
       where: { userId_provider: { userId: u.userId, provider: 'strava' } }
     }).catch(() => null);
     if (!integracao?.accessToken) return reply.code(400).send({ error: 'Strava não conectado. Conecte primeiro.' });
-    const token = integracao.accessToken;
+    let token = integracao.accessToken;
+    // Auto refresh se expirado
+    if (integracao.expiresAt && new Date(integracao.expiresAt) < new Date()) {
+      token = await refreshStravaToken(integracao);
+      if (!token) return reply.code(400).send({ error: 'Token expirado. Reconecte o Strava.' });
+    }
     try {
       const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=30', {
         headers: { 'Authorization': `Bearer ${token}` }
