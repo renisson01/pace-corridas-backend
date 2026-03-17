@@ -2,7 +2,8 @@ import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
 import jwt from 'jsonwebtoken';
 
-const prisma = new PrismaClient();
+if (!globalThis.__prisma) { globalThis.__prisma = new PrismaClient(); }
+const prisma = globalThis.__prisma;
 const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
 
 // ==================== RATE LIMIT ====================
