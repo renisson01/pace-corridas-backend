@@ -1,5 +1,5 @@
 import { resultsService } from './results.service.js';
-import { prisma } from '../../utils/prisma.js';
+import prisma from '../../lib/prisma.js';
 
 export async function resultsRoutes(fastify) {
   fastify.post('/results', async (request) => {

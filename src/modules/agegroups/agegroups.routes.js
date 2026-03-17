@@ -1,6 +1,6 @@
+import prisma from "../../lib/prisma.js";
 import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
-const prisma = new PrismaClient();
 
 export default async function agegroupRoutes(fastify) {
   fastify.put('/races/:id/agegroups', async (req, reply) => {

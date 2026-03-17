@@ -8,7 +8,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma.js";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const log = msg => console.log(`[PACE-RaceFinder] ${new Date().toISOString()} | ${msg}`);
 

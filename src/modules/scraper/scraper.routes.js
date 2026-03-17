@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 /**
  * PACE BRAZIL — Rotas do Scraper de Corridas
  * 

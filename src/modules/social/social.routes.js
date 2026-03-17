@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
 

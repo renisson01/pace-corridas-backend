@@ -1,6 +1,6 @@
 import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma.js";
 
 // Importar fetch e cheerio de forma compatível
 const fetch = (...args) => import('node-fetch').then(({default: f}) => f(...args));

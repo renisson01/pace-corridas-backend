@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 export async function subscriptionRoutes(fastify) {
 
   // POST /subscription/coach/calcular — calcula mensalidade do treinador

@@ -17,7 +17,7 @@ import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
 import * as cheerio from 'cheerio';
 
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma.js";
 
 // ==================== NORMALIZAÇÃO ====================
 

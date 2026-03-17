@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 import { writeFileSync, mkdirSync, existsSync, createReadStream, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';

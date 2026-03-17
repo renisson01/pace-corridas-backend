@@ -1,4 +1,4 @@
-import { prisma } from '../../utils/prisma.js';
+import prisma from '../../lib/prisma.js';
 import { calculatePace, getAgeGroup } from '../../utils/helpers.js';
 
 const PONTOS_GERAL = { 1: 20, 2: 16, 3: 14, 4: 12, 5: 10 };

@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 /**
  * PACE — Rotas de Corridas Abertas + Race Finder
  */

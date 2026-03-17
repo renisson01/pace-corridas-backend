@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 
 // SISTEMA DE PONTUAÇÃO PACE
 // Pódio Geral: 1º=100pts, 2º=85pts, 3º=75pts, 4º=65pts, 5º=55pts

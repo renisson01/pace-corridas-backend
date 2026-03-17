@@ -1,6 +1,6 @@
 import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma.js";
 
 export const racesService = {
   async findAll({ state, city, status, distance, month, limit } = {}) {

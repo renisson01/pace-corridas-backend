@@ -1,4 +1,4 @@
-import { prisma } from '../../utils/prisma.js';
+import prisma from '../../lib/prisma.js';
 
 export const matchService = {
   async findMatches() {

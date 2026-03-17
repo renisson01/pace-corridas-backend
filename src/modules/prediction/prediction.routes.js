@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 function tps(t){if(typeof t==='number')return t;if(!t)return 0;const p=t.split(':').map(Number);if(p.length===3)return p[0]*3600+p[1]*60+p[2];if(p.length===2)return p[0]*60+p[1];return 0}
 function spt(s){const h=Math.floor(s/3600);const m=Math.floor((s%3600)/60);const sc=Math.round(s%60);if(h>0)return h+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');return m+':'+String(sc).padStart(2,'0')}
 function riegel(t1,d1,d2){return t1*Math.pow(d2/d1,1.06)}

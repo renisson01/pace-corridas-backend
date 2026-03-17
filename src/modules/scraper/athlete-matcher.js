@@ -1,6 +1,6 @@
 import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma.js";
 
 // SISTEMA DE DEDUPLICAÇÃO DE ATLETAS
 // Lógica: mesmo atleta = data nascimento + cidade similares

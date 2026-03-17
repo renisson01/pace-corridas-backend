@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 const ADMIN_KEY = process.env.ADMIN_KEY || 'pace-admin-2026';
 
 // Resultados verificados - Fonte: cbat.org.br (notícias oficiais)

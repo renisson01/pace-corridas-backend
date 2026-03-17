@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../../lib/prisma.js';
 import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 
 const BASE_URL = process.env.BASE_URL || 'https://web-production-990e7.up.railway.app';
