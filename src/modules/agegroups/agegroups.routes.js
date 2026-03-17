@@ -1,20 +1,13 @@
 import prisma from "../../lib/prisma.js";
-import pkg from '@prisma/client';
-const { PrismaClient } = pkg;
 
 export default async function agegroupRoutes(fastify) {
   fastify.put('/races/:id/agegroups', async (req, reply) => {
     const { id } = req.params;
     const { ageGroupType } = req.body;
     try {
-      const race = await prisma.race.update({
-        where: { id },
-        data: { ageGroupType: ageGroupType || 'none' }
-      });
+      const race = await prisma.race.update({ where: { id }, data: { ageGroupType: ageGroupType || 'none' } });
       return { success: true, race };
-    } catch (err) {
-      return reply.code(500).send({ error: err.message });
-    }
+    } catch (err) { return reply.code(500).send({ error: err.message }); }
   });
 
   fastify.get('/races/:id/agegroups', async (req, reply) => {
