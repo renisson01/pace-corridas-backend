@@ -1,3 +1,4 @@
+import { calcularScore, calcularIdadeBiologica } from '../../lib/bioage.js';
 import prisma from '../../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 
@@ -26,7 +27,10 @@ export async function cobaiaRoutes(fastify) {
         update: { peso, gorduraPct, massaMagra, hrvMedia, fcRepouso, horasSono, qualidadeSono,
                   horasDormir, horasAcordar, humor, energia, vyvanse: vyvanse || false, notas }
       });
-      return { success: true, checkin };
+const ultimo = diarios[diarios.length - 1] || {};      const score = calcularScore({        horasSono: ultimo.horasSono,        hrvMedia: ultimo.hrvMedia,        fcRepouso: ultimo.fcRepouso,        gorduraPct: ultimo.gorduraPct,        treinouHoje: treinos.length > 0,        streak      });      const bioAge = calcularIdadeBiologica(user?.age || 30, score);
+      return {
+        bioAge,
+        score, success: true, checkin };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
@@ -41,7 +45,10 @@ export async function cobaiaRoutes(fastify) {
         data: { userId: u.userId, data: new Date(), refeicao, descricao, fotoUrl,
                 caloriasEst, proteinaEst, carbEst, gorduraEst, horario }
       });
-      return { success: true, registro: reg };
+const ultimo = diarios[diarios.length - 1] || {};      const score = calcularScore({        horasSono: ultimo.horasSono,        hrvMedia: ultimo.hrvMedia,        fcRepouso: ultimo.fcRepouso,        gorduraPct: ultimo.gorduraPct,        treinouHoje: treinos.length > 0,        streak      });      const bioAge = calcularIdadeBiologica(user?.age || 30, score);
+      return {
+        bioAge,
+        score, success: true, registro: reg };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
@@ -55,7 +62,10 @@ export async function cobaiaRoutes(fastify) {
       const reg = await prisma.cobaiaSauna.create({
         data: { userId: u.userId, data: new Date(), protocolo, duracaoMin, tempMedia, fcAntes, fcDepois, sensacao, notas }
       });
-      return { success: true, registro: reg };
+const ultimo = diarios[diarios.length - 1] || {};      const score = calcularScore({        horasSono: ultimo.horasSono,        hrvMedia: ultimo.hrvMedia,        fcRepouso: ultimo.fcRepouso,        gorduraPct: ultimo.gorduraPct,        treinouHoje: treinos.length > 0,        streak      });      const bioAge = calcularIdadeBiologica(user?.age || 30, score);
+      return {
+        bioAge,
+        score, success: true, registro: reg };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
@@ -69,7 +79,10 @@ export async function cobaiaRoutes(fastify) {
       const reg = await prisma.cobaiaAgenda.create({
         data: { userId: u.userId, data: data ? new Date(data) : new Date(), tipo, titulo, descricao, horario, duracao }
       });
-      return { success: true, registro: reg };
+const ultimo = diarios[diarios.length - 1] || {};      const score = calcularScore({        horasSono: ultimo.horasSono,        hrvMedia: ultimo.hrvMedia,        fcRepouso: ultimo.fcRepouso,        gorduraPct: ultimo.gorduraPct,        treinouHoje: treinos.length > 0,        streak      });      const bioAge = calcularIdadeBiologica(user?.age || 30, score);
+      return {
+        bioAge,
+        score, success: true, registro: reg };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
@@ -82,7 +95,10 @@ export async function cobaiaRoutes(fastify) {
         where: { id: req.params.id },
         data: { completado: true, notas: req.body?.notas }
       });
-      return { success: true, registro: reg };
+const ultimo = diarios[diarios.length - 1] || {};      const score = calcularScore({        horasSono: ultimo.horasSono,        hrvMedia: ultimo.hrvMedia,        fcRepouso: ultimo.fcRepouso,        gorduraPct: ultimo.gorduraPct,        treinouHoje: treinos.length > 0,        streak      });      const bioAge = calcularIdadeBiologica(user?.age || 30, score);
+      return {
+        bioAge,
+        score, success: true, registro: reg };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
@@ -97,7 +113,10 @@ export async function cobaiaRoutes(fastify) {
       const reg = await prisma.cobaiaExame.create({
         data: { userId: u.userId, data: data ? new Date(data) : new Date(), tipoExame, marcador, valor, unidade, refMin, refMax, status, notas }
       });
-      return { success: true, registro: reg };
+const ultimo = diarios[diarios.length - 1] || {};      const score = calcularScore({        horasSono: ultimo.horasSono,        hrvMedia: ultimo.hrvMedia,        fcRepouso: ultimo.fcRepouso,        gorduraPct: ultimo.gorduraPct,        treinouHoje: treinos.length > 0,        streak      });      const bioAge = calcularIdadeBiologica(user?.age || 30, score);
+      return {
+        bioAge,
+        score, success: true, registro: reg };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
@@ -135,7 +154,10 @@ export async function cobaiaRoutes(fastify) {
       const agora = new Date();
       const diaProtocolo = Math.floor((agora - inicio) / (24*60*60*1000)) + 1;
 
+const ultimo = diarios[diarios.length - 1] || {};      const score = calcularScore({        horasSono: ultimo.horasSono,        hrvMedia: ultimo.hrvMedia,        fcRepouso: ultimo.fcRepouso,        gorduraPct: ultimo.gorduraPct,        treinouHoje: treinos.length > 0,        streak      });      const bioAge = calcularIdadeBiologica(user?.age || 30, score);
       return {
+        bioAge,
+        score,
         atleta: user,
         diaProtocolo: Math.min(Math.max(diaProtocolo, 1), 60),
         streak,
@@ -177,7 +199,10 @@ export async function cobaiaRoutes(fastify) {
         prisma.cobaiaAgenda.findMany({ where: { userId: u.userId, data: { gte: hoje, lt: amanha } } }),
         prisma.cobaiaSauna.findMany({ where: { userId: u.userId, data: { gte: hoje, lt: amanha } } }),
       ]);
-      return { checkin, refeicoes, agenda, sauna, checkinFeito: !!checkin };
+const ultimo = diarios[diarios.length - 1] || {};      const score = calcularScore({        horasSono: ultimo.horasSono,        hrvMedia: ultimo.hrvMedia,        fcRepouso: ultimo.fcRepouso,        gorduraPct: ultimo.gorduraPct,        treinouHoje: treinos.length > 0,        streak      });      const bioAge = calcularIdadeBiologica(user?.age || 30, score);
+      return {
+        bioAge,
+        score, checkin, refeicoes, agenda, sauna, checkinFeito: !!checkin };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 }
