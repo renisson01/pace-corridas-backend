@@ -1,6 +1,4 @@
-import pkg from '@prisma/client';
-const { PrismaClient } = pkg;
-const prisma = new PrismaClient();
+import prisma from '../lib/prisma.js';
 
 function tempoParaSegundos(t) {
   if (!t) return 999999;

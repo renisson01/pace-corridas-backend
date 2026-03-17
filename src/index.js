@@ -157,19 +157,7 @@ try {
 }
 
 
-// Keep-alive: evita que o banco durma no Railway
-// Keep-alive: usa o prisma global em vez de criar instância nova
-import { PrismaClient } from '@prisma/client';
-// Keep-alive: ping leve a cada 5 min (1 conexão temporária)
-setInterval(async () => {
-  let tmp;
-  try {
-    const { PrismaClient: PC } = await import('@prisma/client');
-    tmp = new PC();
-    await tmp.$queryRaw`SELECT 1`;
-  } catch(e) { console.warn('[KEEP-ALIVE]', e.message?.substring(0, 50)); }
-  finally { if (tmp) await tmp.$disconnect().catch(() => {}); }
-}, 5 * 60 * 1000);
+// Keep-alive removido — singleton Prisma gerencia conexões
 
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
   if (err) { console.error('❌', err); process.exit(1); }

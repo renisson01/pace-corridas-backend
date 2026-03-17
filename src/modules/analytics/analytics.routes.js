@@ -1,3 +1,4 @@
+import prisma from '../lib/prisma.js';
 import { prisma } from '../../utils/prisma.js';
 
 export async function analyticsRoutes(fastify) {

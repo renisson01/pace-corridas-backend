@@ -1,8 +1,6 @@
+import prisma from '../lib/prisma.js';
 import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
-import pkg from '@prisma/client';
-const { PrismaClient } = pkg;
 
-const prisma = new PrismaClient();
 const BASE_URL = process.env.BASE_URL || 'https://web-production-990e7.up.railway.app';
 const TAXA_PLATAFORMA = 0.15;
 const votosX1 = { pedro: 0, tiago: 0, doacoes: [] };

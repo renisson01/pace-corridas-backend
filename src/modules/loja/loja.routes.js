@@ -1,9 +1,7 @@
-import pkg from '@prisma/client';
+import prisma from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 
-const { PrismaClient } = pkg;
-const prisma = new PrismaClient();
 const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
 
 // ✅ Cloudinary configurado

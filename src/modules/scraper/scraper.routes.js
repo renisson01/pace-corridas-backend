@@ -1,3 +1,4 @@
+import prisma from '../lib/prisma.js';
 /**
  * PACE BRAZIL — Rotas do Scraper de Corridas
  * 
@@ -10,10 +11,7 @@
 
 import jwt from 'jsonwebtoken';
 import { executarScraping, SCRAPERS } from './scraper.service.js';
-import pkg from '@prisma/client';
-const { PrismaClient } = pkg;
 
-const prisma = new PrismaClient();
 const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
 
 function getUser(req) {

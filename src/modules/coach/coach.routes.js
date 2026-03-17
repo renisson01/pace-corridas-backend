@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 
-const prisma = new PrismaClient();
 
 function getUser(req) {
   try {

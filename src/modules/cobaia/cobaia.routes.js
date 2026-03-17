@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 
-let prisma;
-try { const mod = await import('../../index.js'); prisma = mod.default; } catch { prisma = new PrismaClient(); }
 const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
 
 function getUser(req) {
@@ -12,7 +10,7 @@ function getUser(req) {
 
 export async function cobaiaRoutes(fastify) {
 
-  // ==================== CHECK-IN DIÁRIO ====================
+  // CHECK-IN DIÁRIO
   fastify.post('/cobaia/checkin', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
@@ -32,7 +30,7 @@ export async function cobaiaRoutes(fastify) {
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
-  // ==================== REGISTRAR ALIMENTAÇÃO ====================
+  // REGISTRAR ALIMENTAÇÃO
   fastify.post('/cobaia/alimentacao', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
@@ -47,7 +45,7 @@ export async function cobaiaRoutes(fastify) {
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
-  // ==================== REGISTRAR SAUNA ====================
+  // REGISTRAR SAUNA
   fastify.post('/cobaia/sauna', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
@@ -61,7 +59,7 @@ export async function cobaiaRoutes(fastify) {
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
-  // ==================== REGISTRAR AGENDA ====================
+  // REGISTRAR AGENDA
   fastify.post('/cobaia/agenda', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
@@ -75,7 +73,7 @@ export async function cobaiaRoutes(fastify) {
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
-  // ==================== COMPLETAR ITEM DA AGENDA ====================
+  // COMPLETAR ITEM DA AGENDA
   fastify.patch('/cobaia/agenda/:id', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
@@ -88,13 +86,13 @@ export async function cobaiaRoutes(fastify) {
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
-  // ==================== REGISTRAR EXAME ====================
+  // REGISTRAR EXAME
   fastify.post('/cobaia/exame', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
     const { tipoExame, marcador, valor, unidade, refMin, refMax, notas, data } = req.body || {};
     if (!marcador || valor === undefined) return reply.code(400).send({ error: 'Marcador e valor obrigatórios' });
-    const status = refMin && refMax ? (valor >= refMin && valor <= refMax ? 'normal' : (valor < refMin ? 'atencao' : 'atencao')) : null;
+    const status = refMin != null && refMax != null ? (valor >= refMin && valor <= refMax ? 'normal' : 'atencao') : null;
     try {
       const reg = await prisma.cobaiaExame.create({
         data: { userId: u.userId, data: data ? new Date(data) : new Date(), tipoExame, marcador, valor, unidade, refMin, refMax, status, notas }
@@ -103,29 +101,26 @@ export async function cobaiaRoutes(fastify) {
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
-  // ==================== DASHBOARD DADOS (PÚBLICO) ====================
+  // DASHBOARD DADOS
   fastify.get('/cobaia/dashboard/:userId?', async (req, reply) => {
-    // Se tem userId no param, é público. Senão, usa o logado.
     let userId = req.params.userId;
     if (!userId) {
       const u = getUser(req);
       if (!u) return reply.code(401).send({ error: 'Login necessário' });
       userId = u.userId;
     }
-
     try {
       const [user, diarios, alimentacao, agenda, saunas, exames, treinos] = await Promise.all([
-        prisma.user.findUnique({ where: { id: userId }, select: { name: true, city: true, state: true, tempo5k: true, tempo10k: true, tempo21k: true, nivelAtleta: true } }),
+        prisma.user.findUnique({ where: { id: userId }, select: { name: true, city: true, state: true, age: true, tempo5k: true, tempo10k: true, tempo21k: true, nivelAtleta: true } }),
         prisma.cobaiaDiario.findMany({ where: { userId }, orderBy: { data: 'desc' }, take: 60 }),
         prisma.cobaiaAlimentacao.findMany({ where: { userId }, orderBy: { createdAt: 'desc' }, take: 20 }),
         prisma.cobaiaAgenda.findMany({ where: { userId }, orderBy: { data: 'desc' }, take: 30 }),
         prisma.cobaiaSauna.findMany({ where: { userId }, orderBy: { data: 'desc' }, take: 30 }),
         prisma.cobaiaExame.findMany({ where: { userId }, orderBy: { data: 'desc' }, take: 50 }),
         prisma.atividadeGPS.findMany({ where: { userId }, orderBy: { iniciadoEm: 'desc' }, take: 30,
-          select: { distanciaKm: true, duracaoSeg: true, paceMedio: true, iniciadoEm: true, tipo: true } }),
+          select: { distanciaKm: true, duracaoSeg: true, paceMedio: true, iniciadoEm: true, tipo: true, titulo: true, fonte: true, elevacaoGanho: true } }),
       ]);
 
-      // Calcular streak (dias consecutivos com check-in)
       let streak = 0;
       const hoje = new Date(); hoje.setHours(0,0,0,0);
       for (let i = 0; i < diarios.length; i++) {
@@ -135,9 +130,10 @@ export async function cobaiaRoutes(fastify) {
         else break;
       }
 
-      // Calcular dia do protocolo (inicio: 15/03/2026)
-      const inicio = new Date('2026-03-15');
-      const diaProtocolo = Math.floor((new Date() - inicio) / (24*60*60*1000)) + 1;
+      // Dia do protocolo — inicio 15/03/2026 no fuso de Brasilia (UTC-3)
+      const inicio = new Date('2026-03-15T03:00:00Z');
+      const agora = new Date();
+      const diaProtocolo = Math.floor((agora - inicio) / (24*60*60*1000)) + 1;
 
       return {
         atleta: user,
@@ -161,14 +157,14 @@ export async function cobaiaRoutes(fastify) {
           diasRegistrados: diarios.length,
           sessSauna: saunas.length,
           examesFeitos: exames.length,
-          treinosFeitos: treinos.length,
+          treinosFeitos: treinos.filter(t => t.distanciaKm > 0.5).length,
           kmTotal: treinos.reduce((s, t) => s + (t.distanciaKm || 0), 0).toFixed(1)
         }
       };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
 
-  // ==================== MEU RESUMO HOJE ====================
+  // RESUMO HOJE
   fastify.get('/cobaia/hoje', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
