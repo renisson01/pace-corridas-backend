@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import "./agents/index.js";
 if (!process.env.RAILWAY_ENVIRONMENT_NAME) config({ path: ".env" });
 
 process.on("unhandledRejection", e => { console.error("❌ ERRO FATAL:", e); });

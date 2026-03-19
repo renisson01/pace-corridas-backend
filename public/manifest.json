@@ -1,22 +1,16 @@
 {
-  "name": "PACE BRAZIL — A Casa do Corredor",
-  "short_name": "PACE BR",
-  "description": "Corridas, ranking, GPS, comunidades e treinador IA para corredores do Brasil",
-  "start_url": "/",
+  "name": "PACE Corridas",
+  "short_name": "PACE",
+  "description": "O app de corrida mais inteligente do Brasil",
+  "start_url": "/atleta.html",
   "display": "standalone",
-  "background_color": "#080B10",
-  "theme_color": "#00E676",
-  "orientation": "portrait-primary",
+  "background_color": "#0a0a0f",
+  "theme_color": "#00e676",
+  "orientation": "portrait",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "https://pace-corridas.com/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "https://pace-corridas.com/icon-512.png", "sizes": "512x512", "type": "image/png" }
   ],
-  "shortcuts": [
-    { "name": "Corridas", "url": "/corridas-abertas.html", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192"}] },
-    { "name": "Ranking", "url": "/elite.html", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192"}] },
-    { "name": "GPS", "url": "/gps.html", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192"}] },
-    { "name": "Comunidades", "url": "/comunidades.html", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192"}] }
-  ],
-  "categories": ["sports", "health", "fitness"],
+  "categories": ["sports", "fitness", "health"],
   "lang": "pt-BR"
 }

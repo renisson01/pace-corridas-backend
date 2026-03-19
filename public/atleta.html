@@ -385,6 +385,11 @@ body::after {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00e676">
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(()=>console.log('PWA ativo')).catch(()=>{});}</script>
 </head>
 <body>
 
@@ -495,41 +500,60 @@ body::after {
 
 <!-- ── GPS / ATIVIDADE ─────────────────── -->
 <div class="page" id="page-gps">
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">📍 Registrar Atividade</div>
-    </div>
-    <div class="gps-card">
-      <div class="gps-map-placeholder">
-        <div class="gps-map-text">
-          <div style="font-size:32px;margin-bottom:8px">📍</div>
-          <div style="font-size:14px;font-weight:600;color:var(--text)">GPS Pronto</div>
-          <div style="font-size:12px;color:var(--muted2);margin-top:4px">Inicie para começar o rastreamento</div>
-        </div>
-      </div>
-      <div class="gps-live-stats">
-        <div class="gps-stat">
-          <div class="gps-stat-val" id="gpsKm">0.00</div>
-          <div class="gps-stat-label">km</div>
-        </div>
-        <div class="gps-stat">
-          <div class="gps-stat-val" id="gpsTempo">00:00</div>
-          <div class="gps-stat-label">tempo</div>
-        </div>
-        <div class="gps-stat">
-          <div class="gps-stat-val" id="gpsPace">--:--</div>
-          <div class="gps-stat-label">pace/km</div>
-        </div>
+
+  <!-- MAPA REAL -->
+  <div style="position:relative">
+    <div id="mapaGPS" style="height:260px;background:#0d0d1a;position:relative;overflow:hidden">
+      <div id="mapaPlaceholder" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+        <div style="font-size:36px">🗺️</div>
+        <div style="font-size:13px;color:var(--muted2)">Mapa carregará ao iniciar</div>
+        <div style="font-size:11px;color:var(--muted2);opacity:.6">GPS precisará de permissão de localização</div>
       </div>
     </div>
-    <button class="btn-start-gps" id="btnGPS" onclick="toggleGPS()">
-      <span id="gpsIcon">⏺</span> <span id="gpsLabel">INICIAR CORRIDA</span>
-    </button>
+    <!-- Overlay stats no mapa -->
+    <div style="position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;z-index:400;pointer-events:none">
+      <div id="gpsStatusBadge" style="display:none;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);border:1px solid rgba(0,255,170,.3);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--neon);font-weight:700">📡 GPS Ativo</div>
+      <div id="gpsAltBadge" style="display:none;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--muted2)">Alt: <span id="gpsAlt">--</span>m</div>
+    </div>
   </div>
 
-  <div class="section">
-    <div class="section-header"><div class="section-title">⚡ Registrar Manual</div></div>
-    <div class="form-card">
+  <!-- STATS LIVE -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border2);margin-bottom:0">
+    <div style="background:var(--bg);padding:14px 8px;text-align:center">
+      <div class="gps-stat-val" id="gpsKm" style="font-family:var(--display);font-size:26px;color:var(--neon);line-height:1">0.00</div>
+      <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:3px">km</div>
+    </div>
+    <div style="background:var(--bg);padding:14px 8px;text-align:center">
+      <div class="gps-stat-val" id="gpsTempo" style="font-family:var(--display);font-size:26px;color:var(--text);line-height:1">00:00</div>
+      <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:3px">tempo</div>
+    </div>
+    <div style="background:var(--bg);padding:14px 8px;text-align:center">
+      <div class="gps-stat-val" id="gpsPace" style="font-family:var(--display);font-size:26px;color:var(--text);line-height:1">--:--</div>
+      <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:3px">pace/km</div>
+    </div>
+    <div style="background:var(--bg);padding:14px 8px;text-align:center">
+      <div class="gps-stat-val" id="gpsFC" style="font-family:var(--display);font-size:26px;color:var(--red);line-height:1">--</div>
+      <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:3px">bpm</div>
+    </div>
+  </div>
+
+  <!-- BOTÃO PRINCIPAL -->
+  <div style="padding:16px">
+    <button class="btn-start-gps" id="btnGPS" onclick="toggleGPS()" style="width:100%;padding:18px;border-radius:16px;font-size:20px;font-weight:900;letter-spacing:2px;border:none;cursor:pointer;transition:all .2s;background:var(--neon);color:#000">
+      <span id="gpsIcon">⏺</span> <span id="gpsLabel">INICIAR CORRIDA</span>
+    </button>
+
+    <!-- Strava sync -->
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button onclick="sincronizarStrava()" style="flex:1;padding:11px;border-radius:12px;background:rgba(252,76,2,.15);border:1px solid rgba(252,76,2,.4);color:#FC4C02;font-size:12px;font-weight:700;cursor:pointer">🟠 Sincronizar Strava</button>
+      <button onclick="showPage('integracoes')" style="flex:1;padding:11px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer">⌚ Conectar Relógio</button>
+    </div>
+  </div>
+
+  <!-- REGISTRAR MANUAL -->
+  <div class="section" style="margin-top:0">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--neon);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">⚡ Registrar Manual</div>
       <div class="form-row">
         <div>
           <label class="field-label">Distância (km)</label>
@@ -544,27 +568,22 @@ body::after {
         <div>
           <label class="field-label">Tipo</label>
           <select class="field-input field-select" id="regTipo">
-            <option>Corrida</option>
-            <option>Caminhada</option>
-            <option>Trail</option>
-            <option>Esteira</option>
-            <option>Bike</option>
+            <option>Corrida</option><option>Caminhada</option><option>Trail</option><option>Esteira</option><option>Bike</option>
           </select>
         </div>
         <div>
-          <label class="field-label">Percepção (1-10)</label>
+          <label class="field-label">Percepção (PSE 1-10)</label>
           <input type="number" class="field-input" id="regPSE" placeholder="7" min="1" max="10">
         </div>
       </div>
-      <div class="form-row full">
-        <div>
-          <label class="field-label">Observações</label>
-          <input type="text" class="field-input" id="regObs" placeholder="Como foi o treino?">
-        </div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Observações</label>
+        <input type="text" class="field-input" id="regObs" placeholder="Como foi o treino?" style="width:100%">
       </div>
-      <button class="btn-save" onclick="salvarAtividade()">💾 Salvar Atividade</button>
+      <button class="btn-save" onclick="salvarAtividade()" style="width:100%">💾 Salvar Atividade</button>
     </div>
   </div>
+
 </div>
 
 <!-- ── HISTÓRICO ───────────────────────── -->
@@ -774,34 +793,87 @@ body::after {
 
 <!-- ── RANKING ─────────────────────────── -->
 <div class="page" id="page-ranking">
-  <!-- tabs distância -->
-  <div style="display:flex;gap:6px;overflow-x:auto;padding:14px 16px 0;scrollbar-width:none">
+
+  <!-- TABS DISTÂNCIA -->
+  <div style="display:flex;gap:6px;overflow-x:auto;padding:14px 16px 8px;scrollbar-width:none">
     <button class="chip active" onclick="mudaDistRanking('5k',this)">5 KM</button>
     <button class="chip" onclick="mudaDistRanking('10k',this)">10 KM</button>
+    <button class="chip" onclick="mudaDistRanking('15k',this)">15 KM</button>
     <button class="chip" onclick="mudaDistRanking('21k',this)">Meia</button>
     <button class="chip" onclick="mudaDistRanking('42k',this)">Maratona</button>
+    <button class="chip" onclick="mudaDistRanking('3k',this)">3 KM</button>
   </div>
-  <div class="section">
-    <div class="section-header">
+
+  <!-- BUSCA -->
+  <div style="padding:0 16px 12px">
+    <input id="rankingBusca" placeholder="🔍 Buscar atleta por nome..." oninput="filtrarRankingLocal(this.value)"
+      style="width:100%;padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--text);font-size:13px">
+  </div>
+
+  <!-- PÓDIO TOP 3 -->
+  <div id="rankingPodio" style="padding:0 16px 16px;display:none">
+    <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px;align-items:flex-end">
+      <!-- 2º lugar -->
+      <div id="podio2" style="text-align:center">
+        <div style="background:rgba(192,192,192,.15);border:2px solid #c0c0c0;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;margin:0 auto 6px;color:#c0c0c0">2</div>
+        <div id="podio2Nome" style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="podio2Tempo" style="font-size:13px;font-weight:800;color:#c0c0c0;font-family:var(--display)"></div>
+        <div style="background:rgba(192,192,192,.2);border-radius:8px 8px 0 0;height:70px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:28px">🥈</div>
+      </div>
+      <!-- 1º lugar -->
+      <div id="podio1" style="text-align:center">
+        <div style="background:rgba(255,214,0,.2);border:2px solid #ffd600;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;margin:0 auto 6px;color:#ffd600;box-shadow:0 0 20px rgba(255,214,0,.3)">1</div>
+        <div id="podio1Nome" style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="podio1Tempo" style="font-size:16px;font-weight:800;color:#ffd600;font-family:var(--display)"></div>
+        <div style="background:rgba(255,214,0,.15);border-radius:8px 8px 0 0;height:90px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:36px">🥇</div>
+      </div>
+      <!-- 3º lugar -->
+      <div id="podio3" style="text-align:center">
+        <div style="background:rgba(205,127,50,.15);border:2px solid #cd7f32;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;margin:0 auto 6px;color:#cd7f32">3</div>
+        <div id="podio3Nome" style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="podio3Tempo" style="font-size:13px;font-weight:800;color:#cd7f32;font-family:var(--display)"></div>
+        <div style="background:rgba(205,127,50,.15);border-radius:8px 8px 0 0;height:55px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:24px">🥉</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINHA POSIÇÃO DESTAQUE -->
+  <div id="minhaPosicaoCard" style="display:none;margin:0 16px 12px;background:rgba(0,255,170,.06);border:1px solid rgba(0,255,170,.25);border-radius:14px;padding:14px">
+    <div style="font-size:10px;color:var(--neon);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:6px">⭐ Minha Posição</div>
+    <div id="minhaPosicaoInfo" style="display:flex;align-items:center;gap:12px">
+      <div style="font-family:var(--display);font-size:32px;color:var(--neon)" id="minhaPosNum">--</div>
+      <div>
+        <div style="font-size:14px;font-weight:700" id="minhaPosNome"></div>
+        <div style="font-size:12px;color:var(--muted2)" id="minhaPosTempo"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA COMPLETA -->
+  <div class="section" style="margin-top:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 2px">
       <div class="section-title" id="rankingTitulo">🏆 Ranking 5 KM</div>
+      <div id="rankingTotal" style="font-size:11px;color:var(--neon);font-weight:700"></div>
     </div>
     <div id="rankingFullList">
       <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
       <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
       <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
-      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
-      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
     </div>
+    <button id="rankingLoadMore" onclick="carregarMaisRanking()" style="display:none;width:100%;padding:12px;margin-top:8px;background:var(--card);border:1px solid var(--border2);color:var(--neon);border-radius:12px;font-weight:700;cursor:pointer;font-size:13px">Ver mais atletas</button>
   </div>
-  <!-- Meu resultado -->
+
+  <!-- MEUS RESULTADOS -->
   <div class="section">
     <div class="section-header">
-      <div class="section-title">📊 Meus Resultados</div>
+      <div class="section-title">📊 Meus Resultados de Prova</div>
+      <div class="section-link" onclick="showPage('enviar-resultado')">+ Enviar</div>
     </div>
     <div id="meusResultadosList">
       <div class="skeleton" style="height:60px;border-radius:12px;margin-bottom:8px"></div>
     </div>
   </div>
+
 </div>
 
 <!-- ── MAIS ────────────────────────────── -->
@@ -1534,6 +1606,64 @@ async function carregarFeed() {
 // ═══════════════════════════════════════
 // GPS
 // ═══════════════════════════════════════
+// ═══════════════════════════════════
+// GPS COM MAPA REAL (Leaflet)
+// ═══════════════════════════════════
+let mapaLeaflet = null;
+let mapaRota = null;
+let rotaPontos = [];
+let marcadorAtual = null;
+
+function iniciarMapa(lat, lng) {
+  const mapaEl = document.getElementById('mapaGPS');
+  document.getElementById('mapaPlaceholder').style.display = 'none';
+  if (!mapaLeaflet) {
+    mapaLeaflet = L.map('mapaGPS', { zoomControl: false, attributionControl: false }).setView([lat, lng], 16);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(mapaLeaflet);
+    // Ícone personalizado
+    marcadorAtual = L.circleMarker([lat, lng], {
+      radius: 10, fillColor: '#00ffaa', color: '#000', weight: 2, opacity: 1, fillOpacity: 1
+    }).addTo(mapaLeaflet);
+    // Linha da rota
+    mapaRota = L.polyline([], { color: '#00ffaa', weight: 4, opacity: 0.85 }).addTo(mapaLeaflet);
+  } else {
+    mapaLeaflet.setView([lat, lng], 16);
+    marcadorAtual.setLatLng([lat, lng]);
+  }
+}
+
+function atualizarMapa(lat, lng) {
+  if (!mapaLeaflet) return;
+  marcadorAtual.setLatLng([lat, lng]);
+  rotaPontos.push([lat, lng]);
+  mapaRota.setLatLngs(rotaPontos);
+  mapaLeaflet.setView([lat, lng]);
+}
+
+async function sincronizarStrava() {
+  const t = localStorage.getItem('pace_token');
+  if (!t) return showToast('Faça login primeiro');
+  showToast('Sincronizando Strava...');
+  try {
+    const r = await fetch('/integracoes/strava/sync', {
+      method: 'POST', headers: { Authorization: 'Bearer ' + t }
+    });
+    const d = await r.json();
+    if (d.success) {
+      showToast('✅ ' + (d.msg || d.sincronizadas + ' atividades sincronizadas!'));
+      carregarAtividades();
+      carregarSemana();
+    } else if (d.error?.includes('não conectado')) {
+      showToast('Conecte o Strava primeiro → Integrações');
+      setTimeout(() => showPage('integracoes'), 1500);
+    } else {
+      showToast(d.error || 'Erro ao sincronizar', 'error');
+    }
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
 function toggleGPS() {
   gpsAtivo = !gpsAtivo;
   const btn = document.getElementById('btnGPS');
@@ -1892,7 +2022,10 @@ function abrirCorridaDetalhe(c) {
 // ═══════════════════════════════════════
 let distRanking = '5k';
 
-async function carregarRankingPage() {
+let rankingData = [];
+let rankingOffset = 0;
+
+async function carregarRankingPage(append=false) {
   const el = document.getElementById('rankingFullList');
   if (!el) return;
   el.innerHTML = '<div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>'.repeat(5);
@@ -1940,6 +2073,34 @@ async function carregarMeusResultados() {
   } catch {
     el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted2);font-size:13px"><a href="/meu-resultado.html" style="color:var(--neon);font-weight:700">+ Enviar meu resultado</a></div>';
   }
+}
+
+function filtrarRankingLocal(query) {
+  if (!rankingData.length) return;
+  const el = document.getElementById('rankingFullList');
+  if (!el) return;
+  const q = query.toLowerCase();
+  const filtrado = q ? rankingData.filter(a => (a.name||'').toLowerCase().includes(q)) : rankingData;
+  el.innerHTML = filtrado.map((a,i) => {
+    const isMe = user && a.name?.toLowerCase()===user.name?.toLowerCase();
+    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${isMe?'rgba(0,255,170,.06)':'var(--card)'};border:1px solid ${isMe?'rgba(0,255,170,.3)':'var(--border2)'};border-radius:12px;margin-bottom:6px">
+      <div style="width:28px;text-align:center;font-size:13px;font-weight:800;color:var(--muted2)">${a.posicao}°</div>
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;color:var(--neon)">${(a.name||'?')[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis${isMe?';color:var(--neon)':''}">${a.name||'Atleta'}${isMe?' 👤':''}</div>
+        <div style="font-size:11px;color:var(--muted2)">${a.state||''} ${a.equipe||''}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--display);font-size:16px;font-weight:700;color:var(--text)">${a.melhorTempo||'--'}</div>
+        <div style="font-size:10px;color:var(--muted2)">${a.nivel||''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function carregarMaisRanking() {
+  rankingOffset += 20;
+  await carregarRankingPage(true);
 }
 
 function mudaDistRanking(dist, btn) {
