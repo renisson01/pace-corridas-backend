@@ -588,15 +588,36 @@ body::after {
 
 <!-- ── HISTÓRICO ───────────────────────── -->
 <div class="page" id="page-historico">
+  <!-- STATS REAIS DO GPS -->
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:16px 16px 0">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:14px;text-align:center">
+      <div style="font-family:var(--display);font-size:32px;color:var(--neon)" id="histKmTotal">--</div>
+      <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:4px">km totais</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:14px;text-align:center">
+      <div style="font-family:var(--display);font-size:32px;color:var(--text)" id="histTreinos">--</div>
+      <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:4px">atividades</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:14px;text-align:center">
+      <div style="font-family:var(--display);font-size:32px;color:var(--yellow)" id="histCalorias">--</div>
+      <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:4px">kcal totais</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:14px;text-align:center">
+      <div style="font-family:var(--display);font-size:32px;color:var(--blue)" id="histMediaKm">--</div>
+      <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:4px">km/atividade</div>
+    </div>
+  </div>
+
   <div class="section">
     <div class="section-header">
-      <div class="section-title">📈 Meus Records</div>
+      <div class="section-title">📈 Records Pessoais</div>
+      <div class="section-link" onclick="showPage('perfil')">Editar</div>
     </div>
     <div class="records-grid" id="recordsGrid">
-      <div class="record-card"><div class="record-dist">5 KM</div><div class="record-time skeleton" style="width:80px;height:32px"></div></div>
-      <div class="record-card"><div class="record-dist">10 KM</div><div class="record-time skeleton" style="width:80px;height:32px"></div></div>
-      <div class="record-card"><div class="record-dist">21 KM</div><div class="record-time skeleton" style="width:80px;height:32px"></div></div>
-      <div class="record-card"><div class="record-dist">42 KM</div><div class="record-time skeleton" style="width:80px;height:32px"></div></div>
+      <div class="record-card"><div class="record-dist">5 KM</div><div class="record-time" id="rec5k">--</div></div>
+      <div class="record-card"><div class="record-dist">10 KM</div><div class="record-time" id="rec10k">--</div></div>
+      <div class="record-card"><div class="record-dist">21 KM</div><div class="record-time" id="rec21k">--</div></div>
+      <div class="record-card"><div class="record-dist">42 KM</div><div class="record-time" id="rec42k">--</div></div>
     </div>
   </div>
 
@@ -994,7 +1015,9 @@ body::after {
         <div style="font-weight:700;font-size:15px">Strava</div>
         <div style="font-size:12px;color:var(--muted2);margin-top:2px">Sincronizar corridas e KMs automaticamente</div>
       </div>
-      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Strava')"><span onclick="conectarStrava()" style="cursor:pointer">Conectar</span></div>
+      <div id="stravaBtn" style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+        <div onclick="conectarStrava()" style="background:rgba(252,76,2,.2);border:1px solid rgba(252,76,2,.4);color:#FC4C02;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" id="stravaConectarBtn">Conectar</div>
+      </div>
     </div>
 
     <!-- Garmin -->
@@ -1004,7 +1027,9 @@ body::after {
         <div style="font-weight:700;font-size:15px">Garmin Connect</div>
         <div style="font-size:12px;color:var(--muted2);margin-top:2px">GPS, FC, VO2 máx e planilhas avançadas</div>
       </div>
-      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Garmin')">Em breve</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="background:rgba(0,124,195,.15);border:1px solid rgba(0,124,195,.3);color:#007CC3;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoGarmin()">Como conectar</div>
+      </div>
     </div>
 
     <!-- Polar -->
@@ -1014,7 +1039,7 @@ body::after {
         <div style="font-weight:700;font-size:15px">Polar Flow</div>
         <div style="font-size:12px;color:var(--muted2);margin-top:2px">FC, zonas de treino e recuperação</div>
       </div>
-      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Polar')">Em breve</div>
+      <div style="background:rgba(208,1,27,.15);border:1px solid rgba(208,1,27,.3);color:#D0011B;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoPolar()">Via Strava</div>
     </div>
 
     <!-- Apple Watch -->
@@ -1024,7 +1049,7 @@ body::after {
         <div style="font-weight:700;font-size:15px">Apple Watch</div>
         <div style="font-size:12px;color:var(--muted2);margin-top:2px">HealthKit, corridas e atividades iOS</div>
       </div>
-      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Apple Watch')">Em breve</div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--muted2);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoApple()">iOS em breve</div>
     </div>
 
     <!-- Amazfit -->
@@ -1034,7 +1059,7 @@ body::after {
         <div style="font-weight:700;font-size:15px">Amazfit / Zepp</div>
         <div style="font-size:12px;color:var(--muted2);margin-top:2px">Relógios acessíveis com GPS preciso</div>
       </div>
-      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Amazfit')">Em breve</div>
+      <div style="background:rgba(255,105,0,.15);border:1px solid rgba(255,105,0,.3);color:#FF6900;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoAmazfit()">Via Strava</div>
     </div>
 
     <!-- Huawei -->
@@ -1044,7 +1069,7 @@ body::after {
         <div style="font-weight:700;font-size:15px">Huawei Health</div>
         <div style="font-size:12px;color:var(--muted2);margin-top:2px">Watch GT e Band series</div>
       </div>
-      <div style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:var(--neon);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" onclick="integracaoBreve('Huawei')">Em breve</div>
+      <div style="background:rgba(207,10,44,.15);border:1px solid rgba(207,10,44,.3);color:#CF0A2C;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoHuawei()">Via Strava</div>
     </div>
 
     <div style="background:rgba(0,255,170,.05);border:1px solid rgba(0,255,170,.1);border-radius:12px;padding:14px;text-align:center;margin-top:8px">
@@ -1136,9 +1161,11 @@ function showPage(id) {
   if (id === 'perfil') preencherFormPerfil();
   if (id === 'ia') iniciarIA();
   // lazy load
+  if (id === 'historico') carregarHistoricoStats();
   if (id === 'corridas' && !todasCorridasPage.length) carregarCorridasPage(true);
   if (id === 'ranking') carregarRankingPage();
   if (id === 'comunidade') { carregarMeusGrupos(); carregarExplorarGrupos(); }
+  if (id === 'integracoes') verificarStatusIntegracoes();
 }
 
 function showToast(msg) {
@@ -1308,7 +1335,55 @@ function calcularPacesAoVivo() {
 // ═══════════════════════════════════════
 // TREINO DO DIA
 // ═══════════════════════════════════════
-function carregarTreinoHoje() {
+async function carregarTreinoHoje() {
+  const heroTitulo = document.getElementById('heroTitulo');
+  const heroSub = document.getElementById('heroSub');
+  const heroStats = document.getElementById('heroStats');
+  try {
+    // Tentar buscar treino do coach
+    const d = await api('/coach/planilha/' + (perfilData?.id || user?.id) + '?semana=0').catch(() => null);
+    const hoje = new Date().toISOString().split('T')[0];
+    const treinoHoje = d?.treinos?.find(t => t.dataEspecifica?.startsWith(hoje));
+    if (treinoHoje) {
+      heroTitulo.textContent = treinoHoje.titulo;
+      heroSub.textContent = treinoHoje.descricao?.split('\n')[0] || '';
+      const etapas = treinoHoje.etapas || [];
+      const durTotal = etapas.reduce((a,e)=>a+(parseInt(e.durMin)||0),0);
+      const distTotal = etapas.reduce((a,e)=>a+(parseFloat(e.distanciaM)||0)/1000,0);
+      if (etapas.length) {
+        heroStats.innerHTML = `
+          <div class="hero-stat"><div class="hero-stat-val">${durTotal||'--'}</div><div class="hero-stat-label">min</div></div>
+          <div class="hero-stat"><div class="hero-stat-val">${distTotal>0?distTotal.toFixed(1):'--'}</div><div class="hero-stat-label">km</div></div>
+          <div class="hero-stat"><div class="hero-stat-val">${etapas.length}</div><div class="hero-stat-label">etapas</div></div>`;
+      }
+      return;
+    }
+  } catch(e) {}
+  // Fallback: treino da IA
+  try {
+    const dica = await api('/ia/dica-do-dia');
+    const msg = dica.dica || dica.message || dica.resposta || '';
+    if (msg) {
+      heroTitulo.textContent = '🤖 Dica da IA de Hoje';
+      heroSub.textContent = msg.substring(0, 100) + (msg.length > 100 ? '...' : '');
+      heroStats.innerHTML = '';
+      return;
+    }
+  } catch(e) {}
+  // Fallback simples baseado nos dados GPS
+  const stats = await api('/gps/stats').catch(() => null);
+  if (stats) {
+    const kmSem = stats.semana?.km || 0;
+    const nivelTreino = kmSem < 20 ? 'Construção de Base' : kmSem < 40 ? 'Volume Moderado' : 'Alto Volume';
+    heroTitulo.textContent = `Semana de ${nivelTreino}`;
+    heroSub.textContent = `${kmSem.toFixed(1)}km esta semana · ${stats.semana?.atividades || 0} treinos · Continue firme!`;
+    heroStats.innerHTML = `
+      <div class="hero-stat"><div class="hero-stat-val">${kmSem.toFixed(0)}</div><div class="hero-stat-label">km/sem</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">${stats.totalKm?.toFixed(0)||'--'}</div><div class="hero-stat-label">km total</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">${stats.totalAtividades||'--'}</div><div class="hero-stat-label">treinos</div></div>`;
+  }
+}
+function _carregarTreinoHoje_old() {
   const diasSemana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   const dia = new Date().getDay();
   const tipos = ['Descanso 🛋️','Contínuo Leve 🟢','Intervalado ⚡','Fartlek 🔄','Contínuo Moderado 🟡','Corrida Forte 🔴','Longão 🏃'];
@@ -1497,6 +1572,23 @@ function formatarTempo(seg) {
 // ═══════════════════════════════════════
 // CONQUISTAS
 // ═══════════════════════════════════════
+async function carregarHistoricoStats() {
+  try {
+    const stats = await api('/gps/stats');
+    document.getElementById('histKmTotal').textContent = (stats.totalKm||0).toFixed(0);
+    document.getElementById('histTreinos').textContent = stats.totalAtividades || 0;
+    document.getElementById('histCalorias').textContent = (stats.totalCalorias||0).toFixed(0);
+    document.getElementById('histMediaKm').textContent = (stats.mediaKm||0).toFixed(1);
+    // Records do perfil
+    if (perfilData) {
+      if (document.getElementById('rec5k')) document.getElementById('rec5k').textContent = perfilData.tempo5k || '--';
+      if (document.getElementById('rec10k')) document.getElementById('rec10k').textContent = perfilData.tempo10k || '--';
+      if (document.getElementById('rec21k')) document.getElementById('rec21k').textContent = perfilData.tempo21k || '--';
+      if (document.getElementById('rec42k')) document.getElementById('rec42k').textContent = perfilData.tempo42k || '--';
+    }
+  } catch(e) {}
+}
+
 async function carregarConquistas() {
   const todas = [
     { tipo:'primeiro_5k', titulo:'Primeiro 5K', icone:'🥇', pts:50 },
@@ -2238,6 +2330,34 @@ const _showPageOrigEnv = showPage;
 
 
 // === STRAVA CONNECT FIX ===
+async function verificarStatusIntegracoes() {
+  try {
+    const d = await api('/integracoes/status');
+    const btn = document.getElementById('stravaConectarBtn');
+    if (btn) {
+      if (d.strava || (d.atividades && d.atividades['strava'] > 0)) {
+        btn.textContent = '✅ Conectado';
+        btn.style.background = 'rgba(0,255,170,.15)';
+        btn.style.borderColor = 'rgba(0,255,170,.4)';
+        btn.style.color = 'var(--neon)';
+        btn.onclick = () => sincronizarStrava();
+        // Adicionar botão sync
+        const parent = btn.parentElement;
+        if (!document.getElementById('stravaSync')) {
+          const syncBtn = document.createElement('div');
+          syncBtn.id = 'stravaSync';
+          syncBtn.textContent = '↻ Sincronizar';
+          syncBtn.style.cssText = 'background:rgba(252,76,2,.1);border:1px solid rgba(252,76,2,.3);color:#FC4C02;padding:4px 10px;border-radius:16px;font-size:10px;font-weight:700;cursor:pointer';
+          syncBtn.onclick = () => sincronizarStrava();
+          parent.appendChild(syncBtn);
+        }
+      } else {
+        btn.textContent = 'Conectar';
+      }
+    }
+  } catch(e) {}
+}
+
 async function conectarStrava() {
   try {
     const r = await fetch(API + '/integracoes/strava/connect', {
