@@ -523,43 +523,95 @@ async function abrirDetalhe(id) {
       ? `<div class="info-box-val" style="color:var(--neon)">💚 Gratuita</div>`
       : `<div class="info-box-val">R$ ${c.preco.toFixed(2).replace('.',',')}</div>`;
 
+    const vagasHtml = c.vagasRestantes > 0
+      ? `<span style="color:var(--neon);font-weight:700">${c.vagasRestantes} vagas restantes</span>`
+      : c.vagasTotal > 0 ? `<span style="color:var(--red)">Vagas esgotadas</span>` : '';
+
+    const checklistHtml = (() => {
+      try {
+        const items = typeof c.checklist === 'string' ? JSON.parse(c.checklist) : (c.checklist || []);
+        return items.length ? `<div style="margin:12px 0">
+          <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">✅ O que vem no kit</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">${items.map(i=>`<span style="background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.2);color:var(--neon);padding:3px 10px;border-radius:20px;font-size:12px">✓ ${i}</span>`).join('')}</div>
+        </div>` : '';
+      } catch { return ''; }
+    })();
+
+    const faixasHtml = (() => {
+      try {
+        const fa = typeof c.faixasEtarias === 'string' ? JSON.parse(c.faixasEtarias) : (c.faixasEtarias || []);
+        return fa.length ? `<div style="margin:12px 0">
+          <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">👥 Faixas Etárias</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">${fa.map(f=>`<span style="background:var(--bg3);border:1px solid var(--b);padding:3px 10px;border-radius:20px;font-size:12px">${f}</span>`).join('')}</div>
+        </div>` : '';
+      } catch { return ''; }
+    })();
+
     document.getElementById('modalInner').innerHTML = `
-      ${c.imageUrl ? `<img class="modal-img" src="${c.imageUrl}" alt="${c.nome}">` : '<div class="modal-img-ph">🏁</div>'}
+      ${c.imageUrl ? `<img class="modal-img" src="${c.imageUrl}" alt="${c.nome}" onerror="this.style.display='none'">` : '<div class="modal-img-ph">🏁</div>'}
       <div class="modal-body">
-        <div class="modal-nome">${c.nome}</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+          <div style="flex:1">
+            <div class="modal-nome">${c.nome}</div>
+            ${c.edicaoNumero ? `<div style="font-size:12px;color:var(--dim)">${c.edicaoNumero}ª Edição</div>` : ''}
+          </div>
+          ${c.podioGeral ? `<span style="background:rgba(255,214,0,.15);color:#ffd600;border:1px solid rgba(255,214,0,.3);padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;flex-shrink:0">🏆 Pódio Geral</span>` : ''}
+        </div>
 
         <div class="modal-info-grid">
           <div class="info-box">
             <div class="info-box-ico">📅</div>
             <div class="info-box-label">Data</div>
-            <div class="info-box-val">${dataFmt}</div>
+            <div class="info-box-val" style="font-size:13px">${dataFmt}</div>
           </div>
           <div class="info-box">
             <div class="info-box-ico">⏳</div>
             <div class="info-box-label">Faltam</div>
-            <div class="info-box-val" style="color:${diasRestantes <= 7 ? 'var(--red)' : diasRestantes <= 30 ? 'var(--yellow)' : 'var(--neon)'}">${diasRestantes} dias</div>
+            <div class="info-box-val" style="color:${diasRestantes <= 7 ? 'var(--red)' : diasRestantes <= 30 ? 'var(--yellow)' : 'var(--neon)'}">${diasRestantes}d</div>
           </div>
           <div class="info-box">
             <div class="info-box-ico">📍</div>
             <div class="info-box-label">Local</div>
-            <div class="info-box-val">${c.cidade || '—'}/${c.estado}</div>
+            <div class="info-box-val" style="font-size:12px">${c.cidade || '—'}/${c.estado}</div>
           </div>
           <div class="info-box">
             <div class="info-box-ico">💰</div>
             <div class="info-box-label">Inscrição</div>
             ${precoHtml}
           </div>
+          ${c.horarioLargada ? `<div class="info-box"><div class="info-box-ico">🕐</div><div class="info-box-label">Largada</div><div class="info-box-val">${c.horarioLargada}</div></div>` : ''}
+          ${c.tipoPiso ? `<div class="info-box"><div class="info-box-ico">🛣️</div><div class="info-box-label">Piso</div><div class="info-box-val" style="font-size:12px">${c.tipoPiso}</div></div>` : ''}
+          ${c.tipoPerfil ? `<div class="info-box"><div class="info-box-ico">📐</div><div class="info-box-label">Perfil</div><div class="info-box-val" style="font-size:12px">${c.tipoPerfil}</div></div>` : ''}
+          ${c.pontoAgua ? `<div class="info-box"><div class="info-box-ico">💧</div><div class="info-box-label">Hidratação</div><div class="info-box-val" style="font-size:11px">${c.pontoAgua}</div></div>` : ''}
         </div>
 
         ${dists ? `<div class="modal-dists">${dists}</div>` : ''}
-        ${c.descricao ? `<div class="modal-desc">${c.descricao}</div>` : ''}
-        ${c.organizador ? `<div class="modal-desc">👤 Organização: <b>${c.organizador}</b></div>` : ''}
-        ${c.horarioLargada ? `<div class="modal-desc">🕐 Largada: <b>${c.horarioLargada}</b></div>` : ''}
 
-        <a href="${c.linkInscricao}" target="_blank" class="btn-inscrever-full">
+        ${vagasHtml ? `<div style="background:rgba(0,255,170,.06);border:1px solid rgba(0,255,170,.15);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13px">${vagasHtml}${c.vagasTotal?` de ${c.vagasTotal} vagas`:''}</div>` : ''}
+
+        ${c.temKit ? `<div style="display:flex;align-items:center;gap:8px;background:rgba(68,138,255,.08);border:1px solid rgba(68,138,255,.2);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13px"><span style="font-size:18px">🎽</span><div><div style="font-weight:700;color:#448aff">Kit do Corredor incluso</div><div style="font-size:11px;color:var(--dim)">Camisa, número e brindes</div></div></div>` : ''}
+
+        ${c.certificado ? `<div style="display:flex;align-items:center;gap:8px;background:rgba(255,214,0,.06);border:1px solid rgba(255,214,0,.2);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13px"><span style="font-size:18px">🏅</span><div><div style="font-weight:700;color:#ffd600">Certificado de conclusão</div><div style="font-size:11px;color:var(--dim)">Emitido digitalmente</div></div></div>` : ''}
+
+        ${checklistHtml}
+        ${faixasHtml}
+
+        ${c.descricao ? `<div class="modal-desc">${c.descricao}</div>` : ''}
+        ${c.organizador ? `<div style="font-size:13px;color:var(--dim);margin:8px 0">👤 Organização: <b style="color:var(--text)">${c.organizador}</b></div>` : ''}
+
+        ${c.regulamentoTexto ? `<details style="margin:12px 0"><summary style="font-size:12px;color:var(--neon);cursor:pointer;font-weight:700">📄 Ver Regulamento</summary><div style="font-size:12px;color:var(--dim);margin-top:8px;line-height:1.6;white-space:pre-wrap">${c.regulamentoTexto.substring(0,500)}...</div></details>` : ''}
+
+        <a href="${c.linkInscricao}" target="_blank" class="btn-inscrever-full" style="margin-top:16px">
           🏁 Ir para Inscrição
         </a>
-        <div class="modal-fonte">via ${c.fonte || 'PACE'} · Link direto para a página de inscrição</div>
+
+        ${c.whatsapp || c.instagram ? `
+        <div style="display:flex;gap:8px;margin-top:10px">
+          ${c.whatsapp ? `<a href="https://wa.me/${c.whatsapp.replace(/\D/g,'')}" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.25);color:#25d366;padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">💬 WhatsApp</a>` : ''}
+          ${c.instagram ? `<a href="https://instagram.com/${c.instagram.replace('@','')}" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(225,48,108,.12);border:1px solid rgba(225,48,108,.25);color:#e1306c;padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">📸 Instagram</a>` : ''}
+        </div>` : ''}
+
+        <div class="modal-fonte">via ${c.fonte || 'PACE'} · ${new Date(c.atualizadoEm||c.criadoEm||Date.now()).toLocaleDateString('pt-BR')}</div>
       </div>`;
 
   } catch(e) {

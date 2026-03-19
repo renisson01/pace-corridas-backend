@@ -1291,20 +1291,41 @@ function verDetalheTreino() { showToast('📋 Abra o chat com a IA para ver deta
 // ═══════════════════════════════════════
 // SEMANA
 // ═══════════════════════════════════════
-function carregarSemana() {
+async function carregarSemana() {
   const dias = ['S','T','Q','Q','S','S','D'];
-  const hoje = new Date().getDay(); // 0=dom
-  const kms = [0, 8, 0, 10, 7, 9, 12]; // exemplo
-  const maxKm = Math.max(...kms, 1);
-  const totalKm = kms.reduce((a,b)=>a+b,0);
-  const treinos = kms.filter(k=>k>0).length;
+  const hoje = new Date().getDay();
+  let kms = [0,0,0,0,0,0,0];
+  let totalKm = 0, treinos = 0, totalSeg = 0;
 
-  document.getElementById('semKm').textContent = totalKm.toFixed(0);
+  try {
+    const stats = await api('/gps/stats');
+    totalKm = stats.totalKm || 0;
+    treinos = stats.semana?.atividades || 0;
+    totalSeg = stats.totalSeg || 0;
+
+    // Buscar atividades desta semana para montar barras por dia
+    const ini = new Date(); ini.setDate(ini.getDate()-ini.getDay()); ini.setHours(0,0,0,0);
+    const ativs = await api('/gps/atividades?limit=30');
+    const lista = ativs.atividades || ativs || [];
+    lista.forEach(a => {
+      const d = new Date(a.iniciadoEm || a.createdAt);
+      if (d >= ini) {
+        const diaSem = d.getDay(); // 0=dom
+        kms[diaSem] = (kms[diaSem] || 0) + (a.distanciaKm || 0);
+      }
+    });
+    totalKm = stats.semana?.km || kms.reduce((a,b)=>a+b,0);
+    treinos = stats.semana?.atividades || lista.filter(a=>new Date(a.iniciadoEm||a.createdAt)>=ini).length;
+  } catch(e) {}
+
+  document.getElementById('semKm').textContent = totalKm.toFixed(1);
   document.getElementById('semTreinos').textContent = treinos;
-  document.getElementById('semTempo').textContent = (totalKm * 6.5 / 60).toFixed(1); // aprox
+  const horas = totalSeg > 0 ? (totalSeg/3600).toFixed(1) : (totalKm * 6.5 / 60).toFixed(1);
+  document.getElementById('semTempo').textContent = horas;
 
-  const reorder = [...dias.slice(1), dias[0]]; // Seg a Dom
+  const reorder = [...dias.slice(1), dias[0]];
   const kmsReorder = [...kms.slice(1), kms[0]];
+  const maxKm = Math.max(...kmsReorder, 1);
 
   document.getElementById('diasGrid').innerHTML = reorder.map((d,i) => {
     const isHoje = (i+1)%7 === hoje || (i===6 && hoje===0);
@@ -1313,7 +1334,7 @@ function carregarSemana() {
       <div class="dia-col">
         <div class="dia-label">${d}</div>
         <div class="dia-bar-wrap"><div class="dia-bar ${isHoje?'hoje':kmsReorder[i]>0?'active':''}" style="height:${h}px"></div></div>
-        <div class="dia-km">${kmsReorder[i]||'·'}</div>
+        <div class="dia-km">${kmsReorder[i]>0?kmsReorder[i].toFixed(1):'·'}</div>
       </div>
     `;
   }).join('');
@@ -1369,7 +1390,7 @@ async function carregarAtividades() {
         <div class="ativ-icon">🏃</div>
         <div class="ativ-info">
           <div class="ativ-titulo">${a.titulo || 'Corrida'}</div>
-          <div class="ativ-meta">${new Date(a.criadoEm||a.createdAt).toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})}</div>
+          <div class="ativ-meta">${new Date(a.iniciadoEm||a.criadoEm||a.createdAt).toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})}</div>
           <div class="ativ-stats">
             <div class="ativ-stat"><div class="ativ-stat-val">${a.distanciaKm?.toFixed(1)||'--'}</div><div class="ativ-stat-label">km</div></div>
             <div class="ativ-stat"><div class="ativ-stat-val">${formatarTempo(a.duracaoSeg)}</div><div class="ativ-stat-label">tempo</div></div>
@@ -1446,7 +1467,7 @@ async function carregarConquistas() {
 // ═══════════════════════════════════════
 async function carregarRanking() {
   try {
-    const data = await api('/ranking/5k?limit=5');
+    const data = await api('/ranking/5km?limit=5');
     const items = data.ranking || data.data || [];
     const meuId = user.id;
     const cores = ['gold','silver','bronze'];
@@ -1547,7 +1568,7 @@ async function salvarAtividadeGPS() {
   const km = parseFloat(document.getElementById('gpsKm').textContent);
   if (km < 0.1) return;
   try {
-    await api('/gps/salvar', {
+    await api('/gps/atividade', {
       method: 'POST',
       body: JSON.stringify({ distanciaKm: km, duracaoSeg: gpsSegundos, tipo: 'corrida', paceMedio: '6:00' })
     });
@@ -1567,7 +1588,7 @@ async function salvarAtividade() {
   const paceSeg = duracaoSeg / parseFloat(dist);
   const paceMedio = `${Math.floor(paceSeg/60)}:${Math.round(paceSeg%60).toString().padStart(2,'0')}`;
   try {
-    await api('/gps/salvar', { method:'POST', body: JSON.stringify({ distanciaKm: parseFloat(dist), duracaoSeg, tipo: document.getElementById('regTipo').value.toLowerCase(), paceMedio, titulo: document.getElementById('regObs').value || '' }) });
+    await api('/gps/atividade', { method:'POST', body: JSON.stringify({ distanciaKm: parseFloat(dist), duracaoSeg, tipo: document.getElementById('regTipo').value.toLowerCase(), paceMedio, titulo: document.getElementById('regObs').value || '' }) });
     showToast(`✅ ${dist}km salva! Ótimo treino!`);
     document.getElementById('regDist').value = '';
     document.getElementById('regTempo').value = '';
@@ -1668,7 +1689,7 @@ async function salvarPerfil() {
     tempo42k: document.getElementById('edit42k').value,
   };
   try {
-    const data = await api('/auth/perfil', { method:'PATCH', body: JSON.stringify(body) });
+    const data = await api('/auth/me', { method:'PATCH', body: JSON.stringify(body) });
     if (data.user) {
       perfilData = data.user;
       localStorage.setItem('pace_user', JSON.stringify(data.user));
@@ -1877,7 +1898,7 @@ async function carregarRankingPage() {
   el.innerHTML = '<div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>'.repeat(5);
 
   try {
-    const data = await api('/ranking/' + distRanking.replace('k','km') + '?limit=20');
+    const data = await api('/ranking/' + distRanking.replace(/k$/,'km') + '?limit=20');
     const items = data.ranking || data.data || [];
     const meuId = user.id || user.userId;
     const cores = ['gold','silver','bronze'];
