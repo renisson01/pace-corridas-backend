@@ -2,438 +2,354 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>PACE Admin — Loja</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — EstamPace</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body{background:#0a0f1a;}
-.grad{background:linear-gradient(135deg,#22c55e,#16a34a);}
-::-webkit-scrollbar{display:none;}
-.produto-card{transition:all .2s;}
-.produto-card:hover{transform:translateY(-2px);}
+:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--neon:#00e676;--laranja:#FF6D00;--text:#f0f0f8;--muted:#6b6b85;--red:#ff1744;--blue:#448aff;--yellow:#ffd600}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--laranja)}
+.logo span{color:var(--neon)}
+.content{max-width:900px;margin:0 auto;padding:24px 16px}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab.active{color:var(--neon);border-bottom-color:var(--neon)}
+.section{display:none}.section.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:var(--neon);line-height:1}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.pedido-row{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.pedido-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pedido-nome{font-size:14px;font-weight:700}
+.pedido-info{font-size:12px;color:var(--muted);line-height:1.6}
+.pedido-endereco{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;line-height:1.8}
+.badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700}
+.badge-pendente{background:rgba(255,214,0,.15);color:var(--yellow)}
+.badge-pago{background:rgba(0,230,118,.15);color:var(--neon)}
+.badge-enviado{background:rgba(68,138,255,.15);color:var(--blue)}
+.badge-cancelado{background:rgba(255,23,68,.15);color:var(--red)}
+.btn-status{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none}
+.btn-enviado{background:rgba(68,138,255,.2);color:var(--blue);border:1px solid rgba(68,138,255,.3)}
+.btn-pago{background:rgba(0,230,118,.2);color:var(--neon);border:1px solid rgba(0,230,118,.3)}
+.btn-cancel{background:rgba(255,23,68,.1);color:var(--red);border:1px solid rgba(255,23,68,.2)}
+.btn-wa{background:rgba(37,211,102,.15);color:#25D366;border:1px solid rgba(37,211,102,.3);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.field-group{margin-bottom:14px}
+.field-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
+.field-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;width:100%;outline:none}
+.field-input:focus{border-color:var(--neon)}
+textarea.field-input{resize:vertical;min-height:80px}
+.btn-primary{background:var(--laranja);color:white;border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%}
+.btn-upload{background:var(--bg3);border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border .2s}
+.btn-upload:hover{border-color:var(--neon)}
+.fotos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.foto-item{position:relative;aspect-ratio:3/4;background:var(--bg3);border-radius:10px;overflow:hidden}
+.foto-item img{width:100%;height:100%;object-fit:cover}
+.foto-del{position:absolute;top:4px;right:4px;background:rgba(255,23,68,.85);color:white;border:none;border-radius:6px;padding:2px 8px;font-size:12px;cursor:pointer;font-weight:700}
+.loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:32px;color:var(--muted);font-size:13px}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--neon);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+.filtros{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filtro-btn{padding:6px 14px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
+.filtro-btn.active{background:rgba(0,230,118,.15);border-color:var(--neon);color:var(--neon)}
+.acesso-negado{display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:999}
+.acesso-negado.show{display:flex}
 </style>
 </head>
-<body class="text-white min-h-screen pb-24">
+<body>
 
-<header class="sticky top-0 z-40 px-4 py-3 flex items-center gap-3 bg-slate-900 border-b border-slate-800">
-  <a href="/" class="text-slate-400 text-xl">←</a>
-  <h1 class="font-black text-lg">🛍️ Admin Loja</h1>
-  <a href="/admin-pedidos.html" class="ml-auto text-xs bg-orange-500/20 border border-orange-500/50 text-orange-400 px-3 py-2 rounded-xl font-bold">📦 Pedidos</a>
+<div class="acesso-negado" id="acessoNegado">
+  <div style="font-size:48px">🔐</div>
+  <div style="font-size:20px;font-weight:700;color:var(--red)">Acesso Restrito</div>
+  <div style="font-size:14px;color:var(--muted)">Faça login como administrador</div>
+  <a href="/entrar.html" style="background:var(--laranja);color:white;padding:12px 24px;border-radius:12px;text-decoration:none;font-weight:700">Fazer Login</a>
+</div>
+
+<header class="topbar">
+  <div class="logo">Estam<span>Pace</span> <span style="font-size:14px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600">Admin</span></div>
+  <a href="/loja.html" style="font-size:13px;color:var(--muted);text-decoration:none">← Ver Loja</a>
 </header>
 
-<!-- TABS -->
-<div class="flex gap-2 px-4 mt-4">
-  <button onclick="showTab('novo')" id="tab-novo" class="flex-1 py-2 rounded-xl text-sm font-bold bg-green-500 text-black">➕ Novo</button>
-  <button onclick="showTab('lista')" id="tab-lista" class="flex-1 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-400">📋 Produtos</button>
-</div>
+<div class="content">
+  <div class="tabs">
+    <div class="tab active" onclick="abaAtiva('pedidos',this)">📦 Pedidos do Dia</div>
+    <div class="tab" onclick="abaAtiva('todos',this)">📋 Todos os Pedidos</div>
+    <div class="tab" onclick="abaAtiva('fotos',this)">📸 Fotos</div>
+    <div class="tab" onclick="abaAtiva('produto',this)">✏️ Produto</div>
+  </div>
 
-<!-- ═══════════════ FORM NOVO PRODUTO ═══════════════ -->
-<section id="tab-novo-content" class="px-4 mt-4 space-y-3">
-
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-    <h2 class="font-black text-base">📝 Dados do produto</h2>
-
-    <input id="p-nome" placeholder="Nome do produto *" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500">
-    <textarea id="p-desc" placeholder="Descrição (opcional)" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-green-500 resize-none"></textarea>
-
-    <div class="grid grid-cols-2 gap-3">
-      <div>
-        <label class="text-xs text-slate-400 block mb-1">Preço (R$) *</label>
-        <input id="p-preco" type="number" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
+  <div class="section active" id="sec-pedidos">
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-val" id="statPedidos">--</div><div class="stat-label">Pedidos Hoje</div></div>
+      <div class="stat"><div class="stat-val" id="statReceita" style="color:var(--neon)">--</div><div class="stat-label">Receita Hoje</div></div>
+      <div class="stat"><div class="stat-val" id="statEnviar" style="color:var(--yellow)">--</div><div class="stat-label">Para Enviar</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        📦 Pedidos de Hoje
+        <button onclick="carregarPedidos('hoje')" style="background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:8px;font-size:12px;cursor:pointer">↻ Atualizar</button>
       </div>
-      <div>
-        <label class="text-xs text-slate-400 block mb-1">Categoria</label>
-        <select id="p-cat" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
-          <option value="camisa">👕 Camisa</option>
-          <option value="shorts">🩳 Shorts</option>
-          <option value="bone">🧢 Boné</option>
-          <option value="acessorio">⌚ Acessório</option>
-        </select>
-      </div>
+      <div id="pedidosHoje"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
     </div>
   </div>
 
-  <!-- UPLOAD DE FOTOS -->
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-    <h2 class="font-black text-base">📸 Fotos do produto</h2>
-    <p class="text-xs text-slate-400">Você pode adicionar até 5 fotos. A primeira será a foto principal.</p>
-
-    <!-- Drop area -->
-    <input type="file" id="file-input" accept="image/*" multiple class="hidden" onchange="handleFotos(this.files)">
-    <div onclick="document.getElementById('file-input').click()"
-      class="border-2 border-dashed border-slate-600 rounded-xl p-6 text-center cursor-pointer hover:border-green-500 transition-colors" id="drop-area">
-      <p class="text-3xl mb-2">📸</p>
-      <p class="text-sm text-slate-400 font-bold">Toque para escolher fotos</p>
-      <p class="text-xs text-slate-500 mt-1">JPG, PNG ou WebP — até 10MB cada</p>
+  <div class="section" id="sec-todos">
+    <div class="filtros">
+      <button class="filtro-btn active" onclick="filtrarStatus('',this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrarStatus('aguardando_pagamento',this)">⏳ Aguardando</button>
+      <button class="filtro-btn" onclick="filtrarStatus('pago',this)">✅ Pago</button>
+      <button class="filtro-btn" onclick="filtrarStatus('enviado',this)">📮 Enviado</button>
+      <button class="filtro-btn" onclick="filtrarStatus('cancelado',this)">❌ Cancelado</button>
     </div>
+    <div id="todosPedidos"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+  </div>
 
-    <!-- Preview das fotos -->
-    <div id="fotos-preview" class="grid grid-cols-3 gap-2 hidden"></div>
-
-    <!-- Progress -->
-    <div id="upload-progress" class="hidden">
-      <div class="bg-slate-800 rounded-full h-2">
-        <div id="progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width:0%"></div>
+  <div class="section" id="sec-fotos">
+    <div class="card">
+      <div class="card-title">📸 Upload de Fotos das Camisetas</div>
+      <div class="btn-upload" onclick="document.getElementById('inputFoto').click()">
+        <div style="font-size:40px;margin-bottom:8px">📷</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Clique para selecionar fotos</div>
+        <div style="font-size:12px;color:var(--muted)">JPG, PNG até 5MB · Proporção 3:4 recomendada · Pode selecionar várias</div>
       </div>
-      <p class="text-xs text-slate-400 mt-1 text-center" id="progress-text">Enviando fotos...</p>
+      <input type="file" id="inputFoto" accept="image/*" multiple style="display:none" onchange="uploadFotos(this.files)">
+      <div id="uploadProgress" style="display:none;margin-top:12px">
+        <div style="background:var(--bg3);border-radius:8px;height:8px;overflow:hidden">
+          <div id="progressBar" style="height:100%;background:var(--neon);width:0%;transition:width .3s;border-radius:8px"></div>
+        </div>
+        <div id="progressText" style="font-size:12px;color:var(--muted);margin-top:6px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🖼️ Fotos Cadastradas</div>
+      <div class="fotos-grid" id="fotosGrid"><div class="loading"><div class="spinner"></div></div></div>
     </div>
   </div>
 
-  <!-- CORES -->
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-    <h2 class="font-black text-base">🎨 Cores disponíveis</h2>
-    <div class="flex gap-3 flex-wrap" id="cores-container">
-      <label class="flex items-center gap-2 text-sm cursor-pointer bg-slate-800 px-3 py-2 rounded-xl border border-slate-700 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
-        <input type="checkbox" value="Verde" checked class="accent-green-500"> Verde
-      </label>
-      <label class="flex items-center gap-2 text-sm cursor-pointer bg-slate-800 px-3 py-2 rounded-xl border border-slate-700 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
-        <input type="checkbox" value="Preto" class="accent-green-500"> Preto
-      </label>
-      <label class="flex items-center gap-2 text-sm cursor-pointer bg-slate-800 px-3 py-2 rounded-xl border border-slate-700 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
-        <input type="checkbox" value="Branco" class="accent-green-500"> Branco
-      </label>
-      <label class="flex items-center gap-2 text-sm cursor-pointer bg-slate-800 px-3 py-2 rounded-xl border border-slate-700 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
-        <input type="checkbox" value="Azul" class="accent-green-500"> Azul
-      </label>
-      <label class="flex items-center gap-2 text-sm cursor-pointer bg-slate-800 px-3 py-2 rounded-xl border border-slate-700 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
-        <input type="checkbox" value="Cinza" class="accent-green-500"> Cinza
-      </label>
-      <label class="flex items-center gap-2 text-sm cursor-pointer bg-slate-800 px-3 py-2 rounded-xl border border-slate-700 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
-        <input type="checkbox" value="Vermelho" class="accent-green-500"> Vermelho
-      </label>
+  <div class="section" id="sec-produto">
+    <div class="card">
+      <div class="card-title">✏️ Configurações do Produto</div>
+      <div class="field-group"><label class="field-label">Nome do Produto</label><input class="field-input" id="prodNome" value="Camiseta EstamPace"></div>
+      <div class="field-group"><label class="field-label">Preço Promocional (R$)</label><input class="field-input" id="prodPreco" type="number" value="149.90" step="0.01"></div>
+      <div class="field-group"><label class="field-label">Descrição</label><textarea class="field-input" id="prodDesc">Camiseta esportiva dry-fit premium para corrida de rua. Bordado PACE oficial.</textarea></div>
+      <div class="field-group"><label class="field-label">Tamanhos disponíveis</label><input class="field-input" id="prodTamanhos" value="PP,P,M,G,GG,XGG"></div>
+      <div class="field-group"><label class="field-label">Estoque total</label><input class="field-input" id="prodEstoque" type="number" value="100"></div>
+      <button class="btn-primary" onclick="salvarProduto()">💾 Salvar Configurações</button>
     </div>
-  </div>
-
-  <!-- ESTOQUE POR TAMANHO -->
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-    <h2 class="font-black text-base">📦 Estoque por tamanho</h2>
-    <div class="grid grid-cols-5 gap-2">
-      <div class="text-center">
-        <p class="text-xs text-slate-400 mb-1 font-bold">PP</p>
-        <input id="e-PP" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500">
-      </div>
-      <div class="text-center">
-        <p class="text-xs text-slate-400 mb-1 font-bold">P</p>
-        <input id="e-P" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500">
-      </div>
-      <div class="text-center">
-        <p class="text-xs text-slate-400 mb-1 font-bold">M</p>
-        <input id="e-M" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500">
-      </div>
-      <div class="text-center">
-        <p class="text-xs text-slate-400 mb-1 font-bold">G</p>
-        <input id="e-G" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500">
-      </div>
-      <div class="text-center">
-        <p class="text-xs text-slate-400 mb-1 font-bold">GG</p>
-        <input id="e-GG" type="number" value="10" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 text-sm text-white text-center outline-none focus:border-green-500">
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTÃO SALVAR -->
-  <button onclick="salvarProduto()" id="btn-salvar" class="w-full grad text-black font-black py-4 rounded-2xl text-base active:scale-95 transition-all shadow-lg shadow-green-500/20">
-    💾 Salvar produto
-  </button>
-
-  <!-- MENSAGEM DE FEEDBACK -->
-  <div id="msg-feedback" class="hidden text-center py-3 rounded-xl font-bold text-sm"></div>
-</section>
-
-<!-- ═══════════════ LISTA DE PRODUTOS ═══════════════ -->
-<section id="tab-lista-content" class="px-4 mt-4 hidden">
-  <div id="loading-lista" class="text-center py-12 text-slate-400">
-    <p class="text-3xl mb-2">⏳</p>
-    <p>Carregando produtos...</p>
-  </div>
-  <div id="lista-produtos" class="space-y-3"></div>
-  <p id="sem-produtos" class="hidden text-center text-slate-400 py-12">
-    <span class="text-4xl block mb-3">🛍️</span>
-    Nenhum produto cadastrado ainda.
-  </p>
-</section>
-
-<!-- MODAL EDITAR -->
-<div id="modal-editar" class="hidden fixed inset-0 bg-black/80 z-50 flex items-end">
-  <div class="bg-slate-900 border-t border-slate-700 w-full rounded-t-3xl p-5 space-y-3 max-h-[80vh] overflow-y-auto">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="font-black text-lg">✏️ Editar produto</h3>
-      <button onclick="fecharModal()" class="text-slate-400 text-2xl">✕</button>
-    </div>
-    <input id="edit-id" type="hidden">
-    <input id="edit-nome" placeholder="Nome *" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
-    <textarea id="edit-desc" placeholder="Descrição" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500 resize-none"></textarea>
-    <div class="grid grid-cols-2 gap-3">
-      <div>
-        <label class="text-xs text-slate-400 block mb-1">Preço (R$)</label>
-        <input id="edit-preco" type="number" step="0.01" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 block mb-1">Estoque total</label>
-        <input id="edit-estoque" type="number" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-green-500">
-      </div>
-    </div>
-    <button onclick="salvarEdicao()" class="w-full grad text-black font-black py-3 rounded-2xl active:scale-95 transition-all">💾 Salvar alterações</button>
-    <button onclick="deletarProduto()" class="w-full bg-red-500/20 border border-red-500/50 text-red-400 font-bold py-3 rounded-2xl active:scale-95 transition-all">🗑️ Remover produto</button>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-const API = '';
+const ADMIN_KEY = '3b77d62cb40acbbe091abf119204cd5fd3371c47e68e47cf9698088a1d1a18d6';
 const TOKEN = localStorage.getItem('pace_token');
+const USER = JSON.parse(localStorage.getItem('pace_user') || '{}');
+let produtoId = null, statusFiltro = '';
 
-// ═══ TABS ═══
-function showTab(tab) {
-  document.getElementById('tab-novo-content').classList.toggle('hidden', tab !== 'novo');
-  document.getElementById('tab-lista-content').classList.toggle('hidden', tab !== 'lista');
-  document.getElementById('tab-novo').className = tab === 'novo'
-    ? 'flex-1 py-2 rounded-xl text-sm font-bold bg-green-500 text-black'
-    : 'flex-1 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-400';
-  document.getElementById('tab-lista').className = tab === 'lista'
-    ? 'flex-1 py-2 rounded-xl text-sm font-bold bg-green-500 text-black'
-    : 'flex-1 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-400';
-  if (tab === 'lista') carregarProdutos();
+// Verificar acesso
+if (!USER.isAdmin) {
+  document.getElementById('acessoNegado').classList.add('show');
 }
 
-// ═══ ESTADO DAS FOTOS ═══
-let fotosUpadas = []; // URLs já enviadas ao Cloudinary
-
-// ═══ UPLOAD DE FOTOS ═══
-async function handleFotos(files) {
-  if (!files.length) return;
-  if (fotosUpadas.length + files.length > 5) {
-    mostrarMsg('Máximo de 5 fotos por produto', 'erro');
-    return;
-  }
-
-  document.getElementById('upload-progress').classList.remove('hidden');
-  const progressBar = document.getElementById('progress-bar');
-  const progressText = document.getElementById('progress-text');
-
-  let enviados = 0;
-  for (const file of files) {
-    progressText.textContent = `Enviando foto ${enviados + 1} de ${files.length}...`;
-    progressBar.style.width = `${(enviados / files.length) * 100}%`;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const res = await fetch(`${API}/loja/upload-foto`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${TOKEN}` },
-        body: formData
-      });
-      const data = await res.json();
-      if (data.url) {
-        fotosUpadas.push(data.url);
-        adicionarPreviewFoto(data.url, fotosUpadas.length - 1);
-      } else {
-        mostrarMsg('Erro no upload: ' + (data.error || 'Tente novamente'), 'erro');
-      }
-    } catch (e) {
-      mostrarMsg('Erro de conexão no upload', 'erro');
-    }
-    enviados++;
-  }
-
-  progressBar.style.width = '100%';
-  progressText.textContent = `✅ ${fotosUpadas.length} foto(s) enviada(s)`;
-  setTimeout(() => document.getElementById('upload-progress').classList.add('hidden'), 2000);
+function abaAtiva(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sec-'+id).classList.add('active');
+  if(id==='pedidos') carregarPedidos('hoje');
+  if(id==='todos') carregarPedidos('todos');
+  if(id==='fotos') carregarFotos();
+  if(id==='produto') carregarProduto();
 }
 
-function adicionarPreviewFoto(url, index) {
-  const preview = document.getElementById('fotos-preview');
-  preview.classList.remove('hidden');
-  const div = document.createElement('div');
-  div.className = 'relative';
-  div.innerHTML = `
-    <img src="${url}" class="w-full h-24 object-cover rounded-xl border border-slate-700">
-    ${index === 0 ? '<span class="absolute top-1 left-1 bg-green-500 text-black text-xs font-bold px-1.5 py-0.5 rounded-lg">Principal</span>' : ''}
-    <button onclick="removerFoto(${index})" class="absolute top-1 right-1 bg-red-500/80 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">✕</button>
-  `;
-  preview.appendChild(div);
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-function removerFoto(index) {
-  fotosUpadas.splice(index, 1);
-  // Re-renderizar preview
-  const preview = document.getElementById('fotos-preview');
-  preview.innerHTML = '';
-  if (fotosUpadas.length === 0) { preview.classList.add('hidden'); return; }
-  fotosUpadas.forEach((url, i) => adicionarPreviewFoto(url, i));
-}
-
-// ═══ SALVAR PRODUTO ═══
-async function salvarProduto() {
-  const nome = document.getElementById('p-nome').value.trim();
-  const preco = document.getElementById('p-preco').value;
-
-  if (!nome) { mostrarMsg('⚠️ Nome do produto é obrigatório', 'erro'); return; }
-  if (!preco || parseFloat(preco) <= 0) { mostrarMsg('⚠️ Preço é obrigatório', 'erro'); return; }
-  if (fotosUpadas.length === 0) { mostrarMsg('⚠️ Adicione pelo menos uma foto', 'erro'); return; }
-
-  const btn = document.getElementById('btn-salvar');
-  btn.textContent = '⏳ Salvando...';
-  btn.disabled = true;
-
-  const cores = [...document.querySelectorAll('#cores-container input:checked')].map(c => c.value);
-  const tamanhos = ['PP', 'P', 'M', 'G', 'GG'];
-  const estoquePorTamanho = {};
-  tamanhos.forEach(t => { estoquePorTamanho[t] = document.getElementById(`e-${t}`)?.value || 10; });
-
-  try {
-    const res = await fetch(`${API}/loja/produtos`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
-      body: JSON.stringify({
-        nome,
-        descricao: document.getElementById('p-desc').value.trim() || null,
-        preco: parseFloat(preco),
-        fotos: fotosUpadas,
-        tamanhos,
-        cores,
-        categoria: document.getElementById('p-cat').value,
-        estoquePorTamanho,
-      })
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      mostrarMsg('✅ Produto salvo com sucesso!', 'sucesso');
-      resetarForm();
+async function carregarPedidos(tipo){
+  const hoje = new Date().toISOString().split('T')[0];
+  const url = tipo==='hoje'
+    ? `/loja/admin/pedidos?data=${hoje}`
+    : `/loja/admin/pedidos${statusFiltro?'?status='+statusFiltro:''}`;
+  try{
+    const d = await fetch(url,{headers:{'x-admin-key':ADMIN_KEY}}).then(r=>r.json());
+    const pedidos = d.pedidos||[];
+    const resumo = d.resumo||{};
+    if(tipo==='hoje'){
+      document.getElementById('statPedidos').textContent = resumo.pedidosHoje||0;
+      document.getElementById('statReceita').textContent = `R$ ${(resumo.receitaHoje||0).toFixed(2).replace('.',',')}`;
+      document.getElementById('statEnviar').textContent = pedidos.filter(p=>p.status==='pago').length;
+      document.getElementById('pedidosHoje').innerHTML = pedidos.length
+        ? pedidos.map(p=>renderPedido(p)).join('')
+        : '<div style="text-align:center;padding:32px;color:var(--muted)">Nenhum pedido hoje ainda 📭</div>';
     } else {
-      mostrarMsg('❌ Erro: ' + (data.error || 'Tente novamente'), 'erro');
+      document.getElementById('todosPedidos').innerHTML = pedidos.length
+        ? pedidos.map(p=>renderPedido(p)).join('')
+        : '<div style="text-align:center;padding:32px;color:var(--muted)">Nenhum pedido encontrado</div>';
     }
-  } catch (e) {
-    mostrarMsg('❌ Erro de conexão', 'erro');
-  }
-
-  btn.textContent = '💾 Salvar produto';
-  btn.disabled = false;
+  }catch(e){ toast('Erro: '+e.message); }
 }
 
-function resetarForm() {
-  document.getElementById('p-nome').value = '';
-  document.getElementById('p-desc').value = '';
-  document.getElementById('p-preco').value = '';
-  document.getElementById('fotos-preview').innerHTML = '';
-  document.getElementById('fotos-preview').classList.add('hidden');
-  fotosUpadas = [];
-  ['PP','P','M','G','GG'].forEach(t => { document.getElementById(`e-${t}`).value = 10; });
-}
-
-// ═══ CARREGAR LISTA DE PRODUTOS ═══
-async function carregarProdutos() {
-  document.getElementById('loading-lista').classList.remove('hidden');
-  document.getElementById('lista-produtos').innerHTML = '';
-  document.getElementById('sem-produtos').classList.add('hidden');
-
-  try {
-    const res = await fetch(`${API}/loja/produtos`);
-    const produtos = await res.json();
-
-    document.getElementById('loading-lista').classList.add('hidden');
-
-    if (!produtos.length) {
-      document.getElementById('sem-produtos').classList.remove('hidden');
-      return;
-    }
-
-    const lista = document.getElementById('lista-produtos');
-    produtos.forEach(p => {
-      const fotos = p.fotos ? p.fotos.split(',') : [];
-      const div = document.createElement('div');
-      div.className = 'produto-card bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex gap-3 p-3';
-      div.innerHTML = `
-        <img src="${fotos[0] || 'https://via.placeholder.com/80x80/1e293b/64748b?text=sem+foto'}"
-             class="w-20 h-20 object-cover rounded-xl flex-shrink-0">
-        <div class="flex-1 min-w-0">
-          <p class="font-black text-sm truncate">${p.nome}</p>
-          <p class="text-green-400 font-bold text-sm">R$ ${parseFloat(p.preco).toFixed(2)}</p>
-          <p class="text-xs text-slate-400">${p.categoria} · ${p.tamanhos || ''}</p>
-          <p class="text-xs text-slate-500">Estoque: ${p.estoque} un · ${fotos.length} foto(s)</p>
-        </div>
-        <button onclick="abrirEditar(${JSON.stringify(p).replace(/"/g,'&quot;')})"
-                class="self-start text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">✏️</button>
-      `;
-      lista.appendChild(div);
-    });
-  } catch (e) {
-    document.getElementById('loading-lista').classList.add('hidden');
-    mostrarMsg('Erro ao carregar produtos', 'erro');
-  }
-}
-
-// ═══ EDITAR PRODUTO ═══
-function abrirEditar(p) {
-  document.getElementById('edit-id').value = p.id;
-  document.getElementById('edit-nome').value = p.nome;
-  document.getElementById('edit-desc').value = p.descricao || '';
-  document.getElementById('edit-preco').value = p.preco;
-  document.getElementById('edit-estoque').value = p.estoque;
-  document.getElementById('modal-editar').classList.remove('hidden');
-}
-
-function fecharModal() {
-  document.getElementById('modal-editar').classList.add('hidden');
-}
-
-async function salvarEdicao() {
-  const id = document.getElementById('edit-id').value;
-  const body = {
-    nome: document.getElementById('edit-nome').value,
-    descricao: document.getElementById('edit-desc').value,
-    preco: document.getElementById('edit-preco').value,
-    estoque: document.getElementById('edit-estoque').value,
+function renderPedido(p){
+  const statusMap = {
+    aguardando_pagamento:'<span class="badge badge-pendente">⏳ Aguardando Pag.</span>',
+    pago:'<span class="badge badge-pago">✅ Pago</span>',
+    enviado:'<span class="badge badge-enviado">📮 Enviado</span>',
+    cancelado:'<span class="badge badge-cancelado">❌ Cancelado</span>'
   };
-  try {
-    const res = await fetch(`${API}/loja/produtos/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
-      body: JSON.stringify(body)
+  const status = statusMap[p.status]||`<span class="badge badge-pendente">${p.status}</span>`;
+  const data = new Date(p.criadoEm).toLocaleString('pt-BR');
+  const tel = (p.whatsappCliente||'').replace(/\D/g,'');
+  const wppMsg = encodeURIComponent(
+    `Olá ${p.nomeCliente||''}! Seu pedido EstamPace foi confirmado! 🏃\n`+
+    `👕 ${p.produtoNome} — ${p.tamanho} / ${p.cor} x${p.quantidade}\n`+
+    `💰 R$ ${p.valorTotal?.toFixed(2)?.replace('.',',')}\n\n`+
+    `Em breve você receberá as informações de envio. Obrigado! 🙏`
+  );
+  return `<div class="pedido-row">
+    <div class="pedido-header">
+      <div>
+        <div class="pedido-nome">${p.nomeCliente||p.user?.name||'Cliente'}</div>
+        <div style="font-size:11px;color:var(--muted)">#${p.id.substring(0,8)} · ${data}</div>
+      </div>
+      <div style="text-align:right">
+        ${status}
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;color:var(--neon);margin-top:4px;font-weight:900">R$ ${p.valorTotal?.toFixed(2)?.replace('.',',')}</div>
+      </div>
+    </div>
+    <div class="pedido-info">
+      👕 ${p.produtoNome} · 📏 ${p.tamanho} · 🎨 ${p.cor} · 🔢 ${p.quantidade}x
+      ${p.promocao==='leve3pague2'?'&nbsp;🎁 Leve 3 Pague 2':''}
+    </div>
+    ${p.enderecoRua?`<div class="pedido-endereco">
+      <strong>📦 Endereço de entrega:</strong><br>
+      ${p.enderecoRua}, ${p.enderecoNum} — ${p.enderecoBairro||''}<br>
+      ${p.enderecoCidade||''}/${p.enderecoEstado||''} · CEP: ${p.enderecoCEP||'--'}
+      ${p.whatsappCliente?`<br>📱 WhatsApp: <strong>${p.whatsappCliente}</strong>`:''}
+      ${p.obs?`<br>💬 Obs: ${p.obs}`:''}
+    </div>`:'<div style="font-size:12px;color:var(--muted);margin-top:6px">Sem endereço informado — contate pelo WhatsApp</div>'}
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      ${p.status!=='enviado'&&p.status!=='cancelado'?`<button class="btn-status btn-enviado" onclick="updateStatus('${p.id}','enviado')">📮 Marcar Enviado</button>`:''}
+      ${p.status==='aguardando_pagamento'?`<button class="btn-status btn-pago" onclick="updateStatus('${p.id}','pago')">✅ Confirmar Pago</button>`:''}
+      ${tel?`<a class="btn-wa" href="https://wa.me/55${tel}?text=${wppMsg}" target="_blank">💬 WhatsApp</a>`:''}
+      ${p.status!=='cancelado'?`<button class="btn-status btn-cancel" onclick="updateStatus('${p.id}','cancelado')">✕</button>`:''}
+    </div>
+  </div>`;
+}
+
+async function updateStatus(id,status){
+  try{
+    await fetch(`/loja/admin/pedidos/${id}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','x-admin-key':ADMIN_KEY},
+      body:JSON.stringify({status})
     });
-    if (res.ok) {
-      fecharModal();
-      mostrarMsg('✅ Produto atualizado!', 'sucesso');
-      carregarProdutos();
+    toast(`✅ Status atualizado: ${status}`);
+    setTimeout(()=>carregarPedidos(document.getElementById('sec-pedidos').classList.contains('active')?'hoje':'todos'),500);
+  }catch(e){toast('Erro: '+e.message);}
+}
+
+function filtrarStatus(s,btn){
+  statusFiltro=s;
+  document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  carregarPedidos('todos');
+}
+
+async function carregarFotos(){
+  try{
+    const produtos = await fetch('/loja/produtos').then(r=>r.json());
+    const prod = Array.isArray(produtos)?produtos[0]:null;
+    produtoId = prod?.id||null;
+    const fotos = (prod?.fotos||'').split(',').filter(Boolean);
+    const grid = document.getElementById('fotosGrid');
+    grid.innerHTML = fotos.length
+      ? fotos.map((f,i)=>`<div class="foto-item"><img src="${f}" onerror="this.src='https://placehold.co/200x260/1c1c26/6b6b85?text=Foto'"><button class="foto-del" onclick="deletarFoto(${i})">✕</button></div>`).join('')
+      : '<div style="color:var(--muted);font-size:13px;padding:12px;grid-column:span 3">Nenhuma foto cadastrada. Faça upload acima!</div>';
+  }catch(e){document.getElementById('fotosGrid').innerHTML='<div style="color:var(--muted);padding:12px">Erro ao carregar</div>';}
+}
+
+async function uploadFotos(files){
+  if(!files?.length) return;
+  const prog=document.getElementById('uploadProgress');
+  const bar=document.getElementById('progressBar');
+  const txt=document.getElementById('progressText');
+  prog.style.display='block';
+  const urls=[];
+  for(let i=0;i<files.length;i++){
+    txt.textContent=`Enviando foto ${i+1} de ${files.length}...`;
+    bar.style.width=`${(i/files.length)*100}%`;
+    const form=new FormData();form.append('file',files[i]);
+    try{
+      const r=await fetch('/loja/upload-foto',{method:'POST',headers:{'Authorization':`Bearer ${TOKEN}`},body:form});
+      const d=await r.json();
+      if(d.url) urls.push(d.url);
+    }catch(e){toast('Erro no upload: '+e.message);}
+  }
+  bar.style.width='100%';
+  txt.textContent=`✅ ${urls.length} foto(s) enviadas com sucesso!`;
+  if(urls.length){
+    const produtos=await fetch('/loja/produtos').then(r=>r.json()).catch(()=>[]);
+    const prod=Array.isArray(produtos)?produtos[0]:null;
+    const fotasAtuais=(prod?.fotos||'').split(',').filter(Boolean);
+    const todasFotos=[...fotasAtuais,...urls].join(',');
+    if(prod?.id){
+      await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({fotos:todasFotos})}).catch(()=>{});
+      toast(`✅ ${urls.length} foto(s) adicionadas!`);
     } else {
-      const d = await res.json();
-      mostrarMsg('Erro: ' + d.error, 'erro');
+      await fetch('/loja/produtos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({nome:'Camiseta EstamPace',preco:149.90,fotos:urls.join(','),tamanhos:'PP,P,M,G,GG,XGG',categoria:'camisa',estoque:100,descricao:'Camiseta esportiva dry-fit premium para corrida de rua.'})}).catch(()=>{});
+      toast(`✅ Produto criado com ${urls.length} foto(s)!`);
     }
-  } catch { mostrarMsg('Erro de conexão', 'erro'); }
+    carregarFotos();
+  }
+  setTimeout(()=>{prog.style.display='none';bar.style.width='0%';},3000);
 }
 
-async function deletarProduto() {
-  if (!confirm('Remover este produto da loja?')) return;
-  const id = document.getElementById('edit-id').value;
-  try {
-    await fetch(`${API}/loja/produtos/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${TOKEN}` }
-    });
-    fecharModal();
-    mostrarMsg('🗑️ Produto removido', 'sucesso');
-    carregarProdutos();
-  } catch { mostrarMsg('Erro ao remover', 'erro'); }
+async function deletarFoto(idx){
+  if(!confirm('Remover esta foto?')) return;
+  const produtos=await fetch('/loja/produtos').then(r=>r.json()).catch(()=>[]);
+  const prod=Array.isArray(produtos)?produtos[0]:null;
+  if(!prod) return;
+  const fotos=prod.fotos.split(',').filter((_,i)=>i!==idx).join(',');
+  await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({fotos})});
+  toast('Foto removida!');carregarFotos();
 }
 
-// ═══ FEEDBACK ═══
-function mostrarMsg(texto, tipo) {
-  const el = document.getElementById('msg-feedback');
-  el.textContent = texto;
-  el.className = tipo === 'sucesso'
-    ? 'text-center py-3 rounded-xl font-bold text-sm bg-green-500/20 border border-green-500/50 text-green-400'
-    : 'text-center py-3 rounded-xl font-bold text-sm bg-red-500/20 border border-red-500/50 text-red-400';
-  el.classList.remove('hidden');
-  setTimeout(() => el.classList.add('hidden'), 4000);
+async function carregarProduto(){
+  const produtos=await fetch('/loja/produtos').then(r=>r.json()).catch(()=>[]);
+  const prod=Array.isArray(produtos)?produtos[0]:null;
+  if(prod){
+    produtoId=prod.id;
+    document.getElementById('prodNome').value=prod.nome||'';
+    document.getElementById('prodPreco').value=prod.preco||149.90;
+    document.getElementById('prodDesc').value=prod.descricao||'';
+    document.getElementById('prodTamanhos').value=prod.tamanhos||'PP,P,M,G,GG,XGG';
+    document.getElementById('prodEstoque').value=prod.estoque||0;
+  }
 }
 
-// Verificar autenticação
-if (!TOKEN) {
-  alert('Faça login para acessar o painel admin');
-  window.sessionStorage.setItem('pace_redirect','/loja-admin.html');location.href='/entrar.html';
+async function salvarProduto(){
+  const data={nome:document.getElementById('prodNome').value,preco:parseFloat(document.getElementById('prodPreco').value),descricao:document.getElementById('prodDesc').value,tamanhos:document.getElementById('prodTamanhos').value,estoque:parseInt(document.getElementById('prodEstoque').value)||0};
+  const url=produtoId?`/loja/produtos/${produtoId}`:'/loja/produtos';
+  const method=produtoId?'PATCH':'POST';
+  try{
+    const r=await fetch(url,{method,headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({...data,categoria:'camisa'})});
+    const d=await r.json();
+    if(d.id){produtoId=d.id;toast('✅ Produto salvo com sucesso!');}
+    else toast('Erro: '+(d.error||'Desconhecido'));
+  }catch(e){toast('Erro: '+e.message);}
 }
+
+document.addEventListener('DOMContentLoaded',()=>carregarPedidos('hoje'));
 </script>
 </body>
 </html>

@@ -3,420 +3,289 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EstamPace Camisetas — Loja Oficial</title>
-<meta name="description" content="Camisetas esportivas premium 100% Poliamida. UV50+, antibacteriana, toque gelado. R$99,90.">
-<meta property="og:title" content="EstamPace — Camisetas Esportivas Premium">
-<meta property="og:description" content="100% Poliamida · UV50+ · Antibacteriana · R$99,90">
-<meta property="og:image" content="https://web-production-990e7.up.railway.app/camisa2.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>EstamPace — Camisetas de Corrida</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;--laranja2:#E65100;
-  --bg:#060810;--bg2:#0C0F1A;--bg3:#141828;--surface:#1A1F30;
-  --border:#1E2436;--border2:#252B40;
-  --text:#F0F4FF;--muted:#6B7A99;--muted2:#8892AA;
-}
+:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--neon:#00e676;--laranja:#FF6D00;--laranja2:#FF8F00;--text:#f0f0f8;--muted:#6b6b85;--red:#ff1744}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
-
-/* NOISE */
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.5}
-
-/* TOPBAR */
-.topbar{position:sticky;top:0;z-index:100;background:rgba(6,8,16,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between}
-.logo-wrap{display:flex;align-items:center;gap:10px}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--verde);text-decoration:none;letter-spacing:1px}
-.logo-sep{width:1px;height:20px;background:var(--border2)}
-.brand-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--laranja);letter-spacing:2px;text-transform:uppercase}
-.insta-link{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#833AB4,#FD1D1D,#FCAF45);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:white;text-decoration:none;transition:all .2s}
-.insta-link:hover{transform:scale(1.05);opacity:.9}
-
-/* HERO */
-.hero{position:relative;overflow:hidden;min-height:100svh;display:flex;flex-direction:column}
-.hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg-img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.35) saturate(1.2)}
-.hero-bg-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(6,8,16,.3) 0%,rgba(6,8,16,.5) 50%,rgba(6,8,16,1) 100%)}
-.hero-content{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 20px 40px}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,109,0,.15);border:1px solid rgba(255,109,0,.4);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--laranja);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;backdrop-filter:blur(8px)}
-.hero-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(52px,14vw,80px);font-weight:900;line-height:.9;letter-spacing:-1px;margin-bottom:8px}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--laranja);letter-spacing:2px;text-decoration:none}
+.logo span{color:var(--neon)}
+.nav-links{display:flex;gap:16px;align-items:center}
+.nav-link{color:var(--muted);font-size:13px;font-weight:600;text-decoration:none}
+.btn-admin{background:rgba(255,109,0,.15);border:1px solid rgba(255,109,0,.3);color:var(--laranja);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none}
+.hero{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(255,109,0,.12),transparent 70%)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,23,68,.15);border:1px solid rgba(255,23,68,.3);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:800;color:#ff1744;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,23,68,.3)}50%{box-shadow:0 0 0 8px rgba(255,23,68,0)}}
+.hero-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(40px,12vw,72px);font-weight:900;line-height:1;margin-bottom:16px}
 .hero-title em{color:var(--laranja);font-style:normal}
-.hero-title span{color:var(--verde)}
-.hero-sub{font-size:15px;color:rgba(240,244,255,.7);margin-bottom:28px;line-height:1.5;max-width:360px}
-.hero-price-wrap{display:flex;align-items:center;gap:16px;margin-bottom:24px}
-.hero-price{font-family:'Barlow Condensed',sans-serif;font-size:clamp(40px,10vw,56px);font-weight:900;color:var(--verde);line-height:1}
-.hero-price sup{font-size:20px;font-weight:700;vertical-align:super;margin-right:4px}
-.hero-price-label{font-size:12px;color:var(--muted2);line-height:1.4}
-.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
-.btn-primary{background:linear-gradient(135deg,var(--laranja),var(--laranja2));color:white;border:none;border-radius:14px;padding:16px 32px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:1px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,109,0,.4)}
-.btn-wa{background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.4);color:#25D366;border-radius:14px;padding:16px 24px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(8px)}
-.btn-wa:hover{background:rgba(37,211,102,.25);transform:translateY(-2px)}
-
-/* SPECS STRIP */
-.specs-strip{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0;overflow:hidden;position:relative;z-index:1}
-.specs-inner{display:flex;overflow-x:auto;scrollbar-width:none;padding:16px 20px;gap:24px}
-.specs-inner::-webkit-scrollbar{display:none}
-.spec-item{display:flex;align-items:center;gap:10px;flex-shrink:0;padding:10px 16px;background:var(--bg3);border-radius:12px;border:1px solid var(--border2)}
-.spec-ico{font-size:22px}
-.spec-txt .spec-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.spec-txt .spec-val{font-size:14px;font-weight:700;color:var(--text);margin-top:1px}
-
-/* GALERIA */
-.gallery-section{padding:40px 20px;max-width:600px;margin:0 auto}
-.section-label{font-size:11px;font-weight:700;color:var(--laranja);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
-.section-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,7vw,38px);font-weight:900;margin-bottom:20px;line-height:1}
-.gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-.gallery-img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;border-radius:16px;cursor:pointer;transition:all .3s;border:2px solid transparent}
-.gallery-img:hover,.gallery-img.active{border-color:var(--laranja);transform:scale(1.02)}
-.gallery-img.active{box-shadow:0 0 0 3px rgba(255,109,0,.3)}
-
-/* PRODUTO CARD */
-.produto-section{padding:0 20px 40px;max-width:600px;margin:0 auto}
-.produto-card{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;overflow:hidden}
-.produto-card-header{background:linear-gradient(135deg,var(--bg3),var(--surface));padding:20px;border-bottom:1px solid var(--border)}
-.produto-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.25);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--verde);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.produto-nome{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;margin-bottom:4px}
-.produto-sub{font-size:13px;color:var(--muted2)}
-.produto-preco-wrap{display:flex;align-items:baseline;gap:8px;margin-top:16px}
-.produto-preco{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;color:var(--verde);line-height:1}
-.produto-preco sup{font-size:18px;font-weight:700;vertical-align:super}
-.produto-preco-note{font-size:12px;color:var(--muted)}
+.hero-title span{color:var(--neon)}
+.hero-sub{font-size:16px;color:rgba(240,244,255,.7);max-width:400px;line-height:1.6;margin-bottom:32px}
+.hero-preco{display:flex;align-items:center;gap:16px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
+.preco-antigo{font-family:'Barlow Condensed',sans-serif;font-size:32px;color:var(--muted);text-decoration:line-through}
+.preco-novo{font-family:'Barlow Condensed',sans-serif;font-size:clamp(52px,14vw,80px);font-weight:900;color:var(--neon);line-height:1}
+.preco-novo sup{font-size:28px;vertical-align:super}
+.preco-desc{font-size:11px;color:var(--muted);margin-top:4px}
+.promo-badge{background:linear-gradient(135deg,var(--laranja),var(--laranja2));color:white;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:900;letter-spacing:1px;transform:rotate(-2deg)}
+.hero-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px}
+.btn-comprar-hero{background:linear-gradient(135deg,var(--laranja),var(--laranja2));color:white;border:none;border-radius:14px;padding:18px 32px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.btn-comprar-hero:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,109,0,.4)}
+.btn-wa-hero{background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);color:#25D366;border-radius:14px;padding:14px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px}
+.promo-bar{background:linear-gradient(135deg,rgba(255,109,0,.15),rgba(255,143,0,.15));border:1px solid rgba(255,109,0,.3);border-radius:16px;padding:20px;margin:0 20px 30px;text-align:center;max-width:600px;margin-left:auto;margin-right:auto}
+.promo-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--laranja);margin-bottom:6px}
+.promo-sub{font-size:13px;color:rgba(240,244,255,.7)}
+.galeria-wrap{max-width:600px;margin:0 auto;padding:0 20px 40px}
+.galeria-main-ph{width:100%;aspect-ratio:3/4;background:var(--card);border-radius:20px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--muted);margin-bottom:10px}
+.galeria-main{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:20px;margin-bottom:10px;border:2px solid var(--border)}
+.galeria-thumbs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.galeria-thumb{width:70px;height:90px;object-fit:cover;border-radius:10px;cursor:pointer;border:2px solid transparent;flex-shrink:0}
+.galeria-thumb.active,.galeria-thumb:hover{border-color:var(--laranja)}
+.produto-wrap{max-width:600px;margin:0 auto;padding:0 20px 40px}
+.produto-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.produto-header{padding:20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--bg3),var(--bg2))}
+.produto-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.25);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--neon);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.produto-nome{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:4px}
+.produto-sub{font-size:13px;color:var(--muted)}
+.preco-row{display:flex;align-items:flex-end;gap:10px;margin-top:14px}
+.preco-de{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--muted);text-decoration:line-through}
+.preco-por{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;color:var(--neon);line-height:1}
+.preco-por sup{font-size:16px;vertical-align:super}
 .produto-body{padding:20px}
-
-/* CORES */
-.cores-section{margin-bottom:20px}
-.cores-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.cores-grid{display:flex;gap:10px;flex-wrap:wrap}
-.cor-opt{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative}
-.cor-opt.sel{border-color:white;transform:scale(1.15)}
-.cor-opt.sel::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:white;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-
-/* TAMANHOS */
-.tam-section{margin-bottom:20px}
-.tam-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.tam-grid{display:flex;gap:8px;flex-wrap:wrap}
-.tam-btn{background:var(--bg3);border:2px solid var(--border2);color:var(--text);min-width:48px;height:48px;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;padding:0 12px}
-.tam-btn.sel{background:var(--laranja);color:white;border-color:var(--laranja);box-shadow:0 4px 20px rgba(255,109,0,.3)}
+.section-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.cores-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.cor-btn{width:36px;height:36px;border-radius:50%;border:3px solid transparent;cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.cor-btn.sel{border-color:white;transform:scale(1.15)}
+.cor-btn.sel::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:white;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.tam-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tam-btn{background:var(--bg3);border:2px solid var(--border);color:var(--text);min-width:50px;height:50px;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;padding:0 12px}
+.tam-btn.sel{background:var(--laranja);color:white;border-color:var(--laranja);box-shadow:0 4px 16px rgba(255,109,0,.35)}
 .tam-btn:hover:not(.sel){border-color:var(--laranja);color:var(--laranja)}
-.tam-guia{font-size:11px;color:var(--verde);cursor:pointer;text-decoration:underline;margin-top:6px;display:inline-block}
-
-/* QTD */
-.qtd-section{margin-bottom:24px}
-.qtd-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.qtd-ctrl{display:flex;align-items:center;gap:0;background:var(--bg3);border:2px solid var(--border2);border-radius:14px;overflow:hidden;width:fit-content}
-.qtd-btn{background:transparent;border:none;color:var(--text);width:48px;height:48px;font-size:22px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
-.qtd-btn:hover{background:var(--surface);color:var(--laranja)}
-.qtd-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;min-width:44px;text-align:center;color:var(--verde)}
-
-/* COMPRAR */
-.comprar-section{display:flex;flex-direction:column;gap:10px}
-.btn-comprar{width:100%;padding:18px;background:linear-gradient(135deg,var(--laranja) 0%,var(--laranja2) 100%);color:white;border:none;border-radius:14px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-comprar:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,109,0,.4)}
-.btn-comprar:disabled{background:var(--surface);color:var(--muted);cursor:not-allowed;transform:none;box-shadow:none}
-.btn-whatsapp{width:100%;padding:16px;background:rgba(37,211,102,.1);border:2px solid rgba(37,211,102,.3);color:#25D366;border-radius:14px;font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none}
-.btn-whatsapp:hover{background:rgba(37,211,102,.2);border-color:#25D366;transform:translateY(-2px)}
-
-/* FEATURES */
-.features-section{padding:0 20px 40px;max-width:600px;margin:0 auto}
-.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.feature-card{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px}
-.feature-ico{font-size:28px}
-.feature-title{font-size:13px;font-weight:700;color:var(--text)}
-.feature-desc{font-size:11px;color:var(--muted2);line-height:1.4}
-
-/* COMO PEDIR */
-.steps-section{padding:0 20px 40px;max-width:600px;margin:0 auto}
-.steps-list{display:flex;flex-direction:column;gap:12px}
-.step{display:flex;align-items:flex-start;gap:14px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px}
-.step-num{background:linear-gradient(135deg,var(--laranja),var(--laranja2));color:white;width:32px;height:32px;border-radius:50%;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.step-txt .step-title{font-size:14px;font-weight:700;margin-bottom:2px}
-.step-txt .step-desc{font-size:12px;color:var(--muted2)}
-
-/* TABELA MEDIDAS */
-.medidas-modal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.8);backdrop-filter:blur(8px)}
+.link-medidas{font-size:12px;color:var(--neon);cursor:pointer;margin-left:auto;text-decoration:underline}
+.qtd-row{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.qtd-btn{width:40px;height:40px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .2s}
+.qtd-btn:hover{border-color:var(--laranja);color:var(--laranja)}
+.qtd-num{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;min-width:32px;text-align:center}
+.qtd-promo{font-size:12px;color:var(--neon);font-weight:700}
+.total-box{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px}
+.total-row{display:flex;justify-content:space-between;align-items:center}
+.total-val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:var(--neon)}
+.total-eco{font-size:12px;color:var(--laranja);font-weight:700;margin-top:4px}
+.endereco-form{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px;display:none}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field-row.full{grid-template-columns:1fr}
+.field-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:5px;display:block}
+.field-input{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;width:100%;outline:none;transition:border .2s}
+.field-input:focus{border-color:var(--laranja)}
+.checkout-btns{display:flex;flex-direction:column;gap:10px}
+.btn-pix{width:100%;padding:18px;background:linear-gradient(135deg,var(--laranja),var(--laranja2));color:white;border:none;border-radius:14px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.btn-pix:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,109,0,.4)}
+.btn-wa-compra{width:100%;padding:14px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:#25D366;border-radius:14px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.specs-wrap{max-width:600px;margin:0 auto;padding:0 20px 40px}
+.specs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.spec-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px}
+.spec-icon{font-size:24px;flex-shrink:0}
+.spec-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.spec-val{font-size:14px;font-weight:700;margin-top:2px}
+.pix-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;align-items:flex-end;justify-content:center}
+.pix-modal.open{display:flex}
+.pix-sheet{background:var(--card);border-radius:24px 24px 0 0;padding:28px 24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.pix-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.pix-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;margin-bottom:4px}
+.pix-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+.pix-valor{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--neon);text-align:center;margin-bottom:16px}
+.pix-qr{width:200px;height:200px;background:white;border-radius:12px;padding:8px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.pix-codigo{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:11px;color:var(--neon);word-break:break-all;margin-bottom:12px;max-height:60px;overflow:auto;font-family:monospace}
+.btn-copiar{width:100%;padding:14px;background:var(--neon);color:#000;border:none;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;cursor:pointer;margin-bottom:8px}
+.pix-instrucao{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:16px}
+.btn-fechar-pix{width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer}
+.medidas-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:flex-end;justify-content:center}
 .medidas-modal.open{display:flex}
-.medidas-sheet{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-width:560px;padding:24px 20px 40px}
-.medidas-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px}
+.medidas-sheet{background:var(--card);border-radius:24px 24px 0 0;padding:28px 24px;width:100%;max-width:480px}
+.medidas-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
 .medidas-table{width:100%;border-collapse:collapse;font-size:13px}
-.medidas-table th{background:var(--bg3);padding:10px;text-align:center;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.medidas-table td{padding:10px;text-align:center;border-bottom:1px solid var(--border)}
-.medidas-table tr:last-child td{border-bottom:none}
-
-/* FOOTER */
-.footer{background:var(--bg2);border-top:1px solid var(--border);padding:30px 20px;text-align:center;margin-bottom:80px}
-.footer-brand{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:var(--laranja);margin-bottom:4px}
-.footer-sub{font-size:13px;color:var(--muted)}
-.footer-links{display:flex;justify-content:center;gap:16px;margin-top:16px}
-.footer-link{font-size:12px;color:var(--muted2);text-decoration:none}
-.footer-link:hover{color:var(--verde)}
-
-/* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(6,8,16,.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 0 12px;z-index:100}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;padding:4px 12px}
+.medidas-table th{padding:8px 10px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+.medidas-table td{padding:10px;border-bottom:1px solid rgba(42,42,56,.5);font-weight:600}
+.medidas-table tr:last-child td{border:none}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:600;z-index:400;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,15,.96);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:var(--muted);padding:4px 0}
+.nav-item.ativo,.nav-item:hover{color:var(--neon)}
 .nav-icon{font-size:20px}
-.nav-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.nav-item.ativo .nav-label,.nav-item.ativo .nav-icon{color:var(--laranja)}
-
-/* TOAST */
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,var(--laranja),var(--laranja2));color:white;padding:12px 24px;border-radius:20px;font-weight:700;font-size:14px;z-index:400;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 30px rgba(255,109,0,.4)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-@media(min-width:600px){
-  .gallery-section,.produto-section,.features-section,.steps-section{max-width:560px}
-  .hero-content{padding:0 40px 60px}
-}
+.nav-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="logo-wrap">
-    <a href="/index.html" class="logo">PACE</a>
-    <div class="logo-sep"></div>
-    <span class="brand-name">EstamPace</span>
+<header class="topbar">
+  <a href="/atleta.html" class="logo">Estam<span>Pace</span></a>
+  <div class="nav-links">
+    <a href="/atleta.html" class="nav-link">🏃 App</a>
+    <a href="/corridas-abertas.html" class="nav-link">🏁 Corridas</a>
+    <a href="/loja-admin.html" class="btn-admin" id="adminBtn" style="display:none">⚙️ Admin</a>
   </div>
-  <a class="insta-link" href="https://www.instagram.com/estampacecamisetas?igsh=MXFqbXdzYjR1bmNtbA==" target="_blank">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-    @estampacecamisetas
-  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-badge">🔥 OFERTA RELÂMPAGO — TEMPO LIMITADO</div>
+  <h1 class="hero-title">Veste quem<br><em>corre</em> de <span>verdade</span></h1>
+  <p class="hero-sub">Camiseta esportiva premium para atletas de rua. Dry-fit, corte anatômico, bordado PACE.</p>
+  <div class="hero-preco">
+    <div class="preco-antigo">R$ 299,90</div>
+    <div>
+      <div class="preco-novo"><sup>R$</sup>149<sup>,90</sup></div>
+      <div class="preco-desc">50% off · Frete grátis Sergipe</div>
+    </div>
+    <div class="promo-badge">-50%</div>
+  </div>
+  <div class="hero-btns">
+    <button class="btn-comprar-hero" onclick="document.getElementById('comprar-anchor').scrollIntoView({behavior:'smooth'})">🛒 QUERO AGORA</button>
+    <a class="btn-wa-hero" href="https://wa.me/5579998020798" target="_blank">💬 Falar no WhatsApp</a>
+  </div>
+</section>
+
+<div class="promo-bar">
+  <div class="promo-title">🎁 LEVE 3, PAGUE 2!</div>
+  <div class="promo-sub">Adicione 3 ou mais peças e ganhe a mais barata de graça. Ideal para grupos de corrida!</div>
 </div>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-bg">
-    <img class="hero-bg-img" src="https://placehold.co/400x500/1a1a2e/00e676?text=FOTO" alt="EstamPace Camiseta">
-    <div class="hero-bg-overlay"></div>
+<div class="galeria-wrap">
+  <div id="galeriaMain" class="galeria-main-ph">
+    <div style="font-size:56px">👕</div>
+    <div style="font-size:15px;font-weight:700">Camiseta EstamPace</div>
+    <div style="font-size:12px;margin-top:4px">Fotos carregando...</div>
   </div>
-  <div class="hero-content">
-    <div class="hero-badge">🔥 Coleção 2026 · Edição Limitada</div>
-    <h1 class="hero-title">CAMISETA<br><em>ESTAM</em><span>PACE</span></h1>
-    <p class="hero-sub">Performance + Estilo para quem leva a corrida a sério</p>
-    <div class="hero-price-wrap">
-      <div class="hero-price"><sup>R$</sup>99<small style="font-size:28px">,90</small></div>
-      <div class="hero-price-label">Frete grátis<br>para Sergipe</div>
-    </div>
-    <div class="hero-cta">
-      <button class="btn-primary" onclick="document.getElementById('comprar-anchor').scrollIntoView({behavior:'smooth'})">
-        🛒 Comprar Agora
-      </button>
-      <a class="btn-wa" href="https://wa.me/5579998020798?text=Olá! Quero comprar uma camiseta EstamPace!" target="_blank">
-        💬 WhatsApp
-      </a>
-    </div>
-  </div>
+  <div class="galeria-thumbs" id="galleryThumbs"></div>
 </div>
 
-<!-- SPECS STRIP -->
-<div class="specs-strip">
-  <div class="specs-inner">
-    <div class="spec-item">
-      <span class="spec-ico">🧵</span>
-      <div class="spec-txt">
-        <div class="spec-label">Material</div>
-        <div class="spec-val">100% Poliamida Premium</div>
-      </div>
-    </div>
-    <div class="spec-item">
-      <span class="spec-ico">☀️</span>
-      <div class="spec-txt">
-        <div class="spec-label">Proteção Solar</div>
-        <div class="spec-val">UV50+ Certificado</div>
-      </div>
-    </div>
-    <div class="spec-item">
-      <span class="spec-ico">🧊</span>
-      <div class="spec-txt">
-        <div class="spec-label">Tecnologia</div>
-        <div class="spec-val">Toque Macio & Gelado</div>
-      </div>
-    </div>
-    <div class="spec-item">
-      <span class="spec-ico">🦠</span>
-      <div class="spec-txt">
-        <div class="spec-label">Tratamento</div>
-        <div class="spec-val">Ação Antibacteriana</div>
-      </div>
-    </div>
-    <div class="spec-item">
-      <span class="spec-ico">💧</span>
-      <div class="spec-txt">
-        <div class="spec-label">Desempenho</div>
-        <div class="spec-val">Secagem Ultra Rápida</div>
-      </div>
-    </div>
-    <div class="spec-item">
-      <span class="spec-ico">🏃</span>
-      <div class="spec-txt">
-        <div class="spec-label">Ideal para</div>
-        <div class="spec-val">Corrida · Treino · Dia a dia</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- GALERIA -->
-<div class="gallery-section">
-  <div class="section-label">Galeria de Fotos</div>
-  <div class="section-title">Veja os detalhes 📸</div>
-  <div class="gallery-grid">
-    <img class="gallery-img active" id="gimg1" src="https://placehold.co/400x500/1a1a2e/00e676?text=FOTO" alt="EstamPace Camiseta Lisa" onclick="selectImg(this)">
-    <img class="gallery-img" id="gimg2" src="https://placehold.co/400x500/1a1a2e/00e676?text=FOTO" alt="EstamPace Camiseta com Logo" onclick="selectImg(this)">
-  </div>
-</div>
-
-<!-- COMPRAR -->
-<div class="produto-section" id="comprar-anchor">
+<div class="produto-wrap" id="comprar-anchor">
   <div class="produto-card">
-    <div class="produto-card-header">
-      <div class="produto-tag">✦ Premium · UV50+</div>
+    <div class="produto-header">
+      <div class="produto-tag">🏃 EstamPace Oficial</div>
       <div class="produto-nome">Camiseta EstamPace</div>
-      <div class="produto-sub">100% Poliamida · Tecnologia de ponta para atletas</div>
-      <div class="produto-preco-wrap">
-        <div class="produto-preco"><sup>R$</sup>99<small style="font-size:22px">,90</small></div>
-        <div class="produto-preco-note">à vista<br>Frete grátis SE</div>
+      <div class="produto-sub">Dry-fit premium · Bordado PACE · Corte atlético</div>
+      <div class="preco-row">
+        <div class="preco-de">R$ 299,90</div>
+        <div class="preco-por"><sup>R$</sup><span id="precoDisplay">149,90</span></div>
       </div>
     </div>
     <div class="produto-body">
-
-      <!-- CORES -->
-      <div class="cores-section">
-        <div class="cores-label">Cor — <span id="corLabel" style="color:var(--laranja)">Laranja</span></div>
-        <div class="cores-grid" id="coresGrid">
-          <div class="cor-opt sel" data-cor="Laranja" style="background:#E65100" onclick="selectCor(this)" title="Laranja"></div>
-          <div class="cor-opt" data-cor="Preto" style="background:#1a1a1a;border-color:#444" onclick="selectCor(this)" title="Preto"></div>
-          <div class="cor-opt" data-cor="Branco" style="background:#f0f0f0" onclick="selectCor(this)" title="Branco"></div>
-          <div class="cor-opt" data-cor="Azul Royal" style="background:#1565C0" onclick="selectCor(this)" title="Azul Royal"></div>
-          <div class="cor-opt" data-cor="Verde" style="background:#00C853" onclick="selectCor(this)" title="Verde"></div>
-          <div class="cor-opt" data-cor="Vermelho" style="background:#C62828" onclick="selectCor(this)" title="Vermelho"></div>
-          <div class="cor-opt" data-cor="Cinza" style="background:#546E7A" onclick="selectCor(this)" title="Cinza"></div>
-          <div class="cor-opt" data-cor="Rosa" style="background:#E91E63" onclick="selectCor(this)" title="Rosa"></div>
-        </div>
+      <div class="section-lbl">Cor: <span id="corLabel" style="color:var(--text);font-weight:700;text-transform:none;letter-spacing:0">Laranja</span></div>
+      <div class="cores-row" id="coresRow">
+        <div class="cor-btn sel" data-cor="Laranja" style="background:#FF6D00" onclick="selectCor(this)" title="Laranja"></div>
+        <div class="cor-btn" data-cor="Preto" style="background:#1a1a1a;border-color:#555" onclick="selectCor(this)" title="Preto"></div>
+        <div class="cor-btn" data-cor="Branco" style="background:#f0f0f0" onclick="selectCor(this)" title="Branco"></div>
+        <div class="cor-btn" data-cor="Azul" style="background:#1976D2" onclick="selectCor(this)" title="Azul"></div>
+        <div class="cor-btn" data-cor="Verde" style="background:#00C853" onclick="selectCor(this)" title="Verde"></div>
+        <div class="cor-btn" data-cor="Vermelho" style="background:#D50000" onclick="selectCor(this)" title="Vermelho"></div>
+        <div class="cor-btn" data-cor="Cinza" style="background:#607D8B" onclick="selectCor(this)" title="Cinza"></div>
+        <div class="cor-btn" data-cor="Vinho" style="background:#880E4F" onclick="selectCor(this)" title="Vinho"></div>
       </div>
 
-      <!-- TAMANHOS -->
-      <div class="tam-section">
-        <div class="tam-label">Tamanho — <span id="tamLabel" style="color:var(--laranja)">Selecione</span></div>
-        <div class="tam-grid">
-          <button class="tam-btn" onclick="selectTam(this,'PP')">PP</button>
-          <button class="tam-btn" onclick="selectTam(this,'P')">P</button>
-          <button class="tam-btn" onclick="selectTam(this,'M')">M</button>
-          <button class="tam-btn" onclick="selectTam(this,'G')">G</button>
-          <button class="tam-btn" onclick="selectTam(this,'GG')">GG</button>
-          <button class="tam-btn" onclick="selectTam(this,'XGG')">XGG</button>
-        </div>
-        <span class="tam-guia" onclick="abrirMedidas()">📏 Ver tabela de medidas</span>
+      <div style="display:flex;align-items:center;margin-bottom:10px">
+        <div class="section-lbl" style="margin:0">Tamanho: <span id="tamLabel" style="color:var(--muted);font-weight:700;text-transform:none;letter-spacing:0">selecione</span></div>
+        <span class="link-medidas" onclick="abrirMedidas()">📏 Tabela</span>
+      </div>
+      <div class="tam-row">
+        <button class="tam-btn" onclick="selectTam(this,'PP')">PP</button>
+        <button class="tam-btn" onclick="selectTam(this,'P')">P</button>
+        <button class="tam-btn" onclick="selectTam(this,'M')">M</button>
+        <button class="tam-btn" onclick="selectTam(this,'G')">G</button>
+        <button class="tam-btn" onclick="selectTam(this,'GG')">GG</button>
+        <button class="tam-btn" onclick="selectTam(this,'XGG')">XGG</button>
       </div>
 
-      <!-- QTD -->
-      <div class="qtd-section">
-        <div class="qtd-label">Quantidade</div>
-        <div class="qtd-ctrl">
-          <button class="qtd-btn" onclick="mudaQtd(-1)">−</button>
-          <span class="qtd-num" id="qtdNum">1</span>
-          <button class="qtd-btn" onclick="mudaQtd(1)">+</button>
-        </div>
+      <div class="section-lbl">Quantidade</div>
+      <div class="qtd-row">
+        <button class="qtd-btn" onclick="mudaQtd(-1)">−</button>
+        <span class="qtd-num" id="qtdNum">1</span>
+        <button class="qtd-btn" onclick="mudaQtd(1)">+</button>
+        <span class="qtd-promo" id="promoMsg"></span>
       </div>
 
-      <!-- BOTÕES COMPRAR -->
-      <div class="comprar-section">
-        <button class="btn-comprar" id="btnComprar" onclick="comprarApp()">
-          🛒 COMPRAR AGORA — R$<span id="totalPreco">99,90</span>
+      <div style="margin-bottom:12px">
+        <button onclick="toggleEndereco()" id="btnEndereco"
+          style="width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center">
+          <span>📦 Adicionar endereço de entrega</span><span id="enderecoArrow">▼</span>
         </button>
-        <a class="btn-whatsapp" id="btnWa" href="#" onclick="comprarWa(event)" target="_blank">
-          💬 Pedir pelo WhatsApp
-        </a>
+        <div class="endereco-form" id="enderecoForm">
+          <div class="field-row full"><div><label class="field-label">Seu Nome *</label><input type="text" class="field-input" id="nomeCliente" placeholder="Nome completo"></div></div>
+          <div class="field-row">
+            <div><label class="field-label">WhatsApp *</label><input type="tel" class="field-input" id="wppCliente" placeholder="79999990000"></div>
+            <div><label class="field-label">CEP</label><input type="text" class="field-input" id="cepCliente" placeholder="49000-000" oninput="buscarCEP(this.value)"></div>
+          </div>
+          <div class="field-row">
+            <div><label class="field-label">Rua / Av.</label><input type="text" class="field-input" id="ruaCliente" placeholder="Rua das Flores"></div>
+            <div><label class="field-label">Número</label><input type="text" class="field-input" id="numCliente" placeholder="123"></div>
+          </div>
+          <div class="field-row">
+            <div><label class="field-label">Bairro</label><input type="text" class="field-input" id="bairroCliente" placeholder="Centro"></div>
+            <div><label class="field-label">Cidade/UF</label><input type="text" class="field-input" id="cidadeCliente" placeholder="Itabaiana/SE"></div>
+          </div>
+          <div class="field-row full"><div><label class="field-label">Observação</label><input type="text" class="field-input" id="obsCliente" placeholder="Ap. 12, bloco B..."></div></div>
+        </div>
       </div>
 
-    </div>
-  </div>
-</div>
+      <div class="total-box">
+        <div class="total-row">
+          <span style="font-size:13px;color:var(--muted)">Total</span>
+          <span class="total-val" id="totalDisplay">R$ 149,90</span>
+        </div>
+        <div class="total-eco" id="economiaMsg">💚 Você economiza R$ 150,00</div>
+      </div>
 
-<!-- FEATURES -->
-<div class="features-section">
-  <div class="section-label">Por que escolher</div>
-  <div class="section-title">Tecnologia de atleta 🏃</div>
-  <div class="features-grid">
-    <div class="feature-card">
-      <span class="feature-ico">☀️</span>
-      <div class="feature-title">UV50+ Certificado</div>
-      <div class="feature-desc">Protege sua pele nos treinos ao ar livre sem abrir mão do conforto</div>
-    </div>
-    <div class="feature-card">
-      <span class="feature-ico">🧊</span>
-      <div class="feature-title">Toque Gelado</div>
-      <div class="feature-desc">Tecnologia cool touch mantém você fresco mesmo nos treinos mais intensos</div>
-    </div>
-    <div class="feature-card">
-      <span class="feature-ico">🦠</span>
-      <div class="feature-title">Antibacteriana</div>
-      <div class="feature-desc">Tratamento especial que inibe bactérias e elimina odores durante o exercício</div>
-    </div>
-    <div class="feature-card">
-      <span class="feature-ico">💧</span>
-      <div class="feature-title">Secagem Rápida</div>
-      <div class="feature-desc">Absorve a transpiração e seca muito mais rápido que o algodão convencional</div>
-    </div>
-    <div class="feature-card">
-      <span class="feature-ico">🎯</span>
-      <div class="feature-title">Corte Anatômico</div>
-      <div class="feature-desc">Modelagem que acompanha os movimentos sem apertar nem soltar</div>
-    </div>
-    <div class="feature-card">
-      <span class="feature-ico">✨</span>
-      <div class="feature-title">Poliamida Premium</div>
-      <div class="feature-desc">100% poliamida de alta qualidade, mais resistente e durável que o poliéster</div>
-    </div>
-  </div>
-</div>
+      <div class="checkout-btns">
+        <button class="btn-pix" onclick="checkout('pix')">💳 PAGAR COM PIX</button>
+        <button class="btn-wa-compra" onclick="checkout('wa')">💬 Finalizar pelo WhatsApp</button>
+      </div>
 
-<!-- COMO PEDIR -->
-<div class="steps-section">
-  <div class="section-label">Como comprar</div>
-  <div class="section-title">Simples e rápido ⚡</div>
-  <div class="steps-list">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-txt">
-        <div class="step-title">Escolha cor, tamanho e quantidade</div>
-        <div class="step-desc">Selecione os campos acima e clique em Comprar Agora</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-txt">
-        <div class="step-title">Confirme pelo WhatsApp</div>
-        <div class="step-desc">Você será redirecionado para finalizar com a gente diretamente</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-txt">
-        <div class="step-title">Pagamento via Pix ou cartão</div>
-        <div class="step-desc">Confirmamos e enviamos no prazo combinado</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-txt">
-        <div class="step-title">Entrega em Sergipe e todo Brasil</div>
-        <div class="step-desc">Frete grátis para Sergipe · Entrega via transportadora</div>
+      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6">
+        🔒 Pagamento seguro via Mercado Pago · Pix instantâneo<br>
+        📦 Frete grátis Sergipe · Todo Brasil via transportadora
       </div>
     </div>
   </div>
 </div>
 
-<!-- TABELA MEDIDAS -->
+<div class="specs-wrap">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;margin-bottom:16px">⚡ Por que a EstamPace?</div>
+  <div class="specs-grid">
+    <div class="spec-card"><span class="spec-icon">🧵</span><div><div class="spec-lbl">Material</div><div class="spec-val">Dry-fit 100% Premium</div></div></div>
+    <div class="spec-card"><span class="spec-icon">💧</span><div><div class="spec-lbl">Tecnologia</div><div class="spec-val">Absorção de suor</div></div></div>
+    <div class="spec-card"><span class="spec-icon">🎽</span><div><div class="spec-lbl">Corte</div><div class="spec-val">Atlético masculino</div></div></div>
+    <div class="spec-card"><span class="spec-icon">🏃</span><div><div class="spec-lbl">Ideal para</div><div class="spec-val">Corrida de rua</div></div></div>
+    <div class="spec-card"><span class="spec-icon">🏅</span><div><div class="spec-lbl">Bordado</div><div class="spec-val">Logo PACE oficial</div></div></div>
+    <div class="spec-card"><span class="spec-icon">📦</span><div><div class="spec-lbl">Entrega</div><div class="spec-val">Frete grátis em SE</div></div></div>
+  </div>
+</div>
+
+<div class="pix-modal" id="pixModal">
+  <div class="pix-sheet">
+    <div class="pix-handle"></div>
+    <div class="pix-title">💳 Pagar com Pix</div>
+    <div class="pix-sub" id="pixProdutoInfo">Camiseta EstamPace</div>
+    <div class="pix-valor" id="pixValor">R$ 149,90</div>
+    <div class="pix-qr" id="pixQRWrap"><div style="font-size:40px;color:#ccc">⏳</div></div>
+    <div class="pix-codigo" id="pixCodigo">Gerando código Pix...</div>
+    <button class="btn-copiar" onclick="copiarPix()">📋 Copiar Código Pix</button>
+    <div class="pix-instrucao">1. Abra o app do seu banco<br>2. Escolha <strong>Pagar com Pix</strong><br>3. Escaneie o QR ou cole o código<br>4. Confirmação automática ✅</div>
+    <div style="background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);border-radius:10px;padding:12px;text-align:center;margin-bottom:12px;font-size:12px;color:var(--neon)">
+      Após o pagamento, enviaremos confirmação pelo WhatsApp 📱
+    </div>
+    <button class="btn-fechar-pix" onclick="fecharPix()">✕ Fechar</button>
+  </div>
+</div>
+
 <div class="medidas-modal" id="medidasModal" onclick="if(event.target===this)fecharMedidas()">
   <div class="medidas-sheet">
     <div class="medidas-handle"></div>
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:16px">📏 Tabela de Medidas</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:16px">📏 Tabela de Medidas</div>
     <table class="medidas-table">
-      <thead>
-        <tr><th>Tamanho</th><th>Peito (cm)</th><th>Comprimento</th><th>Manga</th></tr>
-      </thead>
+      <thead><tr><th>Tam.</th><th>Peito (cm)</th><th>Comprimento</th><th>Manga</th></tr></thead>
       <tbody>
         <tr><td><b>PP</b></td><td>88–92</td><td>64</td><td>18</td></tr>
         <tr><td><b>P</b></td><td>92–96</td><td>66</td><td>19</td></tr>
@@ -426,129 +295,181 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <tr><td><b>XGG</b></td><td>110–118</td><td>74</td><td>23</td></tr>
       </tbody>
     </table>
-    <div style="font-size:11px;color:var(--muted);margin-top:12px">* Medidas em centímetros · Em caso de dúvida, prefira o tamanho maior</div>
-    <button onclick="fecharMedidas()" style="margin-top:20px;width:100%;padding:14px;background:var(--surface);border:none;border-radius:12px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer">Fechar</button>
+    <div style="font-size:11px;color:var(--muted);margin-top:10px">* Em caso de dúvida, prefira o tamanho maior</div>
+    <button onclick="fecharMedidas()" style="margin-top:18px;width:100%;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer">Fechar</button>
   </div>
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-brand">EstamPace</div>
-  <div class="footer-sub">Camisetas esportivas para quem corre de verdade 🏃</div>
-  <div class="footer-links">
-    <a class="footer-link" href="https://www.instagram.com/estampacecamisetas?igsh=MXFqbXdzYjR1bmNtbA==" target="_blank">📸 Instagram</a>
-    <a class="footer-link" href="/atleta.html">🏃 PACE App</a>
-    <a class="footer-link" href="/corridas-abertas.html">🏁 Corridas</a>
-  </div>
-</div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a href="/index.html" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
+  <a href="/atleta.html" class="nav-item"><span class="nav-icon">🏃</span><span class="nav-label">App</span></a>
   <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
-  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
-  <a href="/comunidade.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
   <a href="/loja.html" class="nav-item ativo"><span class="nav-icon">🛒</span><span class="nav-label">Loja</span></a>
 </nav>
 
 <script>
-const WHATSAPP_NUM = '5579998020798'; // TROQUE pelo seu número!
-let qtd = 1;
-let tamSel = '';
-let corSel = 'Laranja';
-const PRECO = 99.90;
+const TOKEN = localStorage.getItem('pace_token');
+const USER = JSON.parse(localStorage.getItem('pace_user') || '{}');
+const PRECO_ORIGINAL = 299.90;
+const PRECO_PROMO = 149.90;
+const WHATSAPP = '5579998020798';
+let qtd=1, tamSel='', corSel='Laranja', enderecoAberto=false;
+if(USER.isAdmin) document.getElementById('adminBtn').style.display='';
 
-function selectImg(el) {
-  document.querySelectorAll('.gallery-img').forEach(i => i.classList.remove('active'));
+async function carregarFotos() {
+  try {
+    const produtos = await fetch('/loja/produtos').then(r=>r.json());
+    const prod = Array.isArray(produtos)?produtos[0]:null;
+    if(!prod?.fotos) return;
+    const fotos = prod.fotos.split(',').filter(Boolean);
+    if(!fotos.length) return;
+    const mainEl = document.getElementById('galeriaMain');
+    mainEl.outerHTML = `<img class="galeria-main" id="galeriaMain" src="${fotos[0]}" alt="Camiseta EstamPace" onerror="this.style.display='none'">`;
+    document.getElementById('galleryThumbs').innerHTML = fotos.map((f,i)=>
+      `<img class="galeria-thumb${i===0?' active':''}" src="${f}" onclick="selecionarFoto(this,'${f}')" onerror="this.style.display='none'">`
+    ).join('');
+  } catch(e){}
+}
+
+function selecionarFoto(el,url){
+  document.querySelectorAll('.galeria-thumb').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
+  const m=document.getElementById('galeriaMain');
+  if(m&&m.tagName==='IMG') m.src=url;
 }
 
-function selectCor(el) {
-  document.querySelectorAll('.cor-opt').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-  corSel = el.dataset.cor;
-  document.getElementById('corLabel').textContent = corSel;
+function selectCor(el){
+  document.querySelectorAll('.cor-btn').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel'); corSel=el.dataset.cor;
+  document.getElementById('corLabel').textContent=corSel;
 }
 
-function selectTam(btn, tam) {
-  document.querySelectorAll('.tam-btn').forEach(b => b.classList.remove('sel'));
-  btn.classList.add('sel');
-  tamSel = tam;
-  document.getElementById('tamLabel').textContent = tam;
+function selectTam(btn,tam){
+  document.querySelectorAll('.tam-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); tamSel=tam;
+  document.getElementById('tamLabel').textContent=tam;
   atualizarTotal();
 }
 
-function mudaQtd(d) {
-  qtd = Math.max(1, Math.min(10, qtd + d));
-  document.getElementById('qtdNum').textContent = qtd;
+function mudaQtd(d){
+  qtd=Math.max(1,Math.min(10,qtd+d));
+  document.getElementById('qtdNum').textContent=qtd;
+  const msg=document.getElementById('promoMsg');
+  if(qtd>=3){const g=Math.floor(qtd/3);msg.textContent=`🎁 ${g} peça(s) grátis!`;msg.style.color='var(--neon)';}
+  else if(qtd===2){msg.textContent='+1 para ganhar grátis!';msg.style.color='var(--laranja)';}
+  else msg.textContent='';
   atualizarTotal();
 }
 
-function atualizarTotal() {
-  const total = (PRECO * qtd).toFixed(2).replace('.', ',');
-  document.getElementById('totalPreco').textContent = total;
+function atualizarTotal(){
+  let total=PRECO_PROMO*qtd;
+  let gratis=0;
+  if(qtd>=3){gratis=Math.floor(qtd/3);total=PRECO_PROMO*(qtd-gratis);}
+  const eco=(PRECO_ORIGINAL*qtd)-total;
+  document.getElementById('totalDisplay').textContent=`R$ ${total.toFixed(2).replace('.',',')}`;
+  document.getElementById('economiaMsg').textContent=`💚 Você economiza R$ ${eco.toFixed(2).replace('.',',')}${gratis>0?` + ${gratis} peça grátis!`:''}`;
 }
 
-function comprarApp() {
-  if (!tamSel) { toast('⚠️ Selecione um tamanho!'); return; }
-  const msg = encodeURIComponent(
-    `Olá! Quero comprar a Camiseta EstamPace!\n\n` +
-    `👕 Cor: ${corSel}\n` +
-    `📏 Tamanho: ${tamSel}\n` +
-    `🔢 Quantidade: ${qtd}\n` +
-    `💰 Total: R$ ${(PRECO * qtd).toFixed(2).replace('.', ',')}\n\n` +
-    `Aguardo instruções para pagamento! 😊`
-  );
-  window.open(`https://wa.me/${WHATSAPP_NUM}?text=${msg}`, '_blank');
+function toggleEndereco(){
+  enderecoAberto=!enderecoAberto;
+  document.getElementById('enderecoForm').style.display=enderecoAberto?'block':'none';
+  document.getElementById('enderecoArrow').textContent=enderecoAberto?'▲':'▼';
 }
 
-function comprarWa(e) {
-  e.preventDefault();
-  if (!tamSel) { toast('⚠️ Selecione um tamanho antes!'); return; }
-  const msg = encodeURIComponent(
-    `Olá! Vim pelo Instagram e quero comprar a Camiseta EstamPace!\n\n` +
-    `👕 Cor: ${corSel}\n` +
-    `📏 Tamanho: ${tamSel}\n` +
-    `🔢 Quantidade: ${qtd}\n` +
-    `💰 Total: R$ ${(PRECO * qtd).toFixed(2).replace('.', ',')}\n\n` +
-    `Aguardo instruções de pagamento!`
-  );
-  window.open(`https://wa.me/${WHATSAPP_NUM}?text=${msg}`, '_blank');
+async function buscarCEP(cep){
+  const c=cep.replace(/\D/g,'');
+  if(c.length!==8) return;
+  try{
+    const d=await fetch(`https://viacep.com.br/ws/${c}/json/`).then(r=>r.json());
+    if(!d.erro){
+      document.getElementById('ruaCliente').value=d.logradouro||'';
+      document.getElementById('bairroCliente').value=d.bairro||'';
+      document.getElementById('cidadeCliente').value=`${d.localidade}/${d.uf}`;
+    }
+  }catch(e){}
 }
 
-function abrirMedidas() {
-  document.getElementById('medidasModal').classList.add('open');
-}
-function fecharMedidas() {
-  document.getElementById('medidasModal').classList.remove('open');
-}
+async function checkout(tipo){
+  if(!tamSel){toast('⚠️ Selecione um tamanho!');return;}
+  let total=PRECO_PROMO*qtd;
+  const gratis=qtd>=3?Math.floor(qtd/3):0;
+  if(gratis>0) total=PRECO_PROMO*(qtd-gratis);
+  const promocao=gratis>0?'leve3pague2':null;
+  const nome=document.getElementById('nomeCliente')?.value||USER.name||'';
+  const wpp=document.getElementById('wppCliente')?.value||'';
+  const rua=document.getElementById('ruaCliente')?.value||'';
+  const num=document.getElementById('numCliente')?.value||'';
+  const bairro=document.getElementById('bairroCliente')?.value||'';
+  const cidade=document.getElementById('cidadeCliente')?.value?.split('/')[0]||'';
+  const estado=document.getElementById('cidadeCliente')?.value?.split('/')[1]||'';
+  const cep=document.getElementById('cepCliente')?.value||'';
+  const obs=document.getElementById('obsCliente')?.value||'';
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-// Animação de entrada suave
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.spec-item, .feature-card, .step').forEach((el, i) => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = `all 0.4s ease ${i * 0.05}s`;
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.style.opacity = '1';
-          e.target.style.transform = 'translateY(0)';
-        }
+  if(tipo==='pix'){
+    document.getElementById('pixModal').classList.add('open');
+    document.getElementById('pixValor').textContent=`R$ ${total.toFixed(2).replace('.',',')}`;
+    document.getElementById('pixProdutoInfo').textContent=`${qtd}x Camiseta EstamPace ${corSel} — Tam. ${tamSel}${gratis>0?` (${gratis} grátis!)`:''}`;
+    document.getElementById('pixCodigo').textContent='Gerando código Pix...';
+    document.getElementById('pixQRWrap').innerHTML='<div style="font-size:40px;color:#888">⏳</div>';
+    try{
+      const r=await fetch('/loja/comprar',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN||''}`},
+        body:JSON.stringify({produtoNome:'Camiseta EstamPace',tamanho:tamSel,cor:corSel,quantidade:qtd,valorUnit:PRECO_PROMO,promocao,nomeCliente:nome,whatsappCliente:wpp,enderecoRua:rua,enderecoNum:num,enderecoBairro:bairro,enderecoCidade:cidade,enderecoEstado:estado,enderecoCEP:cep,obs})
       });
-    }, { threshold: 0.1 });
-    obs.observe(el);
+      const d=await r.json();
+      if(d.pixCode){
+        document.getElementById('pixCodigo').textContent=d.pixCode;
+        window._pixCode=d.pixCode;
+        if(d.pixQR) document.getElementById('pixQRWrap').innerHTML=`<img src="data:image/png;base64,${d.pixQR}" style="width:100%;height:100%">`;
+      } else if(d.waLink){
+        document.getElementById('pixCodigo').textContent='Pix indisponível — finalize pelo WhatsApp';
+        document.getElementById('pixQRWrap').innerHTML='<div style="font-size:36px">💬</div>';
+        setTimeout(()=>window.open(d.waLink,'_blank'),1500);
+      }
+      if(d.msg) toast(d.msg);
+    }catch(e){
+      document.getElementById('pixCodigo').textContent='Erro ao gerar Pix. Use o WhatsApp.';
+    }
+    return;
+  }
+  // WhatsApp
+  const msg=encodeURIComponent(
+    `🏃 *Pedido EstamPace*\n\n👕 Camiseta EstamPace\n🎨 Cor: ${corSel}\n📏 Tamanho: ${tamSel}\n🔢 Quantidade: ${qtd}${gratis>0?` (${gratis} grátis 🎁)`:''}\n💰 Total: R$ ${total.toFixed(2).replace('.',',')}`+
+    (nome?`\n👤 ${nome}`:'')+
+    (wpp?`\n📱 ${wpp}`:'')+
+    (rua?`\n\n📦 Endereço:\n${rua} ${num}, ${bairro}\n${cidade}/${estado} — CEP: ${cep}`:'')+
+    (obs?`\n💬 ${obs}`:'')+
+    `\n\n_PACE Corridas_`
+  );
+  window.open(`https://wa.me/${WHATSAPP}?text=${msg}`,'_blank');
+}
+
+function copiarPix(){
+  const code=window._pixCode||document.getElementById('pixCodigo').textContent;
+  if(!code||code.includes('Gerando')) return;
+  navigator.clipboard.writeText(code).then(()=>toast('✅ Código Pix copiado!')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('✅ Código Pix copiado!');
   });
+}
+
+function fecharPix(){document.getElementById('pixModal').classList.remove('open');}
+function abrirMedidas(){document.getElementById('medidasModal').classList.add('open');}
+function fecharMedidas(){document.getElementById('medidasModal').classList.remove('open');}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  carregarFotos();atualizarTotal();
+  const p=new URLSearchParams(location.search);
+  if(p.get('pagamento')==='sucesso') toast('🎉 Pagamento aprovado!');
+  if(p.get('pagamento')==='erro') toast('❌ Pagamento não concluído. Tente novamente.');
 });
 </script>
 </body>
