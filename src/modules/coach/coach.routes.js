@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
-const prisma = new PrismaClient();
+import prisma from '../../lib/prisma.js';
 const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
 const getUser = (req) => { try { return jwt.verify(req.headers.authorization?.replace('Bearer ',''), JWT); } catch { return null; } };
 
