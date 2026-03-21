@@ -2,290 +2,214 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>PACE — Entre para Correr</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PACE BRAZIL — Entrar</title>
+<meta name="description" content="Entre no PACE BRAZIL. Corrida, longevidade e performance num só app.">
+<link rel="manifest" href="/manifest.json">
 <style>
-:root{
-  --bg:#05050e;--bg2:#09091a;--bg3:#0e0e22;
-  --card:#12122a;--card2:#191935;
-  --b:#1c1c38;--b2:#26264a;
-  --neon:#00ffaa;--neon2:#00cc88;--neon3:#00ff88;
-  --orange:#ff6b35;--red:#ff3b5c;--blue:#4c9eff;--yellow:#ffd60a;
-  --text:#eeeef8;--dim:#7777aa;
-  --f:'Barlow',sans-serif;--fd:'Barlow Condensed',sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:var(--f);position:relative}
+body{background:#04060b;color:#e2e8f0;font-family:'Space Grotesk',sans-serif}
 
-/* ── CANVAS FUNDO ── */
-#bg-canvas{position:fixed;inset:0;z-index:0;opacity:.35}
+/* ═══ TELAS ═══ */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity .4s,transform .4s;will-change:opacity,transform;overflow-y:auto;overflow-x:hidden}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateY(20px)}
 
-/* ── TELAS ── */
-.screen{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;
-  transition:opacity .4s,transform .4s;will-change:opacity,transform}
-.screen.hidden{opacity:0;pointer-events:none;transform:translateY(24px)}
+/* ═══ BACKGROUND ═══ */
+.bg-glow{position:fixed;top:-20%;left:-20%;width:140%;height:60%;background:radial-gradient(ellipse,#F7931A08 0%,transparent 70%);pointer-events:none;z-index:0}
+.bg-dots{position:fixed;inset:0;background-image:radial-gradient(#F7931A06 1px,transparent 1px);background-size:24px 24px;pointer-events:none;z-index:0}
 
-/* ── ONBOARDING ── */
-#screen-onboard{background:transparent;overflow:hidden}
+/* ═══ ONBOARDING ═══ */
+#screen-onboard{z-index:10;background:#04060b}
+.ob-container{flex:1;display:flex;flex-direction:column;position:relative}
 .ob-slides{display:flex;width:300%;height:100%;transition:transform .5s cubic-bezier(.4,0,.2,1)}
-.ob-slide{width:33.333%;height:100%;display:flex;flex-direction:column;
-  align-items:center;justify-content:flex-end;padding:0 28px 52px;text-align:center;position:relative}
+.ob-slide{width:33.333%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;text-align:center}
+.ob-visual{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;margin-bottom:28px;position:relative}
+.ob-visual::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1.5px solid;animation:pulse-ring 3s ease-in-out infinite}
+.ob-v1{background:#F7931A11}.ob-v1::after{border-color:#F7931A22}
+.ob-v2{background:#27AE6011}.ob-v2::after{border-color:#27AE6022}
+.ob-v3{background:#2980B911}.ob-v3::after{border-color:#2980B922}
+@keyframes pulse-ring{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:.5}}
 
-.ob-icon-wrap{position:relative;margin-bottom:24px}
-.ob-icon{font-size:80px;display:block;filter:drop-shadow(0 0 30px var(--neon));
-  animation:float 3s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.ob-ring{position:absolute;inset:-20px;border-radius:50%;
-  border:1.5px solid rgba(0,255,170,.15);animation:spin 8s linear infinite}
-.ob-ring2{position:absolute;inset:-36px;border-radius:50%;
-  border:1px dashed rgba(0,255,170,.07);animation:spin 14s linear infinite reverse}
-@keyframes spin{to{transform:rotate(360deg)}}
+.ob-title{font-size:26px;font-weight:800;line-height:1.15;margin-bottom:12px;color:#fff}
+.ob-title span{color:#F7931A}
+.ob-desc{font-size:14px;color:#8899bb;line-height:1.6;max-width:320px}
 
-.ob-titulo{font-family:var(--fd);font-size:36px;font-weight:900;line-height:1.1;
-  margin-bottom:12px;letter-spacing:.5px}
-.ob-titulo span{color:var(--neon)}
-.ob-sub{font-size:15px;color:var(--dim);line-height:1.65;max-width:300px}
+.ob-nav{padding:20px 32px 40px;display:flex;align-items:center;justify-content:space-between}
+.ob-dots{display:flex;gap:8px}
+.dot{width:8px;height:8px;border-radius:4px;background:#1e2d3d;transition:all .3s}
+.dot.on{width:24px;background:#F7931A}
+.ob-skip{color:#667788;font-size:13px;font-weight:600;background:none;border:none;cursor:pointer;padding:8px}
+.ob-next{background:#F7931A;color:#000;font-weight:700;border:none;padding:12px 28px;border-radius:12px;font-size:14px;cursor:pointer;font-family:inherit;transition:transform .2s}
+.ob-next:active{transform:scale(.96)}
 
-/* Medalha XP no slide 3 */
-.xp-badges{display:flex;gap:10px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-.xp-b{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;
-  background:rgba(0,255,170,.08);border:1px solid rgba(0,255,170,.2);color:var(--neon)}
+/* ═══ AUTH SCREEN ═══ */
+#screen-auth{z-index:10}
+.auth-scroll{flex:1;display:flex;flex-direction:column;align-items:center;padding:40px 24px 40px;position:relative;z-index:1}
 
-/* Dots */
-.ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:24px}
-.dot{width:6px;height:6px;border-radius:3px;background:var(--b2);
-  transition:all .3s;cursor:pointer}
-.dot.on{width:24px;background:var(--neon)}
+.auth-logo{font-size:36px;font-weight:800;color:#F7931A;letter-spacing:6px;margin-bottom:2px}
+.auth-logo-sub{font-size:11px;color:#667788;letter-spacing:3px;margin-bottom:32px}
 
-/* Botão pular / próximo */
-.ob-actions{display:flex;flex-direction:column;gap:10px;width:100%}
-.btn-next{background:var(--neon);color:#000;border:none;padding:16px;border-radius:16px;
-  font-size:16px;font-weight:800;cursor:pointer;font-family:var(--fd);letter-spacing:.5px;
-  transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-next:hover{background:var(--neon2);transform:scale(1.02)}
-.btn-pular{background:none;border:none;color:var(--dim);font-size:14px;cursor:pointer;padding:8px;font-family:var(--f)}
-.btn-pular:hover{color:var(--text)}
+/* Tabs */
+.auth-tabs{display:flex;background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;padding:4px;width:100%;max-width:380px;margin-bottom:24px}
+.auth-tab{flex:1;text-align:center;padding:12px;font-size:14px;font-weight:700;color:#667788;border-radius:10px;cursor:pointer;transition:all .3s;border:none;background:none;font-family:inherit}
+.auth-tab.on{background:#F7931A;color:#000}
 
-/* ── TELA LOGIN/CADASTRO ── */
-#screen-auth{background:var(--bg);overflow-y:auto;padding-bottom:env(safe-area-inset-bottom)}
-.auth-wrap{min-height:100%;display:flex;flex-direction:column}
-
-.auth-top{padding:52px 24px 32px;text-align:center;position:relative}
-.logo-mark{display:inline-flex;align-items:center;gap:10px;margin-bottom:24px}
-.logo-ico{width:48px;height:48px;border-radius:14px;
-  background:linear-gradient(135deg,var(--neon),var(--neon2));
-  display:flex;align-items:center;justify-content:center;font-size:22px}
-.logo-txt{font-family:var(--fd);font-size:28px;font-weight:900;letter-spacing:4px;color:var(--neon)}
-
-/* TABS */
-.auth-tabs{display:flex;background:var(--bg3);border-radius:14px;padding:4px;margin:0 24px 24px}
-.tab-btn{flex:1;padding:10px;border:none;background:none;color:var(--dim);
-  font-size:14px;font-weight:700;cursor:pointer;border-radius:10px;transition:all .2s;font-family:var(--f)}
-.tab-btn.on{background:var(--neon);color:#000}
-
-/* FORM */
-.auth-form{padding:0 24px;flex:1}
+/* Form */
+.auth-form{width:100%;max-width:380px}
 .form-panel{display:none}
 .form-panel.on{display:block}
 
-.field{margin-bottom:14px}
-.field-label{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:1px;
-  text-transform:uppercase;margin-bottom:6px;display:block}
-.field-input{width:100%;background:var(--bg3);border:1.5px solid var(--b);color:var(--text);
-  padding:13px 16px;border-radius:14px;font-size:15px;font-family:var(--f);transition:all .2s}
-.field-input:focus{outline:none;border-color:var(--neon);background:var(--card)}
-.field-input::placeholder{color:var(--dim)}
-.field-input.error{border-color:var(--red)}
+.field{margin-bottom:16px}
+.field-label{display:block;font-size:12px;font-weight:600;color:#8899bb;margin-bottom:6px;letter-spacing:.5px}
+.field-input{width:100%;background:#0d1117;border:1.5px solid #1e2d3d;border-radius:12px;padding:14px 16px;font-size:15px;color:#e2e8f0;font-family:inherit;outline:none;transition:border-color .3s}
+.field-input:focus{border-color:#F7931A}
+.field-input::placeholder{color:#445566}
+.field-input.error{border-color:#E74C3C}
 
-/* SELECT TIPO */
-.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.tipo-card{background:var(--bg3);border:2px solid var(--b);border-radius:14px;
-  padding:16px 12px;text-align:center;cursor:pointer;transition:all .25s}
-.tipo-card:hover{border-color:var(--b2)}
-.tipo-card.on{border-color:var(--neon);background:rgba(0,255,170,.06)}
-.tipo-card .ico{font-size:28px;margin-bottom:6px}
-.tipo-card .label{font-family:var(--fd);font-size:15px;font-weight:700;display:block}
-.tipo-card .sub{font-size:11px;color:var(--dim);margin-top:2px}
-
-/* BTN SUBMIT */
-.btn-submit{width:100%;background:var(--neon);color:#000;border:none;padding:16px;
-  border-radius:16px;font-size:16px;font-weight:800;cursor:pointer;
-  font-family:var(--fd);letter-spacing:.5px;transition:all .2s;margin-top:6px;
-  display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-submit:hover{background:var(--neon2);transform:scale(1.01)}
-.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-.divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--dim);font-size:12px}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b)}
-
-.btn-google{width:100%;background:var(--bg3);border:1.5px solid var(--b);color:var(--text);
-  padding:14px;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;font-family:var(--f)}
-.btn-google:hover{border-color:var(--b2);background:var(--card)}
-
-.error-msg{color:var(--red);font-size:12px;margin-top:4px;display:none}
+.error-msg{font-size:11px;color:#E74C3C;margin-top:4px;display:none;font-weight:500}
 .error-msg.show{display:block}
-.success-msg{color:var(--neon);font-size:13px;text-align:center;margin-top:8px;display:none}
-.success-msg.show{display:block}
 
-.terms{font-size:11px;color:var(--dim);text-align:center;margin-top:14px;line-height:1.5;padding-bottom:24px}
-.terms a{color:var(--neon);text-decoration:none}
+.strength-bar{height:3px;background:#1e2d3d;border-radius:2px;margin-top:6px;overflow:hidden}
+.strength-fill{height:100%;border-radius:2px;width:0;transition:all .3s}
 
-/* ── TELA SUCESSO ── */
-#screen-sucesso{background:var(--bg);align-items:center;justify-content:center;padding:32px}
-.suc-wrap{text-align:center;max-width:320px}
-.suc-icon{font-size:80px;margin-bottom:20px;
-  animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
-@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.suc-title{font-family:var(--fd);font-size:32px;font-weight:900;margin-bottom:10px}
-.suc-title span{color:var(--neon)}
-.suc-sub{font-size:15px;color:var(--dim);line-height:1.6;margin-bottom:28px}
-.xp-ganho{display:inline-flex;align-items:center;gap:8px;
-  background:rgba(0,255,170,.08);border:1px solid rgba(0,255,170,.2);
-  color:var(--neon);padding:10px 20px;border-radius:20px;
-  font-family:var(--fd);font-size:18px;font-weight:700;margin-bottom:24px}
-.achievements{display:flex;gap:12px;justify-content:center;margin-bottom:28px}
+/* Tipo cards */
+.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.tipo-card{background:#0d1117;border:1.5px solid #1e2d3d;border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .3s}
+.tipo-card:hover{border-color:#F7931A44}
+.tipo-card.on{border-color:#F7931A;background:#F7931A08}
+.tipo-card .ico{font-size:28px;margin-bottom:6px}
+.tipo-card .label{display:block;font-size:14px;font-weight:700;color:#fff}
+.tipo-card .sub{display:block;font-size:11px;color:#667788;margin-top:2px}
+
+/* Buttons */
+.btn-submit{width:100%;padding:16px;border-radius:14px;font-size:16px;font-weight:800;border:none;cursor:pointer;font-family:inherit;transition:all .3s;position:relative;overflow:hidden}
+.btn-submit:active{transform:scale(.98)}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+.btn-main-orange{background:#F7931A;color:#000}
+.btn-main-orange:hover:not(:disabled){box-shadow:0 0 30px #F7931A33}
+
+.spinner{display:none;width:20px;height:20px;border:2.5px solid #00000033;border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#445566;font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#1e2d3d}
+
+.btn-google{width:100%;padding:14px;border-radius:12px;font-size:14px;font-weight:600;border:1.5px solid #1e2d3d;background:#0d1117;color:#c0ccdd;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:border-color .3s}
+.btn-google:hover{border-color:#F7931A44}
+
+.btn-strava{width:100%;padding:14px;border-radius:12px;font-size:14px;font-weight:600;border:none;background:#FC4C02;color:#fff;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .2s;margin-top:8px}
+.btn-strava:active{transform:scale(.98)}
+
+.forgot{text-align:right;margin-bottom:16px}
+.forgot a{font-size:12px;color:#667788;text-decoration:none;font-weight:500}
+.forgot a:hover{color:#F7931A}
+
+.terms{text-align:center;font-size:11px;color:#556677;margin-top:16px;line-height:1.5}
+.terms a{color:#F7931A;text-decoration:none}
+
+.bonus-box{display:flex;align-items:center;justify-content:center;gap:8px;background:#F7931A08;border:1px solid #F7931A22;border-radius:12px;padding:12px;margin-top:12px}
+.bonus-box span:first-child{font-size:20px}
+.bonus-box span:last-child{font-size:12px;color:#F7931A;font-weight:700}
+
+/* ═══ SUCESSO ═══ */
+#screen-sucesso{z-index:20;background:#04060b;justify-content:center;align-items:center}
+.suc-wrap{text-align:center;padding:32px;position:relative;z-index:1}
+.suc-icon{font-size:72px;margin-bottom:16px;animation:bounce-in .6s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes bounce-in{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.suc-xp{background:#F7931A;color:#000;font-size:14px;font-weight:800;padding:6px 20px;border-radius:20px;display:inline-block;margin-bottom:16px}
+.suc-title{font-size:32px;font-weight:800;line-height:1.2;margin-bottom:8px}
+.suc-title span{color:#F7931A}
+.suc-sub{font-size:14px;color:#8899bb;line-height:1.6;max-width:320px;margin:0 auto 24px}
+
+.achievements{display:flex;justify-content:center;gap:16px;margin-bottom:32px}
 .ach{text-align:center}
-.ach-ico{font-size:32px;margin-bottom:4px;
-  animation:bounceIn .4s cubic-bezier(.34,1.56,.64,1) both}
-.ach:nth-child(2) .ach-ico{animation-delay:.1s}
-.ach:nth-child(3) .ach-ico{animation-delay:.2s}
-@keyframes bounceIn{from{transform:scale(0) rotate(-20deg)}to{transform:scale(1) rotate(0)}}
-.ach-label{font-size:10px;color:var(--dim);font-weight:700}
-.btn-comecar{width:100%;background:var(--neon);color:#000;border:none;padding:16px;
-  border-radius:16px;font-size:16px;font-weight:800;cursor:pointer;font-family:var(--fd);
-  letter-spacing:.5px;transition:all .2s}
-.btn-comecar:hover{background:var(--neon2)}
+.ach-ico{width:52px;height:52px;background:#0d1117;border:1.5px solid #F7931A44;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 6px}
+.ach-label{font-size:10px;color:#667788;font-weight:600}
 
-/* Partículas de confete */
-.confete{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden}
-.c-p{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall linear forwards}
-@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.btn-go{background:#F7931A;color:#000;font-weight:800;padding:18px 40px;border-radius:16px;font-size:16px;border:none;cursor:pointer;font-family:inherit;transition:transform .2s}
+.btn-go:active{transform:scale(.96)}
 
-/* ── TOAST ── */
-.toast-box{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:999;
-  pointer-events:none}
-.toast{background:var(--card);border:1px solid var(--b2);border-radius:12px;
-  padding:10px 18px;font-size:13px;font-weight:600;color:var(--neon);
-  opacity:0;transform:translateY(8px);transition:all .3s;white-space:nowrap}
+/* Confetti */
+.confete{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+.c-p{position:absolute;animation:confetti-fall linear forwards}
+@keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100}
+.toast{background:#0d1117;border:1px solid #1e2d3d;color:#e2e8f0;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateY(0)}
+.toast.error{border-color:#E74C3C44;color:#E74C3C}
 
-/* Loader spinner */
-.spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.3);
-  border-top-color:#000;border-radius:50%;animation:spin2 .6s linear infinite;display:none}
-@keyframes spin2{to{transform:rotate(360deg)}}
+/* Security badge */
+.security{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;opacity:.6}
+.security svg{width:14px;height:14px}
+.security span{font-size:10px;color:#667788}
 
-/* Progress bar */
-.strength-bar{height:3px;background:var(--b);border-radius:2px;margin-top:6px;overflow:hidden}
-.strength-fill{height:100%;border-radius:2px;transition:all .3s;width:0}
-
-@media(min-width:500px){
-  #screen-auth{display:flex;align-items:center;justify-content:center}
-  .auth-wrap{max-width:420px;width:100%;min-height:auto;background:var(--bg2);
-    border:1px solid var(--b);border-radius:24px;margin:24px;padding-bottom:0}
-  .auth-top{padding:36px 24px 24px}
+@media(max-width:380px){
+  .auth-scroll{padding:32px 16px 32px}
+  .ob-title{font-size:22px}
 }
 </style>
 </head>
 <body>
 
-<!-- BG ANIMADO -->
-<canvas id="bg-canvas"></canvas>
+<div class="bg-glow"></div>
+<div class="bg-dots"></div>
 
-<!-- ══════════════════════════════════════
-     TELA 1: ONBOARDING
-══════════════════════════════════════ -->
+<!-- ═══════════════════════════════════
+     TELA 1: ONBOARDING (3 slides)
+═══════════════════════════════════ -->
 <div class="screen" id="screen-onboard">
-  <div class="ob-slides" id="obSlides">
+  <div class="ob-container">
+    <div class="ob-slides" id="obSlides">
+      
+      <div class="ob-slide">
+        <div class="ob-visual ob-v1">🏃</div>
+        <div class="ob-title">Corra com <span>inteligência</span></div>
+        <div class="ob-desc">Ranking nacional, calendário de corridas, GPS, comunidades e tudo que um corredor precisa — num só app.</div>
+      </div>
 
-    <!-- SLIDE 1 -->
-    <div class="ob-slide">
-      <div class="ob-icon-wrap">
-        <span class="ob-icon">🏃</span>
-        <div class="ob-ring"></div>
-        <div class="ob-ring2"></div>
+      <div class="ob-slide">
+        <div class="ob-visual ob-v2">🤖</div>
+        <div class="ob-title">IA que te <span>conhece</span></div>
+        <div class="ob-desc">Sua treinadora pessoal sabe seu VDOT, zonas de FC, sono, alimentação e medicação. Cada resposta é baseada nos seus dados reais.</div>
       </div>
-      <h1 class="ob-titulo">Treine com <span>Inteligência</span></h1>
-      <p class="ob-sub">IA treinadora em português que cria treinos personalizados baseados no seu ritmo, frequência cardíaca e metas reais.</p>
-      <div class="ob-dots" id="obDots">
-        <div class="dot on" onclick="goSlide(0)"></div>
-        <div class="dot" onclick="goSlide(1)"></div>
-        <div class="dot" onclick="goSlide(2)"></div>
+
+      <div class="ob-slide">
+        <div class="ob-visual ob-v3">🧬</div>
+        <div class="ob-title">Reduza sua <span>idade biológica</span></div>
+        <div class="ob-desc">Protocolos baseados em Bryan Johnson, Peter Attia e estudos publicados. Acompanhe com exames reais e dados de composição corporal.</div>
       </div>
-      <div class="ob-actions">
-        <button class="btn-next" onclick="goSlide(1)">Próximo →</button>
-        <button class="btn-pular" onclick="irParaAuth()">Já tenho conta</button>
-      </div>
+
     </div>
-
-    <!-- SLIDE 2 -->
-    <div class="ob-slide">
-      <div class="ob-icon-wrap">
-        <span class="ob-icon" style="animation-delay:.3s">🏁</span>
-        <div class="ob-ring" style="animation-duration:10s"></div>
-        <div class="ob-ring2"></div>
-      </div>
-      <h1 class="ob-titulo">Encontre <span>Corridas</span> Perto de Você</h1>
-      <p class="ob-sub">Scraper automático busca corridas no Brasil todo — Ticket Sports, Sympla e mais. Nunca perca uma prova na sua cidade.</p>
-      <div class="ob-dots">
-        <div class="dot" onclick="goSlide(0)"></div>
-        <div class="dot on" onclick="goSlide(1)"></div>
-        <div class="dot" onclick="goSlide(2)"></div>
-      </div>
-      <div class="ob-actions">
-        <button class="btn-next" onclick="goSlide(2)">Próximo →</button>
-        <button class="btn-pular" onclick="irParaAuth()">Já tenho conta</button>
-      </div>
+  </div>
+  
+  <div class="ob-nav">
+    <button class="ob-skip" onclick="irParaAuth()">Pular</button>
+    <div class="ob-dots">
+      <div class="dot on" onclick="goSlide(0)"></div>
+      <div class="dot" onclick="goSlide(1)"></div>
+      <div class="dot" onclick="goSlide(2)"></div>
     </div>
-
-    <!-- SLIDE 3 -->
-    <div class="ob-slide">
-      <div class="ob-icon-wrap">
-        <span class="ob-icon" style="animation-delay:.6s">🏆</span>
-        <div class="ob-ring" style="animation-duration:6s"></div>
-        <div class="ob-ring2"></div>
-      </div>
-      <h1 class="ob-titulo">Evolua e <span>Conquiste</span></h1>
-      <div class="xp-badges">
-        <div class="xp-b">⚡ +50 XP ao entrar</div>
-        <div class="xp-b">🎯 Missões diárias</div>
-        <div class="xp-b">👥 Grupos e Clubes</div>
-        <div class="xp-b">📈 Ranking Nacional</div>
-      </div>
-      <p class="ob-sub">Junte-se a corredores de todo o Brasil. Grupos de corrida, assessorias, treinadores certificados — tudo em um lugar.</p>
-      <div class="ob-dots">
-        <div class="dot" onclick="goSlide(0)"></div>
-        <div class="dot" onclick="goSlide(1)"></div>
-        <div class="dot on" onclick="goSlide(2)"></div>
-      </div>
-      <div class="ob-actions">
-        <button class="btn-next" onclick="irParaAuth()" style="background:linear-gradient(135deg,var(--neon),var(--blue))">
-          🚀 Começar Agora — Grátis
-        </button>
-        <button class="btn-pular" onclick="irParaAuth()">Já tenho conta</button>
-      </div>
-    </div>
-
+    <button class="ob-next" id="obNext" onclick="nextSlide()">Próximo</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
+<!-- ═══════════════════════════════════
      TELA 2: LOGIN / CADASTRO
-══════════════════════════════════════ -->
+═══════════════════════════════════ -->
 <div class="screen hidden" id="screen-auth">
-  <div class="auth-wrap">
+  <div class="auth-scroll">
 
-    <div class="auth-top">
-      <div class="logo-mark">
-        <div class="logo-ico">🏃</div>
-        <span class="logo-txt">PACE</span>
-      </div>
-      <div class="auth-tabs">
-        <button class="tab-btn on" id="tabLogin" onclick="setTab('login')">Entrar</button>
-        <button class="tab-btn" id="tabCadastro" onclick="setTab('cadastro')">Criar Conta</button>
-      </div>
+    <div class="auth-logo">PACE</div>
+    <div class="auth-logo-sub">B R A Z I L</div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tabLogin" onclick="switchTab('login')">Entrar</button>
+      <button class="auth-tab" id="tabCadastro" onclick="switchTab('cadastro')">Criar Conta</button>
     </div>
 
     <div class="auth-form">
@@ -293,27 +217,40 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);position:relati
       <!-- ── FORM LOGIN ── -->
       <div class="form-panel on" id="panelLogin">
         <div class="field">
-          <label class="field-label">Email</label>
-          <input class="field-input" id="loginEmail" type="email" placeholder="seu@email.com" autocomplete="email">
+          <label class="field-label">EMAIL</label>
+          <input class="field-input" id="loginEmail" type="email" placeholder="seu@email.com" autocomplete="email" inputmode="email">
           <div class="error-msg" id="errLoginEmail">Email inválido</div>
         </div>
         <div class="field">
-          <label class="field-label">Senha</label>
+          <label class="field-label">SENHA</label>
           <input class="field-input" id="loginSenha" type="password" placeholder="••••••••" autocomplete="current-password">
           <div class="error-msg" id="errLoginSenha">Senha incorreta</div>
         </div>
-        <div style="text-align:right;margin-bottom:16px">
-          <a href="#" style="font-size:12px;color:var(--dim);text-decoration:none">Esqueci a senha</a>
+        <div class="forgot">
+          <a href="#" onclick="toast('Entre em contato: contato@pacebrazil.com')">Esqueci minha senha</a>
         </div>
-        <button class="btn-submit" id="btnLogin" onclick="fazerLogin()">
-          <span id="loginTxt">Entrar no PACE</span>
+        <button class="btn-submit btn-main-orange" id="btnLogin" onclick="fazerLogin()">
+          <span id="loginTxt">Entrar</span>
           <div class="spinner" id="loginSpinner"></div>
         </button>
-        <div class="divider">ou</div>
-        <button class="btn-google" onclick="toast('Em breve disponível!')">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
-          Continuar com Google
+
+        <div class="divider">ou continue com</div>
+
+        <button class="btn-strava" onclick="window.location.href='/integracoes/strava/auth'">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="#fff"><path d="M6.8 13.4L4 7.8h2.4l2.4 5.6h-2zm2 0h2L14 7.8h-2.4L9.2 13.4H8.8zm-4-5.6L7.2 2 9.6 7.8H7.2L4.8 7.8z"/></svg>
+          Entrar com Strava
         </button>
+
+        <button class="btn-google" onclick="toast('Em breve!')">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+          Entrar com Google
+        </button>
+
+        <div class="security">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#667788" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>
+          <span>Conexão segura · Dados criptografados</span>
+        </div>
+
         <div class="terms">
           Ao entrar você concorda com os <a href="#">Termos de Uso</a> e <a href="#">Privacidade</a>
         </div>
@@ -322,56 +259,64 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);position:relati
       <!-- ── FORM CADASTRO ── -->
       <div class="form-panel" id="panelCadastro">
 
-        <!-- TIPO -->
-        <div style="margin-bottom:6px">
-          <label class="field-label">Sou um(a)</label>
+        <div style="margin-bottom:16px">
+          <label class="field-label">EU SOU</label>
           <div class="tipo-grid">
             <div class="tipo-card on" id="tipoAtleta" onclick="setTipo('atleta')">
               <div class="ico">🏃</div>
               <span class="label">Atleta</span>
-              <span class="sub">Quero treinar e correr</span>
+              <span class="sub">Quero treinar e evoluir</span>
             </div>
             <div class="tipo-card" id="tipoTreinador" onclick="setTipo('treinador')">
-              <div class="ico">👨‍🏫</div>
+              <div class="ico">🎯</div>
               <span class="label">Treinador</span>
-              <span class="sub">Quero orientar atletas</span>
+              <span class="sub">Quero gerenciar atletas</span>
             </div>
           </div>
         </div>
 
         <div class="field">
-          <label class="field-label">Nome completo</label>
+          <label class="field-label">NOME COMPLETO</label>
           <input class="field-input" id="cadNome" type="text" placeholder="Seu nome" autocomplete="name">
-          <div class="error-msg" id="errCadNome">Nome obrigatório</div>
+          <div class="error-msg" id="errCadNome">Nome é obrigatório</div>
         </div>
         <div class="field">
-          <label class="field-label">Email</label>
-          <input class="field-input" id="cadEmail" type="email" placeholder="seu@email.com" autocomplete="email">
+          <label class="field-label">EMAIL</label>
+          <input class="field-input" id="cadEmail" type="email" placeholder="seu@email.com" autocomplete="email" inputmode="email">
           <div class="error-msg" id="errCadEmail">Email inválido</div>
         </div>
         <div class="field">
-          <label class="field-label">Senha</label>
+          <label class="field-label">SENHA</label>
           <input class="field-input" id="cadSenha" type="password" placeholder="Mínimo 6 caracteres" oninput="checkSenha(this.value)" autocomplete="new-password">
           <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
           <div class="error-msg" id="errCadSenha">Mínimo 6 caracteres</div>
         </div>
 
-        <button class="btn-submit" id="btnCadastro" onclick="fazerCadastro()">
-          <span id="cadTxt">🚀 Criar Conta — Grátis</span>
+        <button class="btn-submit btn-main-orange" id="btnCadastro" onclick="fazerCadastro()">
+          <span id="cadTxt">Criar Conta Grátis</span>
           <div class="spinner" id="cadSpinner"></div>
         </button>
 
-        <div class="divider">ou</div>
-        <button class="btn-google" onclick="toast('Em breve disponível!')">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
-          Continuar com Google
+        <div class="divider">ou continue com</div>
+
+        <button class="btn-strava" onclick="window.location.href='/integracoes/strava/auth'">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="#fff"><path d="M6.8 13.4L4 7.8h2.4l2.4 5.6h-2zm2 0h2L14 7.8h-2.4L9.2 13.4H8.8zm-4-5.6L7.2 2 9.6 7.8H7.2L4.8 7.8z"/></svg>
+          Cadastrar com Strava
         </button>
 
-        <div style="display:flex;align-items:center;justify-content:center;gap:6px;
-          background:rgba(0,255,170,.05);border:1px solid rgba(0,255,170,.12);
-          border-radius:12px;padding:10px;margin-top:10px">
-          <span style="font-size:18px">⚡</span>
-          <span style="font-size:12px;color:var(--neon);font-weight:600">+50 XP ao criar sua conta hoje!</span>
+        <button class="btn-google" onclick="toast('Em breve!')">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+          Cadastrar com Google
+        </button>
+
+        <div class="bonus-box">
+          <span>⚡</span>
+          <span>+50 XP ao criar sua conta hoje!</span>
+        </div>
+
+        <div class="security">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#667788" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>
+          <span>Conexão segura · Dados criptografados · Sem spam</span>
         </div>
 
         <div class="terms">
@@ -384,16 +329,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);position:relati
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     TELA 3: SUCESSO / BEM-VINDO
-══════════════════════════════════════ -->
+<!-- ═══════════════════════════════════
+     TELA 3: SUCESSO
+═══════════════════════════════════ -->
 <div class="screen hidden" id="screen-sucesso">
   <div class="confete" id="confete"></div>
   <div class="suc-wrap">
     <div class="suc-icon" id="sucIco">🎉</div>
-    <div class="xp-ganho">⚡ +50 XP Ganhos!</div>
+    <div class="suc-xp" id="sucXp">⚡ +50 XP</div>
     <h2 class="suc-title">Bem-vindo ao<br><span>PACE!</span></h2>
-    <p class="suc-sub" id="sucSub">Sua jornada como corredor começa agora. Treinos, corridas e comunidade no seu bolso.</p>
+    <p class="suc-sub" id="sucSub">Sua jornada começa agora.</p>
     <div class="achievements">
       <div class="ach">
         <div class="ach-ico">🏃</div>
@@ -408,82 +353,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);position:relati
         <div class="ach-label">Early Adopter</div>
       </div>
     </div>
-    <button class="btn-comecar" id="btnComecar" onclick="irParaDashboard()">
-      Ir para o App 🚀
+    <button class="btn-go" id="btnComecar" onclick="irParaDashboard()">
+      Entrar no App →
     </button>
   </div>
 </div>
 
 <!-- TOAST -->
-<div class="toast-box"><div class="toast" id="toastEl"></div></div>
+<div class="toast-wrap"><div class="toast" id="toastEl"></div></div>
 
 <script>
-// ══════════════════════════════════════
-// BG CANVAS — PARTÍCULAS
-// ══════════════════════════════════════
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let W, H, particles = [];
-
-function resize() {
-  W = canvas.width = innerWidth;
-  H = canvas.height = innerHeight;
-}
-
-class Particle {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random() * W;
-    this.y = Math.random() * H;
-    this.r = Math.random() * 1.5 + .3;
-    this.vx = (Math.random() - .5) * .3;
-    this.vy = -Math.random() * .4 - .1;
-    this.alpha = Math.random() * .6 + .1;
-    this.color = Math.random() > .7 ? '#00ffaa' : Math.random() > .5 ? '#4c9eff' : '#ffffff';
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.alpha;
-    ctx.fill();
-  }
-  update() {
-    this.x += this.vx; this.y += this.vy;
-    if (this.y < -5 || this.x < -5 || this.x > W + 5) this.reset();
-  }
-}
-
-function initParticles() {
-  particles = Array.from({length: 80}, () => new Particle());
-}
-
-function animateBg() {
-  ctx.clearRect(0, 0, W, H);
-  // Gradiente de fundo
-  const g = ctx.createRadialGradient(W*.3, H*.4, 0, W*.3, H*.4, W*.8);
-  g.addColorStop(0, 'rgba(0,255,170,.04)');
-  g.addColorStop(.5, 'rgba(76,158,255,.02)');
-  g.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animateBg);
-}
-
-resize(); initParticles(); animateBg();
-window.addEventListener('resize', () => { resize(); initParticles(); });
-
-// ══════════════════════════════════════
+// ═══════════════════════════════
 // ONBOARDING
-// ══════════════════════════════════════
+// ═══════════════════════════════
 let slideAtual = 0;
 
 function goSlide(n) {
   slideAtual = n;
-  document.getElementById('obSlides').style.transform = `translateX(-${n * 33.333}%)`;
+  document.getElementById('obSlides').style.transform = 'translateX(-' + (n * 33.333) + '%)';
   document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === n));
+  document.getElementById('obNext').textContent = n === 2 ? 'Começar' : 'Próximo';
+}
+
+function nextSlide() {
+  if (slideAtual < 2) goSlide(slideAtual + 1);
+  else irParaAuth();
 }
 
 // Swipe
@@ -500,116 +394,155 @@ document.getElementById('obSlides').addEventListener('touchend', e => {
 function irParaAuth() {
   document.getElementById('screen-onboard').classList.add('hidden');
   document.getElementById('screen-auth').classList.remove('hidden');
+  localStorage.setItem('pace_ob_done', '1');
 }
 
-// Verificar se já passou pelo onboarding
+// Pular onboarding se já viu
 if (localStorage.getItem('pace_ob_done')) irParaAuth();
 
-// ══════════════════════════════════════
-// AUTH TABS
-// ══════════════════════════════════════
-function setTab(tab) {
-  document.getElementById('tabLogin').classList.toggle('on', tab === 'login');
-  document.getElementById('tabCadastro').classList.toggle('on', tab === 'cadastro');
-  document.getElementById('panelLogin').classList.toggle('on', tab === 'login');
-  document.getElementById('panelCadastro').classList.toggle('on', tab === 'cadastro');
+// Pular direto se já logado
+if (localStorage.getItem('pace_token')) irParaDashboard();
+
+// ═══════════════════════════════
+// TABS
+// ═══════════════════════════════
+function switchTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('tabLogin').classList.toggle('on', isLogin);
+  document.getElementById('tabCadastro').classList.toggle('on', !isLogin);
+  document.getElementById('panelLogin').classList.toggle('on', isLogin);
+  document.getElementById('panelCadastro').classList.toggle('on', !isLogin);
+  // Limpar erros
+  document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.field-input').forEach(e => e.classList.remove('error'));
 }
 
-// ══════════════════════════════════════
-// TIPO USUÁRIO
-// ══════════════════════════════════════
+// Check URL params
+const params = new URLSearchParams(window.location.search);
+if (params.get('tab') === 'cadastro' || params.get('plan') || params.get('role')) {
+  switchTab('cadastro');
+  if (params.get('role') === 'coach') setTipo('treinador');
+}
+
+// ═══════════════════════════════
+// TIPO ATLETA/TREINADOR
+// ═══════════════════════════════
 let tipoSelecionado = 'atleta';
-function setTipo(t) {
-  tipoSelecionado = t;
-  document.getElementById('tipoAtleta').classList.toggle('on', t === 'atleta');
-  document.getElementById('tipoTreinador').classList.toggle('on', t === 'treinador');
+
+function setTipo(tipo) {
+  tipoSelecionado = tipo;
+  document.getElementById('tipoAtleta').classList.toggle('on', tipo === 'atleta');
+  document.getElementById('tipoTreinador').classList.toggle('on', tipo === 'treinador');
 }
 
-// ══════════════════════════════════════
-// FORÇA DA SENHA
-// ══════════════════════════════════════
-function checkSenha(v) {
+// ═══════════════════════════════
+// PASSWORD STRENGTH
+// ═══════════════════════════════
+function checkSenha(val) {
   const fill = document.getElementById('strengthFill');
-  let score = 0;
-  if (v.length >= 6) score++;
-  if (v.length >= 10) score++;
-  if (/[A-Z]/.test(v)) score++;
-  if (/[0-9]/.test(v)) score++;
-  if (/[^a-zA-Z0-9]/.test(v)) score++;
-  const pct = (score / 5) * 100;
-  const colors = ['#ff3b5c','#ff6b35','#ffd60a','#00ffaa','#00ffaa'];
+  let str = 0;
+  if (val.length >= 6) str++;
+  if (val.length >= 8) str++;
+  if (/[A-Z]/.test(val)) str++;
+  if (/[0-9]/.test(val)) str++;
+  if (/[^a-zA-Z0-9]/.test(val)) str++;
+
+  const pct = [0, 20, 40, 60, 80, 100][str];
+  const cor = ['#E74C3C', '#E74C3C', '#F7931A', '#F7931A', '#27AE60', '#27AE60'][str];
   fill.style.width = pct + '%';
-  fill.style.background = colors[score - 1] || '#ff3b5c';
+  fill.style.background = cor;
 }
 
-// ══════════════════════════════════════
+// ═══════════════════════════════
 // LOGIN
-// ══════════════════════════════════════
+// ═══════════════════════════════
 async function fazerLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   const senha = document.getElementById('loginSenha').value;
   let ok = true;
 
-  if (!email || !email.includes('@')) {
-    document.getElementById('errLoginEmail').classList.add('show'); ok = false;
-  } else document.getElementById('errLoginEmail').classList.remove('show');
+  document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.field-input').forEach(e => e.classList.remove('error'));
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    document.getElementById('errLoginEmail').classList.add('show');
+    document.getElementById('loginEmail').classList.add('error');
+    ok = false;
+  }
   if (!senha) {
-    document.getElementById('errLoginSenha').classList.add('show'); ok = false;
-  } else document.getElementById('errLoginSenha').classList.remove('show');
+    document.getElementById('errLoginSenha').classList.add('show');
+    document.getElementById('loginSenha').classList.add('error');
+    ok = false;
+  }
   if (!ok) return;
 
   setLoading('login', true);
   try {
     const res = await fetch('/auth/login', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Credenciais incorretas');
+    if (!res.ok) throw new Error(data.error || 'Email ou senha incorretos');
 
     localStorage.setItem('pace_token', data.token);
     localStorage.setItem('pace_user', JSON.stringify(data.user || {}));
     localStorage.setItem('pace_ob_done', '1');
 
     mostrarSucesso(data.user, false);
-  } catch(e) {
+  } catch (e) {
     document.getElementById('errLoginSenha').textContent = e.message;
     document.getElementById('errLoginSenha').classList.add('show');
-  } finally { setLoading('login', false); }
+    document.getElementById('loginSenha').classList.add('error');
+  } finally {
+    setLoading('login', false);
+  }
 }
 
-// ══════════════════════════════════════
+// ═══════════════════════════════
 // CADASTRO
-// ══════════════════════════════════════
+// ═══════════════════════════════
 async function fazerCadastro() {
   const nome = document.getElementById('cadNome').value.trim();
-  const email = document.getElementById('cadEmail').value.trim();
+  const email = document.getElementById('cadEmail').value.trim().toLowerCase();
   const senha = document.getElementById('cadSenha').value;
   let ok = true;
 
-  if (!nome) { document.getElementById('errCadNome').classList.add('show'); ok = false; }
-  else document.getElementById('errCadNome').classList.remove('show');
-  if (!email || !email.includes('@')) { document.getElementById('errCadEmail').classList.add('show'); ok = false; }
-  else document.getElementById('errCadEmail').classList.remove('show');
-  if (!senha || senha.length < 6) { document.getElementById('errCadSenha').classList.add('show'); ok = false; }
-  else document.getElementById('errCadSenha').classList.remove('show');
+  document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.field-input').forEach(e => e.classList.remove('error'));
+
+  if (!nome || nome.length < 2) {
+    document.getElementById('errCadNome').classList.add('show');
+    document.getElementById('cadNome').classList.add('error');
+    ok = false;
+  }
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    document.getElementById('errCadEmail').classList.add('show');
+    document.getElementById('cadEmail').classList.add('error');
+    ok = false;
+  }
+  if (!senha || senha.length < 6) {
+    document.getElementById('errCadSenha').classList.add('show');
+    document.getElementById('cadSenha').classList.add('error');
+    ok = false;
+  }
   if (!ok) return;
 
   setLoading('cadastro', true);
   try {
     const res = await fetch('/auth/register', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nome, email, senha, tipo: tipoSelecionado })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Erro ao criar conta');
 
-    // Auto-login após cadastro
+    // Auto-login
     const loginRes = await fetch('/auth/login', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha })
     });
     const loginData = await loginRes.json();
@@ -620,15 +553,18 @@ async function fazerCadastro() {
 
     localStorage.setItem('pace_ob_done', '1');
     mostrarSucesso({ nome, tipo: tipoSelecionado }, true);
-  } catch(e) {
+  } catch (e) {
     document.getElementById('errCadEmail').textContent = e.message;
     document.getElementById('errCadEmail').classList.add('show');
-  } finally { setLoading('cadastro', false); }
+    document.getElementById('cadEmail').classList.add('error');
+  } finally {
+    setLoading('cadastro', false);
+  }
 }
 
-// ══════════════════════════════════════
-// LOADING STATE
-// ══════════════════════════════════════
+// ═══════════════════════════════
+// LOADING
+// ═══════════════════════════════
 function setLoading(form, on) {
   if (form === 'login') {
     document.getElementById('loginTxt').style.display = on ? 'none' : '';
@@ -641,9 +577,9 @@ function setLoading(form, on) {
   }
 }
 
-// ══════════════════════════════════════
-// TELA SUCESSO
-// ══════════════════════════════════════
+// ═══════════════════════════════
+// SUCESSO
+// ═══════════════════════════════
 function mostrarSucesso(user, isNovo) {
   document.getElementById('screen-auth').classList.add('hidden');
   document.getElementById('screen-sucesso').classList.remove('hidden');
@@ -651,13 +587,12 @@ function mostrarSucesso(user, isNovo) {
   const nome = user?.nome || user?.name || 'Corredor';
   const primeiroNome = nome.split(' ')[0];
   document.getElementById('sucIco').textContent = isNovo ? '🎉' : '🏃';
+  document.getElementById('sucXp').style.display = isNovo ? '' : 'none';
   document.getElementById('sucSub').textContent = isNovo
-    ? `Olá, ${primeiroNome}! Você ganhou +50 XP de bônus. Sua jornada começa agora!`
-    : `Bem-vindo de volta, ${primeiroNome}! Continue sua evolução.`;
+    ? 'Olá, ' + primeiroNome + '! Você ganhou +50 XP. Sua jornada começa agora!'
+    : 'Bem-vindo de volta, ' + primeiroNome + '! Continue sua evolução.';
 
   if (isNovo) dispararConfete();
-
-  // Redirecionar automaticamente em 3s
   setTimeout(() => irParaDashboard(), 3500);
 }
 
@@ -670,53 +605,49 @@ function irParaDashboard() {
   }
 }
 
-// ══════════════════════════════════════
+// ═══════════════════════════════
 // CONFETE
-// ══════════════════════════════════════
+// ═══════════════════════════════
 function dispararConfete() {
   const el = document.getElementById('confete');
-  const cores = ['#00ffaa','#4c9eff','#ffd60a','#ff6b35','#ff3b5c','#fff'];
-  for (let i = 0; i < 60; i++) {
+  const cores = ['#F7931A', '#27AE60', '#2980B9', '#E74C3C', '#fff', '#8E44AD'];
+  for (let i = 0; i < 50; i++) {
     const p = document.createElement('div');
     p.className = 'c-p';
-    p.style.cssText = `
-      left:${Math.random()*100}%;
-      top:-10px;
-      background:${cores[Math.floor(Math.random()*cores.length)]};
-      animation-duration:${1.5+Math.random()*2}s;
-      animation-delay:${Math.random()*.5}s;
-      width:${6+Math.random()*8}px;
-      height:${6+Math.random()*8}px;
-      border-radius:${Math.random() > .5 ? '50%' : '2px'};
-    `;
+    Object.assign(p.style, {
+      left: Math.random() * 100 + '%',
+      top: '-10px',
+      background: cores[Math.floor(Math.random() * cores.length)],
+      animationDuration: (1.5 + Math.random() * 2) + 's',
+      animationDelay: (Math.random() * .5) + 's',
+      width: (5 + Math.random() * 7) + 'px',
+      height: (5 + Math.random() * 7) + 'px',
+      borderRadius: Math.random() > .5 ? '50%' : '2px'
+    });
     el.appendChild(p);
   }
   setTimeout(() => el.innerHTML = '', 4000);
 }
 
-// ══════════════════════════════════════
+// ═══════════════════════════════
 // TOAST
-// ══════════════════════════════════════
-function toast(msg, dur = 2800) {
+// ═══════════════════════════════
+function toast(msg, dur) {
+  dur = dur || 2800;
   const el = document.getElementById('toastEl');
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(window._tt);
-  window._tt = setTimeout(() => el.classList.remove('show'), dur);
+  window._tt = setTimeout(function() { el.classList.remove('show'); }, dur);
 }
 
-// Enter nos inputs
-document.addEventListener('keydown', e => {
+// Enter key
+document.addEventListener('keydown', function(e) {
   if (e.key !== 'Enter') return;
-  const panel = document.getElementById('panelLogin');
+  var panel = document.getElementById('panelLogin');
   if (panel.classList.contains('on')) fazerLogin();
   else fazerCadastro();
 });
-
-// Se já logado, redirecionar
-if (localStorage.getItem('pace_token')) {
-  irParaDashboard();
-}
 </script>
 </body>
 </html>
