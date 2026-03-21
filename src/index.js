@@ -67,7 +67,7 @@ const pages = [
   'pacematch','organizador','stats','faixas','calculadoras',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
   'ia','ia-avatar','admin-pedidos','scraper','importar-resultado',
-  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador','cobaia','exames'
+  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador','cobaia','exames','cobaia-resultados'
 ];
 
 for (const pg of pages) {
