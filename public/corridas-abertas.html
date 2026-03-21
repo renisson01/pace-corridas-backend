@@ -137,15 +137,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100v
 .btn-load-more:hover{border-color:var(--neon);color:var(--neon)}
 
 /* BOTTOM NAV */
-.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:200;
-  background:rgba(7,7,15,.96);backdrop-filter:blur(20px);
-  border-top:1px solid var(--b);display:flex;padding-bottom:env(safe-area-inset-bottom)}
-.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;
-  padding:10px 4px 8px;cursor:pointer;color:var(--dim);border:none;background:none;
-  font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;gap:3px;transition:color .2s}
-.bnav-btn .ico{font-size:20px;transition:all .2s}
-.bnav-btn.on{color:var(--neon)}
-.bnav-btn.on .ico{filter:drop-shadow(0 0 6px var(--neon));transform:translateY(-2px)}
+
 
 /* MODAL DETALHE */
 .modal-overlay{display:none;position:fixed;inset:0;z-index:500;
@@ -313,23 +305,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100v
 </div>
 
 <!-- BOTTOM NAV -->
-<nav class="bottomnav">
-  <button class="bnav-btn on" onclick="">
-    <span class="ico">🏁</span>Corridas
-  </button>
-  <button class="bnav-btn" onclick="window.location.href='/comunidade.html'">
-    <span class="ico">👥</span>Grupos
-  </button>
-  <button class="bnav-btn" onclick="window.location.href='/atleta.html'">
-    <span class="ico">🏠</span>Início
-  </button>
-  <button class="bnav-btn" onclick="window.location.href='/atleta.html#ia'">
-    <span class="ico">🤖</span>IA
-  </button>
-  <button class="bnav-btn" onclick="window.location.href='/atleta.html#perfil'">
-    <span class="ico">👤</span>Perfil
-  </button>
-</nav>
+
 
 <!-- MODAL DETALHE -->
 <div class="modal-overlay" id="modalDetalhe">

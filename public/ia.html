@@ -86,9 +86,8 @@ textarea::placeholder{color:var(--muted)}
 .mbody{padding:20px;overflow-y:auto;flex:1;line-height:1.7;font-size:14px}
 .mbody::-webkit-scrollbar{width:3px}
 .mbody::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.bnav{display:flex;background:rgba(13,17,23,0.95);border-top:1px solid var(--border);padding:8px 0;backdrop-filter:blur(20px);flex-shrink:0}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;color:var(--muted);font-size:10px;font-weight:500;text-decoration:none;transition:color .2s}
-.ni.on,.ni:hover{color:var(--verde)}
+
+
 .nicon{font-size:20px;line-height:1}
 .lwall{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;text-align:center;z-index:200}
 .lwall h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;font-style:italic}
@@ -158,13 +157,7 @@ textarea::placeholder{color:var(--muted)}
       <div class="nvl" id="nvl" style="display:none"></div>
     </div>
   </div>
-  <nav class="bnav">
-    <a href="/index.html" class="ni"><div class="nicon">🏠</div><span>Início</span></a>
-    <a href="/corridas-abertas.html" class="ni"><div class="nicon">🏁</div><span>Corridas</span></a>
-    <a href="/elite.html" class="ni"><div class="nicon">🏆</div><span>Ranking</span></a>
-    <a href="/ia.html" class="ni on"><div class="nicon">🤖</div><span>PACE IA</span></a>
-    <a href="/loja.html" class="ni"><div class="nicon">👕</div><span>Loja</span></a>
-  </nav>
+  
 </div>
 <div class="overlay" id="ov" onclick="fecharModal(event)">
   <div class="modal">
@@ -183,7 +176,7 @@ textarea::placeholder{color:var(--muted)}
 </div>
 <script>
 const API='';
-let token=localStorage.getItem('token');
+let token=localStorage.getItem('pace_token');
 let hist=[];
 let busy=false;
 
@@ -346,37 +339,7 @@ async function checkPremiumStatus() {
 }
 if (token) checkPremiumStatus();
 
-// === CARREGAR HISTORICO AO ABRIR ===
-async function carregarHistorico() {
-  try {
-    const r = await fetch(API + '/ia/historico', { headers: { 'Authorization': 'Bearer ' + TOKEN } });
-    const d = await r.json();
-    if (d.mensagens && d.mensagens.length > 0) {
-      const chatBox = document.getElementById('chatMessages') || document.getElementById('chat-messages') || document.getElementById('mensagens') || document.querySelector('.chat-messages') || document.querySelector('[class*="chat"]');
-      if (chatBox) {
-        chatBox.innerHTML = '';
-        d.mensagens.forEach(m => {
-          const div = document.createElement('div');
-          if (m.role === 'user') {
-            div.className = 'msg-user';
-            div.style.cssText = 'text-align:right;margin:8px 0;';
-            div.innerHTML = '<div style="display:inline-block;background:#1a3a2a;color:#e2e8f0;padding:10px 14px;border-radius:14px 14px 4px 14px;max-width:85%;text-align:left;font-size:14px;">' + m.content.replace(/\n/g,'<br>') + '</div>';
-          } else {
-            div.className = 'msg-ia';
-            div.style.cssText = 'text-align:left;margin:8px 0;';
-            let content = m.content.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/##\s?(.*?)(<br>)/g,'<h4 style="color:#F7931A;margin:8px 0 4px;">$1</h4>');
-            div.innerHTML = '<div style="display:inline-block;background:#0d1117;border:1px solid #1e2d3d;color:#c0ccdd;padding:10px 14px;border-radius:14px 14px 14px 4px;max-width:90%;text-align:left;font-size:14px;line-height:1.5;">' + content + '</div>';
-          }
-          chatBox.appendChild(div);
-        });
-        chatBox.scrollTop = chatBox.scrollHeight;
-        console.log('Historico carregado:', d.mensagens.length, 'mensagens');
-      }
-    }
-  } catch(e) { console.log('Erro ao carregar historico:', e); }
-}
-// Carregar ao abrir
-if (TOKEN) { setTimeout(carregarHistorico, 500); }
+// Historico carregado via loadHist()
 
 </script>
 
