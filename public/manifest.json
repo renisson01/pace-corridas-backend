@@ -1,16 +1,32 @@
 {
-  "name": "PACE Corridas",
+  "name": "PACE BRAZIL — Corrida & Longevidade",
   "short_name": "PACE",
-  "description": "O app de corrida mais inteligente do Brasil",
+  "description": "Corrida de rua, IA treinadora e protocolos de longevidade. Tudo num só app.",
   "start_url": "/atleta.html",
   "display": "standalone",
-  "background_color": "#0a0a0f",
-  "theme_color": "#00e676",
+  "background_color": "#04060b",
+  "theme_color": "#F7931A",
   "orientation": "portrait",
   "icons": [
-    { "src": "https://pace-corridas.com/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "https://pace-corridas.com/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "/pace-logo-512.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/pace-logo-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ],
-  "categories": ["sports", "fitness", "health"],
-  "lang": "pt-BR"
+  "categories": [
+    "sports",
+    "fitness",
+    "health"
+  ],
+  "lang": "pt-BR",
+  "scope": "/",
+  "id": "/atleta.html"
 }

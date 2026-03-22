@@ -39,12 +39,8 @@ export async function integracoesRoutes(fastify) {
   fastify.post('/integracoes/strava/connect', async (req, reply) => {
     const u = getUser(req);
     if (!u) return reply.code(401).send({ error: 'Login necessário' });
-    const clientId = process.env.STRAVA_CLIENT_ID;
-    if (!clientId) return {
-      status: 'coming_soon',
-      mensagem: 'Strava em breve! Configure STRAVA_CLIENT_ID no Railway.',
-      dica: 'Por enquanto registre seus treinos manualmente na aba Enviar Resultado.'
-    };
+    const clientId = process.env.STRAVA_CLIENT_ID || '212560';
+    // clientId tem fallback 212560, sempre funciona
     const redirect = `https://web-production-990e7.up.railway.app/integracoes/strava/callback`;
     const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirect)}&response_type=code&scope=read,activity:read_all&state=${u.userId}`;
     return { url, status: 'redirect_needed' };
@@ -80,8 +76,8 @@ export async function integracoesRoutes(fastify) {
       const res = await fetch('https://www.strava.com/oauth/token', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          client_id: process.env.STRAVA_CLIENT_ID,
-          client_secret: process.env.STRAVA_CLIENT_SECRET,
+          client_id: process.env.STRAVA_CLIENT_ID || '212560',
+          client_secret: process.env.STRAVA_CLIENT_SECRET || 'ead67dbb236b3acb8e506d5aee85a50ee595c22f',
           code, grant_type: 'authorization_code'
         })
       });
@@ -121,8 +117,8 @@ async function refreshStravaToken(integracao) {
     const res = await fetch('https://www.strava.com/oauth/token', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        client_id: process.env.STRAVA_CLIENT_ID,
-        client_secret: process.env.STRAVA_CLIENT_SECRET,
+        client_id: process.env.STRAVA_CLIENT_ID || '212560',
+        client_secret: process.env.STRAVA_CLIENT_SECRET || 'ead67dbb236b3acb8e506d5aee85a50ee595c22f',
         refresh_token: integracao.refreshToken,
         grant_type: 'refresh_token'
       })

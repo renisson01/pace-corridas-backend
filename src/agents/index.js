@@ -3,10 +3,7 @@
 // Rodam no Railway via node-cron. Cada agente tem log próprio.
 // ═══════════════════════════════════════════════════════════
 import cron from 'node-cron';
-import { PrismaClient } from '@prisma/client';
-
-
-const prisma = new PrismaClient();
+import prisma from '../modules/../lib/prisma.js';
 
 function log(agente, msg) {
   console.log(`[${new Date().toISOString()}] 🤖 AGENTE:${agente} — ${msg}`);
@@ -18,44 +15,48 @@ log('SCRAPER', 'Agente de corridas ativo via corridas.routes.js');
 
 // ─── AGENTE 2: Sync Strava (diário 3h) ───────────────────
 cron.schedule('0 3 * * *', async () => {
-  log('STRAVA', 'Iniciando sync automático de todos usuários com Strava...');
+  log('STRAVA', 'Iniciando sync automático via IntegracaoToken...');
   try {
-    const users = await prisma.user.findMany({
-      where: { bio: { contains: 'strava_token:' } },
-      select: { id: true, bio: true, name: true }
+    const tokens = await prisma.integracaoToken.findMany({
+      where: { provider: 'strava' },
+      select: { userId: true, accessToken: true, refreshToken: true, expiresAt: true }
     });
-    log('STRAVA', `${users.length} usuários com Strava conectado`);
+    log('STRAVA', tokens.length + ' usuários com Strava conectado');
     let total = 0;
-    for (const u of users) {
-      const tokenMatch = u.bio?.match(/strava_token:([^\|]+)/);
-      if (!tokenMatch) continue;
+    for (const t of tokens) {
       try {
-        const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=10', {
-          headers: { Authorization: `Bearer ${tokenMatch[1]}` }
-        });
+        let accessToken = t.accessToken;
+        // Refresh token se expirado
+        if (t.expiresAt && new Date(t.expiresAt) < new Date() && t.refreshToken) {
+          const rr = await fetch('https://www.strava.com/oauth/token', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ client_id: process.env.STRAVA_CLIENT_ID || '212560', client_secret: process.env.STRAVA_CLIENT_SECRET || 'ead67dbb236b3acb8e506d5aee85a50ee595c22f', refresh_token: t.refreshToken, grant_type: 'refresh_token' })
+          });
+          const rd = await rr.json();
+          if (rd.access_token) {
+            accessToken = rd.access_token;
+            await prisma.integracaoToken.update({ where: { userId_provider: { userId: t.userId, provider: 'strava' } }, data: { accessToken: rd.access_token, refreshToken: rd.refresh_token || t.refreshToken, expiresAt: rd.expires_at ? new Date(rd.expires_at * 1000) : null } });
+          }
+        }
+        const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=10', { headers: { Authorization: 'Bearer ' + accessToken } });
         const ativs = await res.json();
         if (!Array.isArray(ativs)) continue;
         for (const a of ativs.filter(x => x.type === 'Run')) {
-          const distKm = parseFloat((a.distance/1000).toFixed(2));
+          const km = parseFloat((a.distance/1000).toFixed(2));
           const dur = a.moving_time;
-          const pb = distKm > 0 ? dur/distKm : 0;
-          const pace = `${Math.floor(pb/60)}:${String(Math.floor(pb%60)).padStart(2,'0')}`;
+          const ps = km > 0 ? dur/km : 0;
+          const pace = Math.floor(ps/60) + ':' + String(Math.floor(ps%60)).padStart(2,'0');
           await prisma.atividadeGPS.upsert({
             where: { stravaId: String(a.id) },
-            create: { userId: u.id, stravaId: String(a.id), fonte: 'strava', tipo: 'corrida',
-              distanciaKm: distKm, duracaoSeg: dur, paceMedio: pace,
-              velMedia: parseFloat((distKm/(dur/3600)).toFixed(2)),
-              titulo: a.name || 'Strava Run', compartilhado: false,
-              iniciadoEm: new Date(a.start_date),
-              finalizadoEm: new Date(new Date(a.start_date).getTime()+dur*1000) },
+            create: { userId: t.userId, stravaId: String(a.id), fonte: 'strava', tipo: 'corrida', distanciaKm: km, duracaoSeg: dur, paceMedio: pace, velMedia: parseFloat((km/(dur/3600)).toFixed(2)), elevacaoGanho: a.total_elevation_gain || 0, titulo: a.name || 'Corrida', compartilhado: false, iniciadoEm: new Date(a.start_date), finalizadoEm: new Date(new Date(a.start_date).getTime()+dur*1000) },
             update: {}
           }).catch(() => {});
           total++;
         }
-      } catch(e) { log('STRAVA', `Erro user ${u.name}: ${e.message}`); }
+      } catch(e) { log('STRAVA', 'Erro user ' + t.userId + ': ' + e.message); }
     }
-    log('STRAVA', `✅ Sync concluído: ${total} atividades`);
-  } catch(e) { log('STRAVA', `❌ Erro geral: ${e.message}`); }
+    log('STRAVA', '✅ Sync concluído: ' + total + ' atividades');
+  } catch(e) { log('STRAVA', '❌ Erro geral: ' + e.message); }
 });
 
 // ─── AGENTE 3: Recalcular Rankings (diário 4h) ───────────

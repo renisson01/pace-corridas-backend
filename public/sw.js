@@ -1,6 +1,6 @@
 // PACE Corridas — Service Worker v1.0
-const CACHE = 'pace-v1';
-const OFFLINE = ['/atleta.html', '/entrar.html', '/corridas-abertas.html'];
+const CACHE = 'pace-v2';
+const OFFLINE = ['/atleta.html', '/entrar.html', '/corridas-abertas.html', '/ia.html', '/cobaia.html', '/perfil.html', '/exames.html', '/cobaia-resultados.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE)));
