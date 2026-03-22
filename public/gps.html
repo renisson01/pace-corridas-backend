@@ -4,52 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GPS Tracker — PACE BRAZIL</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#00E676;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+:root{--verde:#F7931A;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(8,11,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.topbar-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
-.gps-hero{background:linear-gradient(135deg,rgba(0,230,118,0.08),rgba(0,200,83,0.03));border-bottom:1px solid var(--border);padding:24px 20px;text-align:center}
+.topbar-logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
+.topbar-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.gps-hero{background:linear-gradient(135deg,rgba(247,147,26,0.08),rgba(0,200,83,0.03));border-bottom:1px solid var(--border);padding:24px 20px;text-align:center}
 .gps-hero-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
-.gps-hero-title{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.gps-hero-title{font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
 .gps-hero-sub{font-size:13px;color:var(--muted)}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:20px 16px}
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
-.stat-card .valor{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--verde);display:block;line-height:1}
+.stat-card .valor{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;color:var(--verde);display:block;line-height:1}
 .stat-card .label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;display:block}
 .tracker-box{margin:0 16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden}
 .tracker-header{padding:20px;border-bottom:1px solid var(--border);text-align:center}
 .tracker-status{display:inline-flex;align-items:center;gap:6px;background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.2);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:16px}
-.tracker-status.ativo{background:rgba(0,230,118,0.1);border-color:rgba(0,230,118,0.2);color:var(--verde)}
+.tracker-status.ativo{background:rgba(247,147,26,0.1);border-color:rgba(247,147,26,0.2);color:var(--verde)}
 .tracker-status::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
 .tracker-status.ativo::before{animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
-.tempo-display{font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;line-height:1;letter-spacing:-3px;color:var(--text);font-variant-numeric:tabular-nums}
+.tempo-display{font-family:'Space Grotesk',sans-serif;font-size:72px;font-weight:900;line-height:1;letter-spacing:-3px;color:var(--text);font-variant-numeric:tabular-nums}
 .tempo-display.correndo{color:var(--verde)}
 .metricas-live{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)}
 .metrica{text-align:center}
-.metrica .val{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:var(--text)}
+.metrica .val{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:900;color:var(--text)}
 .metrica .val.verde{color:var(--verde)}
 .metrica .uni{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
 .btn-area{padding:16px 20px}
-.btn-iniciar{width:100%;padding:18px;background:var(--verde);color:#080B10;border:none;border-radius:50px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px}
-.btn-iniciar:hover{background:var(--verde2);transform:scale(1.02);box-shadow:0 0 30px rgba(0,230,118,0.3)}
-.btn-parar{width:100%;padding:18px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:50px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:none;align-items:center;justify-content:center;gap:10px}
+.btn-iniciar{width:100%;padding:18px;background:var(--verde);color:#080B10;border:none;border-radius:50px;font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-iniciar:hover{background:var(--verde2);transform:scale(1.02);box-shadow:0 0 30px rgba(247,147,26,0.3)}
+.btn-parar{width:100%;padding:18px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:50px;font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:none;align-items:center;justify-content:center;gap:10px}
 .btn-parar:hover{background:rgba(239,68,68,0.25)}
 .historico-section{padding:0 16px 20px}
 .sec-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
-.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:14px}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:900;margin-bottom:14px}
 .ativ-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:all 0.2s}
 .ativ-card:hover{border-color:var(--verde);background:var(--bg3)}
-.ativ-icon{width:44px;height:44px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ativ-icon{width:44px;height:44px;background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .ativ-info{flex:1}
-.ativ-titulo{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700}
+.ativ-titulo{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700}
 .ativ-data{font-size:11px;color:var(--muted);margin-top:2px}
 .ativ-stats{text-align:right}
-.ativ-km{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde);line-height:1}
+.ativ-km{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;color:var(--verde);line-height:1}
 .ativ-pace{font-size:11px;color:var(--muted)}
 .empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
 .empty-icon{font-size:40px;margin-bottom:12px}

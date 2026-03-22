@@ -4,24 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>PACE — Resultados & Ranking Brasil</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#00E676;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+:root{--verde:#F7931A;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
 a{text-decoration:none;color:inherit}
-button{cursor:pointer;font-family:'Barlow',sans-serif}
+button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
 
 .topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(8,11,16,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px}
 .stats-row{display:flex;gap:16px}
 .stat-item{text-align:center}
-.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--laranja);line-height:1}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900;color:var(--laranja);line-height:1}
 .stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
 
 .main-tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
 .main-tabs::-webkit-scrollbar{display:none}
-.main-tab{flex-shrink:0;padding:11px 18px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--muted);border:none;background:transparent;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer}
+.main-tab{flex-shrink:0;padding:11px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--muted);border:none;background:transparent;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer}
 .main-tab.ativo{color:var(--verde);border-bottom-color:var(--verde)}
 
 .secao{display:none;padding:12px 16px}
@@ -30,7 +30,7 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 /* Seletor corrida */
 .selector-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
 .selector-box label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px}
-.sel-corrida{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:10px;font-size:13px;font-family:'Barlow',sans-serif;outline:none;cursor:pointer}
+.sel-corrida{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:10px;font-size:13px;font-family:'Space Grotesk',sans-serif;outline:none;cursor:pointer}
 .sel-corrida:focus{border-color:var(--verde)}
 .info-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .itag{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted)}
@@ -38,7 +38,7 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 
 /* Sub-tabs corrida */
 .sub-tabs{display:flex;gap:6px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:10px;overflow-x:auto;scrollbar-width:none}
-.sub-tab{flex-shrink:0;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);border:none;background:transparent;border-radius:20px;cursor:pointer;transition:all .2s}
+.sub-tab{flex-shrink:0;padding:6px 14px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);border:none;background:transparent;border-radius:20px;cursor:pointer;transition:all .2s}
 .sub-tab.sel{background:var(--verde);color:#080B10}
 
 /* Dist tabs */
@@ -50,9 +50,9 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 .filtros-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
 .btn-gen{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s}
 .btn-gen.sel{background:var(--verde);color:#080B10;border-color:var(--verde)}
-.input-filtro{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-size:12px;font-family:'Barlow',sans-serif;outline:none;min-width:120px;flex:1}
+.input-filtro{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-size:12px;font-family:'Space Grotesk',sans-serif;outline:none;min-width:120px;flex:1}
 .input-filtro:focus{border-color:var(--verde)}
-.sel-faixa{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-size:12px;font-family:'Barlow',sans-serif;outline:none;cursor:pointer}
+.sel-faixa{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-size:12px;font-family:'Space Grotesk',sans-serif;outline:none;cursor:pointer}
 
 /* Cartaz */
 .cartaz-wrap{margin-bottom:12px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,109,0,.25)}
@@ -60,8 +60,8 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 
 /* Resultado card */
 .res-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;cursor:pointer;transition:all .15s;text-decoration:none;color:inherit}
-.res-card:hover{border-color:rgba(0,230,118,.3);background:rgba(0,230,118,.03)}
-.pos-badge{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;flex-shrink:0}
+.res-card:hover{border-color:rgba(247,147,26,.3);background:rgba(247,147,26,.03)}
+.pos-badge{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:900;flex-shrink:0}
 .p1{background:linear-gradient(135deg,#FFD700,#FFA500);color:#080B10}
 .p2{background:linear-gradient(135deg,#C0C0C0,#909090);color:#080B10}
 .p3{background:linear-gradient(135deg,#CD7F32,#8B5020);color:#fff}
@@ -70,29 +70,29 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 .res-nome{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
 .res-sub{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .res-tempo{text-align:right;flex-shrink:0}
-.res-tempo p{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1}
+.res-tempo p{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1}
 .res-tempo span{font-size:10px;color:var(--muted)}
 
 /* Faixa card */
-.faixa-header{background:var(--bg2);border:1px solid rgba(0,230,118,.2);border-radius:12px;padding:10px 14px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-.faixa-titulo{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;color:var(--verde)}
+.faixa-header{background:var(--bg2);border:1px solid rgba(247,147,26,.2);border-radius:12px;padding:10px 14px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faixa-titulo{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:900;color:var(--verde)}
 .faixa-total{font-size:11px;color:var(--muted)}
 .faixa-body{display:none;margin-bottom:8px}
 .faixa-body.open{display:block}
 
 /* Ranking */
 .rank-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;cursor:pointer;transition:border-color .15s}
-.rank-card:hover{border-color:rgba(0,230,118,.3)}
+.rank-card:hover{border-color:rgba(247,147,26,.3)}
 .nivel-badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
 .nv-em{background:rgba(255,215,0,.15);color:#FFD700;border:1px solid rgba(255,215,0,.3)}
 .nv-en{background:rgba(255,109,0,.15);color:#FF6D00;border:1px solid rgba(255,109,0,.3)}
 .nv-er{background:rgba(59,130,246,.15);color:#60A5FA;border:1px solid rgba(59,130,246,.3)}
-.nv-se{background:rgba(0,230,118,.15);color:var(--verde);border:1px solid rgba(0,230,118,.3)}
+.nv-se{background:rgba(247,147,26,.15);color:var(--verde);border:1px solid rgba(247,147,26,.3)}
 .nv-av{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
 
 .loading{text-align:center;padding:32px;color:var(--muted);font-size:26px}
 .empty{text-align:center;padding:32px;color:var(--muted);font-size:13px}
-.secao-lbl{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;margin-bottom:10px;color:var(--text)}
+.secao-lbl{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:900;margin-bottom:10px;color:var(--text)}
 
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:6px 0 calc(8px + env(safe-area-inset-bottom))}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;color:var(--muted)}
@@ -100,7 +100,7 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 .nav-icon{font-size:20px;line-height:1}
 .nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 
-#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(0,230,118,.3);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;display:none;white-space:nowrap}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(247,147,26,.3);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;display:none;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -203,13 +203,13 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 <!-- ===== ABA PONTUAÇÃO ===== -->
 <div class="secao" id="secao-pontuacao">
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px">
-    <p style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;margin-bottom:14px">⭐ Sistema de Pontuação PACE</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900;margin-bottom:14px">⭐ Sistema de Pontuação PACE</p>
     <div style="display:grid;gap:8px">
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:10px"><span style="font-weight:700">⭐ Elite Mundial</span><span style="color:#FFD700;font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:16px">12.000+ pts</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(255,109,0,.08);border:1px solid rgba(255,109,0,.2);border-radius:10px"><span style="font-weight:700">🔥 Elite Nacional</span><span style="color:#FF6D00;font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:16px">7.000+ pts</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px"><span style="font-weight:700">💪 Elite Regional</span><span style="color:#60A5FA;font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:16px">3.000+ pts</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);border-radius:10px"><span style="font-weight:700">📈 Sub-Elite</span><span style="color:var(--verde);font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:16px">1.000+ pts</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px"><span style="font-weight:700">🌱 Avançado</span><span style="color:var(--muted);font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:16px">0 pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:10px"><span style="font-weight:700">⭐ Elite Mundial</span><span style="color:#FFD700;font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">12.000+ pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(255,109,0,.08);border:1px solid rgba(255,109,0,.2);border-radius:10px"><span style="font-weight:700">🔥 Elite Nacional</span><span style="color:#FF6D00;font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">7.000+ pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px"><span style="font-weight:700">💪 Elite Regional</span><span style="color:#60A5FA;font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">3.000+ pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(247,147,26,.08);border:1px solid rgba(247,147,26,.2);border-radius:10px"><span style="font-weight:700">📈 Sub-Elite</span><span style="color:var(--verde);font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">1.000+ pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px"><span style="font-weight:700">🌱 Avançado</span><span style="color:var(--muted);font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">0 pts</span></div>
     </div>
   </div>
 </div>
@@ -481,8 +481,8 @@ async function loadRanking(tipo) {
     if (!dados.length) { document.getElementById('rankingContent').innerHTML = '<div class="empty">Sem dados para esta distância</div>'; return; }
     document.getElementById('rankingContent').innerHTML = dados.map((a,i) => {
       const nc = a.nivel?.includes('Mundial')?'nv-em':a.nivel?.includes('Nacional')?'nv-en':a.nivel?.includes('Regional')?'nv-er':a.nivel?.includes('Sub')?'nv-se':'nv-av';
-      const tempo = a.melhorTempo ? `<p style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1">${a.melhorTempo}</p><span style="font-size:10px;color:var(--muted)">melhor tempo</span>` :
-        `<p style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1">${(a.totalPoints||0).toLocaleString()}</p><span style="font-size:10px;color:var(--muted)">${a.totalRaces||0} provas</span>`;
+      const tempo = a.melhorTempo ? `<p style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1">${a.melhorTempo}</p><span style="font-size:10px;color:var(--muted)">melhor tempo</span>` :
+        `<p style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1">${(a.totalPoints||0).toLocaleString()}</p><span style="font-size:10px;color:var(--muted)">${a.totalRaces||0} provas</span>`;
       const posCls = i===0?'p1':i===1?'p2':i===2?'p3':'pn';
       return `<div class="rank-card" onclick="location.href='/perfil-atleta.html?id=${a.id}'">
         <div class="pos-badge ${posCls}">${i+1}</div>

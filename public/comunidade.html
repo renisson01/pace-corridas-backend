@@ -14,8 +14,8 @@
   --card2:  #181830;
   --border: #1e1e3a;
   --b2:     #28284a;
-  --neon:   #00ffaa;
-  --neon2:  #00cc88;
+  --neon:   #F7931A;
+  --neon2:  #E8850C;
   --orange: #ff6b35;
   --red:    #ff3b5c;
   --blue:   #4c9eff;
@@ -72,7 +72,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100v
 .chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;
   font-size:12px;font-weight:600;border:1px solid var(--border);color:var(--dim);
   cursor:pointer;transition:all .2s;white-space:nowrap;background:var(--bg3)}
-.chip.on,.chip:hover{border-color:var(--neon);color:var(--neon);background:rgba(0,255,170,.07)}
+.chip.on,.chip:hover{border-color:var(--neon);color:var(--neon);background:rgba(247,147,26,.07)}
 .chips-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
 .chips-row::-webkit-scrollbar{display:none}
 .empty{text-align:center;padding:48px 24px;color:var(--dim)}
@@ -119,9 +119,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100v
 .grupo-footer{border-top:1px solid var(--border);padding:10px 16px;
   display:flex;align-items:center;justify-content:space-between}
 .grupo-local{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:4px}
-.btn-entrar{background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.25);color:var(--neon);
+.btn-entrar{background:rgba(247,147,26,.1);border:1px solid rgba(247,147,26,.25);color:var(--neon);
   padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
-.btn-entrar:hover{background:rgba(0,255,170,.2)}
+.btn-entrar:hover{background:rgba(247,147,26,.2)}
 .btn-membro{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--dim);
   padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
 
@@ -181,7 +181,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100v
 .msg-row.mine .msg-nome{display:none}
 .msg-bubble{padding:9px 12px;border-radius:16px;font-size:13px;line-height:1.55;word-break:break-word;position:relative}
 .msg-bubble.theirs{background:var(--card2);border:1px solid var(--border);border-radius:4px 16px 16px 16px;color:var(--text)}
-.msg-bubble.mine{background:rgba(0,255,170,.12);border:1px solid rgba(0,255,170,.2);border-radius:16px 4px 16px 16px}
+.msg-bubble.mine{background:rgba(247,147,26,.12);border:1px solid rgba(247,147,26,.2);border-radius:16px 4px 16px 16px}
 .msg-bubble.sistema{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;
   text-align:center;font-size:12px;color:var(--dim);font-style:italic;max-width:100%;padding:6px 12px}
 .msg-time{font-size:9px;color:var(--dim);padding:0 4px}
@@ -226,7 +226,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100v
 .rank-pos.gold{color:var(--yellow)}
 .rank-pos.silver{color:#b0b0c0}
 .rank-pos.bronze{color:#cd8040}
-.rank-me{border-color:rgba(0,255,170,.25);background:rgba(0,255,170,.04)}
+.rank-me{border-color:rgba(247,147,26,.25);background:rgba(247,147,26,.04)}
 .rank-av{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#000;flex-shrink:0}
 .rank-info{flex:1}
 .rank-nome{font-size:13px;font-weight:700}
@@ -263,7 +263,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100v
 .pending-sub{font-size:11px;color:var(--dim);margin-top:2px}
 .pending-msg{font-size:12px;color:var(--dim);font-style:italic;margin-top:4px}
 .pending-actions{display:flex;gap:6px}
-.btn-aprovar{background:rgba(0,255,170,.12);border:1px solid rgba(0,255,170,.25);color:var(--neon);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-aprovar{background:rgba(247,147,26,.12);border:1px solid rgba(247,147,26,.25);color:var(--neon);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
 .btn-negar{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.2);color:var(--red);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
 
 /* ── MODAL CRIAR/EDITAR GRUPO ── */
@@ -275,7 +275,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f);min-height:100v
 .modal-title{font-size:18px;font-weight:800;margin-bottom:18px;text-align:center}
 .tipo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
 .tipo-opt{border:2px solid var(--border);border-radius:14px;padding:14px 12px;text-align:center;cursor:pointer;transition:all .2s}
-.tipo-opt:hover,.tipo-opt.on{border-color:var(--neon);background:rgba(0,255,170,.06)}
+.tipo-opt:hover,.tipo-opt.on{border-color:var(--neon);background:rgba(247,147,26,.06)}
 .tipo-opt-ico{font-size:28px;margin-bottom:6px}
 .tipo-opt-label{font-size:13px;font-weight:700}
 .tipo-opt-sub{font-size:11px;color:var(--dim);margin-top:2px}
@@ -538,7 +538,7 @@ select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 
     <label class="field-label">Cor do Grupo</label>
     <div class="cor-grid">
-      <div class="cor-opt on" style="background:#00ffaa" data-cor="#00ffaa" onclick="selectCor(this)"></div>
+      <div class="cor-opt on" style="background:#F7931A" data-cor="#F7931A" onclick="selectCor(this)"></div>
       <div class="cor-opt" style="background:#ff6b35" data-cor="#ff6b35" onclick="selectCor(this)"></div>
       <div class="cor-opt" style="background:#4c9eff" data-cor="#4c9eff" onclick="selectCor(this)"></div>
       <div class="cor-opt" style="background:#ffd60a" data-cor="#ffd60a" onclick="selectCor(this)"></div>
@@ -903,7 +903,7 @@ function renderMensagens(msgs, container) {
 }
 
 function stringToColor(str) {
-  const colors = ['#ff6b35','#4c9eff','#c084fc','#ffd60a','#34c759','#ff3b5c','#00ffaa','#ff9f0a'];
+  const colors = ['#ff6b35','#4c9eff','#c084fc','#ffd60a','#34c759','#ff3b5c','#F7931A','#ff9f0a'];
   let hash = 0;
   for (let c of str) hash = c.charCodeAt(0) + ((hash << 5) - hash);
   return colors[Math.abs(hash) % colors.length];
@@ -1158,7 +1158,7 @@ async function confirmarEncerrar() {
 // CRIAR GRUPO
 // ══════════════════════════════════════════
 let criarTipo = 'assessoria';
-let criarCor = '#00ffaa';
+let criarCor = '#F7931A';
 
 function abrirModalCriar() { document.getElementById('modalCriar').classList.add('open'); }
 function fecharModalCriar() { document.getElementById('modalCriar').classList.remove('open'); }

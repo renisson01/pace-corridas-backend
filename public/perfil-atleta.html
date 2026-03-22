@@ -4,45 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>PACE — Perfil do Atleta</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#00E676;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+:root{--verde:#F7931A;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
 a{text-decoration:none;color:inherit}
-button{cursor:pointer;font-family:'Barlow',sans-serif}
+button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
 
 .topbar{height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;background:rgba(8,11,16,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 .btn-back{background:transparent;border:none;color:var(--verde);font-size:20px;padding:4px;cursor:pointer}
-.topbar-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:1px}
+.topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:18px;letter-spacing:1px}
 
 /* Hero do atleta */
-.hero{background:linear-gradient(180deg,rgba(0,230,118,.06) 0%,transparent 100%);padding:20px 16px;border-bottom:1px solid var(--border)}
+.hero{background:linear-gradient(180deg,rgba(247,147,26,.06) 0%,transparent 100%);padding:20px 16px;border-bottom:1px solid var(--border)}
 .hero-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
-.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--verde),#00C853);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:#080B10;flex-shrink:0;overflow:hidden}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--verde),#00C853);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;color:#080B10;flex-shrink:0;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.hero-info h1{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;line-height:1.1;margin-bottom:4px}
+.hero-info h1{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;line-height:1.1;margin-bottom:4px}
 .hero-info p{font-size:12px;color:var(--muted)}
 .nivel-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:4px}
 .nv-em{background:rgba(255,215,0,.15);color:#FFD700;border:1px solid rgba(255,215,0,.3)}
 .nv-en{background:rgba(255,109,0,.15);color:#FF6D00;border:1px solid rgba(255,109,0,.3)}
 .nv-er{background:rgba(59,130,246,.15);color:#60A5FA;border:1px solid rgba(59,130,246,.3)}
-.nv-se{background:rgba(0,230,118,.15);color:var(--verde);border:1px solid rgba(0,230,118,.3)}
+.nv-se{background:rgba(247,147,26,.15);color:var(--verde);border:1px solid rgba(247,147,26,.3)}
 .nv-av{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
 
 /* Stats grid */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center}
-.stat-n{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde);display:block;line-height:1}
+.stat-n{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;color:var(--verde);display:block;line-height:1}
 .stat-l{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:3px;display:block}
 
 /* Melhores tempos */
 .section{padding:14px 16px;border-bottom:1px solid var(--border)}
-.sec-titulo{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px;color:var(--verde)}
+.sec-titulo{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;margin-bottom:10px;color:var(--verde)}
 .tempo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .tempo-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px}
 .tempo-dist{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.tempo-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--verde);line-height:1}
+.tempo-val{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;color:var(--verde);line-height:1}
 .tempo-sub{font-size:10px;color:var(--muted);margin-top:3px}
 
 /* Histórico */
@@ -51,17 +51,17 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 .prova-data{font-size:11px;color:var(--muted);margin-bottom:8px}
 .prova-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .ps-box{background:var(--bg3);border-radius:8px;padding:6px;text-align:center}
-.ps-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;color:var(--verde);display:block;line-height:1}
+.ps-val{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:900;color:var(--verde);display:block;line-height:1}
 .ps-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px;display:block}
 .prova-extra{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 .pe-tag{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 8px;font-size:10px;color:var(--muted)}
 .pe-tag strong{color:var(--text)}
 
 /* Vinculação */
-.vincular-box{margin:14px 16px;background:var(--bg2);border:1px solid rgba(0,230,118,.25);border-radius:14px;padding:16px}
-.vincular-titulo{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--verde);margin-bottom:6px}
+.vincular-box{margin:14px 16px;background:var(--bg2);border:1px solid rgba(247,147,26,.25);border-radius:14px;padding:16px}
+.vincular-titulo{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;color:var(--verde);margin-bottom:6px}
 .vincular-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.btn-vincular{width:100%;background:linear-gradient(135deg,var(--verde),#00C853);color:#080B10;border:none;border-radius:12px;padding:12px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;cursor:pointer}
+.btn-vincular{width:100%;background:linear-gradient(135deg,var(--verde),#00C853);color:#080B10;border:none;border-radius:12px;padding:12px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:900;cursor:pointer}
 .btn-vincular:disabled{opacity:.5}
 
 .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:28px}
@@ -73,7 +73,7 @@ button{cursor:pointer;font-family:'Barlow',sans-serif}
 .nav-icon{font-size:20px;line-height:1}
 .nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 
-#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(0,230,118,.3);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;display:none;white-space:nowrap}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(247,147,26,.3);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;display:none;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -183,7 +183,7 @@ function renderPerfil(a) {
         </button>
       </div>`;
   } else if (esteUsuario) {
-    vincularHtml = `<div style="margin:14px 16px;background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:14px;padding:14px;text-align:center;font-size:13px;color:var(--verde);font-weight:600">✅ Perfil vinculado à sua conta</div>`;
+    vincularHtml = `<div style="margin:14px 16px;background:rgba(247,147,26,.06);border:1px solid rgba(247,147,26,.2);border-radius:14px;padding:14px;text-align:center;font-size:13px;color:var(--verde);font-weight:600">✅ Perfil vinculado à sua conta</div>`;
   }
 
   document.getElementById('mainContent').innerHTML = `

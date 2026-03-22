@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin — EstamPace</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--neon:#00e676;--laranja:#FF6D00;--text:#f0f0f8;--muted:#6b6b85;--red:#ff1744;--blue:#448aff;--yellow:#ffd600}
+:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--neon:#F7931A;--laranja:#FF6D00;--text:#f0f0f8;--muted:#6b6b85;--red:#ff1744;--blue:#448aff;--yellow:#ffd600}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--laranja)}
+.logo{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;color:var(--laranja)}
 .logo span{color:var(--neon)}
 .content{max-width:900px;margin:0 auto;padding:24px 16px}
 .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
@@ -19,7 +19,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .section{display:none}.section.active{display:block}
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
-.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:var(--neon);line-height:1}
+.stat-val{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:900;color:var(--neon);line-height:1}
 .stat-label{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
 .card-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
@@ -30,12 +30,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .pedido-endereco{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;line-height:1.8}
 .badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700}
 .badge-pendente{background:rgba(255,214,0,.15);color:var(--yellow)}
-.badge-pago{background:rgba(0,230,118,.15);color:var(--neon)}
+.badge-pago{background:rgba(247,147,26,.15);color:var(--neon)}
 .badge-enviado{background:rgba(68,138,255,.15);color:var(--blue)}
 .badge-cancelado{background:rgba(255,23,68,.15);color:var(--red)}
 .btn-status{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none}
 .btn-enviado{background:rgba(68,138,255,.2);color:var(--blue);border:1px solid rgba(68,138,255,.3)}
-.btn-pago{background:rgba(0,230,118,.2);color:var(--neon);border:1px solid rgba(0,230,118,.3)}
+.btn-pago{background:rgba(247,147,26,.2);color:var(--neon);border:1px solid rgba(247,147,26,.3)}
 .btn-cancel{background:rgba(255,23,68,.1);color:var(--red);border:1px solid rgba(255,23,68,.2)}
 .btn-wa{background:rgba(37,211,102,.15);color:#25D366;border:1px solid rgba(37,211,102,.3);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
 .field-group{margin-bottom:14px}
@@ -57,7 +57,7 @@ textarea.field-input{resize:vertical;min-height:80px}
 .toast.show{opacity:1}
 .filtros{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .filtro-btn{padding:6px 14px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
-.filtro-btn.active{background:rgba(0,230,118,.15);border-color:var(--neon);color:var(--neon)}
+.filtro-btn.active{background:rgba(247,147,26,.15);border-color:var(--neon);color:var(--neon)}
 .acesso-negado{display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:999}
 .acesso-negado.show{display:flex}
 </style>
@@ -223,7 +223,7 @@ function renderPedido(p){
       </div>
       <div style="text-align:right">
         ${status}
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;color:var(--neon);margin-top:4px;font-weight:900">R$ ${p.valorTotal?.toFixed(2)?.replace('.',',')}</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;color:var(--neon);margin-top:4px;font-weight:900">R$ ${p.valorTotal?.toFixed(2)?.replace('.',',')}</div>
       </div>
     </div>
     <div class="pedido-info">

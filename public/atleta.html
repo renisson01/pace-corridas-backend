@@ -388,7 +388,7 @@ body::after {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00e676">
+<meta name="theme-color" content="#F7931A">
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(()=>console.log('PWA ativo')).catch(()=>{});}</script>
 </head>
 <body>
@@ -2455,6 +2455,12 @@ function assinarLongevidade() {
   })
   .catch(function() { showToast("❌ Erro ao gerar pagamento"); });
 }
+
+function instrucaoGarmin() { showToast('Garmin: Conecte via Garmin Connect > Configurações > Apps > PACE Brazil (em breve)'); }
+function instrucaoApple() { showToast('Apple Watch: Conecte via Apple Saúde > Compartilhar > PACE Brazil (em breve)'); }
+function instrucaoAmazfit() { showToast('Amazfit: Conecte via Zepp App > Perfil > Apps > PACE Brazil (em breve)'); }
+function instrucaoHuawei() { showToast('Huawei: Conecte via Huawei Health > Dispositivos > Apps (em breve)'); }
+function instrucaoPolar() { showToast('Polar: Conecte via Polar Flow > Configurações > Apps (em breve)'); }
 </script>
 
 </body>

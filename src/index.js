@@ -77,6 +77,7 @@ for (const pg of pages) {
 }
 for (const pg of pages) {
   const route = pg === 'index' ? '/' : `/${pg}.html`;
+  if (pg === 'index') app.get('/index.html', async (req, reply) => reply.type('text/html').send(htmlCache['index']));
   app.get(route, async (req, reply) => {
     if (htmlCache[pg]) return reply.type('text/html').send(htmlCache[pg]);
     return reply.code(404).send('Not found');
