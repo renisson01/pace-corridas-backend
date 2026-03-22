@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--green:#00e676;--green2:#00c853;--yellow:#ffd600;--red:#ff1744;--blue:#448aff;--purple:#e040fb;--orange:#ff6d00;--text:#f0f0f8;--muted:#6b6b85;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--display:'Bebas Neue',sans-serif}
+:root{--bg:#04060b;--bg2:#0a0f1a;--bg3:#111827;--card:#0d1117;--border:#1e2d3d;--green:#F7931A;--green2:#E8850C;--yellow:#ffd600;--red:#ff1744;--blue:#448aff;--purple:#e040fb;--orange:#ff6d00;--text:#e2e8f0;--muted:#667788;--font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Space Grotesk',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -19,7 +19,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .nav-section{padding:10px 20px 4px;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-weight:700}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;transition:all .2s;font-size:13px;font-weight:500;color:var(--muted);border-left:3px solid transparent;text-decoration:none}
 .nav-item:hover{color:var(--text);background:rgba(255,255,255,0.04)}
-.nav-item.active{color:var(--green);border-left-color:var(--green);background:rgba(0,230,118,0.06)}
+.nav-item.active{color:var(--green);border-left-color:var(--green);background:rgba(247,147,26,0.06)}
 .nav-item .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .nav-badge{margin-left:auto;background:var(--green);color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:20px;text-align:center}
 .nav-badge.red{background:var(--red);color:#fff}
@@ -71,13 +71,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .data-table tr:hover td{background:rgba(255,255,255,.02)}.data-table tr:last-child td{border-bottom:none}
 .athlete-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all .2s;border:1px solid transparent}
 .athlete-row:hover{background:var(--bg3);border-color:var(--border)}
-.ath-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(0,230,118,.2),rgba(68,138,255,.2));border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;color:var(--green)}
+.ath-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(247,147,26,.2),rgba(68,138,255,.2));border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;color:var(--green)}
 .ath-info{flex:1;min-width:0}
 .ath-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ath-meta{font-size:11px;color:var(--muted)}
 .level-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.5px}
 .level-elite{background:rgba(255,214,0,.15);color:var(--yellow);border:1px solid rgba(255,214,0,.3)}
-.level-avancado{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.level-avancado{background:rgba(247,147,26,.12);color:var(--green);border:1px solid rgba(247,147,26,.25)}
 .level-intermediario{background:rgba(68,138,255,.12);color:var(--blue);border:1px solid rgba(68,138,255,.25)}
 .level-iniciante{background:rgba(107,107,133,.12);color:var(--muted);border:1px solid var(--border)}
 .form-section{margin-bottom:22px}
@@ -99,19 +99,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .etapa-field input,.etapa-field select{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:var(--font);width:100%}
 .etapa-field label{font-size:10px;color:var(--muted);display:block;margin-bottom:3px}
 .zona-pill{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700}
-.z1{background:rgba(68,138,255,.2);color:var(--blue)}.z2{background:rgba(0,230,118,.2);color:var(--green)}
+.z1{background:rgba(68,138,255,.2);color:var(--blue)}.z2{background:rgba(247,147,26,.2);color:var(--green)}
 .z3{background:rgba(255,214,0,.2);color:var(--yellow)}.z4{background:rgba(255,109,0,.2);color:var(--orange)}
 .z5{background:rgba(255,23,68,.2);color:var(--red)}
 .semana-nav{display:flex;align-items:center;gap:12px;margin-bottom:20px}
 .semana-label{font-family:var(--mono);font-size:13px;color:var(--text);flex:1;text-align:center}
 .dias-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:20px}
 .dia-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:120px;cursor:pointer;transition:all .2s}
-.dia-card:hover{border-color:var(--green)}.dia-card.hoje{border-color:var(--green);background:rgba(0,230,118,.05)}
+.dia-card:hover{border-color:var(--green)}.dia-card.hoje{border-color:var(--green);background:rgba(247,147,26,.05)}
 .dia-card.tem-treino{border-color:var(--blue)}.dia-card.executado{border-color:var(--green)}
 .dia-nome{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px}
 .dia-num{font-family:var(--display);font-size:22px;color:var(--text);margin-bottom:8px;line-height:1}
 .dia-treino-item{background:var(--bg2);border-radius:6px;padding:5px 7px;font-size:10px;margin-bottom:4px;border-left:3px solid var(--blue)}
-.dia-gps-item{background:rgba(0,230,118,.08);border-radius:6px;padding:5px 7px;font-size:10px;border-left:3px solid var(--green)}
+.dia-gps-item{background:rgba(247,147,26,.08);border-radius:6px;padding:5px 7px;font-size:10px;border-left:3px solid var(--green)}
 .atividade-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;background:var(--bg3)}
 .atividade-fonte{font-size:18px;flex-shrink:0}
 .atividade-info{flex:1;min-width:0}
@@ -131,7 +131,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .zona-name{font-size:12px;font-weight:600;flex:1}
 .zona-bpm{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right}
 .metod-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;position:relative}
-.metod-card:hover,.metod-card.selected{border-color:var(--green);background:rgba(0,230,118,.04)}
+.metod-card:hover,.metod-card.selected{border-color:var(--green);background:rgba(247,147,26,.04)}
 .metod-card.selected::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--green);font-weight:700;font-size:14px}
 .metod-icon{font-size:28px;margin-bottom:8px}
 .metod-nome{font-size:13px;font-weight:700;margin-bottom:4px}
@@ -180,15 +180,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .cal-header{text-align:center;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:6px 0;font-weight:700}
 .cal-day{min-height:72px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px;cursor:pointer;transition:border .2s;font-size:11px}
-.cal-day:hover{border-color:var(--green)}.cal-day.hoje{border-color:var(--green);background:rgba(0,230,118,.06)}
+.cal-day:hover{border-color:var(--green)}.cal-day.hoje{border-color:var(--green);background:rgba(247,147,26,.06)}
 .cal-day.outro-mes{opacity:.35}
 .cal-day-num{font-size:13px;font-weight:700;margin-bottom:4px}
 .cal-event{background:rgba(68,138,255,.25);border-radius:4px;padding:2px 5px;margin-bottom:2px;font-size:9px;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cal-event.gps{background:rgba(0,230,118,.2);color:var(--green)}
+.cal-event.gps{background:rgba(247,147,26,.2);color:var(--green)}
 .chart-wrap{position:relative;height:200px;margin:8px 0}
 .divider{border:none;border-top:1px solid var(--border);margin:16px 0}
 .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700}
-.badge-green{background:rgba(0,230,118,.15);color:var(--green)}
+.badge-green{background:rgba(247,147,26,.15);color:var(--green)}
 .mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
 .mobile-overlay.open{display:block}
 @media(max-width:768px){
@@ -813,7 +813,7 @@ function renderChartVolume(dados){
   const ctx=document.getElementById('chartVolumeSemana')?.getContext('2d');
   if(!ctx)return;
   if(chartVolume)chartVolume.destroy();
-  chartVolume=new Chart(ctx,{type:'bar',data:{labels:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:dados,backgroundColor:'rgba(0,230,118,0.4)',borderColor:'#00e676',borderWidth:1,borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#6b6b85',stepSize:1},grid:{color:'rgba(42,42,56,.5)'}},x:{ticks:{color:'#6b6b85'},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
+  chartVolume=new Chart(ctx,{type:'bar',data:{labels:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:dados,backgroundColor:'rgba(247,147,26,0.4)',borderColor:'#F7931A',borderWidth:1,borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#6b6b85',stepSize:1},grid:{color:'rgba(42,42,56,.5)'}},x:{ticks:{color:'#6b6b85'},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
 }
 
 async function carregarAtletas(){
@@ -1231,7 +1231,7 @@ function renderChartEvolucao(gps){
   if(chartEvolKm)chartEvolKm.destroy();
   chartEvolKm=new Chart(ctx1,{type:'bar',data:{labels,datasets:[{data:kms,backgroundColor:'rgba(68,138,255,.4)',borderColor:'#448aff',borderWidth:1,borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#6b6b85'},grid:{color:'rgba(42,42,56,.5)'}},x:{ticks:{color:'#6b6b85'},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
   if(chartEvolPace)chartEvolPace.destroy();
-  chartEvolPace=new Chart(ctx2,{type:'line',data:{labels,datasets:[{data:paces,borderColor:'#00e676',backgroundColor:'rgba(0,230,118,.1)',fill:true,tension:.3,pointBackgroundColor:'#00e676',pointRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{reverse:true,ticks:{color:'#6b6b85'},grid:{color:'rgba(42,42,56,.5)'}},x:{ticks:{color:'#6b6b85'},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
+  chartEvolPace=new Chart(ctx2,{type:'line',data:{labels,datasets:[{data:paces,borderColor:'#F7931A',backgroundColor:'rgba(247,147,26,.1)',fill:true,tension:.3,pointBackgroundColor:'#F7931A',pointRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{reverse:true,ticks:{color:'#6b6b85'},grid:{color:'rgba(42,42,56,.5)'}},x:{ticks:{color:'#6b6b85'},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
 }
 
 async function compararAtletas(){

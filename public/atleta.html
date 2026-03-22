@@ -431,7 +431,7 @@ body::after {
       <div class="ia-header">
         <div class="ia-orb">🤖</div>
         <div>
-          <div class="ia-title">IA Treinadora</div>
+          <div class="ia-title">IA Treinadora + Longevidade</div>
           <div class="ia-sub" id="iaSubtitle">Carregando...</div>
         </div>
       </div>
@@ -440,6 +440,8 @@ body::after {
         <div class="chip" onclick="irParaIA('Como está meu treino dessa semana?')">📊 Minha semana</div>
         <div class="chip" onclick="irParaIA('Me dê uma dica de treino para hoje')">💡 Dica de hoje</div>
         <div class="chip" onclick="irParaIA('Qual meu pace alvo para o próximo treino?')">⚡ Meu pace</div>
+        <div class="chip" onclick="irParaIA('Qual minha idade biológica atual?')">🧬 Idade Bio</div>
+        <div class="chip" onclick="irParaIA('Como está meu sono e recuperação?')">😴 Sono</div>
         <div class="chip" onclick="showPage('ia')">💬 Chat completo →</div>
       </div>
     </div>
@@ -481,18 +483,56 @@ body::after {
     </div>
   </div>
 
+  
+  <!-- IDADE BIOLÓGICA -->
+  <div class="section" id="bioAgeHome">
+    <div class="section-header">
+      <div class="section-title">🧬 Idade Biológica</div>
+      <div class="section-link" onclick="window.location.href='/cobaia.html'">Ver Cobaia →</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#0a1a0f,var(--card));border:1px solid #27AE6044;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;cursor:pointer" onclick="window.location.href='/cobaia.html'">
+      <div style="text-align:center">
+        <div id="homeBioAge" style="font-size:42px;font-weight:900;color:#27AE60;line-height:1">--</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">IDADE BIO</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Protocolo Cobaia</div>
+        <div style="font-size:12px;color:var(--muted)">Sono, treino, composição corporal e biomarcadores calculam sua idade real.</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <div style="font-size:10px;background:rgba(247,147,26,.1);color:#F7931A;padding:3px 8px;border-radius:10px;font-weight:700" id="homeBioScore">Score: --</div>
+          <div style="font-size:10px;background:rgba(39,174,96,.1);color:#27AE60;padding:3px 8px;border-radius:10px;font-weight:700" id="homeBioDiff">-- anos</div>
+        </div>
+      </div>
+      <div style="font-size:24px;color:var(--muted)">→</div>
+    </div>
+  </div>
+
+  <!-- STRAVA SYNC -->
+  <div class="section">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
+      <div style="width:44px;height:44px;background:#FC4C02;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⚡</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">Strava Conectado</div>
+        <div style="font-size:11px;color:var(--muted)" id="stravaStatusHome">Sincronize seus treinos</div>
+      </div>
+      <button onclick="window.location.href='/integracoes/strava/auth'" style="background:#FC4C02;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Sync</button>
+    </div>
+  </div>
+
   <!-- PREMIUM (se não for) -->
-  <div class="section" id="premiumCard" style="display:none">
+  <div class="section" id="premiumCard">
     <div class="premium-card">
       <div class="premium-tag">⭐ PREMIUM</div>
-      <div class="premium-title">Eleve seu Treino</div>
+      <div class="premium-title">Eleve seu Treino + Longevidade</div>
       <div class="premium-list">
         <div class="premium-item">Planilha semanal com IA personalizada</div>
         <div class="premium-item">60 mensagens/hora com a IA</div>
         <div class="premium-item">Análise de evolução avançada</div>
         <div class="premium-item">Treinador humano integrado</div>
+        <div class="premium-item">Dashboard de idade biológica</div>
+        <div class="premium-item">Protocolos Bryan Johnson adaptados</div>
       </div>
-      <button class="btn-premium" onclick="assinarPremium()">⭐ Assinar por R$29,90/mês</button>
+      <button class="btn-premium" onclick="assinarPremium()">⭐ Premium R$29,90/mês</button>
     </div>
   </div>
 
