@@ -2473,6 +2473,9 @@ async function conectarOuSyncStrava() {
 }
 
 async function iniciarConexaoStrava() {
+  // Tentar GET direto com token na URL (mais simples)
+  var tk = localStorage.getItem('pace_token');
+  if (tk) { window.location.href = '/integracoes/strava/auth?token=' + encodeURIComponent(tk); return; }
   showToast('⏳ Conectando Strava...');
   try {
     var r = await fetch(API + '/integracoes/strava/connect', {

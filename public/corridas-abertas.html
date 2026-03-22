@@ -508,7 +508,7 @@ async function abrirDetalhe(id) {
         const items = typeof c.checklist === 'string' ? JSON.parse(c.checklist) : (c.checklist || []);
         return items.length ? `<div style="margin:12px 0">
           <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">✅ O que vem no kit</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">${items.map(i=>`<span style="background:rgba(0,255,170,.1);border:1px solid rgba(247,147,26,.2);color:var(--neon);padding:3px 10px;border-radius:20px;font-size:12px">✓ ${i}</span>`).join('')}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">${items.map(i=>`<span style="background:rgba(247,147,26,.1);border:1px solid rgba(247,147,26,.2);color:var(--neon);padding:3px 10px;border-radius:20px;font-size:12px">✓ ${i}</span>`).join('')}</div>
         </div>` : '';
       } catch { return ''; }
     })();
@@ -563,7 +563,7 @@ async function abrirDetalhe(id) {
 
         ${dists ? `<div class="modal-dists">${dists}</div>` : ''}
 
-        ${vagasHtml ? `<div style="background:rgba(0,255,170,.06);border:1px solid rgba(247,147,26,.15);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13px">${vagasHtml}${c.vagasTotal?` de ${c.vagasTotal} vagas`:''}</div>` : ''}
+        ${vagasHtml ? `<div style="background:rgba(247,147,26,.06);border:1px solid rgba(247,147,26,.15);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13px">${vagasHtml}${c.vagasTotal?` de ${c.vagasTotal} vagas`:''}</div>` : ''}
 
         ${c.temKit ? `<div style="display:flex;align-items:center;gap:8px;background:rgba(68,138,255,.08);border:1px solid rgba(68,138,255,.2);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13px"><span style="font-size:18px">🎽</span><div><div style="font-weight:700;color:#448aff">Kit do Corredor incluso</div><div style="font-size:11px;color:var(--dim)">Camisa, número e brindes</div></div></div>` : ''}
 

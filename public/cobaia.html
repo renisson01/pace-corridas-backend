@@ -590,7 +590,7 @@ async function salvarAgenda() {
 async function syncStrava() {
   const r = await fetch(API+'/integracoes/strava/sync',{method:'POST',headers:H});
   const d = await r.json();
-  alert(d.msg || d.error || 'Erro');
+  var btn=document.querySelector('.btn-sync');if(btn){btn.textContent=d.success?'✅ '+(d.sincronizadas||0)+' treinos sincronizados!':'❌ '+(d.error||'Erro');setTimeout(function(){btn.textContent='⚡ SINCRONIZAR STRAVA';},3000);}
   carregarDados();
 }
 
@@ -719,17 +719,16 @@ function renderTreinos(treinos) {
 }
 
 function renderBioAge(data) {
-  const bio = calcBioAge(data);
-  document.getElementById('bioAgeNumber').textContent = bio.bioAge;
-  document.getElementById('bioAgeDiff').textContent = (bio.bioAge < 31 ? '↓ ' + (31 - bio.bioAge).toFixed(1) + ' anos abaixo da cronológica' : 'Calculando...');
+  var useBE=data.bioAge!==undefined;
+  var bioAge=useBE?data.bioAge:calcBioAge(data).bioAge;
+  var age=data.atleta?.age||31;
+  var diff=(age-bioAge).toFixed(1);
+  document.getElementById('bioAgeNumber').textContent=bioAge;
+  document.getElementById('bioAgeDiff').innerHTML=diff>0?'↓ '+diff+' anos abaixo da cronológica':'Calculando...';
   
-  const factors = document.getElementById('bioFactors');
-  factors.innerHTML = [
-    { icon:'🫀', name:'VO2max (VDOT 63.9)', val:bio.factors.vo2, desc:'Elite = grande redução' },
-    { icon:'😴', name:'Qualidade do Sono', val:bio.factors.sono, desc:'8h+ consistente' },
-    { icon:'🏃', name:'Consistência de Treino', val:bio.factors.treino, desc:'4+ treinos/semana' },
-    { icon:'⚖️', name:'Composição Corporal', val:bio.factors.peso, desc:'54kg = ótimo para corredor' },
-  ].map(f => '<div class="protocol-item"><div class="protocol-icon">'+f.icon+'</div><div class="protocol-info"><div class="name">'+f.name+'</div><div class="desc">'+f.desc+'</div></div><span class="protocol-status '+(f.val<0?'status-active':'status-pending')+'">'+(f.val<0?f.val:'+'+f.val)+' anos</span></div>').join('');
+  var factors=document.getElementById('bioFactors');
+  if(data.scoreFatores){var labels={vo2:{i:'🫀',n:'VO2max'},hrv:{i:'💓',n:'HRV'},sleep:{i:'😴',n:'Sono'},training:{i:'🏃',n:'Treino'},body:{i:'⚖️',n:'Corpo'},stress:{i:'🧠',n:'Stress'}};var h='';for(var k in data.scoreFatores){var v=data.scoreFatores[k];var l=labels[k]||{i:'📊',n:k};var cor=v>=80?'#27AE60':v>=50?'#F7931A':'#E74C3C';h+='<div class="protocol-item"><div class="protocol-icon">'+l.i+'</div><div class="protocol-info"><div class="name">'+l.n+'</div><div style="height:4px;background:#1e2d3d;border-radius:2px;margin-top:4px"><div style="height:100%;width:'+v+'%;background:'+cor+';border-radius:2px"></div></div></div><div style="font-size:14px;font-weight:800;color:'+cor+'">'+v+'</div></div>';}factors.innerHTML=h;}else{var bio=calcBioAge(data);factors.innerHTML=[{icon:'🫀',name:'VO2max',val:bio.factors.vo2,desc:'Elite'},{icon:'😴',name:'Sono',val:bio.factors.sono,desc:'8h+'},{icon:'🏃',name:'Treino',val:bio.factors.treino,desc:'Consistência'},{icon:'⚖️',name:'Corpo',val:bio.factors.peso,desc:'Peso'}].map(function(f){return'<div class="protocol-item"><div class="protocol-icon">'+f.icon+'</div><div class="protocol-info"><div class="name">'+f.name+'</div><div class="desc">'+f.desc+'</div></div><span class="protocol-status '+(f.val<0?'status-active':'status-pending')+'">'+(f.val<0?f.val:'+'+f.val)+' anos</span></div>';}).join('');}
+  if(data.score!==undefined){var badge=document.createElement('div');badge.style.cssText='text-align:center;margin-top:8px';badge.innerHTML='<span style="background:#F7931A22;color:#F7931A;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">Score: '+data.score+'/100</span>';document.getElementById('bioAgeCard').appendChild(badge);}
 }
 
 // Main load
