@@ -38,8 +38,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Space 
 .wchip{padding:8px 14px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);font-size:12px;color:var(--text);cursor:pointer;transition:all .2s}
 .wchip:hover{border-color:var(--verde);color:var(--verde)}
 .dica{background:linear-gradient(135deg,rgba(247,147,26,0.08),rgba(232,133,12,0.04));border:1px solid rgba(247,147,26,0.2);border-radius:14px;padding:14px 16px;display:flex;gap:12px;cursor:pointer;transition:all .2s}
-.dica:hover{border-color:rgba(0,230,118,0.4)}
-.dlabel{font-size:10px;font-weight:700;color:var(--verde);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.dica:hover{border-color:rgba(247,147,26,0.4)}
+.dlabel{font-size:10px;font-weight:700;color:#F7931A;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
 .dtext{font-size:13px;color:var(--text);line-height:1.5}
 .msg{display:flex;gap:10px;animation:up .3s ease}
 .msg.u{flex-direction:row-reverse}
@@ -52,7 +52,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Space 
 .mmeta{font-size:11px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:4px}
 .msg.u .mmeta{justify-content:flex-end}
 .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px}
-.bt{background:rgba(0,230,118,0.15);color:var(--verde)}
+.bt{background:rgba(247,147,26,0.15);color:var(--verde)}
 .bl{background:rgba(255,109,0,0.15);color:var(--laranja)}
 .bn{background:rgba(255,235,59,0.15);color:#FFD600}
 .bm{background:rgba(156,39,176,0.15);color:#CE93D8}
@@ -125,12 +125,15 @@ textarea::placeholder{color:var(--muted)}
     <div class="chip" onclick="setChip(this,'Tenho chance de pódio nos ')">🏆 Pódio</div>
     <div class="chip" onclick="setChip(this,'Calcule meu pace para ')">⚡ Pace</div>
     <div class="chip" onclick="setChip(this,'Preciso de motivação para ')">💪 Força</div>
+    <div class="chip" onclick="setChip(this,'Qual minha idade biológica ')">🧬 Idade Bio</div>
+    <div class="chip" onclick="setChip(this,'Como está meu sono ')">😴 Sono</div>
+    <div class="chip" onclick="setChip(this,'Me fale sobre protocolo de sauna ')">🔥 Sauna</div>
   </div>
   <div class="msgs" id="msgs">
     <div class="welcome" id="welcome">
       <div class="wicon">🏃</div>
       <h2>Olá, atleta! 👋</h2>
-      <p>Sou sua treinadora pessoal. Posso te ajudar com treinos, nutrição, lesões e corridas em Sergipe!</p>
+      <p>Sou sua treinadora pessoal de corrida e longevidade. Treinos, nutrição, sono, idade biológica, protocolos de sauna e muito mais!</p>
       <div class="wchips">
         <div class="wchip" onclick="enviarRapido('Qual meu pace ideal para o 10km?')">⚡ Meu pace ideal</div>
         <div class="wchip" onclick="enviarRapido('Tenho chance de pódio na minha faixa etária?')">🏆 Chance de pódio</div>
@@ -138,6 +141,8 @@ textarea::placeholder{color:var(--muted)}
         <div class="wchip" onclick="enviarRapido('Me faz um plano de treino semanal')">📅 Plano semanal</div>
         <div class="wchip" onclick="enviarRapido('O que comer no dia da prova?')">🍌 Dia da prova</div>
         <div class="wchip" onclick="enviarRapido('Estou sentindo dor no joelho após correr')">🩺 Dor no joelho</div>
+        <div class="wchip" onclick="enviarRapido('Qual minha idade biológica e como reduzir?')">🧬 Idade biológica</div>
+        <div class="wchip" onclick="enviarRapido('Me monte um protocolo de longevidade')">🔥 Longevidade</div>
       </div>
     </div>
     <div class="dica" id="dica" onclick="enviarRapido('Me conta mais sobre essa dica')" style="display:none">

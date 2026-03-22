@@ -598,6 +598,25 @@ function mostrarSucesso(user, isNovo) {
 
 function irParaDashboard() {
   const user = JSON.parse(localStorage.getItem('pace_user') || '{}');
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get('plan');
+  const redirect = sessionStorage.getItem('pace_redirect');
+  
+  if (redirect) {
+    sessionStorage.removeItem('pace_redirect');
+    window.location.href = redirect;
+    return;
+  }
+  
+  if (plan === 'premium') {
+    window.location.href = '/atleta.html?plan=premium';
+    return;
+  }
+  if (plan === 'longevidade') {
+    window.location.href = '/atleta.html?plan=longevidade';
+    return;
+  }
+  
   if (user.tipo === 'treinador' || user.role === 'treinador') {
     window.location.href = '/treinador.html';
   } else {
