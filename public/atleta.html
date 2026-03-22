@@ -2432,6 +2432,29 @@ async function syncStrava() {
   } catch(e) { alert('Erro: ' + e.message); }
 }
 
+
+// === AUTO-ABRIR PAGAMENTO VIA URL ===
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var hash = window.location.hash;
+  if (params.get("plan") === "premium" || hash === "#premium") { setTimeout(function() { assinarPremium(); }, 1000); }
+  if (params.get("plan") === "longevidade") { setTimeout(function() { assinarLongevidade(); }, 1000); }
+})();
+
+function assinarLongevidade() {
+  showToast("⏳ Gerando Pix Longevidade...");
+  fetch("/pagamentos/longevidade", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + TOKEN },
+    body: "{}"
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.error) { showToast("❌ " + d.error); return; }
+    mostrarPixModal(d);
+  })
+  .catch(function() { showToast("❌ Erro ao gerar pagamento"); });
+}
 </script>
 
 </body>

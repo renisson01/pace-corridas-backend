@@ -190,6 +190,24 @@ export async function pagamentosRoutes(fastify) {
         console.log('[WEBHOOK] ✅ Premium ativado:', userId, 'até', premiumUntil.toISOString());
       }
 
+
+      // === LONGEVIDADE ===
+      if (ref.startsWith('longevidade-')) {
+        const userId = ref.split('-')[1];
+        const premiumUntil = new Date();
+        premiumUntil.setDate(premiumUntil.getDate() + 30);
+        await prisma.user.update({
+          where: { id: userId },
+          data: { isPremium: true, premiumUntil }
+        }).catch(() => {});
+        await prisma.pagamentoRegistro.upsert({
+          where: { paymentId: String(data.id) },
+          create: { paymentId: String(data.id), tipo: 'longevidade', valor, doadorEmail, ref, status: 'aprovado' },
+          update: { status: 'aprovado' }
+        }).catch(() => {});
+        console.log('[WEBHOOK] ✅ Longevidade ativado:', userId, 'até', premiumUntil.toISOString());
+      }
+
     } catch (e) { console.error('[WEBHOOK ERROR]', e.message); }
   });
 
@@ -340,6 +358,46 @@ export async function pagamentosRoutes(fastify) {
       };
     } catch (e) {
       console.error('[MP PREMIUM]', e.message);
+      return reply.code(500).send({ error: e.message });
+    }
+  });
+
+
+  // POST /pagamentos/longevidade — Protocolo Longevidade R$99,90/mês
+  fastify.post('/pagamentos/longevidade', async (req, reply) => {
+    if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
+    const jwt = await import('jsonwebtoken');
+    const u = (() => { try { return jwt.default.verify(req.headers.authorization?.replace('Bearer ',''), process.env.JWT_SECRET || 'pace-secret-2026'); } catch { return null; } })();
+    if (!u) return reply.code(401).send({ error: 'Login necessário' });
+
+    try {
+      const user = await prisma.user.findUnique({ where: { id: u.userId }, select: { email: true, name: true } });
+      const externalRef = 'longevidade-' + u.userId + '-' + Date.now();
+      const paymentApi = new Payment(getMPClient());
+      const result = await paymentApi.create({ body: {
+        transaction_amount: 99.90,
+        description: 'PACE BRAZIL — Protocolo Longevidade + Performance (30 dias)',
+        payment_method_id: 'pix',
+        external_reference: externalRef,
+        notification_url: BASE_URL + '/pagamentos/webhook',
+        payer: { email: user?.email || 'atleta@pacebrazil.com', first_name: user?.name || 'Atleta' }
+      }});
+
+      const pixData = result?.point_of_interaction?.transaction_data;
+      if (!pixData?.qr_code) return reply.code(500).send({ error: 'Pix não gerado.' });
+
+      return {
+        ok: true,
+        tipo: 'longevidade',
+        valor: 99.90,
+        periodo: '30 dias',
+        paymentId: result.id,
+        qrCode: pixData.qr_code,
+        qrCodeBase64: pixData.qr_code_base64,
+        externalRef
+      };
+    } catch (e) {
+      console.error('[MP LONGEVIDADE]', e.message);
       return reply.code(500).send({ error: e.message });
     }
   });
