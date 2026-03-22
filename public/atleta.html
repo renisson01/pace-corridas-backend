@@ -400,7 +400,7 @@ body::after {
     <div class="greeting">Olá, <span id="topNome">Atleta</span> 👋</div>
   </div>
   <div class="topbar-right">
-    <a href="/" class="icon-btn" title="Home">🏠</a>
+    <a href="/atleta.html" class="icon-btn" title="Home">🏠</a>
     <div class="icon-btn notif-dot" title="Notificações" onclick="showToast('📬 Nenhuma notificação nova')">🔔</div>
     <div class="avatar-btn" id="topAvatar" onclick="showPage('perfil')">A</div>
   </div>
@@ -515,7 +515,7 @@ body::after {
         <div style="font-size:14px;font-weight:700">Strava Conectado</div>
         <div style="font-size:11px;color:var(--muted)" id="stravaStatusHome">Sincronize seus treinos</div>
       </div>
-      <button onclick="window.location.href='/integracoes/strava/auth'" style="background:#FC4C02;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Sync</button>
+      <button onclick="conectarOuSyncStrava()" style="background:#FC4C02;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Sync</button>
     </div>
   </div>
 
@@ -585,7 +585,7 @@ body::after {
 
     <!-- Strava sync -->
     <div style="display:flex;gap:8px;margin-top:10px">
-      <button onclick="sincronizarStrava()" style="flex:1;padding:11px;border-radius:12px;background:rgba(252,76,2,.15);border:1px solid rgba(252,76,2,.4);color:#FC4C02;font-size:12px;font-weight:700;cursor:pointer">🟠 Sincronizar Strava</button>
+      <button onclick="syncStrava()" style="flex:1;padding:11px;border-radius:12px;background:rgba(252,76,2,.15);border:1px solid rgba(252,76,2,.4);color:#FC4C02;font-size:12px;font-weight:700;cursor:pointer">🟠 Sincronizar Strava</button>
       <button onclick="showPage('integracoes')" style="flex:1;padding:11px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer">⌚ Conectar Relógio</button>
     </div>
   </div>
@@ -2455,6 +2455,65 @@ function assinarLongevidade() {
   })
   .catch(function() { showToast("❌ Erro ao gerar pagamento"); });
 }
+
+
+// === STRAVA CONNECT/SYNC INTELIGENTE ===
+async function conectarOuSyncStrava() {
+  showToast('⏳ Verificando Strava...');
+  try {
+    var r = await api('/integracoes/status');
+    if (r.strava && r.strava.conectado) {
+      syncStrava();
+    } else {
+      iniciarConexaoStrava();
+    }
+  } catch(e) {
+    iniciarConexaoStrava();
+  }
+}
+
+async function iniciarConexaoStrava() {
+  showToast('⏳ Conectando Strava...');
+  try {
+    var r = await fetch(API + '/integracoes/strava/connect', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    var d = await r.json();
+    if (d.url) {
+      window.location.href = d.url;
+    } else {
+      showToast('❌ Erro: ' + (d.error || 'Não foi possível conectar'));
+    }
+  } catch(e) {
+    showToast('❌ Erro de conexão');
+  }
+}
+
+async function syncStrava() {
+  showToast('⏳ Sincronizando treinos...');
+  try {
+    var r = await fetch(API + '/integracoes/strava/sync', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    var d = await r.json();
+    if (d.success || d.sincronizadas !== undefined) {
+      showToast('✅ ' + (d.sincronizadas || 0) + ' treinos sincronizados!');
+      setTimeout(function() { location.reload(); }, 1500);
+    } else {
+      showToast('❌ ' + (d.error || 'Erro ao sincronizar'));
+      if (d.error && d.error.includes('token')) iniciarConexaoStrava();
+    }
+  } catch(e) {
+    showToast('❌ Erro de conexão');
+  }
+}
+
+// Alias para manter compatibilidade
+function sincronizarStrava() { syncStrava(); }
 
 function instrucaoGarmin() { showToast('Garmin: Conecte via Garmin Connect > Configurações > Apps > PACE Brazil (em breve)'); }
 function instrucaoApple() { showToast('Apple Watch: Conecte via Apple Saúde > Compartilhar > PACE Brazil (em breve)'); }

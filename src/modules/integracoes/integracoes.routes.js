@@ -50,6 +50,28 @@ export async function integracoesRoutes(fastify) {
     return { url, status: 'redirect_needed' };
   });
 
+
+  // GET /integracoes/strava/auth — redireciona direto pro Strava OAuth
+  fastify.get('/integracoes/strava/auth', async (req, reply) => {
+    const jwt = await import('jsonwebtoken');
+    const token = req.headers.cookie?.match(/pace_token=([^;]+)/)?.[1]
+      || req.headers.authorization?.replace('Bearer ', '')
+      || req.query.token;
+    
+    if (!token) return reply.redirect('/entrar.html');
+    
+    try {
+      const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
+      const u = jwt.default.verify(token, JWT);
+      const clientId = process.env.STRAVA_CLIENT_ID || '212560';
+      const redirect = (process.env.BASE_URL || 'https://web-production-990e7.up.railway.app') + '/integracoes/strava/callback';
+      const url = 'https://www.strava.com/oauth/authorize?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirect) + '&response_type=code&scope=read,activity:read_all&state=' + u.userId;
+      return reply.redirect(url);
+    } catch(e) {
+      return reply.redirect('/entrar.html');
+    }
+  });
+
   // Strava — callback OAuth
   fastify.get('/integracoes/strava/callback', async (req, reply) => {
     const { code, state: userId, error } = req.query;
