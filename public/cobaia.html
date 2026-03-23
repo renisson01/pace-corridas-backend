@@ -784,6 +784,8 @@ function renderBioAge(data) {
 
 // Main load
 async function carregarDados() {
+  document.getElementById("mKm").textContent="...";
+  document.getElementById("mTreinos").textContent="...";
   console.log("carregarDados called");
   try {
     const r = await fetch(API+'/cobaia/dashboard',{headers:H});
@@ -815,7 +817,7 @@ async function carregarDados() {
     renderCharts(d);
     renderTreinos(d.treinos);
     renderBioAge(d);
-  } catch(e) { console.error(e); }
+  } catch(e) { console.error("COBAIA ERR:",e); document.getElementById("mKm").textContent="ERR"; document.getElementById("hojeContent").innerHTML="<div style=color:red>Erro: "+e.message+"</div>"; }
 }
 
 if(!TOKEN) window.location.href='/entrar.html';
