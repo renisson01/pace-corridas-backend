@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>PACE COBAIA — Protocolo 60 Dias</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -564,28 +564,28 @@ async function salvarCheckin() {
   const body = { peso:parseFloat(document.getElementById('cPeso').value)||null, fcRepouso:parseInt(document.getElementById('cFcRep').value)||null, horasSono:parseFloat(document.getElementById('cSono').value)||null, qualidadeSono:parseInt(document.getElementById('rSono')?.dataset.value)||null, horasDormir:document.getElementById('cDormir').value||null, horasAcordar:document.getElementById('cAcordar').value||null, humor:parseInt(document.getElementById('rHumor')?.dataset.value)||null, energia:parseInt(document.getElementById('rEnergia')?.dataset.value)||null, vyvanse:document.getElementById('tVyvanse').classList.contains('on'), notas:document.getElementById('cNotas').value||null };
   const r = await fetch(API+'/cobaia/checkin',{method:'POST',headers:H,body:JSON.stringify(body)});
   const d = await r.json();
-  if(d.success){alert('Check-in salvo!');fecharModal('checkin');carregarDados();}else alert(d.error||'Erro');
+  if(d.success){fecharModal('checkin');var t=document.querySelector('.btn-primary');if(t){t.textContent='✅ Salvo!';t.style.background='#27AE60';setTimeout(function(){t.textContent='💾 SALVAR';t.style.background='#F7931A';},2000);}carregarDados();}else{var t=document.querySelector('.btn-primary');if(t){t.textContent='❌ '+(d.error||'Erro');setTimeout(function(){t.textContent='💾 SALVAR';},2000);}}
 }
 async function salvarAlimentacao() {
   const body = { refeicao:document.getElementById('aRefeicao').value, descricao:document.getElementById('aDesc').value, horario:document.getElementById('aHorario').value||null };
   if(!body.descricao) return alert('Descreva!');
   const r = await fetch(API+'/cobaia/alimentacao',{method:'POST',headers:H,body:JSON.stringify(body)});
   const d = await r.json();
-  if(d.success){alert('Salvo!');fecharModal('alimentacao');carregarDados();}else alert(d.error||'Erro');
+  if(d.success){fecharModal('alimentacao');carregarDados();}else{console.error(d.error);}
 }
 async function salvarSauna() {
   const body = { protocolo:document.getElementById('sProtocolo').value, duracaoMin:parseInt(document.getElementById('sDuracao').value)||0, tempMedia:parseFloat(document.getElementById('sTemp').value)||null, fcAntes:parseInt(document.getElementById('sFcAntes').value)||null, fcDepois:parseInt(document.getElementById('sFcDepois').value)||null, sensacao:parseInt(document.getElementById('rSauna')?.dataset.value)||null };
   if(!body.duracaoMin) return alert('Duração!');
   const r = await fetch(API+'/cobaia/sauna',{method:'POST',headers:H,body:JSON.stringify(body)});
   const d = await r.json();
-  if(d.success){alert('Salvo!');fecharModal('sauna');carregarDados();}else alert(d.error||'Erro');
+  if(d.success){fecharModal('sauna');carregarDados();}else{console.error(d.error);}
 }
 async function salvarAgenda() {
   const body = { tipo:document.getElementById('gTipo').value, titulo:document.getElementById('gTitulo').value, horario:document.getElementById('gHorario').value||null, duracao:parseInt(document.getElementById('gDuracao').value)||null };
   if(!body.titulo) return alert('Título!');
   const r = await fetch(API+'/cobaia/agenda',{method:'POST',headers:H,body:JSON.stringify(body)});
   const d = await r.json();
-  if(d.success){alert('Salvo!');fecharModal('agenda');carregarDados();}else alert(d.error||'Erro');
+  if(d.success){fecharModal('agenda');carregarDados();}else{console.error(d.error);}
 }
 async function syncStrava() {
   const r = await fetch(API+'/integracoes/strava/sync',{method:'POST',headers:H});
