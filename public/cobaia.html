@@ -577,6 +577,7 @@ function showTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   event.target.classList.add('active');
+  if(name==='rodavida') carregarRodaVida();
 }
 
 // Ratings
@@ -940,7 +941,6 @@ function renderRodaHistorico(rodas) {
 }
 
 // Carregar ao trocar pra aba
-var origSetTab = typeof setTab === 'function' ? setTab : null;
 
 </script>
 
