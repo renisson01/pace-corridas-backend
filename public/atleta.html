@@ -536,6 +536,40 @@ body::after {
     </div>
   </div>
 
+  <!-- MAIS OPÇÕES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">⚡ Mais</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button onclick="showPage('ranking')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">🏆</span> Ranking
+      </button>
+      <button onclick="showPage('gps')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">📡</span> GPS
+      </button>
+      <button onclick="showPage('historico')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">📈</span> Histórico
+      </button>
+      <button onclick="showPage('integracoes')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">⌚</span> Relógios
+      </button>
+      <button onclick="showPage('enviar-resultado')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">🏅</span> Resultado
+      </button>
+      <a href="/exames.html" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none">
+        <span style="font-size:22px">🔬</span> Exames
+      </a>
+      <a href="/treinador.html" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none">
+        <span style="font-size:22px">📋</span> Treinador
+      </a>
+      <a href="/loja.html" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none">
+        <span style="font-size:22px">👕</span> Loja
+      </a>
+    </div>
+    <button onclick="logout()" style="width:100%;margin-top:12px;padding:14px;background:none;border:1px solid #E74C3C44;border-radius:14px;color:#E74C3C;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">🚪 Sair da conta</button>
+  </div>
+
 </div>
 
 <!-- ── GPS / ATIVIDADE ─────────────────── -->
