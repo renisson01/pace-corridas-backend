@@ -76,4 +76,21 @@ export async function cobaiaRoutes(fastify) {
       return { checkin, refeicoes, agenda, sauna, checkinFeito: !!checkin };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
+
+  // POST /cobaia/roda-vida — salvar avaliação
+  fastify.post("/cobaia/roda-vida", async (req, reply) => {
+    const u = getUser(req); if (!u) return reply.code(401).send({ error: "Login necessário" });
+    const b = req.body || {};
+    const roda = await prisma.rodaVida.create({
+      data: { userId: u.userId, carreira: b.carreira||5, financas: b.financas||5, saude: b.saude||5, familia: b.familia||5, amorRomance: b.amorRomance||5, vidaSocial: b.vidaSocial||5, crescimentoPessoal: b.crescimentoPessoal||5, recreacao: b.recreacao||5, ambienteFisico: b.ambienteFisico||5, contribuicao: b.contribuicao||5, espiritualidade: b.espiritualidade||5, saudeMental: b.saudeMental||5, observacoes: b.observacoes || null }
+    });
+    return { success: true, roda };
+  });
+
+  // GET /cobaia/roda-vida — histórico
+  fastify.get("/cobaia/roda-vida", async (req, reply) => {
+    const u = getUser(req); if (!u) return reply.code(401).send({ error: "Login necessário" });
+    const rodas = await prisma.rodaVida.findMany({ where: { userId: u.userId }, orderBy: { data: "desc" }, take: 12 });
+    return { rodas };
+  });
 }

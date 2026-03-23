@@ -779,3 +779,26 @@ model CobaiaExame {
   createdAt    DateTime @default(now())
   user         User     @relation(fields: [userId], references: [id])
 }
+
+
+model RodaVida {
+  id                  String   @id @default(cuid())
+  userId              String
+  data                DateTime @default(now())
+  carreira            Int      @default(5) // 1-10
+  financas            Int      @default(5)
+  saude               Int      @default(5)
+  familia             Int      @default(5)
+  amorRomance         Int      @default(5)
+  vidaSocial          Int      @default(5)
+  crescimentoPessoal  Int      @default(5)
+  recreacao           Int      @default(5)
+  ambienteFisico      Int      @default(5)
+  contribuicao        Int      @default(5)
+  espiritualidade     Int      @default(5)
+  saudeMental         Int      @default(5)
+  observacoes         String?
+  createdAt           DateTime @default(now())
+
+  @@index([userId, data])
+}

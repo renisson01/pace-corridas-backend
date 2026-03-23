@@ -460,6 +460,41 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
 
 </div>
 
+
+<div class="tab-content" id="tab-rodavida">
+  <div class="card" style="text-align:center;margin-bottom:16px">
+    <div style="font-size:36px;margin-bottom:8px">🎯</div>
+    <h2 style="color:#F7931A;font-size:20px;margin-bottom:4px">Roda da Vida</h2>
+    <p style="color:#667788;font-size:13px">Método Paul J. Meyer — Avalie 12 dimensões da sua vida de 1 a 10</p>
+  </div>
+
+  <!-- RADAR CHART -->
+  <div class="card" id="rodaChartCard" style="display:none">
+    <h3 style="color:#F7931A;font-size:15px;margin-bottom:12px">Sua Roda Atual</h3>
+    <div style="height:320px;position:relative">
+      <canvas id="chartRodaVida"></canvas>
+    </div>
+    <div style="text-align:center;margin-top:8px">
+      <span id="rodaScore" style="background:#F7931A22;color:#F7931A;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">Score: --/120</span>
+      <span id="rodaDate" style="color:#667788;font-size:11px;margin-left:8px"></span>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="card" id="rodaForm">
+    <h3 style="color:#F7931A;font-size:15px;margin-bottom:16px">Nova Avaliação</h3>
+    <div id="rodaSliders"></div>
+    <textarea id="rodaObs" placeholder="Observações, reflexões, metas..." style="width:100%;min-height:60px;margin:12px 0;padding:12px;background:#080c14;border:1px solid #1e2d3d;border-radius:10px;color:#e2e8f0;font-family:inherit;font-size:13px;resize:vertical"></textarea>
+    <button onclick="salvarRodaVida()" style="width:100%;padding:14px;background:#F7931A;color:#000;border:none;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit">💾 SALVAR AVALIAÇÃO</button>
+  </div>
+
+  <!-- EVOLUÇÃO -->
+  <div class="card" id="rodaEvolucao" style="display:none">
+    <h3 style="color:#F7931A;font-size:15px;margin-bottom:8px">📈 Evolução</h3>
+    <div id="rodaHistorico"></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalCheckin">
   <div class="modal">
     <button class="modal-close" onclick="fecharModal('checkin')">&times;</button>
@@ -768,6 +803,145 @@ async function carregarDados() {
 
 if(!TOKEN) window.location.href='/entrar.html';
 else carregarDados();
+
+// ═══ RODA DA VIDA ═══
+const RODA_DIMS = [
+  { key:'carreira', label:'Carreira & Trabalho', color:'#6366f1', icon:'💼' },
+  { key:'financas', label:'Finanças & Dinheiro', color:'#f59e0b', icon:'💰' },
+  { key:'saude', label:'Saúde & Fitness', color:'#22c55e', icon:'💪' },
+  { key:'familia', label:'Família', color:'#f97316', icon:'👨‍👩‍👦' },
+  { key:'amorRomance', label:'Amor & Romance', color:'#ec4899', icon:'❤️' },
+  { key:'vidaSocial', label:'Vida Social & Amizades', color:'#06b6d4', icon:'👥' },
+  { key:'crescimentoPessoal', label:'Crescimento Pessoal', color:'#8b5cf6', icon:'🧠' },
+  { key:'recreacao', label:'Recreação & Diversão', color:'#14b8a6', icon:'🎮' },
+  { key:'ambienteFisico', label:'Ambiente Físico', color:'#a78bfa', icon:'🏠' },
+  { key:'contribuicao', label:'Contribuição & Impacto', color:'#7c3aed', icon:'🌍' },
+  { key:'espiritualidade', label:'Espiritualidade', color:'#d946ef', icon:'🙏' },
+  { key:'saudeMental', label:'Saúde Mental & Emocional', color:'#f43f5e', icon:'🧘' }
+];
+
+let chartRodaVida = null;
+let rodaVidaAtual = {};
+
+function initRodaSliders() {
+  var container = document.getElementById('rodaSliders');
+  if (!container) return;
+  container.innerHTML = RODA_DIMS.map(function(d) {
+    var val = rodaVidaAtual[d.key] || 5;
+    return '<div style="margin-bottom:14px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
+        '<span style="font-size:13px;font-weight:600">' + d.icon + ' ' + d.label + '</span>' +
+        '<span id="val-' + d.key + '" style="font-size:18px;font-weight:900;color:' + d.color + '">' + val + '</span>' +
+      '</div>' +
+      '<input type="range" min="1" max="10" value="' + val + '" ' +
+        'oninput="document.getElementById('val-' + d.key + '').textContent=this.value;rodaVidaAtual['' + d.key + '']=parseInt(this.value)" ' +
+        'style="width:100%;accent-color:' + d.color + ';height:6px">' +
+    '</div>';
+  }).join('');
+}
+
+async function salvarRodaVida() {
+  var body = {};
+  RODA_DIMS.forEach(function(d) { body[d.key] = rodaVidaAtual[d.key] || 5; });
+  body.observacoes = document.getElementById('rodaObs').value || '';
+  
+  var btn = document.querySelector('#rodaForm button');
+  btn.textContent = '⏳ Salvando...'; btn.disabled = true;
+  
+  try {
+    var r = await fetch(API + '/cobaia/roda-vida', { method:'POST', headers:H, body:JSON.stringify(body) });
+    var d = await r.json();
+    if (d.success) {
+      btn.textContent = '✅ Salvo!'; btn.style.background = '#27AE60';
+      setTimeout(function() { btn.textContent = '💾 SALVAR AVALIAÇÃO'; btn.style.background = '#F7931A'; btn.disabled = false; }, 2000);
+      carregarRodaVida();
+    } else {
+      btn.textContent = '❌ ' + (d.error || 'Erro'); btn.disabled = false;
+      setTimeout(function() { btn.textContent = '💾 SALVAR AVALIAÇÃO'; btn.style.background = '#F7931A'; }, 2000);
+    }
+  } catch(e) { btn.textContent = '❌ Erro'; btn.disabled = false; }
+}
+
+async function carregarRodaVida() {
+  try {
+    var r = await fetch(API + '/cobaia/roda-vida', { headers:H });
+    var d = await r.json();
+    if (d.rodas && d.rodas.length > 0) {
+      var ultima = d.rodas[0];
+      // Preencher valores atuais
+      RODA_DIMS.forEach(function(dim) { rodaVidaAtual[dim.key] = ultima[dim.key] || 5; });
+      initRodaSliders();
+      renderRodaChart(ultima, d.rodas[1] || null);
+      renderRodaHistorico(d.rodas);
+    } else {
+      RODA_DIMS.forEach(function(dim) { rodaVidaAtual[dim.key] = 5; });
+      initRodaSliders();
+    }
+  } catch(e) { initRodaSliders(); }
+}
+
+function renderRodaChart(atual, anterior) {
+  document.getElementById('rodaChartCard').style.display = 'block';
+  
+  var labels = RODA_DIMS.map(function(d) { return d.label.split(' ')[0]; });
+  var values = RODA_DIMS.map(function(d) { return atual[d.key] || 5; });
+  var total = values.reduce(function(a,b) { return a+b; }, 0);
+  
+  document.getElementById('rodaScore').textContent = 'Score: ' + total + '/120';
+  document.getElementById('rodaDate').textContent = new Date(atual.data).toLocaleDateString('pt-BR');
+  
+  var datasets = [{
+    label: 'Atual',
+    data: values,
+    backgroundColor: 'rgba(247,147,26,0.15)',
+    borderColor: '#F7931A',
+    borderWidth: 2,
+    pointBackgroundColor: '#F7931A',
+    pointRadius: 4
+  }];
+  
+  if (anterior) {
+    var valAnterior = RODA_DIMS.map(function(d) { return anterior[d.key] || 5; });
+    datasets.push({
+      label: 'Anterior',
+      data: valAnterior,
+      backgroundColor: 'rgba(102,119,136,0.08)',
+      borderColor: '#667788',
+      borderWidth: 1,
+      borderDash: [4,4],
+      pointRadius: 2
+    });
+  }
+  
+  if (chartRodaVida) chartRodaVida.destroy();
+  chartRodaVida = new Chart(document.getElementById('chartRodaVida'), {
+    type: 'radar',
+    data: { labels: labels, datasets: datasets },
+    options: {
+      scales: { r: { beginAtZero: true, max: 10, min: 0, ticks: { stepSize: 2, color: '#667788', backdropColor: 'transparent' }, grid: { color: 'rgba(30,45,61,0.5)' }, angleLines: { color: 'rgba(30,45,61,0.3)' }, pointLabels: { color: '#e2e8f0', font: { size: 10, weight: '600' } } } },
+      plugins: { legend: { display: true, labels: { color: '#667788', font: { size: 11 } } } },
+      responsive: true, maintainAspectRatio: false
+    }
+  });
+}
+
+function renderRodaHistorico(rodas) {
+  if (rodas.length < 2) return;
+  document.getElementById('rodaEvolucao').style.display = 'block';
+  var html = rodas.slice(0, 6).map(function(r) {
+    var total = RODA_DIMS.reduce(function(s, d) { return s + (r[d.key]||0); }, 0);
+    var dt = new Date(r.data).toLocaleDateString('pt-BR');
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#080c14;border-radius:10px;margin-bottom:6px">' +
+      '<span style="font-size:13px;color:#667788">' + dt + '</span>' +
+      '<span style="font-size:16px;font-weight:800;color:#F7931A">' + total + '/120</span>' +
+    '</div>';
+  }).join('');
+  document.getElementById('rodaHistorico').innerHTML = html;
+}
+
+// Carregar ao trocar pra aba
+var origSetTab = typeof setTab === 'function' ? setTab : null;
+
 </script>
 
 <!-- PACE NAV -->
