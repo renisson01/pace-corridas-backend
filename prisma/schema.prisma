@@ -802,3 +802,33 @@ model RodaVida {
 
   @@index([userId, data])
 }
+
+
+model BioAgeRecord {
+  id          String   @id @default(cuid())
+  userId      String
+  chronoAge   Float
+  bioAge      Float
+  delta       Float
+  vo2max      Float?
+  hrv         Float?
+  sleepScore  Float?
+  stressScore Float?
+  label       String?
+  score       Float?
+  createdAt   DateTime @default(now())
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model DecisionLog {
+  id         String   @id @default(cuid())
+  userId     String
+  userState  Json
+  priorities Json
+  dayPlan    Json
+  ageDelta   Float?
+  createdAt  DateTime @default(now())
+  @@index([userId])
+  @@index([createdAt])
+}

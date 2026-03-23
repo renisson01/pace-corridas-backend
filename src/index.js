@@ -47,6 +47,8 @@ import { leagueRoutes } from './modules/league/league.routes.js';
 import { passportRoutes } from './modules/passport/passport.routes.js';
 import { subscriptionRoutes } from './modules/subscription/subscription.routes.js';
 import { cobaiaRoutes } from './modules/cobaia/cobaia.routes.js';
+import { bioageRoutes } from './modules/biological/bioage.routes.js';
+import { decisionRoutes } from './modules/decision/decision.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = Fastify({ logger: false });
@@ -157,6 +159,8 @@ try {
   await app.register(passportRoutes);
   await app.register(subscriptionRoutes);
   await app.register(cobaiaRoutes);
+  await app.register(bioageRoutes);
+  await app.register(decisionRoutes);
   console.log('✅ Todas as rotas registradas (v3.0 PACE BRAZIL)');
 } catch(e) {
   console.error('❌ ERRO ao registrar rotas:', e.message);
