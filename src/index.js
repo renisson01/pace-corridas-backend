@@ -67,7 +67,7 @@ const pages = [
   'pacematch','organizador','stats','faixas','calculadoras',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
   'ia','ia-avatar','admin-pedidos','scraper','importar-resultado',
-  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador','cobaia','exames','cobaia-resultados'
+  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador','cobaia','exames','privacidade','termos','cobaia-resultados'
 ];
 
 for (const pg of pages) {
@@ -88,6 +88,11 @@ app.get('/manifest.json', async (req, reply) => {
   try { reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/manifest.json'),'utf-8')); }
   catch { reply.send('{}'); }
 });
+app.get('/.well-known/assetlinks.json', async (req, reply) => {
+  try { reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/.well-known/assetlinks.json'),'utf-8')); }
+  catch { reply.send('[]'); }
+});
+
 app.get('/sw.js', async (req, reply) => {
   try { reply.type('application/javascript').send(fs.readFileSync(path.join(__dirname,'../public/sw.js'),'utf-8')); }
   catch { reply.send(''); }
