@@ -94,3 +94,35 @@ export async function cobaiaRoutes(fastify) {
     return { rodas };
   });
 }
+
+  fastify.get("/coach/daily", async (req, reply) => {
+    const u = getUser(req); if (!u) return reply.code(401).send({ error: "Login necessario" });
+    try {
+      const userId = u.userId;
+      const hora = new Date().getHours();
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const amanha = new Date(hoje); amanha.setDate(amanha.getDate()+1);
+      const [user, ultimoCheckin, treinos7d, agenda, proximaCorrida] = await Promise.all([
+        prisma.user.findUnique({ where: { id: userId }, select: { name:true, age:true, isPremium:true } }),
+        prisma.cobaiaDiario.findFirst({ where: { userId }, orderBy: { data: "desc" } }),
+        prisma.atividadeGPS.findMany({ where: { userId, iniciadoEm: { gte: new Date(Date.now()-7*24*60*60*1000) } }, take: 10 }),
+        prisma.cobaiaAgenda.findMany({ where: { userId, data: { gte: hoje, lt: amanha } }, orderBy: { horario: "asc" } }),
+        prisma.corridaAberta.findFirst({ where: { data: { gte: hoje }, ativa: true }, orderBy: { data: "asc" } })
+      ]);
+      const nome = (user?.name || "Atleta").split(" ")[0];
+      const saudacao = hora < 6 ? "Boa madrugada" : hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+      const kmSemana = treinos7d.reduce((s,t) => s+(t.distanciaKm||0), 0).toFixed(1);
+      const treinosSemana = treinos7d.length;
+      const diasSemCheckin = ultimoCheckin ? Math.floor((Date.now()-new Date(ultimoCheckin.data).getTime())/(24*60*60*1000)) : 999;
+      const cards = [];
+      cards.push({type:"greeting",icon:hora<12?"\u2600":"\u{1F319}",title:saudacao+", "+nome+"!",message:treinosSemana>0?"Semana: "+kmSemana+"km em "+treinosSemana+" treinos.":"Sem treino essa semana.",color:"#F7931A"});
+      if(diasSemCheckin>=1) cards.push({type:"action",icon:"\u{1F4CA}",title:"Check-in diario",message:diasSemCheckin===999?"Primeiro check-in!":"Faz "+diasSemCheckin+" dia(s).",action:"checkin",color:"#E74C3C"});
+      else cards.push({type:"status",icon:"\u2705",title:"Check-in feito!",message:"Sono: "+(ultimoCheckin?.horasSono||"--")+"h",color:"#27AE60"});
+      const treinoHoje = treinos7d.find(t => { const d=new Date(t.iniciadoEm);d.setHours(0,0,0,0);return d.getTime()===hoje.getTime(); });
+      if(treinoHoje) cards.push({type:"done",icon:"\u{1F3C3}",title:"Treino: "+treinoHoje.distanciaKm.toFixed(1)+"km",message:"Pace: "+(treinoHoje.paceMedio||"--"),color:"#27AE60"});
+      else if(hora>=5&&hora<=21) cards.push({type:"suggestion",icon:"\u{1F3C3}",title:"Treino de hoje",message:treinosSemana>=4?"Descanso ativo.":"Corrida Z2 30min.",action:"treino",color:"#F7931A"});
+      if(proximaCorrida){const dp=Math.floor((new Date(proximaCorrida.data)-Date.now())/(24*60*60*1000));if(dp<=30) cards.push({type:"event",icon:"\u{1F3C1}",title:proximaCorrida.nome||"Corrida",message:dp===0?"HOJE!":"Em "+dp+" dia(s)",color:"#6366f1"});}
+      if(agenda.length>0) cards.push({type:"agenda",icon:"\u{1F4C5}",title:"Agenda ("+agenda.length+")",items:agenda.map(a=>({titulo:a.titulo,horario:a.horario||"",completado:a.completado})),color:"#06b6d4"});
+      return {cards,timestamp:new Date().toISOString(),nome,isPremium:user?.isPremium};
+    } catch(e) { return reply.code(500).send({ error: e.message }); }
+  });

@@ -425,6 +425,12 @@ body::after {
     </div>
   </div>
 
+  
+  <!-- DAILY COACH -->
+  <div class="section" id="dailyCoachSection">
+    <div id="dailyCoachCards" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+
   <!-- IA TREINADORA -->
   <div class="section">
     <div class="ia-card" id="iaCard">
@@ -1208,6 +1214,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   carregarTreinoHoje();
   carregarSemana();
   carregarCorridasProximas();
+  carregarDailyCoach();
   carregarAtividades();
   carregarConquistas();
   carregarRanking();
@@ -2555,6 +2562,53 @@ function instrucaoApple() { showToast('Apple Watch: Conecte via Apple Saúde > C
 function instrucaoAmazfit() { showToast('Amazfit: Conecte via Zepp App > Perfil > Apps > PACE Brazil (em breve)'); }
 function instrucaoHuawei() { showToast('Huawei: Conecte via Huawei Health > Dispositivos > Apps (em breve)'); }
 function instrucaoPolar() { showToast('Polar: Conecte via Polar Flow > Configurações > Apps (em breve)'); }
+
+// ═══ DAILY COACH ═══
+async function carregarDailyCoach() {
+  try {
+    var r = await fetch(API + '/coach/daily', { headers: { 'Authorization': 'Bearer ' + TOKEN } });
+    var d = await r.json();
+    if (d.error || !d.cards) return;
+    
+    var container = document.getElementById('dailyCoachCards');
+    if (!container) return;
+    
+    var html = '';
+    for (var i = 0; i < d.cards.length; i++) {
+      var c = d.cards[i];
+      html += '<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid ' + c.color + ';border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">';
+      html += '<div style="font-size:24px;flex-shrink:0;margin-top:2px">' + c.icon + '</div>';
+      html += '<div style="flex:1">';
+      html += '<div style="font-size:14px;font-weight:700;margin-bottom:4px">' + c.title + '</div>';
+      
+      if (c.message) {
+        html += '<div style="font-size:12px;color:var(--muted2);line-height:1.5">' + c.message + '</div>';
+      }
+      
+      if (c.items) {
+        for (var j = 0; j < c.items.length; j++) {
+          var item = c.items[j];
+          html += '<div style="font-size:12px;color:var(--muted2);margin-top:3px">' + (item.completado ? '\u2705' : '\u25CB') + ' ' + (item.horario ? item.horario + ' ' : '') + item.titulo + '</div>';
+        }
+      }
+      
+      if (c.action === 'checkin') {
+        html += '<button onclick="window.location.href=\'/cobaia.html\'" style="margin-top:8px;background:' + c.color + '22;color:' + c.color + ';border:1px solid ' + c.color + '44;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Fazer check-in</button>';
+      }
+      if (c.action === 'treino') {
+        html += '<button onclick="window.location.href=\'/ia.html\'" style="margin-top:8px;background:' + c.color + '22;color:' + c.color + ';border:1px solid ' + c.color + '44;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Pedir treino pra IA</button>';
+      }
+      if (c.action === 'sauna') {
+        html += '<button onclick="window.location.href=\'/cobaia.html\'" style="margin-top:8px;background:' + c.color + '22;color:' + c.color + ';border:1px solid ' + c.color + '44;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Registrar sauna</button>';
+      }
+      
+      html += '</div></div>';
+    }
+    
+    container.innerHTML = html;
+  } catch(e) { console.error('Daily coach error:', e); }
+}
+
 </script>
 
 </body>

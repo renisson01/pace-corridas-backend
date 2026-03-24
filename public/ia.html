@@ -135,7 +135,7 @@ textarea::placeholder{color:var(--muted)}
   <div class="msgs" id="msgs">
     <div class="welcome" id="welcome">
       <div class="wicon">🏃</div>
-      <h2>Olá, atleta! 👋</h2>
+      <h2 id="iaWelcomeName">Olá, atleta! 👋</h2>
       <p>Sou sua treinadora pessoal de corrida e longevidade. Treinos, nutrição, sono, idade biológica, protocolos de sauna e muito mais!</p>
       <div class="wchips">
         <div class="wchip" onclick="enviarRapido('Qual meu pace ideal para o 10km?')">⚡ Meu pace ideal</div>
@@ -332,6 +332,14 @@ function tradNivel(n){return{iniciante:'Iniciante',intermediario:'Intermediário
 function fmt(t){if(!t)return'';return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');}
 
 checkAuth();
+
+
+// Personalizar welcome
+var nomeUsuario = JSON.parse(localStorage.getItem('pace_user') || '{}').name;
+if (nomeUsuario) {
+  var el = document.getElementById('iaWelcomeName');
+  if (el) el.textContent = 'Olá, ' + nomeUsuario.split(' ')[0] + '! 👋';
+}
 
 // Verificar status premium
 async function checkPremiumStatus() {
