@@ -431,8 +431,8 @@ body::after {
       <div class="ia-header">
         <div class="ia-orb">🤖</div>
         <div>
-          <div class="ia-title">IA Treinadora + Longevidade</div>
-          <div class="ia-sub" id="iaSubtitle">Carregando...</div>
+          <div class="ia-title">IA Treinadora + 3 Agentes</div>
+          <div class="ia-sub" id="iaSubtitle">Treinador | Médico | Nutricionista | Psicólogo</div>
         </div>
       </div>
       <div class="ia-msg" id="iaMsgHoje">⏳ Analisando seu perfil...</div>
@@ -1199,7 +1199,9 @@ let gpsSegundos = 0;
 window.addEventListener('DOMContentLoaded', async () => {
   // Nome no topo
   const firstName = (user.name || 'Atleta').split(' ')[0];
+  function getGreeting() { var h = new Date().getHours(); if (h < 6) return 'Boa madrugada'; if (h < 12) return 'Bom dia'; if (h < 18) return 'Boa tarde'; return 'Boa noite'; }
   document.getElementById('topNome').textContent = firstName;
+  document.querySelector('.greeting').innerHTML = getGreeting() + ', <span id="topNome2">' + firstName + '</span> \u{1F44B}';
   document.getElementById('topAvatar').textContent = firstName[0].toUpperCase();
 
   await carregarPerfil();

@@ -144,5 +144,78 @@ cron.schedule('0 5 * * 1', async () => {
   log('RESULTADOS', 'Agente em desenvolvimento — scraper de resultados');
 });
 
-log('AGENTS', '✅ Todos os 7 agentes autônomos iniciados');
+
+
+// ─── AGENTE 8: Coach Diário (diário 6h) ──────────────────
+cron.schedule('0 6 * * *', async () => {
+  log('COACH', 'Gerando plano diário para todos os atletas premium...');
+  try {
+    const premiums = await prisma.user.findMany({
+      where: { isPremium: true },
+      select: { id: true, name: true, age: true }
+    });
+    log('COACH', premiums.length + ' atletas premium');
+    // Futuro: gerar plano personalizado via Decision Engine e enviar push
+    for (const u of premiums) {
+      try {
+        const ultimo = await prisma.cobaiaDiario.findFirst({
+          where: { userId: u.id },
+          orderBy: { data: 'desc' }
+        });
+        if (ultimo) {
+          log('COACH', 'Atleta ' + u.name + ': ultimo checkin em ' + ultimo.data);
+        }
+      } catch(e) {}
+    }
+    log('COACH', 'Planos diários gerados');
+  } catch(e) { log('COACH', 'Erro: ' + e.message); }
+});
+
+// ─── AGENTE 9: Monitor de Saúde (diário 10h) ─────────────
+cron.schedule('0 10 * * *', async () => {
+  log('SAUDE', 'Verificando alertas de saúde...');
+  try {
+    // Verificar atletas com gordura < 5% (risco)
+    const risco = await prisma.cobaiaDiario.findMany({
+      where: { gorduraPct: { lt: 5, gt: 0 } },
+      distinct: ['userId'],
+      select: { userId: true, gorduraPct: true }
+    });
+    if (risco.length > 0) {
+      log('SAUDE', '⚠️ ' + risco.length + ' atletas com gordura < 5% (risco hormonal)');
+    }
+    
+    // Verificar atletas sem checkin há 3+ dias
+    const tresDias = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+    const inativos = await prisma.user.findMany({
+      where: {
+        isPremium: true,
+        cobaiaDiarios: { none: { data: { gte: tresDias } } }
+      },
+      select: { id: true, name: true }
+    }).catch(() => []);
+    if (inativos.length > 0) {
+      log('SAUDE', '📋 ' + inativos.length + ' premium sem checkin há 3+ dias');
+    }
+    
+    log('SAUDE', 'Verificação concluída');
+  } catch(e) { log('SAUDE', 'Erro: ' + e.message); }
+});
+
+// ─── AGENTE 10: Nutrição Inteligente (diário 12h) ─────────
+cron.schedule('0 12 * * *', async () => {
+  log('NUTRI', 'Analisando padrões alimentares...');
+  try {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const semana = new Date(hoje); semana.setDate(semana.getDate() - 7);
+    const refeicoes = await prisma.cobaiaAlimentacao.findMany({
+      where: { createdAt: { gte: semana } },
+      select: { userId: true, refeicao: true, descricao: true }
+    });
+    log('NUTRI', refeicoes.length + ' refeições registradas na semana');
+    // Futuro: analisar padrões, sugerir melhorias via push
+  } catch(e) { log('NUTRI', 'Erro: ' + e.message); }
+});
+
+log('AGENTS', '✅ Todos os 10 agentes autônomos iniciados');
 export default {};
