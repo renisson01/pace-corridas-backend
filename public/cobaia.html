@@ -824,6 +824,161 @@ if(!TOKEN) window.location.href='/entrar.html';
 else { carregarDados().catch(function(e){console.error(e);}); }
 
 
+
+
+// ═══ RODA DA VIDA ═══
+var RODA_DIMS = [
+  {key:'carreira',label:'Carreira',color:'#6366f1',icon:'\u{1F4BC}'},
+  {key:'financas',label:'Finan\u00e7as',color:'#f59e0b',icon:'\u{1F4B0}'},
+  {key:'saude',label:'Sa\u00fade & Fitness',color:'#22c55e',icon:'\u{1F4AA}'},
+  {key:'familia',label:'Fam\u00edlia',color:'#f97316',icon:'\u{1F468}'},
+  {key:'amorRomance',label:'Amor',color:'#ec4899',icon:'\u2764'},
+  {key:'vidaSocial',label:'Social',color:'#06b6d4',icon:'\u{1F465}'},
+  {key:'crescimentoPessoal',label:'Crescimento',color:'#8b5cf6',icon:'\u{1F9E0}'},
+  {key:'recreacao',label:'Diversao',color:'#14b8a6',icon:'\u{1F3AE}'},
+  {key:'ambienteFisico',label:'Ambiente',color:'#a78bfa',icon:'\u{1F3E0}'},
+  {key:'contribuicao',label:'Impacto',color:'#7c3aed',icon:'\u{1F30D}'},
+  {key:'espiritualidade',label:'Espiritual',color:'#d946ef',icon:'\u{1F64F}'},
+  {key:'saudeMental',label:'Mental',color:'#f43f5e',icon:'\u{1F9D8}'}
+];
+var rodaVidaAtual = {};
+var chartRodaVida = null;
+
+function initRodaSliders() {
+  var container = document.getElementById('rodaSliders');
+  if (!container) return;
+  var html = '';
+  for (var d = 0; d < RODA_DIMS.length; d++) {
+    var dim = RODA_DIMS[d];
+    var val = rodaVidaAtual[dim.key] || 5;
+    html += '<div style="margin-bottom:14px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+    html += '<span style="font-size:13px;font-weight:600">' + dim.icon + ' ' + dim.label + '</span>';
+    html += '<span id="val-' + dim.key + '" style="font-size:18px;font-weight:900;color:' + dim.color + '">' + val + '</span>';
+    html += '</div>';
+    html += '<input type="range" min="1" max="10" value="' + val + '" data-key="' + dim.key + '" oninput="rodaSliderChange(this)" style="width:100%;accent-color:' + dim.color + ';height:6px">';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function rodaSliderChange(el) {
+  var key = el.getAttribute('data-key');
+  var val = parseInt(el.value);
+  document.getElementById('val-' + key).textContent = val;
+  rodaVidaAtual[key] = val;
+}
+
+function salvarRodaVida() {
+  var body = {};
+  for (var d = 0; d < RODA_DIMS.length; d++) {
+    body[RODA_DIMS[d].key] = rodaVidaAtual[RODA_DIMS[d].key] || 5;
+  }
+  var obs = document.getElementById('rodaObs');
+  body.observacoes = obs ? obs.value : '';
+  var btn = document.querySelector('#rodaForm button');
+  if (btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
+  fetch(API + '/cobaia/roda-vida', { method: 'POST', headers: H, body: JSON.stringify(body) })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (btn) { btn.disabled = false; }
+      if (d.success) {
+        if (btn) { btn.textContent = 'Salvo!'; btn.style.background = '#27AE60'; }
+        setTimeout(function() { if (btn) { btn.textContent = 'SALVAR'; btn.style.background = '#F7931A'; } }, 2000);
+        carregarRodaVida();
+      } else {
+        if (btn) { btn.textContent = 'Erro'; }
+        setTimeout(function() { if (btn) { btn.textContent = 'SALVAR'; } }, 2000);
+      }
+    })
+    .catch(function() { if (btn) { btn.textContent = 'SALVAR'; btn.disabled = false; } });
+}
+
+function carregarRodaVida() {
+  fetch(API + '/cobaia/roda-vida', { headers: H })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.rodas && d.rodas.length > 0) {
+        var ultima = d.rodas[0];
+        for (var i = 0; i < RODA_DIMS.length; i++) {
+          rodaVidaAtual[RODA_DIMS[i].key] = ultima[RODA_DIMS[i].key] || 5;
+        }
+        initRodaSliders();
+        renderRodaChart(ultima);
+      } else {
+        for (var j = 0; j < RODA_DIMS.length; j++) {
+          rodaVidaAtual[RODA_DIMS[j].key] = 5;
+        }
+        initRodaSliders();
+      }
+    })
+    .catch(function() { initRodaSliders(); });
+}
+
+function renderRodaChart(atual) {
+  var card = document.getElementById('rodaChartCard');
+  if (!card) return;
+  card.style.display = 'block';
+  var labels = [];
+  var values = [];
+  var total = 0;
+  for (var i = 0; i < RODA_DIMS.length; i++) {
+    labels.push(RODA_DIMS[i].label);
+    var v = atual[RODA_DIMS[i].key] || 5;
+    values.push(v);
+    total += v;
+  }
+  var scoreEl = document.getElementById('rodaScore');
+  if (scoreEl) scoreEl.textContent = 'Score: ' + total + '/120';
+  var dateEl = document.getElementById('rodaDate');
+  if (dateEl) dateEl.textContent = new Date(atual.data).toLocaleDateString('pt-BR');
+  if (chartRodaVida) chartRodaVida.destroy();
+  var ctx = document.getElementById('chartRodaVida');
+  if (!ctx) return;
+  chartRodaVida = new Chart(ctx, {
+    type: 'radar',
+    data: { labels: labels, datasets: [{ label: 'Atual', data: values, backgroundColor: 'rgba(247,147,26,0.15)', borderColor: '#F7931A', borderWidth: 2, pointBackgroundColor: '#F7931A', pointRadius: 4 }] },
+    options: { scales: { r: { beginAtZero: true, max: 10, min: 0, ticks: { stepSize: 2, color: '#667788', backdropColor: 'transparent' }, grid: { color: 'rgba(30,45,61,0.5)' }, pointLabels: { color: '#e2e8f0', font: { size: 10 } } } }, plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }
+  });
+}
+
+// ═══ PLANO DO DIA ═══
+function gerarPlanoDia() {
+  var btn = document.getElementById('btnPlanoDia');
+  if (btn) { btn.textContent = 'Gerando...'; btn.disabled = true; }
+  var estado = { chronoAge: 31, vo2max: 63 };
+  fetch(API + '/decision/next-step', { method: 'POST', headers: H, body: JSON.stringify(estado) })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (btn) { btn.textContent = 'Atualizar'; btn.disabled = false; }
+      if (d.error) return;
+      var msgEl = document.getElementById('coachMsg');
+      if (msgEl && d.coachMessage) { msgEl.style.display = 'block'; msgEl.textContent = d.coachMessage; }
+      var planEl = document.getElementById('planoDia');
+      var emptyEl = document.getElementById('planoEmpty');
+      if (planEl && d.dayPlan && d.dayPlan.length > 0) {
+        if (emptyEl) emptyEl.style.display = 'none';
+        var html = '';
+        var icons = { 'manha': '\u{1F305}', 'tarde': '\u2600', 'noite': '\u{1F319}', 'qualquer_momento': '\u23F0' };
+        var cores = { treino: '#27AE60', sauna: '#E74C3C', sono: '#6366f1', stress: '#F7931A' };
+        for (var i = 0; i < d.dayPlan.length; i++) {
+          var item = d.dayPlan[i];
+          var icon = icons[item.time] || '\u{1F4CB}';
+          var cor = cores[item.category] || '#667788';
+          var nome = item.name || (item.protocol ? item.protocol.name : item.category);
+          html += '<div style="background:#080c14;border:1px solid #1e2d3d;border-left:3px solid ' + cor + ';border-radius:10px;padding:12px;margin-bottom:6px">';
+          html += '<div style="display:flex;align-items:center;gap:8px">';
+          html += '<span style="font-size:18px">' + icon + '</span>';
+          html += '<span style="font-size:14px;font-weight:700;color:' + cor + '">' + nome + '</span>';
+          html += '<span style="font-size:10px;color:#667788;margin-left:auto">' + item.time + '</span>';
+          html += '</div></div>';
+        }
+        planEl.innerHTML = html;
+      }
+    })
+    .catch(function() { if (btn) { btn.textContent = 'Atualizar'; btn.disabled = false; } });
+}
+
 </script>
 
 <!-- PACE NAV -->
