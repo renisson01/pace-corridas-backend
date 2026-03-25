@@ -2599,7 +2599,7 @@ function instrucaoPolar() { showToast('Polar: Conecte via Polar Flow > Configura
 // ═══ DAILY COACH ═══
 async function carregarDailyCoach() {
   try {
-    var r = await fetch(API + '/coach/daily', { headers: { 'Authorization': 'Bearer ' + TOKEN } });
+    var r = await fetch(API + '/coach/daily', { headers: { 'Authorization': 'Bearer ' + token } });
     var d = await r.json();
     if (d.error || !d.cards) return;
     
@@ -2643,11 +2643,12 @@ async function carregarDailyCoach() {
 }
 
 
+var API = window.location.origin;
 // ═══ SCORE DO DIA ═══
 var missaoAtual = null;
 async function carregarScoreDia() {
   try {
-    var r = await fetch(API + '/score/daily', { headers: { 'Authorization': 'Bearer ' + TOKEN } });
+    var r = await fetch(API + '/score/daily', { headers: { 'Authorization': 'Bearer ' + token } });
     var d = await r.json();
     if (d.error) return;
     // Score circle
