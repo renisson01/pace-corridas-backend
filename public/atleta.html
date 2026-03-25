@@ -411,6 +411,38 @@ body::after {
 <!-- ── HOJE ─────────────────────────────── -->
 <div class="page active" id="page-hoje">
 
+  
+  <!-- SCORE DO DIA — Blueprint 4.0 -->
+  <div class="section" id="scoreDiaSection" style="text-align:center;padding:20px 16px">
+    <div style="position:relative;width:140px;height:140px;margin:0 auto 12px">
+      <svg width="140" height="140" viewBox="0 0 140 140" id="scoreCircle">
+        <circle cx="70" cy="70" r="60" fill="none" stroke="#1e2d3d" stroke-width="8"/>
+        <circle cx="70" cy="70" r="60" fill="none" stroke="#F7931A" stroke-width="8" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377" transform="rotate(-90 70 70)" id="scoreArc"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div id="scoreNumber" style="font-size:42px;font-weight:900;color:#F7931A;line-height:1">--</div>
+        <div id="scoreNivel" style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px">CARREGANDO</div>
+      </div>
+    </div>
+    <div id="scoreSaudacao" style="font-size:16px;font-weight:700;margin-bottom:4px"></div>
+    <div id="scoreResumo" style="font-size:12px;color:var(--muted2);margin-bottom:16px"></div>
+    <!-- MISSÃO DO DIA -->
+    <div id="missaoCard" style="background:var(--card);border:2px solid #F7931A44;border-radius:16px;padding:16px;text-align:left;display:none">
+      <div style="font-size:10px;color:#F7931A;font-weight:700;letter-spacing:2px;margin-bottom:8px">MISSAO DO DIA</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="missaoIcon" style="font-size:32px"></div>
+        <div style="flex:1">
+          <div id="missaoTitulo" style="font-size:16px;font-weight:800"></div>
+          <div id="missaoDesc" style="font-size:12px;color:var(--muted2);margin-top:2px"></div>
+        </div>
+        <div id="missaoPontos" style="background:#F7931A22;color:#F7931A;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800"></div>
+      </div>
+      <button id="missaoBtn" onclick="executarMissao()" style="width:100%;margin-top:12px;padding:12px;background:#F7931A;color:#000;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">FAZER AGORA</button>
+    </div>
+    <!-- FATORES -->
+    <div id="scoreFatores" style="display:flex;gap:6px;justify-content:center;margin-top:12px;flex-wrap:wrap"></div>
+  </div>
+
   <!-- TREINO DO DIA -->
   <div class="hero-hoje" id="heroHoje">
     <div class="hero-top">
@@ -1214,6 +1246,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   carregarTreinoHoje();
   carregarSemana();
   carregarCorridasProximas();
+  carregarScoreDia();
   carregarDailyCoach();
   carregarAtividades();
   carregarConquistas();
@@ -2607,6 +2640,61 @@ async function carregarDailyCoach() {
     
     container.innerHTML = html;
   } catch(e) { console.error('Daily coach error:', e); }
+}
+
+
+// ═══ SCORE DO DIA ═══
+var missaoAtual = null;
+async function carregarScoreDia() {
+  try {
+    var r = await fetch(API + '/score/daily', { headers: { 'Authorization': 'Bearer ' + TOKEN } });
+    var d = await r.json();
+    if (d.error) return;
+    // Score circle
+    var arc = document.getElementById('scoreArc');
+    if (arc) { var offset = 377 - (377 * d.score / 100); arc.setAttribute('stroke-dashoffset', offset); arc.style.stroke = d.score >= 70 ? '#27AE60' : d.score >= 40 ? '#F7931A' : '#E74C3C'; }
+    var numEl = document.getElementById('scoreNumber');
+    if (numEl) { numEl.textContent = d.score; numEl.style.color = d.score >= 70 ? '#27AE60' : d.score >= 40 ? '#F7931A' : '#E74C3C'; }
+    var nivelEl = document.getElementById('scoreNivel');
+    if (nivelEl) nivelEl.textContent = d.nivel;
+    var saudEl = document.getElementById('scoreSaudacao');
+    if (saudEl) saudEl.textContent = d.saudacao + ', ' + d.nome + '!';
+    var resEl = document.getElementById('scoreResumo');
+    if (resEl) resEl.textContent = d.kmSemana + 'km em ' + d.treinosSemana + ' treinos | streak ' + d.streak + ' dias';
+    // Missão
+    if (d.missao) {
+      missaoAtual = d.missao;
+      document.getElementById('missaoCard').style.display = 'block';
+      document.getElementById('missaoIcon').textContent = d.missao.icon;
+      document.getElementById('missaoTitulo').textContent = d.missao.titulo;
+      document.getElementById('missaoDesc').textContent = d.missao.desc;
+      document.getElementById('missaoPontos').textContent = d.missao.pontos > 0 ? '+' + d.missao.pontos + 'pts' : 'Concluido';
+      var btn = document.getElementById('missaoBtn');
+      if (d.missao.action === 'concluido') { btn.textContent = 'DIA COMPLETO'; btn.style.background = '#27AE60'; }
+    }
+    // Fatores
+    var fatEl = document.getElementById('scoreFatores');
+    if (fatEl && d.fatores) {
+      var fats = [
+        {n:'Treino',v:d.fatores.treino,m:30,c:'#27AE60'},
+        {n:'Sono',v:d.fatores.sono,m:25,c:'#6366f1'},
+        {n:'HRV',v:d.fatores.hrv,m:15,c:'#E040FB'},
+        {n:'Nutri',v:d.fatores.nutri,m:15,c:'#F7931A'},
+        {n:'Streak',v:d.fatores.consist,m:15,c:'#06b6d4'}
+      ];
+      fatEl.innerHTML = fats.map(function(f) {
+        return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 10px;min-width:55px"><div style="font-size:14px;font-weight:800;color:' + f.c + '">' + f.v + '</div><div style="font-size:9px;color:var(--muted)">' + f.n + '</div></div>';
+      }).join('');
+    }
+  } catch(e) { console.error('Score error:', e); }
+}
+function executarMissao() {
+  if (!missaoAtual) return;
+  if (missaoAtual.action === 'checkin') window.location.href = '/cobaia.html';
+  else if (missaoAtual.action === 'treino') window.location.href = '/ia.html';
+  else if (missaoAtual.action === 'nutricao') window.location.href = '/cobaia.html';
+  else if (missaoAtual.action === 'descanso') showToast('Bom descanso! Yoga ou caminhada leve.');
+  else showToast('Parabens! Dia completo!');
 }
 
 </script>

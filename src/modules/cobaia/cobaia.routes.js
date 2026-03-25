@@ -124,5 +124,50 @@ export async function cobaiaRoutes(fastify) {
       return {cards,timestamp:new Date().toISOString(),nome,isPremium:user?.isPremium};
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
+
+  // GET /score/daily — Score do Dia (0-100) + Missão
+  fastify.get("/score/daily", async (req, reply) => {
+    const u = getUser(req); if (!u) return reply.code(401).send({ error: "Login necessario" });
+    try {
+      const userId = u.userId;
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const amanha = new Date(hoje); amanha.setDate(amanha.getDate()+1);
+      const semana = new Date(Date.now() - 7*24*60*60*1000);
+      const [checkinHoje, treinoHoje, refeicoes, checkins7d, treinos7d, user] = await Promise.all([
+        prisma.cobaiaDiario.findFirst({ where: { userId, data: { gte: hoje, lt: amanha } } }),
+        prisma.atividadeGPS.findFirst({ where: { userId, iniciadoEm: { gte: hoje } } }),
+        prisma.cobaiaAlimentacao.findMany({ where: { userId, createdAt: { gte: hoje, lt: amanha } } }),
+        prisma.cobaiaDiario.findMany({ where: { userId, data: { gte: semana } }, orderBy: { data: "desc" } }),
+        prisma.atividadeGPS.findMany({ where: { userId, iniciadoEm: { gte: semana } } }),
+        prisma.user.findUnique({ where: { id: userId }, select: { name: true, age: true } })
+      ]);
+      // Calcular score
+      var treino = 0, sono = 0, hrv = 0, nutri = 0, consist = 0;
+      // Treino (30pts)
+      if (treinoHoje) { var km = treinoHoje.distanciaKm || 0; treino = km >= 10 ? 30 : km >= 5 ? 25 : km >= 2 ? 20 : 15; }
+      // Sono (25pts)
+      if (checkinHoje?.horasSono) { var h = checkinHoje.horasSono; sono = h >= 8 ? 25 : h >= 7 ? 20 : h >= 6 ? 12 : 5; }
+      // HRV (15pts)
+      if (checkinHoje?.fcRepouso) { var fc = checkinHoje.fcRepouso; hrv = fc <= 50 ? 15 : fc <= 55 ? 12 : fc <= 60 ? 8 : 4; }
+      // Nutrição (15pts)
+      if (refeicoes.length >= 3) nutri = 15; else if (refeicoes.length >= 2) nutri = 10; else if (refeicoes.length >= 1) nutri = 5;
+      // Consistência (15pts) — streak de dias com check-in
+      var streak = 0; for (var i = 0; i < checkins7d.length; i++) { var diff = Math.floor((Date.now() - new Date(checkins7d[i].data).getTime()) / 86400000); if (diff === streak) streak++; else break; }
+      consist = Math.min(15, streak * 3);
+      var score = treino + sono + hrv + nutri + consist;
+      // Gerar missão
+      var missao = null;
+      if (!checkinHoje) missao = { icon: "\u{1F4CA}", titulo: "Check-in matinal", desc: "Registre sono, peso e humor", action: "checkin", pontos: 25 };
+      else if (!treinoHoje && treinos7d.length < 4) missao = { icon: "\u{1F3C3}", titulo: "Corrida Zona 2", desc: "30min no pace confortavel", action: "treino", pontos: 30 };
+      else if (refeicoes.length < 2) missao = { icon: "\u{1F957}", titulo: "Registre refeicoes", desc: "Anote o que comeu hoje", action: "nutricao", pontos: 15 };
+      else if (!treinoHoje && treinos7d.length >= 4) missao = { icon: "\u{1F9D8}", titulo: "Descanso ativo", desc: "Caminhada ou yoga 20min", action: "descanso", pontos: 10 };
+      else missao = { icon: "\u{1F31F}", titulo: "Dia completo!", desc: "Descanse bem esta noite", action: "concluido", pontos: 0 };
+      var nome = (user?.name || "Atleta").split(" ")[0];
+      var hora = new Date().getHours();
+      var saudacao = hora < 6 ? "Boa madrugada" : hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+      var nivel = score >= 85 ? "Elite" : score >= 70 ? "Excelente" : score >= 50 ? "Bom" : score >= 30 ? "Regular" : "Iniciando";
+      return { score, nivel, fatores: { treino, sono, hrv, nutri, consist }, missao, nome, saudacao, streak, kmSemana: treinos7d.reduce((s,t) => s + (t.distanciaKm||0), 0).toFixed(1), treinosSemana: treinos7d.length };
+    } catch(e) { return reply.code(500).send({ error: e.message }); }
+  });
 }
 
