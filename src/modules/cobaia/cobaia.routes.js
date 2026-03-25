@@ -93,8 +93,6 @@ export async function cobaiaRoutes(fastify) {
     const rodas = await prisma.rodaVida.findMany({ where: { userId: u.userId }, orderBy: { data: "desc" }, take: 12 });
     return { rodas };
   });
-}
-
   fastify.get("/coach/daily", async (req, reply) => {
     const u = getUser(req); if (!u) return reply.code(401).send({ error: "Login necessario" });
     try {
@@ -126,3 +124,5 @@ export async function cobaiaRoutes(fastify) {
       return {cards,timestamp:new Date().toISOString(),nome,isPremium:user?.isPremium};
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
+}
+
