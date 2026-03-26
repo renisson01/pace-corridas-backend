@@ -156,9 +156,9 @@ body{background:#0a0f1a;}
 </nav>
 
 <script>
-const TOKEN   = () => localStorage.getItem('pace_token');
+const token   = () => localStorage.getItem('pace_token');
 const USER_ID = () => localStorage.getItem('pace_userId');
-const hdrs    = () => ({'Content-Type':'application/json',...(TOKEN()?{Authorization:'Bearer '+TOKEN()}:{})});
+const hdrs    = () => ({'Content-Type':'application/json',...(token()?{Authorization:'Bearer '+token()}:{})});
 
 let todos=[], estadoAtual='', grupoAtual=null, comunidadeSlug=null, meuPapel='visitante', chatMsgs=[];
 
@@ -332,7 +332,7 @@ function gerarConvite(){
 function toggleConfig(campo){ toast('Configuração salva ✅'); }
 
 async function solicitarEntrada(){
-  if(!TOKEN()){ window.location.href='/entrar.html'; return; }
+  if(!token()){ window.location.href='/entrar.html'; return; }
   if(!comunidadeSlug){ toast('Esta assessoria ainda não tem grupo digital'); return; }
   const btn=document.getElementById('btn-solicitar');
   btn.disabled=true; btn.textContent='⏳ Enviando...';
@@ -347,7 +347,7 @@ async function solicitarEntrada(){
   }catch{ btn.textContent='Solicitar Entrada'; btn.disabled=false; }
 }
 
-function abrirCadastro(){ if(!TOKEN()){window.location.href='/entrar.html';return;} document.getElementById('modal-cad').classList.remove('hidden'); document.getElementById('modal-cad').classList.add('flex'); }
+function abrirCadastro(){ if(!token()){window.location.href='/entrar.html';return;} document.getElementById('modal-cad').classList.remove('hidden'); document.getElementById('modal-cad').classList.add('flex'); }
 function fecharCadastro(){ document.getElementById('modal-cad').classList.add('hidden'); document.getElementById('modal-cad').classList.remove('flex'); }
 async function cadastrar(){
   const nome=document.getElementById('cad-nome').value.trim();

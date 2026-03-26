@@ -567,9 +567,9 @@ select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 // ══════════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════════
-const TOKEN = localStorage.getItem('pace_token');
+const token = localStorage.getItem('pace_token');
 const ME = JSON.parse(localStorage.getItem('pace_user') || '{}');
-if (!TOKEN) window.location.href = '/entrar.html';
+if (!token) window.location.href = '/entrar.html';
 
 let filtroTipo = '';
 let grupoAtual = null;  // { id, nome, tipo, cor, meuRole, ... }
@@ -581,7 +581,7 @@ let ultimaMsgId = null;
 // ══════════════════════════════════════════
 async function api(path, opts = {}) {
   const res = await fetch(path, {
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}`, ...opts.headers },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, ...opts.headers },
     ...opts
   });
   if (!res.ok) {

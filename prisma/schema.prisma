@@ -832,3 +832,13 @@ model DecisionLog {
   @@index([userId])
   @@index([createdAt])
 }
+
+model Payment {
+  id            String   @id @default(cuid())
+  userId        String?
+  email         String?
+  status        String
+  amount        Float
+  externalId    String   @unique
+  createdAt     DateTime @default(now())
+}

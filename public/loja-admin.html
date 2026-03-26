@@ -149,7 +149,7 @@ textarea.field-input{resize:vertical;min-height:80px}
 
 <script>
 const ADMIN_KEY = '3b77d62cb40acbbe091abf119204cd5fd3371c47e68e47cf9698088a1d1a18d6';
-const TOKEN = localStorage.getItem('pace_token');
+const token = localStorage.getItem('pace_token');
 const USER = JSON.parse(localStorage.getItem('pace_user') || '{}');
 let produtoId = null, statusFiltro = '';
 
@@ -290,7 +290,7 @@ async function uploadFotos(files){
     bar.style.width=`${(i/files.length)*100}%`;
     const form=new FormData();form.append('file',files[i]);
     try{
-      const r=await fetch('/loja/upload-foto',{method:'POST',headers:{'Authorization':`Bearer ${TOKEN}`},body:form});
+      const r=await fetch('/loja/upload-foto',{method:'POST',headers:{'Authorization':`Bearer ${token}`},body:form});
       const d=await r.json();
       if(d.url) urls.push(d.url);
     }catch(e){toast('Erro no upload: '+e.message);}
@@ -303,10 +303,10 @@ async function uploadFotos(files){
     const fotasAtuais=(prod?.fotos||'').split(',').filter(Boolean);
     const todasFotos=[...fotasAtuais,...urls].join(',');
     if(prod?.id){
-      await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({fotos:todasFotos})}).catch(()=>{});
+      await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({fotos:todasFotos})}).catch(()=>{});
       toast(`✅ ${urls.length} foto(s) adicionadas!`);
     } else {
-      await fetch('/loja/produtos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({nome:'Camiseta EstamPace',preco:149.90,fotos:urls.join(','),tamanhos:'PP,P,M,G,GG,XGG',categoria:'camisa',estoque:100,descricao:'Camiseta esportiva dry-fit premium para corrida de rua.'})}).catch(()=>{});
+      await fetch('/loja/produtos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({nome:'Camiseta EstamPace',preco:149.90,fotos:urls.join(','),tamanhos:'PP,P,M,G,GG,XGG',categoria:'camisa',estoque:100,descricao:'Camiseta esportiva dry-fit premium para corrida de rua.'})}).catch(()=>{});
       toast(`✅ Produto criado com ${urls.length} foto(s)!`);
     }
     carregarFotos();
@@ -320,7 +320,7 @@ async function deletarFoto(idx){
   const prod=Array.isArray(produtos)?produtos[0]:null;
   if(!prod) return;
   const fotos=prod.fotos.split(',').filter((_,i)=>i!==idx).join(',');
-  await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({fotos})});
+  await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({fotos})});
   toast('Foto removida!');carregarFotos();
 }
 
@@ -342,7 +342,7 @@ async function salvarProduto(){
   const url=produtoId?`/loja/produtos/${produtoId}`:'/loja/produtos';
   const method=produtoId?'PATCH':'POST';
   try{
-    const r=await fetch(url,{method,headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({...data,categoria:'camisa'})});
+    const r=await fetch(url,{method,headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({...data,categoria:'camisa'})});
     const d=await r.json();
     if(d.id){produtoId=d.id;toast('✅ Produto salvo com sucesso!');}
     else toast('Erro: '+(d.error||'Desconhecido'));
