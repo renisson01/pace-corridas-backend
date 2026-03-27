@@ -1,5 +1,5 @@
 /**
- * PACE BRAZIL — Biological Age Engine v2
+ * REGENI — Biological Age Engine v2
  * Baseado em: Composite Model do PDF + estudos Horvath/Fitzgerald
  * BioAge = ChronoAge - (a*VO2_score + b*HRV_score + c*Sleep_score + d*Training_score - e*Stress_score)
  */

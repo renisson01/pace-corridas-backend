@@ -1,6 +1,6 @@
 import prisma from '../../lib/prisma.js';
 /**
- * PACE BRAZIL — Rotas do Scraper de Corridas
+ * REGENI — Rotas do Scraper de Corridas
  * 
  * Endpoints:
  * POST /scraper/executar        — Roda todos os scrapers Tier 1

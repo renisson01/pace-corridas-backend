@@ -161,7 +161,7 @@ try {
   await app.register(cobaiaRoutes);
   await app.register(bioageRoutes);
   await app.register(decisionRoutes);
-  console.log('✅ Todas as rotas registradas (v3.0 PACE BRAZIL)');
+  console.log('✅ Todas as rotas registradas (v3.0 REGENI)');
 } catch(e) {
   console.error('❌ ERRO ao registrar rotas:', e.message);
   console.error(e.stack);
@@ -172,5 +172,5 @@ try {
 
 app.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
   if (err) { console.error('❌', err); process.exit(1); }
-  console.log('🏃 PACE BRAZIL v3.0 online na porta ' + (process.env.PORT || 3000));
+  console.log('🏃 REGENI v3.0 online na porta ' + (process.env.PORT || 3000));
 });

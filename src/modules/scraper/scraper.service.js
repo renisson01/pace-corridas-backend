@@ -1,5 +1,5 @@
 /**
- * PACE BRAZIL — Motor de Scraping de Corridas v1.0
+ * REGENI — Motor de Scraping de Corridas v1.0
  * 
  * Arquitetura:
  * 1. Framework central com deduplicação por (nome_normalizado + data + cidade)
@@ -216,7 +216,7 @@ async function fetchHTML(url, encoding = 'utf-8') {
   try {
     const resp = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; PaceBrazilBot/1.0; +https://pacebrazil.com)',
+        'User-Agent': 'Mozilla/5.0 (compatible; RegeniBot/1.0; +https://pacebrazil.com)',
         'Accept': 'text/html,application/xhtml+xml',
         'Accept-Language': 'pt-BR,pt;q=0.9',
       },
@@ -236,7 +236,7 @@ async function fetchJSON(url) {
   try {
     const resp = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; PaceBrazilBot/1.0)',
+        'User-Agent': 'Mozilla/5.0 (compatible; RegeniBot/1.0)',
         'Accept': 'application/json',
       },
       signal: AbortSignal.timeout(15000),

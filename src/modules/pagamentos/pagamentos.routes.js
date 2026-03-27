@@ -234,7 +234,7 @@ export async function pagamentosRoutes(fastify) {
       const paymentApi = new Payment(getMPClient());
       const result = await paymentApi.create({ body: {
         transaction_amount: 99.90,
-        description: 'PACE BRAZIL — Adesão Treinador',
+        description: 'REGENI — Adesão Treinador',
         payment_method_id: 'pix',
         external_reference: externalRef,
         notification_url: `${BASE_URL}/pagamentos/webhook`,
@@ -333,7 +333,7 @@ export async function pagamentosRoutes(fastify) {
       const paymentApi = new Payment(getMPClient());
       const result = await paymentApi.create({ body: {
         transaction_amount: 29.90,
-        description: 'PACE BRAZIL — IA Treinadora Premium (30 dias)',
+        description: 'REGENI — IA Treinadora Premium (30 dias)',
         payment_method_id: 'pix',
         external_reference: externalRef,
         notification_url: `${BASE_URL}/pagamentos/webhook`,
@@ -376,7 +376,7 @@ export async function pagamentosRoutes(fastify) {
       const paymentApi = new Payment(getMPClient());
       const result = await paymentApi.create({ body: {
         transaction_amount: 99.90,
-        description: 'PACE BRAZIL — Protocolo Longevidade + Performance (30 dias)',
+        description: 'REGENI — Protocolo Longevidade + Performance (30 dias)',
         payment_method_id: 'pix',
         external_reference: externalRef,
         notification_url: BASE_URL + '/pagamentos/webhook',
