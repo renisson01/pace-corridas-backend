@@ -125,8 +125,8 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,sans-serif; 
 
 <script>
 const API = window.location.origin;
-const token = localStorage.getItem('pace_token');
-const H = { 'Content-Type':'application/json', 'Authorization':'Bearer '+token };
+const TOKEN = localStorage.getItem('pace_token');
+const H = { 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN };
 
 // Definição dos exames com referências
 const EXAMES = {
@@ -247,7 +247,7 @@ async function carregarUltimos() {
 }
 
 // Init
-if (!token) window.location.href = '/entrar.html';
+if (!TOKEN) window.location.href = '/entrar.html';
 else { document.getElementById('dataExame').value = new Date().toISOString().split('T')[0]; carregarUltimos(); }
 </script>
 

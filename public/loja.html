@@ -310,7 +310,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </nav>
 
 <script>
-const token = localStorage.getItem('pace_token');
+const TOKEN = localStorage.getItem('pace_token');
 const USER = JSON.parse(localStorage.getItem('pace_user') || '{}');
 const PRECO_ORIGINAL = 299.90;
 const PRECO_PROMO = 149.90;
@@ -416,7 +416,7 @@ async function checkout(tipo){
     try{
       const r=await fetch('/loja/comprar',{
         method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':`Bearer ${token||''}`},
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN||''}`},
         body:JSON.stringify({produtoNome:'Camiseta EstamPace',tamanho:tamSel,cor:corSel,quantidade:qtd,valorUnit:PRECO_PROMO,promocao,nomeCliente:nome,whatsappCliente:wpp,enderecoRua:rua,enderecoNum:num,enderecoBairro:bairro,enderecoCidade:cidade,enderecoEstado:estado,enderecoCEP:cep,obs})
       });
       const d=await r.json();

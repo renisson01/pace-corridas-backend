@@ -583,8 +583,8 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
 
 <script>
 const API = window.location.origin;
-const token = localStorage.getItem('pace_token');
-const H = { 'Content-Type':'application/json', 'Authorization':'Bearer '+token };
+const TOKEN = localStorage.getItem('pace_token');
+const H = { 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN };
 
 // Tabs
 function showTab(name) {
@@ -820,7 +820,7 @@ async function carregarDados() {
   } catch(e) { console.error("COBAIA ERR:",e); document.getElementById("mKm").textContent="ERR"; document.getElementById("hojeContent").innerHTML="<div style=color:red>Erro: "+e.message+"</div>"; }
 }
 
-if(!token) window.location.href='/entrar.html';
+if(!TOKEN) window.location.href='/entrar.html';
 else { carregarDados().catch(function(e){console.error(e);}); }
 
 

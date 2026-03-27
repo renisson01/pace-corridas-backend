@@ -323,7 +323,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 // ══════════════════════════════════
 // ESTADO
 // ══════════════════════════════════
-const token = localStorage.getItem('pace_token');
+const TOKEN = localStorage.getItem('pace_token');
 const ME = JSON.parse(localStorage.getItem('pace_user') || '{}');
 const ADMIN_KEY = '3b77d62cb40acbbe091abf119204cd5fd3371c47e68e47cf9698088a1d1a18d6';
 
@@ -339,7 +339,7 @@ let searchTimer = null;
 async function init() {
   carregarStats();
   carregarCorridas(true);
-  if (token) carregarFavoritos();
+  if (TOKEN) carregarFavoritos();
   
   // Detectar estado do usuário se disponível
   const user = JSON.parse(localStorage.getItem('pace_user') || '{}');
@@ -357,7 +357,7 @@ async function init() {
 // ══════════════════════════════════
 async function api(path, opts = {}) {
   const res = await fetch(path, {
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token||''}`, ...opts.headers },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN||''}`, ...opts.headers },
     ...opts
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -632,7 +632,7 @@ async function carregarFavoritos() {
 
 async function toggleFav(e, id, btn) {
   e.stopPropagation();
-  if (!token) { toast('Login necessário para favoritar'); return; }
+  if (!TOKEN) { toast('Login necessário para favoritar'); return; }
   try {
     const data = await api(`/corridas-abertas/${id}/favoritar`, { method: 'POST' });
     if (data.favoritado) { favoritados.add(id); btn.innerHTML = '❤️'; btn.classList.add('on'); toast('❤️ Favoritado!'); }

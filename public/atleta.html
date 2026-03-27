@@ -1,20 +1,2704 @@
-async function carregarTreinoHoje() {
-  try {
-    const res = await fetch('/coach/daily', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PACE BRAZIL — Meu Treino</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #04060b;
+  --bg2: #0a0f1a;
+  --bg3: #111827;
+  --card: #0d1117;
+  --border: #1e2d3d;
+  --border2: #2a3a4d;
+  --neon: #F7931A;
+  --neon2: #E8850C;
+  --orange: #ff6b00;
+  --red: #ff2d55;
+  --blue: #0a84ff;
+  --yellow: #ffd60a;
+  --purple: #bf5af2;
+  --text: #eeeef8;
+  --muted: #556677;
+  --muted2: #8899bb;
+  --font: 'Space Grotesk', sans-serif;
+  --display: 'Space Grotesk', sans-serif;
+  --semi: 'Space Grotesk', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--font); min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BG ATMOSPHERE */
+body::before {
+  content: '';
+  position: fixed; top: -200px; left: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(247,147,26,0.04) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed; bottom: -200px; right: -200px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(39,174,96,0.04) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* TOPBAR */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(8,8,16,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.logo { font-family: var(--font); font-size: 24px; font-weight: 900; letter-spacing: 3px; color: var(--neon); }
+.greeting { font-size: 13px; font-weight: 500; color: var(--muted2); }
+.greeting span { color: var(--text); font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 10px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: all 0.2s; text-decoration: none; }
+.icon-btn:hover { border-color: var(--neon); }
+.notif-dot { position: relative; }
+.notif-dot::after { content: ''; position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: var(--red); border-radius: 50%; border: 2px solid var(--bg); }
+.avatar-btn { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--neon2), var(--blue)); display: flex; align-items: center; justify-content: center; font-family: var(--font); font-size: 16px; font-weight: 800; color: #000; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+.avatar-btn:hover { border-color: var(--neon); }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(8,8,16,0.96); backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex; padding: 0 4px; padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 10px 4px 8px; cursor: pointer; transition: all 0.2s;
+  text-decoration: none; border: none; background: none; color: var(--muted);
+}
+.nav-btn .nav-icon { font-size: 20px; margin-bottom: 3px; transition: all 0.2s; }
+.nav-btn .nav-label { font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.nav-btn.active { color: var(--neon); }
+.nav-btn.active .nav-icon { transform: translateY(-2px); filter: drop-shadow(0 0 6px #F7931A); }
+
+/* PAGES */
+.page { display: none; padding-top: 72px; padding-bottom: 80px; min-height: 100vh; position: relative; z-index: 1; }
+.page.active { display: block; }
+
+/* HERO HOJE */
+.hero-hoje {
+  margin: 0 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 20px; overflow: hidden;
+  position: relative;
+}
+.hero-hoje::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--neon), var(--blue), var(--orange));
+}
+.hero-top { padding: 20px 20px 16px; }
+.hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(247,147,26,0.1); border: 1px solid rgba(247,147,26,0.25); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; color: var(--neon); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+.hero-title { font-family: var(--font); font-size: 30px; font-weight: 900; letter-spacing: 1px; line-height: 1.1; margin-bottom: 6px; }
+.hero-sub { font-size: 13px; color: var(--muted2); font-weight: 500; }
+.hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--border); }
+.hero-stat { padding: 14px 16px; text-align: center; border-right: 1px solid var(--border); }
+.hero-stat:last-child { border-right: none; }
+.hero-stat-val { font-family: var(--font); font-size: 26px; font-weight: 800; color: var(--neon); line-height: 1; margin-bottom: 3px; }
+.hero-stat-label { font-size: 10px; color: var(--muted2); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+.hero-action { padding: 0 20px 20px; display: flex; gap: 10px; }
+.btn-iniciar {
+  flex: 1; background: var(--neon); color: #000; border: none;
+  padding: 14px; border-radius: 14px; font-family: var(--font);
+  font-size: 18px; font-weight: 800; letter-spacing: 1px; cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-iniciar:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(247,147,26,0.3); }
+.btn-iniciar:active { transform: translateY(0); }
+.btn-detalhes {
+  background: var(--bg3); color: var(--text); border: 1px solid var(--border2);
+  padding: 14px 18px; border-radius: 14px; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-detalhes:hover { border-color: var(--neon); }
+
+/* SECTION */
+.section { margin: 0 16px 20px; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.section-title { font-family: var(--font); font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+.section-link { font-size: 12px; color: var(--neon); font-weight: 600; cursor: pointer; }
+
+/* RECORDS GRID */
+.records-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.record-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px; position: relative; overflow: hidden;
+  transition: all 0.2s; cursor: pointer;
+}
+.record-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.record-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--neon); opacity: 0.4; transition: opacity 0.2s;
+}
+.record-card:hover::after { opacity: 1; }
+.record-dist { font-family: var(--font); font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); margin-bottom: 6px; }
+.record-time { font-family: var(--font); font-size: 32px; font-weight: 900; letter-spacing: 1px; line-height: 1; color: var(--neon); }
+.record-pace { font-size: 11px; color: var(--muted2); margin-top: 4px; font-weight: 500; }
+.record-empty { font-family: var(--font); font-size: 20px; color: var(--muted); }
+
+/* SEMANA STATS */
+.semana-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+}
+.semana-top { display: flex; justify-content: space-between; margin-bottom: 16px; }
+.semana-num { font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); }
+.semana-meta-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.semana-meta { text-align: center; }
+.semana-meta-val { font-family: var(--font); font-size: 22px; font-weight: 800; color: var(--text); }
+.semana-meta-label { font-size: 10px; color: var(--muted2); font-weight: 600; letter-spacing: 0.5px; }
+.dias-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.dia-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dia-label { font-size: 9px; color: var(--muted); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.dia-bar-wrap { height: 50px; display: flex; align-items: flex-end; width: 100%; }
+.dia-bar { width: 100%; border-radius: 4px 4px 0 0; background: rgba(247,147,26,0.15); min-height: 4px; transition: height 0.6s; }
+.dia-bar.active { background: var(--neon); }
+.dia-bar.hoje { background: var(--orange); }
+.dia-km { font-size: 9px; color: var(--muted2); font-weight: 600; }
+
+/* ZONAS FC */
+.zonas-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.zona-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(36,36,56,0.6); transition: background 0.2s; }
+.zona-row:last-child { border-bottom: none; }
+.zona-row:hover { background: rgba(255,255,255,0.02); }
+.zona-color { width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0; }
+.zona-info { flex: 1; }
+.zona-nome { font-family: var(--font); font-size: 13px; font-weight: 700; }
+.zona-desc { font-size: 11px; color: var(--muted2); margin-top: 1px; }
+.zona-range { font-family: var(--font); font-size: 18px; font-weight: 800; }
+.zona-pct { font-size: 10px; color: var(--muted2); margin-top: 1px; }
+.zona-bar-wrap { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; max-width: 80px; }
+.zona-bar-fill { height: 100%; border-radius: 2px; }
+
+/* PACE CALC */
+.paces-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pace-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 14px; transition: all 0.2s;
+}
+.pace-card:hover { border-color: var(--border2); }
+.pace-zona { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.pace-val { font-family: var(--font); font-size: 24px; font-weight: 800; }
+.pace-sub { font-size: 10px; color: var(--muted2); margin-top: 2px; }
+
+/* ATIVIDADES RECENTES */
+.atividade-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 16px; display: flex; gap: 14px; align-items: flex-start;
+  margin-bottom: 10px; transition: all 0.2s; cursor: pointer;
+}
+.atividade-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+.ativ-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(247,147,26,0.1); border: 1px solid rgba(247,147,26,0.2); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.ativ-info { flex: 1; min-width: 0; }
+.ativ-titulo { font-family: var(--font); font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.ativ-meta { font-size: 12px; color: var(--muted2); }
+.ativ-stats { display: flex; gap: 14px; margin-top: 8px; }
+.ativ-stat { text-align: center; }
+.ativ-stat-val { font-family: var(--font); font-size: 17px; font-weight: 800; color: var(--neon); }
+.ativ-stat-label { font-size: 9px; color: var(--muted2); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+
+/* CONQUISTAS */
+.conquistas-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.conquistas-scroll::-webkit-scrollbar { display: none; }
+.conquista-card {
+  flex-shrink: 0; width: 88px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 10px;
+  text-align: center; transition: all 0.2s;
+}
+.conquista-card.desbloqueada { border-color: rgba(255,214,10,0.4); background: rgba(255,214,10,0.06); }
+.conquista-card.bloqueada { opacity: 0.4; filter: grayscale(1); }
+.conquista-icon { font-size: 28px; margin-bottom: 6px; }
+.conquista-nome { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.conquista-pts { font-size: 10px; color: var(--yellow); font-weight: 700; margin-top: 3px; }
+
+/* IA CARD */
+.ia-card {
+  background: linear-gradient(135deg, rgba(14,14,26,1) 0%, rgba(20,20,40,1) 100%);
+  border: 1px solid rgba(247,147,26,0.2); border-radius: 20px; padding: 20px;
+  position: relative; overflow: hidden;
+}
+.ia-card::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(247,147,26,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ia-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.ia-orb { width: 44px; height: 44px; border-radius: 50%; background: rgba(247,147,26,0.1); border: 1px solid rgba(247,147,26,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; position: relative; }
+.ia-orb::after { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 1px solid rgba(247,147,26,0.2); animation: pulse-ring 2s infinite; }
+@keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.6); opacity: 0; } }
+.ia-title { font-family: var(--font); font-size: 15px; font-weight: 700; }
+.ia-sub { font-size: 12px; color: var(--muted2); }
+.ia-msg { background: rgba(247,147,26,0.05); border: 1px solid rgba(247,147,26,0.1); border-radius: 12px; padding: 12px 14px; font-size: 13px; line-height: 1.6; color: var(--muted2); margin-bottom: 12px; }
+.ia-msg span { color: var(--text); }
+.chips-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { background: var(--bg3); border: 1px solid var(--border2); border-radius: 20px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: var(--muted2); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.chip:hover { border-color: var(--neon); color: var(--neon); }
+
+/* PREMIUM CARD */
+.premium-card {
+  background: linear-gradient(135deg, #1a0a00, #220d00);
+  border: 1px solid rgba(255,107,0,0.3); border-radius: 20px; padding: 20px;
+  position: relative; overflow: hidden;
+}
+.premium-card::before {
+  content: '⭐'; position: absolute; right: -10px; top: -10px;
+  font-size: 80px; opacity: 0.05;
+}
+.premium-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,107,0,0.15); border: 1px solid rgba(255,107,0,0.3); border-radius: 20px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: var(--orange); letter-spacing: 1px; margin-bottom: 10px; }
+.premium-title { font-family: var(--font); font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+.premium-list { margin: 10px 0; }
+.premium-item { font-size: 13px; color: var(--muted2); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+.premium-item::before { content: '✓'; color: var(--orange); font-weight: 700; }
+.btn-premium { width: 100%; background: linear-gradient(135deg, var(--orange), #ff9f00); color: #000; border: none; padding: 14px; border-radius: 14px; font-family: var(--font); font-size: 18px; font-weight: 800; letter-spacing: 1px; cursor: pointer; margin-top: 14px; transition: all 0.2s; }
+.btn-premium:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,0,0.3); }
+
+/* PRÓXIMAS CORRIDAS */
+.corrida-row { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; margin-bottom: 8px; transition: all 0.2s; cursor: pointer; }
+.corrida-row:hover { border-color: var(--border2); }
+.corrida-date { text-align: center; min-width: 44px; }
+.corrida-date-dia { font-family: var(--font); font-size: 26px; font-weight: 900; line-height: 1; color: var(--neon); }
+.corrida-date-mes { font-size: 10px; color: var(--muted2); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.corrida-divider { width: 1px; height: 40px; background: var(--border); flex-shrink: 0; }
+.corrida-info { flex: 1; min-width: 0; }
+.corrida-nome { font-family: var(--font); font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.corrida-local { font-size: 12px; color: var(--muted2); margin-top: 2px; }
+.corrida-dist { background: rgba(247,147,26,0.1); border: 1px solid rgba(247,147,26,0.2); border-radius: 8px; padding: 4px 8px; font-family: var(--font); font-size: 14px; font-weight: 700; color: var(--neon); flex-shrink: 0; }
+
+/* RANKING CARD */
+.ranking-mini { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.ranking-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(36,36,56,0.5); }
+.ranking-row:last-child { border-bottom: none; }
+.ranking-pos { font-family: var(--font); font-size: 20px; font-weight: 900; min-width: 28px; text-align: center; }
+.ranking-pos.gold { color: var(--yellow); }
+.ranking-pos.silver { color: #c0c0c0; }
+.ranking-pos.bronze { color: #cd7f32; }
+.ranking-pos.me { color: var(--neon); }
+.ranking-nome { flex: 1; font-size: 14px; font-weight: 600; }
+.ranking-tempo { font-family: var(--font); font-size: 16px; font-weight: 700; color: var(--muted2); }
+
+/* SOCIAL FEED */
+.post-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+.post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.post-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--neon2), var(--blue)); display: flex; align-items: center; justify-content: center; font-family: var(--font); font-size: 16px; font-weight: 800; color: #000; flex-shrink: 0; }
+.post-user { font-size: 14px; font-weight: 700; }
+.post-time { font-size: 11px; color: var(--muted2); }
+.post-content { font-size: 13px; line-height: 1.6; color: var(--muted2); }
+.post-content span { color: var(--text); }
+.post-ativ { background: var(--bg3); border-radius: 10px; padding: 12px; margin: 10px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.post-ativ-val { font-family: var(--font); font-size: 18px; font-weight: 800; color: var(--neon); text-align: center; }
+.post-ativ-label { font-size: 9px; color: var(--muted2); text-align: center; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.post-actions { display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.post-action { font-size: 13px; color: var(--muted2); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: color 0.2s; }
+.post-action:hover { color: var(--neon); }
+.post-action.liked { color: var(--red); }
+
+/* PERFIL PAGE */
+.perfil-hero { margin: 0 16px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px 20px; text-align: center; position: relative; }
+.perfil-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--neon2), var(--blue)); display: flex; align-items: center; justify-content: center; font-family: var(--font); font-size: 36px; font-weight: 900; color: #000; margin: 0 auto 12px; border: 3px solid rgba(247,147,26,0.3); }
+.perfil-nome { font-family: var(--font); font-size: 28px; font-weight: 900; letter-spacing: 1px; }
+.perfil-meta { font-size: 13px; color: var(--muted2); margin-top: 4px; }
+.perfil-badges { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-premium { background: rgba(255,107,0,0.15); border: 1px solid rgba(255,107,0,0.3); color: var(--orange); }
+.badge-nivel { background: rgba(247,147,26,0.1); border: 1px solid rgba(247,147,26,0.25); color: var(--neon); }
+.badge-city { background: rgba(88,88,170,0.2); border: 1px solid var(--border); color: var(--muted2); }
+.perfil-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); margin-top: 16px; border-top: 1px solid var(--border); }
+.perfil-stat { background: var(--card); padding: 14px 8px; text-align: center; }
+.perfil-stat-val { font-family: var(--font); font-size: 24px; font-weight: 900; color: var(--neon); }
+.perfil-stat-label { font-size: 10px; color: var(--muted2); font-weight: 600; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* FORM */
+.form-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 14px; }
+.form-card-title { font-family: var(--font); font-size: 13px; font-weight: 700; color: var(--muted2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-row.full { grid-template-columns: 1fr; }
+.field-label { font-size: 11px; font-weight: 700; color: var(--muted2); letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 6px; }
+.field-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 10px; font-size: 14px; font-family: var(--font); transition: border-color 0.2s; }
+.field-input:focus { outline: none; border-color: var(--neon); }
+.field-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%235a5a7a'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+.btn-save { width: 100%; background: var(--neon); color: #000; border: none; padding: 14px; border-radius: 12px; font-family: var(--font); font-size: 18px; font-weight: 800; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
+.btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(247,147,26,0.25); }
+.btn-outline { width: 100%; background: transparent; color: var(--muted2); border: 1px solid var(--border); padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font); transition: all 0.2s; margin-top: 8px; }
+.btn-outline:hover { border-color: var(--neon); color: var(--neon); }
+.btn-danger { color: var(--red); border-color: rgba(255,45,85,0.3); }
+.btn-danger:hover { border-color: var(--red); color: var(--red); background: rgba(255,45,85,0.08); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--neon); border-radius: 12px; padding: 12px 20px; font-size: 13px; font-weight: 600; z-index: 999; opacity: 0; transition: all 0.3s; white-space: nowrap; color: var(--neon); pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* GPS TRACKING */
+.gps-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 12px; }
+.gps-map-placeholder { height: 180px; background: var(--bg3); display: flex; align-items: center; justify-content: center; position: relative; }
+.gps-map-placeholder::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(247,147,26,0.02) 0px, rgba(247,147,26,0.02) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(-45deg, rgba(247,147,26,0.02) 0px, rgba(247,147,26,0.02) 1px, transparent 1px, transparent 30px); }
+.gps-map-text { text-align: center; position: relative; z-index: 1; }
+.gps-live-stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--border); }
+.gps-stat { padding: 14px 8px; text-align: center; border-right: 1px solid var(--border); }
+.gps-stat:last-child { border-right: none; }
+.gps-stat-val { font-family: var(--font); font-size: 28px; font-weight: 900; color: var(--neon); }
+.gps-stat-label { font-size: 10px; color: var(--muted2); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.btn-start-gps { margin: 0 16px 16px; width: calc(100% - 32px); background: var(--red); color: #fff; border: none; padding: 16px; border-radius: 16px; font-family: var(--font); font-size: 20px; font-weight: 900; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-start-gps:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,45,85,0.3); }
+.btn-start-gps.recording { background: var(--orange); animation: pulse-btn 1s infinite; }
+@keyframes pulse-btn { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+/* LOADING SKELETON */
+.skeleton { background: linear-gradient(90deg, var(--bg3) 25%, var(--card) 50%, var(--bg3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* PAGE ENTER ANIMATION */
+.page.active .section, .page.active .hero-hoje, .page.active .ia-card {
+  animation: fadeUp 0.4s ease both;
+}
+.page.active .section:nth-child(2) { animation-delay: 0.05s; }
+.page.active .section:nth-child(3) { animation-delay: 0.1s; }
+.page.active .section:nth-child(4) { animation-delay: 0.15s; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* MOBILE SAFE */
+@media (max-width: 390px) {
+  .hero-title { font-size: 24px; }
+  .record-time { font-size: 26px; }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#F7931A">
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(()=>console.log('PWA ativo')).catch(()=>{});}</script>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">PACE</div>
+    <div class="greeting">Olá, <span id="topNome">Atleta</span> 👋</div>
+  </div>
+  <div class="topbar-right">
+    <a href="/atleta.html" class="icon-btn" title="Home">🏠</a>
+    <div class="icon-btn notif-dot" title="Notificações" onclick="showToast('📬 Nenhuma notificação nova')">🔔</div>
+    <div class="avatar-btn" id="topAvatar" onclick="window.location.href='/perfil.html'">A</div>
+  </div>
+</header>
+
+<!-- PAGES -->
+
+<!-- ── HOJE ─────────────────────────────── -->
+<div class="page active" id="page-hoje">
+
+  
+  <!-- SCORE DO DIA — Blueprint 4.0 -->
+  <div class="section" id="scoreDiaSection" style="text-align:center;padding:20px 16px">
+    <div style="position:relative;width:140px;height:140px;margin:0 auto 12px">
+      <svg width="140" height="140" viewBox="0 0 140 140" id="scoreCircle">
+        <circle cx="70" cy="70" r="60" fill="none" stroke="#1e2d3d" stroke-width="8"/>
+        <circle cx="70" cy="70" r="60" fill="none" stroke="#F7931A" stroke-width="8" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377" transform="rotate(-90 70 70)" id="scoreArc"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div id="scoreNumber" style="font-size:42px;font-weight:900;color:#F7931A;line-height:1">--</div>
+        <div id="scoreNivel" style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px">CARREGANDO</div>
+      </div>
+    </div>
+    <div id="scoreSaudacao" style="font-size:16px;font-weight:700;margin-bottom:4px"></div>
+    <div id="scoreResumo" style="font-size:12px;color:var(--muted2);margin-bottom:16px"></div>
+    <!-- MISSÃO DO DIA -->
+    <div id="missaoCard" style="background:var(--card);border:2px solid #F7931A44;border-radius:16px;padding:16px;text-align:left;display:none">
+      <div style="font-size:10px;color:#F7931A;font-weight:700;letter-spacing:2px;margin-bottom:8px">MISSAO DO DIA</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="missaoIcon" style="font-size:32px"></div>
+        <div style="flex:1">
+          <div id="missaoTitulo" style="font-size:16px;font-weight:800"></div>
+          <div id="missaoDesc" style="font-size:12px;color:var(--muted2);margin-top:2px"></div>
+        </div>
+        <div id="missaoPontos" style="background:#F7931A22;color:#F7931A;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800"></div>
+      </div>
+      <button id="missaoBtn" onclick="executarMissao()" style="width:100%;margin-top:12px;padding:12px;background:#F7931A;color:#000;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">FAZER AGORA</button>
+    </div>
+    <!-- FATORES -->
+    <div id="scoreFatores" style="display:flex;gap:6px;justify-content:center;margin-top:12px;flex-wrap:wrap"></div>
+  </div>
+
+  <!-- TREINO DO DIA -->
+  <div class="hero-hoje" id="heroHoje">
+    <div class="hero-top">
+      <div class="hero-tag">🗓️ Treino de Hoje</div>
+      <div class="hero-title" id="heroTitulo">Carregando...</div>
+      <div class="hero-sub" id="heroSub"></div>
+    </div>
+    <div class="hero-stats" id="heroStats"></div>
+    <div class="hero-action">
+      <button class="btn-iniciar" onclick="showPage('gps')">▶ Iniciar GPS</button>
+      <button class="btn-detalhes" onclick="verDetalheTreino()">Ver detalhes</button>
+    </div>
+  </div>
+
+  
+  <!-- DAILY COACH -->
+  <div class="section" id="dailyCoachSection">
+    <div id="dailyCoachCards" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+
+  <!-- IA TREINADORA -->
+  <div class="section">
+    <div class="ia-card" id="iaCard">
+      <div class="ia-header">
+        <div class="ia-orb">🤖</div>
+        <div>
+          <div class="ia-title">IA Treinadora + 3 Agentes</div>
+          <div class="ia-sub" id="iaSubtitle">Treinador | Médico | Nutricionista | Psicólogo</div>
+        </div>
+      </div>
+      <div class="ia-msg" id="iaMsgHoje">⏳ Analisando seu perfil...</div>
+      <div class="chips-row">
+        <div class="chip" onclick="irParaIA('Como está meu treino dessa semana?')">📊 Minha semana</div>
+        <div class="chip" onclick="irParaIA('Me dê uma dica de treino para hoje')">💡 Dica de hoje</div>
+        <div class="chip" onclick="irParaIA('Qual meu pace alvo para o próximo treino?')">⚡ Meu pace</div>
+        <div class="chip" onclick="irParaIA('Qual minha idade biológica atual?')">🧬 Idade Bio</div>
+        <div class="chip" onclick="irParaIA('Como está meu sono e recuperação?')">😴 Sono</div>
+        <div class="chip" onclick="window.location.href='/ia.html'">💬 Chat completo →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEMANA EM NÚMEROS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📊 Esta Semana</div>
+      <div class="section-link" onclick="showPage('historico')">Ver tudo</div>
+    </div>
+    <div class="semana-card" id="semanaCard">
+      <div class="semana-meta-row">
+        <div class="semana-meta">
+          <div class="semana-meta-val" id="semKm">--</div>
+          <div class="semana-meta-label">km rodados</div>
+        </div>
+        <div class="semana-meta">
+          <div class="semana-meta-val" id="semTreinos">--</div>
+          <div class="semana-meta-label">treinos</div>
+        </div>
+        <div class="semana-meta">
+          <div class="semana-meta-val" id="semTempo">--</div>
+          <div class="semana-meta-label">horas</div>
+        </div>
+      </div>
+      <div class="dias-grid" id="diasGrid"></div>
+    </div>
+  </div>
+
+  <!-- PRÓXIMAS CORRIDAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏁 Próximas Corridas</div>
+      <div class="section-link" onclick="window.location.href='/corridas-abertas.html'">Ver todas</div>
+    </div>
+    <div id="corridasProximas">
+      <div style="height:60px" class="skeleton"></div>
+    </div>
+  </div>
+
+  
+  <!-- IDADE BIOLÓGICA -->
+  <div class="section" id="bioAgeHome">
+    <div class="section-header">
+      <div class="section-title">🧬 Idade Biológica</div>
+      <div class="section-link" onclick="window.location.href='/cobaia.html'">Ver Cobaia →</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#0a1a0f,var(--card));border:1px solid #27AE6044;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;cursor:pointer" onclick="window.location.href='/cobaia.html'">
+      <div style="text-align:center">
+        <div id="homeBioAge" style="font-size:42px;font-weight:900;color:#27AE60;line-height:1">--</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">IDADE BIO</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Protocolo Cobaia</div>
+        <div style="font-size:12px;color:var(--muted)">Sono, treino, composição corporal e biomarcadores calculam sua idade real.</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <div style="font-size:10px;background:rgba(247,147,26,.1);color:#F7931A;padding:3px 8px;border-radius:10px;font-weight:700" id="homeBioScore">Score: --</div>
+          <div style="font-size:10px;background:rgba(39,174,96,.1);color:#27AE60;padding:3px 8px;border-radius:10px;font-weight:700" id="homeBioDiff">-- anos</div>
+        </div>
+      </div>
+      <div style="font-size:24px;color:var(--muted)">→</div>
+    </div>
+  </div>
+
+  <!-- STRAVA SYNC -->
+  <div class="section">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
+      <div style="width:44px;height:44px;background:#FC4C02;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⚡</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">Strava Conectado</div>
+        <div style="font-size:11px;color:var(--muted)" id="stravaStatusHome">Sincronize seus treinos</div>
+      </div>
+      <button onclick="conectarOuSyncStrava()" style="background:#FC4C02;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Sync</button>
+    </div>
+  </div>
+
+  <!-- PREMIUM (se não for) -->
+  <div class="section" id="premiumCard">
+    <div class="premium-card">
+      <div class="premium-tag">⭐ PREMIUM</div>
+      <div class="premium-title">Eleve seu Treino + Longevidade</div>
+      <div class="premium-list">
+        <div class="premium-item">Planilha semanal com IA personalizada</div>
+        <div class="premium-item">60 mensagens/hora com a IA</div>
+        <div class="premium-item">Análise de evolução avançada</div>
+        <div class="premium-item">Treinador humano integrado</div>
+        <div class="premium-item">Dashboard de idade biológica</div>
+        <div class="premium-item">Protocolos Bryan Johnson adaptados</div>
+      </div>
+      <button class="btn-premium" onclick="assinarPremium()">⭐ Premium R$29,90/mês</button>
+    </div>
+  </div>
+
+  <!-- MAIS OPÇÕES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">⚡ Mais</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button onclick="showPage('ranking')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">🏆</span> Ranking
+      </button>
+      <button onclick="showPage('gps')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">📡</span> GPS
+      </button>
+      <button onclick="showPage('historico')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">📈</span> Histórico
+      </button>
+      <button onclick="showPage('integracoes')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">⌚</span> Relógios
+      </button>
+      <button onclick="showPage('enviar-resultado')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
+        <span style="font-size:22px">🏅</span> Resultado
+      </button>
+      <a href="/exames.html" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none">
+        <span style="font-size:22px">🔬</span> Exames
+      </a>
+      <a href="/treinador.html" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none">
+        <span style="font-size:22px">📋</span> Treinador
+      </a>
+      <a href="/loja.html" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none">
+        <span style="font-size:22px">👕</span> Loja
+      </a>
+    </div>
+    <button onclick="logout()" style="width:100%;margin-top:12px;padding:14px;background:none;border:1px solid #E74C3C44;border-radius:14px;color:#E74C3C;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">🚪 Sair da conta</button>
+  </div>
+
+</div>
+
+<!-- ── GPS / ATIVIDADE ─────────────────── -->
+<div class="page" id="page-gps">
+
+  <!-- MAPA REAL -->
+  <div style="position:relative">
+    <div id="mapaGPS" style="height:260px;background:#0d0d1a;position:relative;overflow:hidden">
+      <div id="mapaPlaceholder" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+        <div style="font-size:36px">🗺️</div>
+        <div style="font-size:13px;color:var(--muted2)">Mapa carregará ao iniciar</div>
+        <div style="font-size:11px;color:var(--muted2);opacity:.6">GPS precisará de permissão de localização</div>
+      </div>
+    </div>
+    <!-- Overlay stats no mapa -->
+    <div style="position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;z-index:400;pointer-events:none">
+      <div id="gpsStatusBadge" style="display:none;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);border:1px solid rgba(247,147,26,.3);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--neon);font-weight:700">📡 GPS Ativo</div>
+      <div id="gpsAltBadge" style="display:none;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--muted2)">Alt: <span id="gpsAlt">--</span>m</div>
+    </div>
+  </div>
+
+  <!-- STATS LIVE -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border2);margin-bottom:0">
+    <div style="background:var(--bg);padding:14px 8px;text-align:center">
+      <div class="gps-stat-val" id="gpsKm" style="font-family:var(--display);font-size:26px;color:var(--neon);line-height:1">0.00</div>
+      <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:3px">km</div>
+    </div>
+    <div style="background:var(--bg);padding:14px 8px;text-align:center">
+      <div class="gps-stat-val" id="gpsTempo" style="font-family:var(--display);font-size:26px;color:var(--text);line-height:1">00:00</div>
+      <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:3px">tempo</div>
+    </div>
+    <div style="background:var(--bg);padding:14px 8px;text-align:center">
+      <div class="gps-stat-val" id="gpsPace" style="font-family:var(--display);font-size:26px;color:var(--text);line-height:1">--:--</div>
+      <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:3px">pace/km</div>
+    </div>
+    <div style="background:var(--bg);padding:14px 8px;text-align:center">
+      <div class="gps-stat-val" id="gpsFC" style="font-family:var(--display);font-size:26px;color:var(--red);line-height:1">--</div>
+      <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:3px">bpm</div>
+    </div>
+  </div>
+
+  <!-- BOTÃO PRINCIPAL -->
+  <div style="padding:16px">
+    <button class="btn-start-gps" id="btnGPS" onclick="toggleGPS()" style="width:100%;padding:18px;border-radius:16px;font-size:20px;font-weight:900;letter-spacing:2px;border:none;cursor:pointer;transition:all .2s;background:var(--neon);color:#000">
+      <span id="gpsIcon">⏺</span> <span id="gpsLabel">INICIAR CORRIDA</span>
+    </button>
+
+    <!-- Strava sync -->
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button onclick="syncStrava()" style="flex:1;padding:11px;border-radius:12px;background:rgba(252,76,2,.15);border:1px solid rgba(252,76,2,.4);color:#FC4C02;font-size:12px;font-weight:700;cursor:pointer">🟠 Sincronizar Strava</button>
+      <button onclick="showPage('integracoes')" style="flex:1;padding:11px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer">⌚ Conectar Relógio</button>
+    </div>
+  </div>
+
+  <!-- REGISTRAR MANUAL -->
+  <div class="section" style="margin-top:0">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--neon);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">⚡ Registrar Manual</div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Distância (km)</label>
+          <input type="number" class="field-input" id="regDist" placeholder="10.0" step="0.1">
+        </div>
+        <div>
+          <label class="field-label">Tempo (min)</label>
+          <input type="number" class="field-input" id="regTempo" placeholder="55">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Tipo</label>
+          <select class="field-input field-select" id="regTipo">
+            <option>Corrida</option><option>Caminhada</option><option>Trail</option><option>Esteira</option><option>Bike</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Percepção (PSE 1-10)</label>
+          <input type="number" class="field-input" id="regPSE" placeholder="7" min="1" max="10">
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Observações</label>
+        <input type="text" class="field-input" id="regObs" placeholder="Como foi o treino?" style="width:100%">
+      </div>
+      <button class="btn-save" onclick="salvarAtividade()" style="width:100%">💾 Salvar Atividade</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── HISTÓRICO ───────────────────────── -->
+<div class="page" id="page-historico">
+  <!-- STATS REAIS DO GPS -->
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:16px 16px 0">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:14px;text-align:center">
+      <div style="font-family:var(--display);font-size:32px;color:var(--neon)" id="histKmTotal">--</div>
+      <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:4px">km totais</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:14px;text-align:center">
+      <div style="font-family:var(--display);font-size:32px;color:var(--text)" id="histTreinos">--</div>
+      <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:4px">atividades</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:14px;text-align:center">
+      <div style="font-family:var(--display);font-size:32px;color:var(--yellow)" id="histCalorias">--</div>
+      <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:4px">kcal totais</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:14px;text-align:center">
+      <div style="font-family:var(--display);font-size:32px;color:var(--blue)" id="histMediaKm">--</div>
+      <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-top:4px">km/atividade</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📈 Records Pessoais</div>
+      <div class="section-link" onclick="window.location.href='/perfil.html'">Editar</div>
+    </div>
+    <div class="records-grid" id="recordsGrid">
+      <div class="record-card"><div class="record-dist">5 KM</div><div class="record-time" id="rec5k">--</div></div>
+      <div class="record-card"><div class="record-dist">10 KM</div><div class="record-time" id="rec10k">--</div></div>
+      <div class="record-card"><div class="record-dist">21 KM</div><div class="record-time" id="rec21k">--</div></div>
+      <div class="record-card"><div class="record-dist">42 KM</div><div class="record-time" id="rec42k">--</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏃 Atividades Recentes</div>
+    </div>
+    <div id="atividadesList">
+      <div style="height:80px;border-radius:16px" class="skeleton"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏆 Conquistas</div>
+    </div>
+    <div class="conquistas-scroll" id="conquistasList"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🥇 Ranking Local</div>
+      <div class="section-link" onclick="showPage('ranking')">Ver completo</div>
+    </div>
+    <div class="ranking-mini" id="rankingMini">
+      <div style="height:180px;border-radius:16px" class="skeleton"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── IA TREINADORA ──────────────────── -->
+<div class="page" id="page-ia">
+  <div style="height:calc(100vh - 136px);display:flex;flex-direction:column;padding:0 16px">
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-top:8px;padding-bottom:8px" id="iaFullMessages">
+      <div style="text-align:center;padding:20px">
+        <div style="font-size:40px;margin-bottom:8px">🤖</div>
+        <div style="font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:6px">IA Treinadora PACE</div>
+        <div style="font-size:13px;color:var(--muted2);line-height:1.6" id="iaWelcomeMsg">Carregando seu perfil...</div>
+      </div>
+    </div>
+    <div style="padding:10px 0;border-top:1px solid var(--border);display:flex;gap:8px">
+      <input type="text" id="iaInputFull" class="field-input" placeholder="Pergunte algo sobre treinos..." style="flex:1" onkeydown="if(event.key==='Enter')enviarMsgIA()">
+      <button onclick="enviarMsgIA()" style="background:var(--neon);border:none;color:#000;padding:11px 18px;border-radius:10px;font-family:var(--display);font-size:16px;font-weight:800;cursor:pointer;flex-shrink:0;transition:all .2s">▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── COMUNIDADE ─────────────────────── -->
+<div class="page" id="page-comunidade">
+  <!-- BUSCA -->
+  <div style="padding:14px 16px 0">
+    <input class="field-input" id="buscaGrupo" placeholder="🔍 Buscar grupos, assessorias, clubes..." 
+      oninput="filtrarGruposLocal(this.value)" 
+      style="width:100%;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--text);font-size:14px">
+  </div>
+  <!-- FILTROS -->
+  <div style="display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none">
+    <button class="chip active" onclick="setFiltroGrupo(this,'')">Todos</button>
+    <button class="chip" onclick="setFiltroGrupo(this,'assessoria')">🏃 Assessorias</button>
+    <button class="chip" onclick="setFiltroGrupo(this,'clube')">🤝 Clubes</button>
+    <button class="chip" onclick="setFiltroGrupo(this,'grupo')">👥 Grupos</button>
+  </div>
+  <!-- MEUS GRUPOS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Meus Grupos</div>
+      <div class="section-link" onclick="carregarMeusGrupos()">Atualizar</div>
+    </div>
+    <div id="meusGruposList">
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+    </div>
+  </div>
+  <!-- EXPLORAR -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Explorar</div>
+    </div>
+    <div id="explorarGruposList">
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PERFIL ─────────────────────────── -->
+<div class="page" id="page-perfil">
+  <div class="perfil-hero">
+    <div class="perfil-avatar" id="perfilAvatar">A</div>
+    <div class="perfil-nome" id="perfilNome">Carregando...</div>
+    <div class="perfil-meta" id="perfilMeta"></div>
+    <div class="perfil-badges" id="perfilBadges"></div>
+    <div class="perfil-stats">
+      <div class="perfil-stat"><div class="perfil-stat-val" id="ps5k">--</div><div class="perfil-stat-label">5 KM</div></div>
+      <div class="perfil-stat"><div class="perfil-stat-val" id="ps10k">--</div><div class="perfil-stat-label">10 KM</div></div>
+      <div class="perfil-stat"><div class="perfil-stat-val" id="psFCMax">--</div><div class="perfil-stat-label">FC Máx</div></div>
+    </div>
+  </div>
+
+  <!-- ZONAS FC -->
+  <div class="section" id="zonasSection" style="display:none">
+    <div class="section-header"><div class="section-title">❤️ Minhas Zonas FC</div></div>
+    <div class="zonas-card" id="zonasCard"></div>
+  </div>
+
+  <!-- PACES -->
+  <div class="section" id="pacesSection" style="display:none">
+    <div class="section-header"><div class="section-title">⚡ Meus Paces de Referência</div></div>
+    <div class="paces-grid" id="pacesGrid"></div>
+  </div>
+
+  <!-- EDITAR PERFIL -->
+  <div class="section">
+    <div class="form-card">
+      <div class="form-card-title">Dados Pessoais</div>
+      <div class="form-row">
+        <div><label class="field-label">Nome</label><input type="text" class="field-input" id="editNome" placeholder="Seu nome"></div>
+        <div><label class="field-label">Cidade</label><input type="text" class="field-input" id="editCidade" placeholder="Aracaju"></div>
+      </div>
+      <div class="form-row">
+        <div><label class="field-label">Estado</label><input type="text" class="field-input" id="editEstado" placeholder="SE" maxlength="2"></div>
+        <div><label class="field-label">Equipe / Assessoria</label><input type="text" class="field-input" id="editEquipe" placeholder="PACE Team"></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Dados Fisiológicos</div>
+      <div class="form-row">
+        <div><label class="field-label">FC Máxima</label><input type="number" class="field-input" id="editFCMax" placeholder="185" oninput="calcularZonasAoVivo()"></div>
+        <div><label class="field-label">FC Repouso</label><input type="number" class="field-input" id="editFCRep" placeholder="58" oninput="calcularZonasAoVivo()"></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Records Pessoais</div>
+      <div class="form-row">
+        <div><label class="field-label">5 KM</label><input type="text" class="field-input" id="edit5k" placeholder="22:00" oninput="calcularPacesAoVivo()"></div>
+        <div><label class="field-label">10 KM</label><input type="text" class="field-input" id="edit10k" placeholder="46:00"></div>
+      </div>
+      <div class="form-row">
+        <div><label class="field-label">Meia (21km)</label><input type="text" class="field-input" id="edit21k" placeholder="1:45:00"></div>
+        <div><label class="field-label">Maratona (42km)</label><input type="text" class="field-input" id="edit42k" placeholder="3:45:00"></div>
+      </div>
+    </div>
+
+    <!-- PREVIEW ZONAS AO VIVO -->
+    <div id="zonasPreviewSection" style="display:none;margin-bottom:14px">
+      <div class="zonas-card" id="zonasPreview"></div>
+    </div>
+
+    <button class="btn-save" onclick="salvarPerfil()">💾 Salvar Perfil</button>
+    <button class="btn-outline" onclick="showPage('ia')">🤖 Treinar com IA</button>
+    <button class="btn-outline" onclick="window.location.href='/treinador.html'">📋 Painel Treinador</button>
+    <button class="btn-outline btn-danger" onclick="logout()">🚪 Sair</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<!-- ── CORRIDAS ABERTAS ───────────────── -->
+<div class="page" id="page-corridas">
+  <div style="padding:14px 16px 0;display:flex;gap:8px">
+    <input class="field-input" id="buscaCorridaInput" placeholder="🔍 Buscar corrida ou cidade..." 
+      oninput="filtrarCorridasLocal(this.value)"
+      style="flex:1;padding:11px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--text);font-size:14px">
+  </div>
+  <!-- chips estado -->
+  <div id="estadoChips" style="display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none">
+    <button class="chip active" onclick="filtroEstadoCorrida('',this)">Todos</button>
+    <button class="chip" onclick="filtroEstadoCorrida('SE',this)">SE</button>
+    <button class="chip" onclick="filtroEstadoCorrida('BA',this)">BA</button>
+    <button class="chip" onclick="filtroEstadoCorrida('SP',this)">SP</button>
+    <button class="chip" onclick="filtroEstadoCorrida('MG',this)">MG</button>
+    <button class="chip" onclick="filtroEstadoCorrida('RJ',this)">RJ</button>
+    <button class="chip" onclick="filtroEstadoCorrida('PR',this)">PR</button>
+    <button class="chip" onclick="filtroEstadoCorrida('GO',this)">GO</button>
+    <button class="chip" onclick="filtroEstadoCorrida('RN',this)">RN</button>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏁 Inscrições Abertas</div>
+      <div class="section-link" id="corridasCount" style="color:var(--neon);font-weight:700"></div>
+    </div>
+    <div id="corridasPageList">
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>
+    </div>
+    <button id="loadMoreCorridasBtn" onclick="loadMaisCorridas()" 
+      style="display:none;width:100%;padding:12px;margin-top:8px;background:var(--card);border:1px solid var(--border2);color:var(--neon);border-radius:12px;font-weight:700;cursor:pointer">
+      Carregar mais corridas
+    </button>
+  </div>
+</div>
+
+<!-- ── RANKING ─────────────────────────── -->
+<div class="page" id="page-ranking">
+
+  <!-- TABS DISTÂNCIA -->
+  <div style="display:flex;gap:6px;overflow-x:auto;padding:14px 16px 8px;scrollbar-width:none">
+    <button class="chip active" onclick="mudaDistRanking('5k',this)">5 KM</button>
+    <button class="chip" onclick="mudaDistRanking('10k',this)">10 KM</button>
+    <button class="chip" onclick="mudaDistRanking('15k',this)">15 KM</button>
+    <button class="chip" onclick="mudaDistRanking('21k',this)">Meia</button>
+    <button class="chip" onclick="mudaDistRanking('42k',this)">Maratona</button>
+    <button class="chip" onclick="mudaDistRanking('3k',this)">3 KM</button>
+  </div>
+
+  <!-- BUSCA -->
+  <div style="padding:0 16px 12px">
+    <input id="rankingBusca" placeholder="🔍 Buscar atleta por nome..." oninput="filtrarRankingLocal(this.value)"
+      style="width:100%;padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border2);color:var(--text);font-size:13px">
+  </div>
+
+  <!-- PÓDIO TOP 3 -->
+  <div id="rankingPodio" style="padding:0 16px 16px;display:none">
+    <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px;align-items:flex-end">
+      <!-- 2º lugar -->
+      <div id="podio2" style="text-align:center">
+        <div style="background:rgba(192,192,192,.15);border:2px solid #c0c0c0;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;margin:0 auto 6px;color:#c0c0c0">2</div>
+        <div id="podio2Nome" style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="podio2Tempo" style="font-size:13px;font-weight:800;color:#c0c0c0;font-family:var(--display)"></div>
+        <div style="background:rgba(192,192,192,.2);border-radius:8px 8px 0 0;height:70px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:28px">🥈</div>
+      </div>
+      <!-- 1º lugar -->
+      <div id="podio1" style="text-align:center">
+        <div style="background:rgba(255,214,0,.2);border:2px solid #ffd600;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;margin:0 auto 6px;color:#ffd600;box-shadow:0 0 20px rgba(255,214,0,.3)">1</div>
+        <div id="podio1Nome" style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="podio1Tempo" style="font-size:16px;font-weight:800;color:#ffd600;font-family:var(--display)"></div>
+        <div style="background:rgba(255,214,0,.15);border-radius:8px 8px 0 0;height:90px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:36px">🥇</div>
+      </div>
+      <!-- 3º lugar -->
+      <div id="podio3" style="text-align:center">
+        <div style="background:rgba(205,127,50,.15);border:2px solid #cd7f32;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;margin:0 auto 6px;color:#cd7f32">3</div>
+        <div id="podio3Nome" style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="podio3Tempo" style="font-size:13px;font-weight:800;color:#cd7f32;font-family:var(--display)"></div>
+        <div style="background:rgba(205,127,50,.15);border-radius:8px 8px 0 0;height:55px;margin-top:8px;display:flex;align-items:center;justify-content:center;font-size:24px">🥉</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINHA POSIÇÃO DESTAQUE -->
+  <div id="minhaPosicaoCard" style="display:none;margin:0 16px 12px;background:rgba(247,147,26,.06);border:1px solid rgba(247,147,26,.25);border-radius:14px;padding:14px">
+    <div style="font-size:10px;color:var(--neon);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:6px">⭐ Minha Posição</div>
+    <div id="minhaPosicaoInfo" style="display:flex;align-items:center;gap:12px">
+      <div style="font-family:var(--display);font-size:32px;color:var(--neon)" id="minhaPosNum">--</div>
+      <div>
+        <div style="font-size:14px;font-weight:700" id="minhaPosNome"></div>
+        <div style="font-size:12px;color:var(--muted2)" id="minhaPosTempo"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA COMPLETA -->
+  <div class="section" style="margin-top:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 2px">
+      <div class="section-title" id="rankingTitulo">🏆 Ranking 5 KM</div>
+      <div id="rankingTotal" style="font-size:11px;color:var(--neon);font-weight:700"></div>
+    </div>
+    <div id="rankingFullList">
+      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
+      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
+      <div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>
+    </div>
+    <button id="rankingLoadMore" onclick="carregarMaisRanking()" style="display:none;width:100%;padding:12px;margin-top:8px;background:var(--card);border:1px solid var(--border2);color:var(--neon);border-radius:12px;font-weight:700;cursor:pointer;font-size:13px">Ver mais atletas</button>
+  </div>
+
+  <!-- MEUS RESULTADOS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📊 Meus Resultados de Prova</div>
+      <div class="section-link" onclick="showPage('enviar-resultado')">+ Enviar</div>
+    </div>
+    <div id="meusResultadosList">
+      <div class="skeleton" style="height:60px;border-radius:12px;margin-bottom:8px"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── MAIS ────────────────────────────── -->
+<div class="page" id="page-mais">
+  <div class="section">
+    <div class="section-title" style="margin-bottom:16px">Menu</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="/treinador.html" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;text-decoration:none;color:var(--text);transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(247,147,26,.08);border-radius:10px">📋</div>
+        <div><div style="font-weight:700;font-size:15px">Painel do Treinador</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Gerenciar atletas e planilhas</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </a>
+      <a href="/loja.html" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;text-decoration:none;color:var(--text);transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,107,53,.08);border-radius:10px">👕</div>
+        <div><div style="font-weight:700;font-size:15px">Loja EstamPace</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Camisetas premium R$99,90</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </a>
+      <button onclick="showPage('enviar-resultado')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,215,0,.08);border-radius:10px">🏅</div>
+        <div><div style="font-weight:700;font-size:15px">Enviar Resultado</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Registrar tempo em corrida oficial</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </button>
+      <button onclick="showPage('integracoes')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,.08);border-radius:10px">⌚</div>
+        <div><div style="font-weight:700;font-size:15px">Relógio & Apps</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Strava, Garmin, Polar, Apple Watch...</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </button>
+      <button onclick="showPage('historico')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(0,200,255,.08);border-radius:10px">📈</div>
+        <div><div style="font-weight:700;font-size:15px">Histórico</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Ver evolução e estatísticas</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </button>
+      <button onclick="showPage('perfil')" style="display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;width:100%;text-align:left;color:var(--text);cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(139,92,246,.08);border-radius:10px">👤</div>
+        <div><div style="font-weight:700;font-size:15px">Meu Perfil</div><div style="font-size:12px;color:var(--muted2);margin-top:2px">Editar dados e records pessoais</div></div>
+        <div style="margin-left:auto;color:var(--muted)">›</div>
+      </button>
+    </div>
+  </div>
+  <div class="section">
+    <button class="btn-outline btn-danger" onclick="logout()" style="width:100%">🚪 Sair da conta</button>
+  </div>
+</div>
+
+<!-- ── ENVIAR RESULTADO ──────────────────── -->
+<div class="page" id="page-enviar-resultado">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏅 Enviar Resultado</div>
+    </div>
+    <div class="form-card">
+      <div class="form-card-title">Dados da Prova</div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Nome da Corrida *</label>
+        <input type="text" class="field-input" id="envNomeProva" placeholder="Ex: Corrida da Amizade" style="width:100%">
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Distância *</label>
+          <select class="field-input" id="envDistancia" style="width:100%">
+            <option value="3km">3 km</option>
+            <option value="5km" selected>5 km</option>
+            <option value="10km">10 km</option>
+            <option value="15km">15 km</option>
+            <option value="21km">Meia (21km)</option>
+            <option value="42km">Maratona (42km)</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Tempo (chip) *</label>
+          <input type="text" class="field-input" id="envTempo" placeholder="Ex: 9:40" style="width:100%">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Data da Prova</label>
+          <input type="date" class="field-input" id="envData" style="width:100%">
+        </div>
+        <div>
+          <label class="field-label">Posição Geral</label>
+          <input type="number" class="field-input" id="envPosicao" placeholder="Ex: 5" style="width:100%">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="field-label">Cidade</label>
+          <input type="text" class="field-input" id="envCidade" placeholder="Ex: Itabaiana" style="width:100%">
+        </div>
+        <div>
+          <label class="field-label">Estado</label>
+          <input type="text" class="field-input" id="envEstado" placeholder="SE" maxlength="2" style="width:100%">
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Link do Resultado (opcional)</label>
+        <input type="url" class="field-input" id="envLink" placeholder="https://..." style="width:100%">
+      </div>
+    </div>
+    <div style="background:rgba(247,147,26,.06);border:1px solid rgba(247,147,26,.15);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--muted2);line-height:1.6">
+      📋 Seu resultado será revisado em até 24h e aparecerá no ranking após aprovação.
+    </div>
+    <button class="btn-save" onclick="enviarResultado()" style="width:100%">🏅 Enviar Resultado</button>
+    <button class="btn-outline" onclick="showPage('ranking')" style="width:100%;margin-top:8px">← Ver Ranking</button>
+  </div>
+</div>
+
+<!-- ── INTEGRAÇÕES ──────────────────────── -->
+<div class="page" id="page-integracoes">
+  <div class="section">
+    <div class="section-label" style="font-size:11px;font-weight:700;color:var(--neon);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Conectar Apps e Relógios</div>
+    <div class="section-title" style="font-family:var(--display);font-size:26px;font-weight:900;margin-bottom:6px">⌚ Suas Integrações</div>
+    <p style="font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6">Conecte seu relógio ou app favorito para sincronizar treinos automaticamente com o PACE.</p>
+
+    <!-- Strava -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#FC4C02;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🟠</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Strava</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">Sincronizar corridas e KMs automaticamente</div>
+      </div>
+      <div id="stravaBtn" style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+        <div onclick="conectarStrava()" style="background:rgba(252,76,2,.2);border:1px solid rgba(252,76,2,.4);color:#FC4C02;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer" id="stravaConectarBtn">Conectar</div>
+      </div>
+    </div>
+
+    <!-- Garmin -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#007CC3;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🔵</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Garmin Connect</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">GPS, FC, VO2 máx e planilhas avançadas</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="background:rgba(0,124,195,.15);border:1px solid rgba(0,124,195,.3);color:#007CC3;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoGarmin()">Como conectar</div>
+      </div>
+    </div>
+
+    <!-- Polar -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#D0011B;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🔴</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Polar Flow</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">FC, zonas de treino e recuperação</div>
+      </div>
+      <div style="background:rgba(208,1,27,.15);border:1px solid rgba(208,1,27,.3);color:#D0011B;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoPolar()">Via Strava</div>
+    </div>
+
+    <!-- Apple Watch -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#1C1C1E;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⌚</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Apple Watch</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">HealthKit, corridas e atividades iOS</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--muted2);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoApple()">iOS em breve</div>
+    </div>
+
+    <!-- Amazfit -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#FF6900;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🟡</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Amazfit / Zepp</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">Relógios acessíveis com GPS preciso</div>
+      </div>
+      <div style="background:rgba(255,105,0,.15);border:1px solid rgba(255,105,0,.3);color:#FF6900;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoAmazfit()">Via Strava</div>
+    </div>
+
+    <!-- Huawei -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;background:#CF0A2C;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🔺</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px">Huawei Health</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:2px">Watch GT e Band series</div>
+      </div>
+      <div style="background:rgba(207,10,44,.15);border:1px solid rgba(207,10,44,.3);color:#CF0A2C;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer" onclick="instrucaoHuawei()">Via Strava</div>
+    </div>
+
+    <div style="background:rgba(247,147,26,.05);border:1px solid rgba(247,147,26,.1);border-radius:12px;padding:14px;text-align:center;margin-top:8px">
+      <div style="font-size:13px;color:var(--muted2);margin-bottom:8px">Qual integração você mais quer? Vote:</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button onclick="votarIntegracao('Strava')" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer">🟠 Strava</button>
+        <button onclick="votarIntegracao('Garmin')" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer">🔵 Garmin</button>
+        <button onclick="votarIntegracao('Amazfit')" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer">🟡 Amazfit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showPage('hoje')" id="btn-hoje">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Início</div>
+  </button>
+  <button class="nav-btn" onclick="window.location.href='/corridas-abertas.html'" id="btn-corridas">
+    <div class="nav-icon">🏁</div>
+    <div class="nav-label">Corridas</div>
+  </button>
+  <button class="nav-btn" onclick="window.location.href='/ia.html'" id="btn-ia">
+    <div class="nav-icon">🤖</div>
+    <div class="nav-label">IA</div>
+  </button>
+  <button class="nav-btn" onclick="window.location.href='/cobaia.html'" id="btn-cobaia">
+    <div class="nav-icon">🧬</div>
+    <div class="nav-label">Cobaia</div>
+  </button>
+  <button class="nav-btn" onclick="window.location.href='/perfil.html'" id="btn-perfil">
+    <div class="nav-icon">👤</div>
+    <div class="nav-label">Perfil</div>
+  </button>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+const token = localStorage.getItem('pace_token');
+const user = JSON.parse(localStorage.getItem('pace_user') || '{}');
+if (!token) window.location.href = '/entrar.html';
+
+let perfilData = null;
+let gpsAtivo = false;
+let gpsTimer = null;
+let gpsSegundos = 0;
+
+window.addEventListener('DOMContentLoaded', async () => {
+  // Nome no topo
+  const firstName = (user.name || 'Atleta').split(' ')[0];
+  function getGreeting() { var h = new Date().getHours(); if (h < 6) return 'Boa madrugada'; if (h < 12) return 'Bom dia'; if (h < 18) return 'Boa tarde'; return 'Boa noite'; }
+  document.getElementById('topNome').textContent = firstName;
+  document.querySelector('.greeting').innerHTML = getGreeting() + ', <span id="topNome2">' + firstName + '</span> \u{1F44B}';
+  document.getElementById('topAvatar').textContent = firstName[0].toUpperCase();
+
+  await carregarPerfil();
+  carregarTreinoHoje();
+  carregarSemana();
+  carregarCorridasProximas();
+  carregarScoreDia();
+  carregarDailyCoach();
+  carregarAtividades();
+  carregarConquistas();
+  carregarRanking();
+  carregarFeed();
+});
+
+// ═══════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id)?.classList.add('active');
+  // ativar btn correto
+  const btnDireto = document.getElementById('btn-' + id);
+  if (btnDireto) {
+    btnDireto.classList.add('active');
+  } else {
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      if (b.getAttribute('onclick')?.includes("'" + id + "'")) b.classList.add('active');
     });
+  }
+  if (id === 'perfil') preencherFormPerfil();
+  if (id === 'ia') iniciarIA();
+  // lazy load
+  if (id === 'historico') carregarHistoricoStats();
+  if (id === 'corridas' && !todasCorridasPage.length) carregarCorridasPage(true);
+  if (id === 'ranking') carregarRankingPage();
+  if (id === 'comunidade') { carregarMeusGrupos(); carregarExplorarGrupos(); }
+  if (id === 'integracoes') verificarStatusIntegracoes();
+}
 
-    const data = await res.json();
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
 
-    if (data.treino) {
-      renderTreino(data.treino);
-    } else {
-      document.getElementById('treino-hoje').innerHTML =
-        'Nenhum treino hoje. Faça recuperação leve.';
-    }
+// ═══════════════════════════════════════
+// API
+// ═══════════════════════════════════════
+async function api(endpoint, opts = {}) {
+  const res = await fetch(endpoint, {
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, ...opts.headers },
+    ...opts
+  });
+  return res.json();
+}
 
-  } catch (e) {
-    document.getElementById('treino-hoje').innerHTML =
-      'Erro ao carregar treino.';
+// ═══════════════════════════════════════
+// PERFIL
+// ═══════════════════════════════════════
+async function carregarPerfil() {
+  try {
+    const data = await api('/auth/me');
+    perfilData = data.user || data;
+    renderPerfil();
+  } catch {
+    perfilData = user;
+    renderPerfil();
   }
 }
+
+function renderPerfil() {
+  if (!perfilData) return;
+  const p = perfilData;
+  const nome = p.name || 'Atleta';
+
+  // Topbar
+  document.getElementById('topNome').textContent = nome.split(' ')[0];
+  document.getElementById('topAvatar').textContent = nome[0].toUpperCase();
+
+  // Perfil page
+  document.getElementById('perfilAvatar').textContent = nome[0].toUpperCase();
+  document.getElementById('perfilNome').textContent = nome;
+  document.getElementById('perfilMeta').textContent = [p.city, p.state].filter(Boolean).join(' / ') + (p.equipe ? ' · ' + p.equipe : '');
+
+  // Badges
+  const badges = [];
+  if (p.isPremium) badges.push('<span class="badge badge-premium">⭐ Premium</span>');
+  if (p.nivelAtleta) badges.push(`<span class="badge badge-nivel">🏃 ${p.nivelAtleta}</span>`);
+  if (p.city) badges.push(`<span class="badge badge-city">📍 ${p.city}</span>`);
+  document.getElementById('perfilBadges').innerHTML = badges.join('');
+
+  // Stats
+  document.getElementById('ps5k').textContent = p.tempo5k || '--';
+  document.getElementById('ps10k').textContent = p.tempo10k || '--';
+  document.getElementById('psFCMax').textContent = p.fcMax ? p.fcMax + 'bpm' : '--';
+
+  // Records
+  renderRecords(p);
+
+  // Zonas FC
+  if (p.fcMax) renderZonasFC(p.fcMax, p.fcRepouso);
+
+  // Paces
+  if (p.tempo5k) renderPaces(p.tempo5k);
+
+  // Premium card
+  if (!p.isPremium) document.getElementById('premiumCard').style.display = 'block';
+
+  // IA subtitle
+  document.getElementById('iaSubtitle').textContent = p.isPremium ? '⭐ Premium — 60 msgs/hora' : 'Gratuito — 5 msgs/hora';
+}
+
+function renderRecords(p) {
+  const records = [
+    { dist: '5 KM', tempo: p.tempo5k, pace: p.tempo5k ? calcPaceStr(p.tempo5k, 5) : null },
+    { dist: '10 KM', tempo: p.tempo10k, pace: p.tempo10k ? calcPaceStr(p.tempo10k, 10) : null },
+    { dist: '21 KM', tempo: p.tempo21k, pace: p.tempo21k ? calcPaceStr(p.tempo21k, 21.1) : null },
+    { dist: '42 KM', tempo: p.tempo42k, pace: p.tempo42k ? calcPaceStr(p.tempo42k, 42.2) : null },
+  ];
+  document.getElementById('recordsGrid').innerHTML = records.map(r => `
+    <div class="record-card" onclick="editarRecord('${r.dist}')">
+      <div class="record-dist">${r.dist}</div>
+      ${r.tempo
+        ? `<div class="record-time">${r.tempo}</div><div class="record-pace">${r.pace}/km</div>`
+        : `<div class="record-empty">—</div><div class="record-pace" style="color:var(--neon);font-size:12px">+ Adicionar</div>`
+      }
+    </div>
+  `).join('');
+}
+
+function calcPaceStr(tempo, dist) {
+  const partes = tempo.split(':').map(Number);
+  let totalSeg;
+  if (partes.length === 3) totalSeg = partes[0]*3600 + partes[1]*60 + partes[2];
+  else totalSeg = partes[0]*60 + (partes[1]||0);
+  const paceSeg = totalSeg / dist;
+  return `${Math.floor(paceSeg/60)}:${Math.round(paceSeg%60).toString().padStart(2,'0')}`;
+}
+
+function renderZonasFC(fcMax, fcRep) {
+  const fr = fcRep || Math.round(fcMax * 0.35);
+  const res = fcMax - fr;
+  const z = (a, b) => ({ min: Math.round(fr+res*a), max: Math.round(fr+res*b) });
+  const zonas = [
+    { nome:'Z1 Trote', desc:'Regenerativo / Aquecimento', pct:'50–64%', ...z(.50,.64), cor:'#5a5a8a', pctNum:14 },
+    { nome:'Z2 CCL', desc:'Base Aeróbica — Conversação', pct:'65–75%', ...z(.65,.75), cor:'#00aaff', pctNum:20 },
+    { nome:'Z3 CCM', desc:'Limiar Aeróbico — Esforço Controlado', pct:'76–84%', ...z(.76,.84), cor:'var(--neon)', pctNum:35 },
+    { nome:'Z4 CCR', desc:'Limiar Anaeróbico — Forte', pct:'85–100%', ...z(.85,1.00), cor:'var(--yellow)', pctNum:65 },
+    { nome:'Z5 VO2', desc:'Máximo — Sprint e Tiros', pct:'101–110%', ...z(1.01,1.10), cor:'var(--red)', pctNum:100 },
+  ];
+  const html = zonas.map(z => `
+    <div class="zona-row">
+      <div class="zona-color" style="background:${z.cor}"></div>
+      <div class="zona-info">
+        <div class="zona-nome" style="color:${z.cor}">${z.nome}</div>
+        <div class="zona-desc">${z.desc}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="zona-range" style="color:${z.cor}">${z.min}–${z.max}</div>
+        <div class="zona-pct">${z.pct}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('zonasCard').innerHTML = html;
+  document.getElementById('zonasSection').style.display = 'block';
+}
+
+function renderPaces(tempo5k) {
+  const [m,s] = tempo5k.split(':').map(Number);
+  const pb = (m*60+(s||0))/5;
+  const f = v => `${Math.floor(v/60)}:${Math.round(v%60).toString().padStart(2,'0')}`;
+  const paces = [
+    { zona:'Trote', val:f(pb*1.45), sub:'Z1 / Aquecimento', cor:'#5a5a8a' },
+    { zona:'CCL', val:f(pb*1.20), sub:'Z2 / Base Aeróbica', cor:'#00aaff' },
+    { zona:'CCM', val:f(pb*1.08), sub:'Z3 / Limiar Aeróbico', cor:'var(--neon)' },
+    { zona:'CCR', val:f(pb*0.97), sub:'Z4 / Forte', cor:'var(--yellow)' },
+    { zona:'CCR Z1', val:f(pb*0.89), sub:'Z5 / VO2 Máximo', cor:'var(--orange)' },
+    { zona:'CCR Z2', val:f(pb*0.84), sub:'Sprint', cor:'var(--red)' },
+  ];
+  document.getElementById('pacesGrid').innerHTML = paces.map(p => `
+    <div class="pace-card">
+      <div class="pace-zona" style="color:${p.cor}">${p.zona}</div>
+      <div class="pace-val" style="color:${p.cor}">${p.val}</div>
+      <div class="pace-sub">${p.sub}/km</div>
+    </div>
+  `).join('');
+  document.getElementById('pacesSection').style.display = 'block';
+}
+
+function calcularZonasAoVivo() {
+  const fcMax = parseInt(document.getElementById('editFCMax').value);
+  const fcRep = parseInt(document.getElementById('editFCRep').value) || Math.round(fcMax * 0.35);
+  if (!fcMax) { document.getElementById('zonasPreviewSection').style.display = 'none'; return; }
+  renderZonasFC(fcMax, fcRep);
+  document.getElementById('zonasSection').style.display = 'block';
+  document.getElementById('zonasPreviewSection').style.display = 'none';
+}
+
+function calcularPacesAoVivo() {
+  const t = document.getElementById('edit5k').value;
+  if (t && t.includes(':')) { renderPaces(t); document.getElementById('pacesSection').style.display = 'block'; }
+}
+
+// ═══════════════════════════════════════
+// TREINO DO DIA
+// ═══════════════════════════════════════
+async function carregarTreinoHoje() {
+  const heroTitulo = document.getElementById('heroTitulo');
+  const heroSub = document.getElementById('heroSub');
+  const heroStats = document.getElementById('heroStats');
+  try {
+    // Tentar buscar treino do coach
+    const d = await api('/coach/planilha/' + (perfilData?.id || user?.id) + '?semana=0').catch(() => null);
+    const hoje = new Date().toISOString().split('T')[0];
+    const treinoHoje = d?.treinos?.find(t => t.dataEspecifica?.startsWith(hoje));
+    if (treinoHoje) {
+      heroTitulo.textContent = treinoHoje.titulo;
+      heroSub.textContent = treinoHoje.descricao?.split('\n')[0] || '';
+      const etapas = treinoHoje.etapas || [];
+      const durTotal = etapas.reduce((a,e)=>a+(parseInt(e.durMin)||0),0);
+      const distTotal = etapas.reduce((a,e)=>a+(parseFloat(e.distanciaM)||0)/1000,0);
+      if (etapas.length) {
+        heroStats.innerHTML = `
+          <div class="hero-stat"><div class="hero-stat-val">${durTotal||'--'}</div><div class="hero-stat-label">min</div></div>
+          <div class="hero-stat"><div class="hero-stat-val">${distTotal>0?distTotal.toFixed(1):'--'}</div><div class="hero-stat-label">km</div></div>
+          <div class="hero-stat"><div class="hero-stat-val">${etapas.length}</div><div class="hero-stat-label">etapas</div></div>`;
+      }
+      return;
+    }
+  } catch(e) {}
+  // Fallback: treino da IA
+  try {
+    const dica = await api('/ia/dica-do-dia');
+    const msg = dica.dica || dica.message || dica.resposta || '';
+    if (msg) {
+      heroTitulo.textContent = '🤖 Dica da IA de Hoje';
+      heroSub.textContent = msg.substring(0, 100) + (msg.length > 100 ? '...' : '');
+      heroStats.innerHTML = '';
+      return;
+    }
+  } catch(e) {}
+  // Fallback simples baseado nos dados GPS
+  const stats = await api('/gps/stats').catch(() => null);
+  if (stats) {
+    const kmSem = stats.semana?.km || 0;
+    const nivelTreino = kmSem < 20 ? 'Construção de Base' : kmSem < 40 ? 'Volume Moderado' : 'Alto Volume';
+    heroTitulo.textContent = `Semana de ${nivelTreino}`;
+    heroSub.textContent = `${kmSem.toFixed(1)}km esta semana · ${stats.semana?.atividades || 0} treinos · Continue firme!`;
+    heroStats.innerHTML = `
+      <div class="hero-stat"><div class="hero-stat-val">${kmSem.toFixed(0)}</div><div class="hero-stat-label">km/sem</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">${stats.totalKm?.toFixed(0)||'--'}</div><div class="hero-stat-label">km total</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">${stats.totalAtividades||'--'}</div><div class="hero-stat-label">treinos</div></div>`;
+  }
+}
+function _carregarTreinoHoje_old() {
+  const diasSemana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const dia = new Date().getDay();
+  const tipos = ['Descanso 🛋️','Contínuo Leve 🟢','Intervalado ⚡','Fartlek 🔄','Contínuo Moderado 🟡','Corrida Forte 🔴','Longão 🏃'];
+  const distancias = [0, 8, 6, 7, 10, 9, 14];
+  const tempos = ['--', '45min', '50min', '40min', '55min', '45min', '75min'];
+
+  document.getElementById('heroTitulo').textContent = tipos[dia];
+  document.getElementById('heroSub').textContent = `${diasSemana[dia]} · ${new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long'})}`;
+
+  if (dia === 0) {
+    document.getElementById('heroStats').innerHTML = `
+      <div class="hero-stat"><div class="hero-stat-val" style="color:var(--muted2)">🛋️</div><div class="hero-stat-label">Descanso</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" style="color:var(--muted2)">💪</div><div class="hero-stat-label">Recuperação</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" style="color:var(--muted2)">😴</div><div class="hero-stat-label">Dormir bem</div></div>
+    `;
+  } else {
+    const dist = perfilData?.tempo5k ? calcDistPorNivel(perfilData.tempo5k, dia) : distancias[dia];
+    document.getElementById('heroStats').innerHTML = `
+      <div class="hero-stat"><div class="hero-stat-val">${dist}</div><div class="hero-stat-label">km</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">${tempos[dia]}</div><div class="hero-stat-label">tempo</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">${perfilData?.tempo5k ? calcPaceStr(perfilData.tempo5k, 5) : '--:--'}</div><div class="hero-stat-label">pace CCL</div></div>
+    `;
+  }
+
+  // IA dica do dia
+  carregarDicaIA();
+}
+
+function calcDistPorNivel(tempo5k, dia) {
+  const [m] = tempo5k.split(':').map(Number);
+  const base = m < 18 ? 14 : m < 22 ? 10 : 7;
+  const mult = [0, 0.8, 0.7, 0.85, 1, 0.7, 1.3][dia];
+  return Math.round(base * mult);
+}
+
+async function carregarDicaIA() {
+  try {
+    const data = await api('/ia/dica-do-dia');
+    document.getElementById('iaMsgHoje').innerHTML = `<span>${data.dica || data.message || 'Treino bem hoje!'}</span>`;
+  } catch {
+    const frases = [
+      'Foco no seu ritmo, não no dos outros. <span>Cada treino te aproxima do seu objetivo.</span>',
+      'Consistência supera intensidade. <span>Treinos regulares valem mais que um treino forte por mês.</span>',
+      'Sua FC de repouso baixando é sinal de evolução. <span>Continue treinando com inteligência.</span>',
+    ];
+    document.getElementById('iaMsgHoje').innerHTML = frases[Math.floor(Math.random()*frases.length)];
+  }
+}
+
+function verDetalheTreino() { showToast('📋 Abra o chat com a IA para ver detalhes completos'); showPage('ia'); }
+
+// ═══════════════════════════════════════
+// SEMANA
+// ═══════════════════════════════════════
+async function carregarSemana() {
+  const dias = ['S','T','Q','Q','S','S','D'];
+  const hoje = new Date().getDay();
+  let kms = [0,0,0,0,0,0,0];
+  let totalKm = 0, treinos = 0, totalSeg = 0;
+
+  try {
+    const stats = await api('/gps/stats');
+    totalKm = stats.totalKm || 0;
+    treinos = stats.semana?.atividades || 0;
+    totalSeg = stats.totalSeg || 0;
+
+    // Buscar atividades desta semana para montar barras por dia
+    const ini = new Date(); ini.setDate(ini.getDate()-ini.getDay()); ini.setHours(0,0,0,0);
+    const ativs = await api('/gps/atividades?limit=30');
+    const lista = ativs.atividades || ativs || [];
+    lista.forEach(a => {
+      const d = new Date(a.iniciadoEm || a.createdAt);
+      if (d >= ini) {
+        const diaSem = d.getDay(); // 0=dom
+        kms[diaSem] = (kms[diaSem] || 0) + (a.distanciaKm || 0);
+      }
+    });
+    totalKm = stats.semana?.km || kms.reduce((a,b)=>a+b,0);
+    treinos = stats.semana?.atividades || lista.filter(a=>new Date(a.iniciadoEm||a.createdAt)>=ini).length;
+  } catch(e) {}
+
+  document.getElementById('semKm').textContent = totalKm.toFixed(1);
+  document.getElementById('semTreinos').textContent = treinos;
+  const horas = totalSeg > 0 ? (totalSeg/3600).toFixed(1) : (totalKm * 6.5 / 60).toFixed(1);
+  document.getElementById('semTempo').textContent = horas;
+
+  const reorder = [...dias.slice(1), dias[0]];
+  const kmsReorder = [...kms.slice(1), kms[0]];
+  const maxKm = Math.max(...kmsReorder, 1);
+
+  document.getElementById('diasGrid').innerHTML = reorder.map((d,i) => {
+    const isHoje = (i+1)%7 === hoje || (i===6 && hoje===0);
+    const h = Math.max((kmsReorder[i]/maxKm)*50, kmsReorder[i]>0?6:2);
+    return `
+      <div class="dia-col">
+        <div class="dia-label">${d}</div>
+        <div class="dia-bar-wrap"><div class="dia-bar ${isHoje?'hoje':kmsReorder[i]>0?'active':''}" style="height:${h}px"></div></div>
+        <div class="dia-km">${kmsReorder[i]>0?kmsReorder[i].toFixed(1):'·'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// CORRIDAS PRÓXIMAS
+// ═══════════════════════════════════════
+async function carregarCorridasProximas() {
+  try {
+    const estado = user.state || '';
+    const data = await api('/corridas-abertas?limit=3' + (estado ? '&estado='+estado : ''));
+    const corridas = data.corridas || data.races || data.data || [];
+    if (!corridas.length) throw new Error('vazio');
+    document.getElementById('corridasProximas').innerHTML = corridas.slice(0,3).map(c => {
+      const d = new Date(c.data || c.date || c.dataEvento || Date.now()+86400000*30);
+      return `
+        <div class="corrida-row">
+          <div class="corrida-date">
+            <div class="corrida-date-dia">${d.getDate()}</div>
+            <div class="corrida-date-mes">${d.toLocaleString('pt-BR',{month:'short'})}</div>
+          </div>
+          <div class="corrida-divider"></div>
+          <div class="corrida-info">
+            <div class="corrida-nome">${c.nome||c.name||'Corrida'}</div>
+            <div class="corrida-local">📍 ${c.cidade||c.city||''} ${c.estado||c.state||''}</div>
+          </div>
+          <div style="color:var(--neon);font-size:20px;font-weight:700">${c.distancias||c.distance||c.distancia||'--'}</div>
+        </div>
+      `;
+    }).join('');
+  } catch {
+    document.getElementById('corridasProximas').innerHTML = `
+      <div class="corrida-row" style="cursor:default">
+        <div style="text-align:center;width:100%;color:var(--muted2);font-size:13px;padding:8px">
+          🏁 Explore corridas no <a href="/corridas-abertas.html" style="color:var(--neon);text-decoration:none;font-weight:700">Calendário de Corridas</a>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ═══════════════════════════════════════
+// ATIVIDADES RECENTES
+// ═══════════════════════════════════════
+async function carregarAtividades() {
+  try {
+    const data = await api('/gps/atividades?limit=5');
+    const atividades = data.atividades || data.activities || data.data || [];
+    if (!atividades.length) throw new Error('vazio');
+    document.getElementById('atividadesList').innerHTML = atividades.map(a => `
+      <div class="atividade-card">
+        <div class="ativ-icon">🏃</div>
+        <div class="ativ-info">
+          <div class="ativ-titulo">${a.titulo || 'Corrida'}</div>
+          <div class="ativ-meta">${new Date(a.iniciadoEm||a.criadoEm||a.createdAt).toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})}</div>
+          <div class="ativ-stats">
+            <div class="ativ-stat"><div class="ativ-stat-val">${a.distanciaKm?.toFixed(1)||'--'}</div><div class="ativ-stat-label">km</div></div>
+            <div class="ativ-stat"><div class="ativ-stat-val">${formatarTempo(a.duracaoSeg)}</div><div class="ativ-stat-label">tempo</div></div>
+            <div class="ativ-stat"><div class="ativ-stat-val">${a.paceMedio||'--'}</div><div class="ativ-stat-label">pace</div></div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch {
+    document.getElementById('atividadesList').innerHTML = `
+      <div class="atividade-card" style="cursor:default;border-style:dashed">
+        <div class="ativ-icon" style="background:transparent;border:none">📍</div>
+        <div class="ativ-info">
+          <div class="ativ-titulo">Nenhuma atividade registrada</div>
+          <div class="ativ-meta">Inicie sua primeira corrida com o GPS!</div>
+          <button class="btn-save" style="margin-top:10px;padding:10px" onclick="showPage('gps')">▶ Ir para GPS</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function formatarTempo(seg) {
+  if (!seg) return '--:--';
+  const h = Math.floor(seg/3600);
+  const m = Math.floor((seg%3600)/60);
+  const s = seg%60;
+  if (h > 0) return `${h}:${m.toString().padStart(2,'0')}`;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════
+// CONQUISTAS
+// ═══════════════════════════════════════
+async function carregarHistoricoStats() {
+  try {
+    const stats = await api('/gps/stats');
+    document.getElementById('histKmTotal').textContent = (stats.totalKm||0).toFixed(0);
+    document.getElementById('histTreinos').textContent = stats.totalAtividades || 0;
+    document.getElementById('histCalorias').textContent = (stats.totalCalorias||0).toFixed(0);
+    document.getElementById('histMediaKm').textContent = (stats.mediaKm||0).toFixed(1);
+    // Records do perfil
+    if (perfilData) {
+      if (document.getElementById('rec5k')) document.getElementById('rec5k').textContent = perfilData.tempo5k || '--';
+      if (document.getElementById('rec10k')) document.getElementById('rec10k').textContent = perfilData.tempo10k || '--';
+      if (document.getElementById('rec21k')) document.getElementById('rec21k').textContent = perfilData.tempo21k || '--';
+      if (document.getElementById('rec42k')) document.getElementById('rec42k').textContent = perfilData.tempo42k || '--';
+    }
+  } catch(e) {}
+}
+
+async function carregarConquistas() {
+  const todas = [
+    { tipo:'primeiro_5k', titulo:'Primeiro 5K', icone:'🥇', pts:50 },
+    { tipo:'primeiro_10k', titulo:'Primeiro 10K', icone:'🏅', pts:100 },
+    { tipo:'madrugador', titulo:'Madrugador', icone:'🌅', pts:30 },
+    { tipo:'consistente', titulo:'Consistente', icone:'🔥', pts:80 },
+    { tipo:'velocista', titulo:'Sub-20 5K', icone:'⚡', pts:200 },
+    { tipo:'meia_maratona', titulo:'Meia Maratona', icone:'🏆', pts:300 },
+    { tipo:'maratona', titulo:'Maratonista', icone:'👑', pts:500 },
+  ];
+  try {
+    const data = await api('/gps/stats');
+    const desbloqueadas = new Set();
+    const stats = data.stats || data;
+    if ((stats.totalKm||0) >= 5) desbloqueadas.add('primeiro_5k');
+    if ((stats.totalKm||0) >= 10) desbloqueadas.add('primeiro_10k');
+    if ((stats.totalAtividades||0) >= 7) desbloqueadas.add('consistente');
+    if ((stats.totalKm||0) >= 21) desbloqueadas.add('meia_maratona');
+    if ((stats.totalKm||0) >= 42) desbloqueadas.add('maratona');
+    document.getElementById('conquistasList').innerHTML = todas.map(c => `
+      <div class="conquista-card ${desbloqueadas.has(c.tipo)?'desbloqueada':'bloqueada'}">
+        <div class="conquista-icon">${c.icone}</div>
+        <div class="conquista-nome">${c.titulo}</div>
+        <div class="conquista-pts">+${c.pts}pts</div>
+      </div>
+    `).join('');
+  } catch {
+    document.getElementById('conquistasList').innerHTML = todas.map((c,i) => `
+      <div class="conquista-card ${i<2?'desbloqueada':'bloqueada'}">
+        <div class="conquista-icon">${c.icone}</div>
+        <div class="conquista-nome">${c.titulo}</div>
+        <div class="conquista-pts">+${c.pts}pts</div>
+      </div>
+    `).join('');
+  }
+}
+
+// ═══════════════════════════════════════
+// RANKING
+// ═══════════════════════════════════════
+async function carregarRanking() {
+  try {
+    const data = await api('/ranking/5km?limit=5');
+    const items = data.ranking || data.data || [];
+    const meuId = user.id;
+    const cores = ['gold','silver','bronze'];
+    document.getElementById('rankingMini').innerHTML = items.length ?
+      items.map((r,i) => `
+        <div class="ranking-row">
+          <div class="ranking-pos ${r.userId===meuId?'me':cores[i]||''}">${i+1}</div>
+          <div class="ranking-nome">${r.nome||r.name} ${r.userId===meuId?'(você)':''}</div>
+          <div class="ranking-tempo">${r.tempo5k||r.tempo||'--'}</div>
+        </div>
+      `).join('') :
+      '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px">Sem dados de ranking</div>';
+  } catch {
+    document.getElementById('rankingMini').innerHTML = `
+      <div class="ranking-row"><div class="ranking-pos gold">1</div><div class="ranking-nome">Seu nome aqui</div><div class="ranking-tempo">--:--</div></div>
+      <div class="ranking-row" style="opacity:0.3"><div class="ranking-pos silver">2</div><div class="ranking-nome">---</div><div class="ranking-tempo">--:--</div></div>
+      <div class="ranking-row" style="opacity:0.2"><div class="ranking-pos bronze">3</div><div class="ranking-nome">---</div><div class="ranking-tempo">--:--</div></div>
+    `;
+  }
+}
+
+// ═══════════════════════════════════════
+// FEED SOCIAL
+// ═══════════════════════════════════════
+async function carregarFeed() {
+  try {
+    const data = await api('/posts?limit=5');
+    const posts = data.posts || data.items || data.data || [];
+    if (!posts.length) throw new Error('vazio');
+    document.getElementById('feedList').innerHTML = posts.map(p => `
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar">${(p.autor||p.user?.name||p.nome||'?')[0].toUpperCase()}</div>
+          <div>
+            <div class="post-user">${p.autor||p.user?.name||p.nome||'Atleta'}</div>
+            <div class="post-time">${new Date(p.criadoEm||p.createdAt).toLocaleString('pt-BR',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})}</div>
+          </div>
+        </div>
+        <div class="post-content">${p.conteudo||p.content||p.texto||''}</div>
+        <div class="post-actions">
+          <div class="post-action" onclick="this.classList.toggle('liked')">❤️ ${p.likes||0}</div>
+          <div class="post-action">💬 Comentar</div>
+          <div class="post-action">📤 Compartilhar</div>
+        </div>
+      </div>
+    `).join('');
+  } catch {
+    document.getElementById('feedList').innerHTML = `
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar" style="background:linear-gradient(135deg,var(--orange),var(--red))">P</div>
+          <div><div class="post-user">PACE Community</div><div class="post-time">Agora</div></div>
+        </div>
+        <div class="post-content"><span>Bem-vindo ao PACE! 🎉</span> Comece sua jornada registrando sua primeira atividade e conectando-se com outros corredores da sua cidade.</div>
+        <div class="post-actions">
+          <div class="post-action" onclick="this.classList.toggle('liked')">❤️ 0</div>
+          <div class="post-action">💬 Comentar</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ═══════════════════════════════════════
+// GPS
+// ═══════════════════════════════════════
+// ═══════════════════════════════════
+// GPS COM MAPA REAL (Leaflet)
+// ═══════════════════════════════════
+let mapaLeaflet = null;
+let mapaRota = null;
+let rotaPontos = [];
+let marcadorAtual = null;
+
+function iniciarMapa(lat, lng) {
+  const mapaEl = document.getElementById('mapaGPS');
+  document.getElementById('mapaPlaceholder').style.display = 'none';
+  if (!mapaLeaflet) {
+    mapaLeaflet = L.map('mapaGPS', { zoomControl: false, attributionControl: false }).setView([lat, lng], 16);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(mapaLeaflet);
+    // Ícone personalizado
+    marcadorAtual = L.circleMarker([lat, lng], {
+      radius: 10, fillColor: '#F7931A', color: '#000', weight: 2, opacity: 1, fillOpacity: 1
+    }).addTo(mapaLeaflet);
+    // Linha da rota
+    mapaRota = L.polyline([], { color: '#F7931A', weight: 4, opacity: 0.85 }).addTo(mapaLeaflet);
+  } else {
+    mapaLeaflet.setView([lat, lng], 16);
+    marcadorAtual.setLatLng([lat, lng]);
+  }
+}
+
+function atualizarMapa(lat, lng) {
+  if (!mapaLeaflet) return;
+  marcadorAtual.setLatLng([lat, lng]);
+  rotaPontos.push([lat, lng]);
+  mapaRota.setLatLngs(rotaPontos);
+  mapaLeaflet.setView([lat, lng]);
+}
+
+async function sincronizarStrava() {
+  const t = localStorage.getItem('pace_token');
+  if (!t) return showToast('Faça login primeiro');
+  showToast('Sincronizando Strava...');
+  try {
+    const r = await fetch('/integracoes/strava/sync', {
+      method: 'POST', headers: { Authorization: 'Bearer ' + t }
+    });
+    const d = await r.json();
+    if (d.success) {
+      showToast('✅ ' + (d.msg || d.sincronizadas + ' atividades sincronizadas!'));
+      carregarAtividades();
+      carregarSemana();
+    } else if (d.error?.includes('não conectado')) {
+      showToast('Conecte o Strava primeiro → Integrações');
+      setTimeout(() => showPage('integracoes'), 1500);
+    } else {
+      showToast(d.error || 'Erro ao sincronizar', 'error');
+    }
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+}
+
+function toggleGPS() {
+  gpsAtivo = !gpsAtivo;
+  const btn = document.getElementById('btnGPS');
+  const icon = document.getElementById('gpsIcon');
+  const label = document.getElementById('gpsLabel');
+  if (gpsAtivo) {
+    btn.classList.add('recording');
+    icon.textContent = '⏹';
+    label.textContent = 'PARAR CORRIDA';
+    gpsSegundos = 0;
+    gpsTimer = setInterval(() => {
+      gpsSegundos++;
+      const km = (gpsSegundos / 360).toFixed(2); // ~10km/h simulado
+      const pace = gpsSegundos > 0 ? Math.round(360 / (gpsSegundos / 60)) : 0;
+      document.getElementById('gpsKm').textContent = km;
+      document.getElementById('gpsTempo').textContent = formatarTempo(gpsSegundos);
+      const paceMin = Math.floor(6); const paceSec = Math.round((6-6)*60);
+      document.getElementById('gpsPace').textContent = `6:00`;
+    }, 1000);
+  } else {
+    clearInterval(gpsTimer);
+    btn.classList.remove('recording');
+    icon.textContent = '⏺';
+    label.textContent = 'INICIAR CORRIDA';
+    if (gpsSegundos > 30) {
+      salvarAtividadeGPS();
+    }
+  }
+}
+
+async function salvarAtividadeGPS() {
+  const km = parseFloat(document.getElementById('gpsKm').textContent);
+  if (km < 0.1) return;
+  try {
+    await api('/gps/atividade', {
+      method: 'POST',
+      body: JSON.stringify({ distanciaKm: km, duracaoSeg: gpsSegundos, tipo: 'corrida', paceMedio: '6:00' })
+    });
+    showToast(`✅ ${km}km salva! Boa corrida!`);
+    carregarAtividades();
+    document.getElementById('gpsKm').textContent = '0.00';
+    document.getElementById('gpsTempo').textContent = '00:00';
+    document.getElementById('gpsPace').textContent = '--:--';
+  } catch { showToast('Atividade registrada localmente!'); }
+}
+
+async function salvarAtividade() {
+  const dist = document.getElementById('regDist').value;
+  const tempo = document.getElementById('regTempo').value;
+  if (!dist || !tempo) return showToast('⚠️ Preencha distância e tempo');
+  const duracaoSeg = parseFloat(tempo) * 60;
+  const paceSeg = duracaoSeg / parseFloat(dist);
+  const paceMedio = `${Math.floor(paceSeg/60)}:${Math.round(paceSeg%60).toString().padStart(2,'0')}`;
+  try {
+    await api('/gps/atividade', { method:'POST', body: JSON.stringify({ distanciaKm: parseFloat(dist), duracaoSeg, tipo: document.getElementById('regTipo').value.toLowerCase(), paceMedio, titulo: document.getElementById('regObs').value || '' }) });
+    showToast(`✅ ${dist}km salva! Ótimo treino!`);
+    document.getElementById('regDist').value = '';
+    document.getElementById('regTempo').value = '';
+    carregarAtividades();
+  } catch { showToast('✅ Atividade salva!'); }
+}
+
+// ═══════════════════════════════════════
+// IA CHAT
+// ═══════════════════════════════════════
+let iaIniciada = false;
+
+function iniciarIA() {
+  if (iaIniciada) return;
+  iaIniciada = true;
+  const nome = (perfilData?.name || user.name || 'atleta').split(' ')[0];
+  const nivel = perfilData?.nivelAtleta || 'iniciante';
+  const t5k = perfilData?.tempo5k;
+  document.getElementById('iaWelcomeMsg').innerHTML = `
+    Olá, <strong style="color:var(--text)">${nome}!</strong> Sou sua treinadora pessoal. 🏃‍♀️<br><br>
+    ${t5k ? `Vejo que seu melhor 5km é <strong style="color:var(--neon)">${t5k}</strong> — ótima base para trabalharmos!` : 'Cadastre seu tempo no 5km no perfil para treinos personalizados.'}<br><br>
+    Como posso ajudar seu treino hoje?
+  `;
+}
+
+function irParaIA(msg) {
+  showPage('ia');
+  document.getElementById('iaInputFull').value = msg;
+  enviarMsgIA();
+}
+
+async function enviarMsgIA() {
+  const input = document.getElementById('iaInputFull');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const container = document.getElementById('iaFullMessages');
+  // Remover welcome se existir
+  const welcome = container.querySelector('div[style*="text-align:center"]');
+  if (welcome) welcome.remove();
+
+  container.innerHTML += `
+    <div style="display:flex;justify-content:flex-end">
+      <div style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.2);border-radius:14px 14px 2px 14px;padding:10px 14px;max-width:80%;font-size:13px;line-height:1.6">${msg}</div>
+    </div>
+  `;
+  container.innerHTML += `<div id="iaLoading" style="display:flex;align-items:center;gap:8px;color:var(--muted2);font-size:13px"><div style="width:8px;height:8px;background:var(--neon);border-radius:50%;animation:pulse-ring 1s infinite"></div> Treinadora pensando...</div>`;
+  container.scrollTop = container.scrollHeight;
+
+  try {
+    const data = await api('/ia/chat', { method:'POST', body: JSON.stringify({ mensagem: msg }) });
+    document.getElementById('iaLoading')?.remove();
+    const resposta = data.resposta || data.message || 'Sem resposta';
+    container.innerHTML += `
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">🤖</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:2px 14px 14px 14px;padding:10px 14px;max-width:85%;font-size:13px;line-height:1.6;color:var(--muted2)">${resposta.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--text)">$1</strong>')}</div>
+      </div>
+    `;
+    if (data.restantes !== undefined) container.innerHTML += `<div style="text-align:center;font-size:11px;color:var(--muted);padding:4px">💬 ${data.restantes} mensagens restantes</div>`;
+  } catch {
+    document.getElementById('iaLoading')?.remove();
+    container.innerHTML += `<div style="color:var(--red);font-size:13px;padding:8px">❌ Erro de conexão</div>`;
+  }
+  container.scrollTop = container.scrollHeight;
+}
+
+// ═══════════════════════════════════════
+// PERFIL EDIT
+// ═══════════════════════════════════════
+function preencherFormPerfil() {
+  const p = perfilData || user;
+  if (!p) return;
+  document.getElementById('editNome').value = p.name || '';
+  document.getElementById('editCidade').value = p.city || '';
+  document.getElementById('editEstado').value = p.state || '';
+  document.getElementById('editEquipe').value = p.equipe || '';
+  document.getElementById('editFCMax').value = p.fcMax || '';
+  document.getElementById('editFCRep').value = p.fcRepouso || '';
+  document.getElementById('edit5k').value = p.tempo5k || '';
+  document.getElementById('edit10k').value = p.tempo10k || '';
+  document.getElementById('edit21k').value = p.tempo21k || '';
+  document.getElementById('edit42k').value = p.tempo42k || '';
+}
+
+async function salvarPerfil() {
+  const body = {
+    nome: document.getElementById('editNome').value,
+    cidade: document.getElementById('editCidade').value,
+    estado: document.getElementById('editEstado').value.toUpperCase(),
+    equipe: document.getElementById('editEquipe').value,
+    fcMax: parseInt(document.getElementById('editFCMax').value) || null,
+    fcRepouso: parseInt(document.getElementById('editFCRep').value) || null,
+    tempo5k: document.getElementById('edit5k').value,
+    tempo10k: document.getElementById('edit10k').value,
+    tempo21k: document.getElementById('edit21k').value,
+    tempo42k: document.getElementById('edit42k').value,
+  };
+  try {
+    const data = await api('/auth/me', { method:'PATCH', body: JSON.stringify(body) });
+    if (data.user) {
+      perfilData = data.user;
+      localStorage.setItem('pace_user', JSON.stringify(data.user));
+      renderPerfil();
+    }
+    showToast('✅ Perfil atualizado!');
+  } catch { showToast('✅ Salvo!'); }
+}
+
+function editarRecord(dist) {
+  showPage('perfil');
+  const map = { '5 KM':'edit5k', '10 KM':'edit10k', '21 KM':'edit21k', '42 KM':'edit42k' };
+  setTimeout(() => document.getElementById(map[dist])?.focus(), 300);
+}
+
+function assinarPremium() {
+  const btn = document.querySelector('.btn-premium');
+  if (btn) { btn.textContent = '⏳ Gerando Pix...'; btn.disabled = true; }
+
+  fetch('/pagamentos/premium', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ email: user.email })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (btn) { btn.textContent = '⭐ Assinar por R$29,90/mês'; btn.disabled = false; }
+    if (d.error) { showToast('❌ ' + d.error); return; }
+    mostrarPixModal(d);
+  })
+  .catch(e => {
+    if (btn) { btn.textContent = '⭐ Assinar por R$29,90/mês'; btn.disabled = false; }
+    showToast('❌ Erro ao gerar pagamento');
+  });
+}
+
+function mostrarPixModal(d) {
+  var old = document.getElementById('pixModal');
+  if (old) old.remove();
+
+  var modal = document.createElement('div');
+  modal.id = 'pixModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)';
+  modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+
+  var imgHtml = '';
+  if (d.qrCodeBase64) {
+    imgHtml = '<img src="data:image/png;base64,' + d.qrCodeBase64 + '" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;margin-bottom:16px" alt="QR Pix">';
+  }
+
+  var html = '<div style="background:#171726;border:1px solid #242438;border-radius:24px;max-width:400px;width:100%;padding:28px 24px;text-align:center;position:relative">';
+  html += '<div style="font-size:48px;margin-bottom:8px">⭐</div>';
+  html += '<div style="font-family:Space Grotesk,sans-serif;font-size:24px;font-weight:900;margin-bottom:4px">PACE Premium</div>';
+  html += '<div style="color:#8888aa;font-size:14px;margin-bottom:20px">R$ 29,90 / mes</div>';
+  html += imgHtml;
+  html += '<div style="background:#141422;border:1px solid #242438;border-radius:12px;padding:12px;margin-bottom:16px">';
+  html += '<div style="font-size:11px;color:#8888aa;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Pix Copia e Cola</div>';
+  html += '<div style="font-size:11px;color:#F7931A;word-break:break-all;max-height:60px;overflow:auto;line-height:1.4" id="pixCode">' + (d.qrCode || '') + '</div>';
+  html += '</div>';
+  html += '<button onclick="copiarPix()" style="width:100%;background:#F7931A;color:#000;border:none;padding:14px;border-radius:14px;font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:800;letter-spacing:1px;cursor:pointer;margin-bottom:10px">Copiar Codigo Pix</button>';
+  html += '<div style="font-size:12px;color:#8888aa;line-height:1.5">Apos o pagamento, seu Premium e ativado<br>automaticamente em ate 2 minutos!</div>';
+  html += '<button onclick="document.getElementById(String.fromCharCode(112,105,120,77,111,100,97,108)).remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#5a5a7a;font-size:24px;cursor:pointer">X</button>';
+  html += '</div>';
+
+  modal.innerHTML = html;
+  document.body.appendChild(modal);
+}
+
+function copiarPix() {
+  const code = document.getElementById('pixCode')?.textContent;
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('✅ Código Pix copiado!');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = code; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    ta.remove();
+    showToast('✅ Código Pix copiado!');
+  });
+}
+
+function logout() {
+  localStorage.removeItem('pace_token');
+  localStorage.removeItem('pace_user');
+  window.location.href = '/entrar.html';
+}
+
+
+// ═══════════════════════════════════════
+// CORRIDAS PAGE — completo
+// ═══════════════════════════════════════
+let todasCorridasPage = [];
+let corridasPagina = 1;
+let corridasEstadoFiltro = '';
+
+async function carregarCorridasPage(reset = true) {
+  if (reset) { corridasPagina = 1; todasCorridasPage = []; }
+  const el = document.getElementById('corridasPageList');
+  if (!el) return;
+  if (reset) el.innerHTML = '<div class="skeleton" style="height:70px;border-radius:12px;margin-bottom:8px"></div>'.repeat(5);
+
+  try {
+    const estado = corridasEstadoFiltro || user.state || '';
+    const params = new URLSearchParams({ page: corridasPagina, limit: 20, orderBy: 'data' });
+    if (estado) params.set('estado', estado);
+    const data = await api('/corridas-abertas?' + params);
+    const corridas = data.corridas || [];
+    const total = data.total || corridas.length;
+    const totalPags = data.paginas || 1;
+
+    document.getElementById('corridasCount').textContent = total + ' corridas';
+
+    if (reset) el.innerHTML = '';
+    if (!corridas.length && reset) {
+      el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted2)"><div style="font-size:48px;margin-bottom:12px">🏁</div><div style="font-weight:700">Nenhuma corrida encontrada</div><div style="font-size:13px;margin-top:6px">Tente outro estado ou filtro</div></div>';
+      return;
+    }
+
+    corridas.forEach(c => {
+      const d = new Date(c.data || c.date || Date.now() + 86400000 * 30);
+      const div = document.createElement('div');
+      div.className = 'corrida-row';
+      div.onclick = () => abrirCorridaDetalhe(c);
+      div.innerHTML = `
+        <div class="corrida-date">
+          <div class="corrida-date-dia">${d.getDate()}</div>
+          <div class="corrida-date-mes">${d.toLocaleString('pt-BR',{month:'short'})}</div>
+        </div>
+        <div class="corrida-divider"></div>
+        <div class="corrida-info" style="flex:1">
+          <div class="corrida-nome">${c.nome || c.name || 'Corrida'}</div>
+          <div class="corrida-local">📍 ${c.cidade || c.city || ''} ${c.estado ? '· ' + c.estado : ''}</div>
+          ${c.distancias ? '<div style="font-size:11px;color:var(--neon);font-weight:700;margin-top:2px">📏 ' + c.distancias + '</div>' : ''}
+        </div>
+        ${c.linkInscricao ? '<div style="font-size:11px;background:rgba(247,147,26,.1);color:var(--neon);padding:4px 10px;border-radius:20px;font-weight:700;white-space:nowrap">Inscreva-se</div>' : ''}
+      `;
+      el.appendChild(div);
+    });
+    todasCorridasPage = [...todasCorridasPage, ...corridas];
+    const btn = document.getElementById('loadMoreCorridasBtn');
+    if (btn) btn.style.display = corridasPagina < totalPags ? 'block' : 'none';
+  } catch(e) {
+    if (reset) document.getElementById('corridasPageList').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted2)">Erro ao carregar corridas. Tente novamente.</div>';
+  }
+}
+
+function loadMaisCorridas() {
+  corridasPagina++;
+  carregarCorridasPage(false);
+}
+
+function filtroEstadoCorrida(estado, btn) {
+  corridasEstadoFiltro = estado;
+  document.querySelectorAll('#estadoChips .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  carregarCorridasPage(true);
+}
+
+function filtrarCorridasLocal(busca) {
+  const el = document.getElementById('corridasPageList');
+  if (!busca) { carregarCorridasPage(true); return; }
+  const b = busca.toLowerCase();
+  const filtradas = todasCorridasPage.filter(c =>
+    (c.nome||c.name||'').toLowerCase().includes(b) ||
+    (c.cidade||c.city||'').toLowerCase().includes(b) ||
+    (c.estado||'').toLowerCase().includes(b)
+  );
+  if (!el) return;
+  el.innerHTML = filtradas.length ? filtradas.map(c => {
+    const d = new Date(c.data || Date.now() + 86400000 * 30);
+    return `<div class="corrida-row" onclick="abrirCorridaDetalhe(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+      <div class="corrida-date">
+        <div class="corrida-date-dia">${d.getDate()}</div>
+        <div class="corrida-date-mes">${d.toLocaleString('pt-BR',{month:'short'})}</div>
+      </div>
+      <div class="corrida-divider"></div>
+      <div class="corrida-info" style="flex:1">
+        <div class="corrida-nome">${c.nome||'Corrida'}</div>
+        <div class="corrida-local">📍 ${c.cidade||''} ${c.estado ? '· '+c.estado : ''}</div>
+      </div>
+    </div>`;
+  }).join('') : '<div style="padding:20px;text-align:center;color:var(--muted2)">Nenhuma corrida encontrada para "' + busca + '"</div>';
+}
+
+function abrirCorridaDetalhe(c) {
+  const d = new Date(c.data || c.date || Date.now());
+  const dataFmt = d.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  showToast(`🏁 ${c.nome || 'Corrida'} — ${dataFmt}`);
+  if (c.linkInscricao) {
+    setTimeout(() => {
+      if (confirm('Abrir página de inscrição?')) window.open(c.linkInscricao, '_blank');
+    }, 500);
+  }
+}
+
+// ═══════════════════════════════════════
+// RANKING PAGE
+// ═══════════════════════════════════════
+let distRanking = '5k';
+
+let rankingData = [];
+let rankingOffset = 0;
+
+async function carregarRankingPage(append=false) {
+  const el = document.getElementById('rankingFullList');
+  if (!el) return;
+  el.innerHTML = '<div class="skeleton" style="height:56px;border-radius:12px;margin-bottom:6px"></div>'.repeat(5);
+
+  try {
+    const data = await api('/ranking/' + distRanking.replace(/k$/,'km') + '?limit=20');
+    const items = data.ranking || data.data || [];
+    const meuId = user.id || user.userId;
+    const cores = ['gold','silver','bronze'];
+    document.getElementById('rankingTitulo').textContent = '🏆 Ranking ' + distRanking.toUpperCase().replace('K',' KM');
+
+    el.innerHTML = items.length ? items.map((r, i) => `
+      <div class="ranking-row ${r.userId === meuId ? 'style="background:rgba(247,147,26,.05);border-radius:12px"' : ''}">
+        <div class="ranking-pos ${r.userId === meuId ? 'me' : (cores[i] || '')}">${i + 1}</div>
+        <div class="ranking-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${(r.nome||r.name||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.nome||r.name||'Atleta'} ${r.userId === meuId ? '<span style="color:var(--neon);font-size:11px">(você)</span>' : ''}</div>
+          <div style="font-size:11px;color:var(--muted2)">${r.cidade||''} ${r.estado ? '· '+r.estado : ''}</div>
+        </div>
+        <div style="font-family:var(--display);font-size:16px;font-weight:700;color:var(--neon);white-space:nowrap">${r.tempo||r['tempo'+distRanking]||'--'}</div>
+      </div>
+    `).join('') : '<div style="padding:40px;text-align:center;color:var(--muted2)">Nenhum resultado ainda.<br>Seja o primeiro! 🏆</div>';
+  } catch(e) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted2)">Erro ao carregar ranking</div>';
+  }
+  carregarMeusResultados();
+}
+
+async function carregarMeusResultados() {
+  const el = document.getElementById('meusResultadosList');
+  if (!el) return;
+  try {
+    const data = await api('/resultados/meus-enviados');
+    const res = data.results || data.data || [];
+    el.innerHTML = res.length ? res.slice(0,5).map(r => `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+        <div style="font-size:24px">${r.posicaoGeral === 1 ? '🥇' : r.posicaoGeral === 2 ? '🥈' : r.posicaoGeral === 3 ? '🥉' : '🏅'}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:14px">${r.corridaNome || r.raceName || 'Corrida'}</div>
+          <div style="font-size:11px;color:var(--muted2)">${r.distancia||''} · ${r.data ? new Date(r.data).toLocaleDateString('pt-BR') : ''}</div>
+        </div>
+        <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--neon)">${r.tempo||r.chipTime||'--'}</div>
+      </div>
+    `).join('') : '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px">Nenhum resultado cadastrado ainda.<br><a href="/meu-resultado.html" style="color:var(--neon);font-weight:700">+ Enviar resultado</a></div>';
+  } catch {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted2);font-size:13px"><a href="/meu-resultado.html" style="color:var(--neon);font-weight:700">+ Enviar meu resultado</a></div>';
+  }
+}
+
+function filtrarRankingLocal(query) {
+  if (!rankingData.length) return;
+  const el = document.getElementById('rankingFullList');
+  if (!el) return;
+  const q = query.toLowerCase();
+  const filtrado = q ? rankingData.filter(a => (a.name||'').toLowerCase().includes(q)) : rankingData;
+  el.innerHTML = filtrado.map((a,i) => {
+    const isMe = user && a.name?.toLowerCase()===user.name?.toLowerCase();
+    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${isMe?'rgba(247,147,26,.06)':'var(--card)'};border:1px solid ${isMe?'rgba(247,147,26,.3)':'var(--border2)'};border-radius:12px;margin-bottom:6px">
+      <div style="width:28px;text-align:center;font-size:13px;font-weight:800;color:var(--muted2)">${a.posicao}°</div>
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;color:var(--neon)">${(a.name||'?')[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis${isMe?';color:var(--neon)':''}">${a.name||'Atleta'}${isMe?' 👤':''}</div>
+        <div style="font-size:11px;color:var(--muted2)">${a.state||''} ${a.equipe||''}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--display);font-size:16px;font-weight:700;color:var(--text)">${a.melhorTempo||'--'}</div>
+        <div style="font-size:10px;color:var(--muted2)">${a.nivel||''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function carregarMaisRanking() {
+  rankingOffset += 20;
+  await carregarRankingPage(true);
+}
+
+function mudaDistRanking(dist, btn) {
+  distRanking = dist;
+  document.querySelectorAll('#page-ranking .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  carregarRankingPage();
+}
+
+// ═══════════════════════════════════════
+// COMUNIDADE PAGE — grupos reais
+// ═══════════════════════════════════════
+let todosGrupos = [];
+let filtroTipoGrupo = '';
+
+async function carregarMeusGrupos() {
+  const el = document.getElementById('meusGruposList');
+  if (!el) return;
+  try {
+    const data = await api('/grupos/meus');
+    const grupos = data.grupos || [];
+    el.innerHTML = grupos.length ? grupos.map(g => grupoCardHTML(g, true)).join('') :
+      '<div style="padding:16px;text-align:center;color:var(--muted2);font-size:13px">Você ainda não participa de nenhum grupo.<br>Explore abaixo!</div>';
+  } catch {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted2);font-size:13px">Erro ao carregar grupos</div>';
+  }
+}
+
+async function carregarExplorarGrupos() {
+  const el = document.getElementById('explorarGruposList');
+  if (!el) return;
+  try {
+    const params = new URLSearchParams({ limit: 20 });
+    if (filtroTipoGrupo) params.set('tipo', filtroTipoGrupo);
+    const busca = document.getElementById('buscaGrupo')?.value;
+    if (busca) params.set('busca', busca);
+    const data = await api('/grupos?' + params);
+    const grupos = data.grupos || [];
+    el.innerHTML = grupos.length ? grupos.map(g => grupoCardHTML(g, false)).join('') :
+      '<div style="padding:40px;text-align:center;color:var(--muted2)">Nenhum grupo encontrado</div>';
+    todosGrupos = grupos;
+  } catch {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted2)">Erro ao carregar grupos</div>';
+  }
+}
+
+function grupoCardHTML(g, meu) {
+  const tipos = { assessoria:'🏃', clube:'🤝', grupo:'👥' };
+  return `<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="window.location.href='/comunidade.html'">
+    <div style="width:44px;height:44px;border-radius:12px;background:rgba(247,147,26,.08);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${tipos[g.tipo]||'👥'}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome||'Grupo'}</div>
+      <div style="font-size:11px;color:var(--muted2);margin-top:2px">${g.membros||0} membros · ${g.tipo||'grupo'}</div>
+    </div>
+    ${meu ? '<div style="font-size:11px;color:var(--neon);font-weight:700">✓ Membro</div>' : '<div style="font-size:11px;color:var(--muted2);font-weight:600">Entrar ›</div>'}
+  </div>`;
+}
+
+function setFiltroGrupo(btn, tipo) {
+  filtroTipoGrupo = tipo;
+  document.querySelectorAll('#page-comunidade .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  carregarExplorarGrupos();
+}
+
+function filtrarGruposLocal(busca) {
+  clearTimeout(window._filtroTimer);
+  window._filtroTimer = setTimeout(carregarExplorarGrupos, 400);
+}
+
+// ═══════════════════════════════════════
+// PATCH showPage — carregar ao trocar aba
+// ═══════════════════════════════════════
+
+
+
+// ═══════════════════════════════════════
+// ENVIAR RESULTADO
+// ═══════════════════════════════════════
+async function enviarResultado() {
+  const nomeProva = document.getElementById('envNomeProva')?.value?.trim();
+  const distancia = document.getElementById('envDistancia')?.value;
+  const tempo = document.getElementById('envTempo')?.value?.trim();
+  const data = document.getElementById('envData')?.value;
+  const posicao = document.getElementById('envPosicao')?.value;
+  const cidade = document.getElementById('envCidade')?.value?.trim();
+  const estado = document.getElementById('envEstado')?.value?.trim().toUpperCase();
+  const link = document.getElementById('envLink')?.value?.trim();
+
+  if (!nomeProva) { showToast('⚠️ Informe o nome da corrida'); return; }
+  if (!tempo) { showToast('⚠️ Informe o tempo'); return; }
+
+  const btn = document.querySelector('#page-enviar-resultado .btn-save');
+  if (btn) { btn.textContent = '⏳ Enviando...'; btn.disabled = true; }
+
+  try {
+    const res = await api('/resultados/enviar-manual', {
+      method: 'POST',
+      body: JSON.stringify({
+        nomeProva, distancia, tempoInformado: tempo,
+        dataProva: data || new Date().toISOString().split('T')[0],
+        posicaoGeral: posicao ? parseInt(posicao) : null,
+        cidade: cidade || user.city || '',
+        estado: estado || user.state || '',
+        linkResultado: link || ''
+      })
+    });
+    showToast('🏅 Resultado enviado! Revisão em até 24h');
+    // Limpar form
+    ['envNomeProva','envTempo','envData','envPosicao','envCidade','envEstado','envLink'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    setTimeout(() => showPage('ranking'), 2000);
+  } catch(e) {
+    showToast('❌ Erro ao enviar. Tente novamente.');
+  } finally {
+    if (btn) { btn.textContent = '🏅 Enviar Resultado'; btn.disabled = false; }
+  }
+}
+
+// ═══════════════════════════════════════
+// INTEGRAÇÕES
+// ═══════════════════════════════════════
+function integracaoBreve(nome) {
+  showToast(`⏳ ${nome} em breve! Estamos desenvolvendo.`);
+}
+function votarIntegracao(nome) {
+  showToast(`✅ Voto registrado para ${nome}! Obrigado.`);
+  // futuramente chamar API para registrar voto
+}
+
+// Preencher cidade/estado no form de enviar resultado com dados do usuário
+const _showPageOrigEnv = showPage;
+
+
+// === STRAVA CONNECT FIX ===
+async function verificarStatusIntegracoes() {
+  try {
+    const d = await api('/integracoes/status');
+    const btn = document.getElementById('stravaConectarBtn');
+    if (btn) {
+      if (d.strava || (d.atividades && d.atividades['strava'] > 0)) {
+        btn.textContent = '✅ Conectado';
+        btn.style.background = 'rgba(247,147,26,.15)';
+        btn.style.borderColor = 'rgba(247,147,26,.4)';
+        btn.style.color = 'var(--neon)';
+        btn.onclick = () => sincronizarStrava();
+        // Adicionar botão sync
+        const parent = btn.parentElement;
+        if (!document.getElementById('stravaSync')) {
+          const syncBtn = document.createElement('div');
+          syncBtn.id = 'stravaSync';
+          syncBtn.textContent = '↻ Sincronizar';
+          syncBtn.style.cssText = 'background:rgba(252,76,2,.1);border:1px solid rgba(252,76,2,.3);color:#FC4C02;padding:4px 10px;border-radius:16px;font-size:10px;font-weight:700;cursor:pointer';
+          syncBtn.onclick = () => sincronizarStrava();
+          parent.appendChild(syncBtn);
+        }
+      } else {
+        btn.textContent = 'Conectar';
+      }
+    }
+  } catch(e) {}
+}
+
+async function conectarStrava() {
+  try {
+    const r = await fetch(API + '/integracoes/strava/connect', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    const d = await r.json();
+    if (d.url) {
+      window.location.href = d.url;
+    } else if (d.status === 'coming_soon') {
+      alert(d.mensagem || 'Strava <span onclick="conectarStrava()" style="cursor:pointer;background:#F7931A;color:#000;padding:6px 16px;border-radius:8px;font-weight:700;">Conectar</span>!');
+    } else {
+      alert('Erro ao conectar Strava');
+    }
+  } catch(e) { alert('Erro: ' + e.message); }
+}
+
+async function syncStrava() {
+  try {
+    const r = await fetch(API + '/integracoes/strava/sync', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    const d = await r.json();
+    if (d.success) {
+      alert(d.msg || d.sincronizadas + ' corridas sincronizadas!');
+    } else {
+      alert(d.error || 'Erro ao sincronizar');
+    }
+  } catch(e) { alert('Erro: ' + e.message); }
+}
+
+
+// === AUTO-ABRIR PAGAMENTO VIA URL ===
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var hash = window.location.hash;
+  if (params.get("plan") === "premium" || hash === "#premium") { setTimeout(function() { assinarPremium(); }, 1000); }
+  if (params.get("plan") === "longevidade") { setTimeout(function() { assinarLongevidade(); }, 1000); }
+})();
+
+function assinarLongevidade() {
+  showToast("⏳ Gerando Pix Longevidade...");
+  fetch("/pagamentos/longevidade", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + TOKEN },
+    body: "{}"
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.error) { showToast("❌ " + d.error); return; }
+    mostrarPixModal(d);
+  })
+  .catch(function() { showToast("❌ Erro ao gerar pagamento"); });
+}
+
+
+// === STRAVA CONNECT/SYNC INTELIGENTE ===
+async function conectarOuSyncStrava() {
+  showToast('⏳ Verificando Strava...');
+  try {
+    var r = await api('/integracoes/status');
+    if (r.strava && r.strava.conectado) {
+      syncStrava();
+    } else {
+      iniciarConexaoStrava();
+    }
+  } catch(e) {
+    iniciarConexaoStrava();
+  }
+}
+
+async function iniciarConexaoStrava() {
+  // Tentar GET direto com token na URL (mais simples)
+  var tk = localStorage.getItem('pace_token');
+  if (tk) { window.location.href = '/integracoes/strava/auth?token=' + encodeURIComponent(tk); return; }
+  showToast('⏳ Conectando Strava...');
+  try {
+    var r = await fetch(API + '/integracoes/strava/connect', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    var d = await r.json();
+    if (d.url) {
+      window.location.href = d.url;
+    } else {
+      showToast('❌ Erro: ' + (d.error || 'Não foi possível conectar'));
+    }
+  } catch(e) {
+    showToast('❌ Erro de conexão');
+  }
+}
+
+async function syncStrava() {
+  showToast('⏳ Sincronizando treinos...');
+  try {
+    var r = await fetch(API + '/integracoes/strava/sync', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    var d = await r.json();
+    if (d.success || d.sincronizadas !== undefined) {
+      showToast('✅ ' + (d.sincronizadas || 0) + ' treinos sincronizados!');
+      setTimeout(function() { location.reload(); }, 1500);
+    } else {
+      showToast('❌ ' + (d.error || 'Erro ao sincronizar'));
+      if (d.error && d.error.includes('token')) iniciarConexaoStrava();
+    }
+  } catch(e) {
+    showToast('❌ Erro de conexão');
+  }
+}
+
+// Alias para manter compatibilidade
+function sincronizarStrava() { syncStrava(); }
+
+function instrucaoGarmin() { showToast('Garmin: Conecte via Garmin Connect > Configurações > Apps > PACE Brazil (em breve)'); }
+function instrucaoApple() { showToast('Apple Watch: Conecte via Apple Saúde > Compartilhar > PACE Brazil (em breve)'); }
+function instrucaoAmazfit() { showToast('Amazfit: Conecte via Zepp App > Perfil > Apps > PACE Brazil (em breve)'); }
+function instrucaoHuawei() { showToast('Huawei: Conecte via Huawei Health > Dispositivos > Apps (em breve)'); }
+function instrucaoPolar() { showToast('Polar: Conecte via Polar Flow > Configurações > Apps (em breve)'); }
+
+// ═══ DAILY COACH ═══
+async function carregarDailyCoach() {
+  try {
+    var r = await fetch(API + '/coach/daily', { headers: { 'Authorization': 'Bearer ' + token } });
+    var d = await r.json();
+    if (d.error || !d.cards) return;
+    
+    var container = document.getElementById('dailyCoachCards');
+    if (!container) return;
+    
+    var html = '';
+    for (var i = 0; i < d.cards.length; i++) {
+      var c = d.cards[i];
+      html += '<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid ' + c.color + ';border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">';
+      html += '<div style="font-size:24px;flex-shrink:0;margin-top:2px">' + c.icon + '</div>';
+      html += '<div style="flex:1">';
+      html += '<div style="font-size:14px;font-weight:700;margin-bottom:4px">' + c.title + '</div>';
+      
+      if (c.message) {
+        html += '<div style="font-size:12px;color:var(--muted2);line-height:1.5">' + c.message + '</div>';
+      }
+      
+      if (c.items) {
+        for (var j = 0; j < c.items.length; j++) {
+          var item = c.items[j];
+          html += '<div style="font-size:12px;color:var(--muted2);margin-top:3px">' + (item.completado ? '\u2705' : '\u25CB') + ' ' + (item.horario ? item.horario + ' ' : '') + item.titulo + '</div>';
+        }
+      }
+      
+      if (c.action === 'checkin') {
+        html += '<button onclick="window.location.href=\'/cobaia.html\'" style="margin-top:8px;background:' + c.color + '22;color:' + c.color + ';border:1px solid ' + c.color + '44;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Fazer check-in</button>';
+      }
+      if (c.action === 'treino') {
+        html += '<button onclick="window.location.href=\'/ia.html\'" style="margin-top:8px;background:' + c.color + '22;color:' + c.color + ';border:1px solid ' + c.color + '44;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Pedir treino pra IA</button>';
+      }
+      if (c.action === 'sauna') {
+        html += '<button onclick="window.location.href=\'/cobaia.html\'" style="margin-top:8px;background:' + c.color + '22;color:' + c.color + ';border:1px solid ' + c.color + '44;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Registrar sauna</button>';
+      }
+      
+      html += '</div></div>';
+    }
+    
+    container.innerHTML = html;
+  } catch(e) { console.error('Daily coach error:', e); }
+}
+
+
+var API = window.location.origin;
+// ═══ SCORE DO DIA ═══
+var missaoAtual = null;
+async function carregarScoreDia() {
+  try {
+    var r = await fetch(API + '/score/daily', { headers: { 'Authorization': 'Bearer ' + token } });
+    var d = await r.json();
+    if (d.error) return;
+    // Score circle
+    var arc = document.getElementById('scoreArc');
+    if (arc) { var offset = 377 - (377 * d.score / 100); arc.setAttribute('stroke-dashoffset', offset); arc.style.stroke = d.score >= 70 ? '#27AE60' : d.score >= 40 ? '#F7931A' : '#E74C3C'; }
+    var numEl = document.getElementById('scoreNumber');
+    if (numEl) { numEl.textContent = d.score; numEl.style.color = d.score >= 70 ? '#27AE60' : d.score >= 40 ? '#F7931A' : '#E74C3C'; }
+    var nivelEl = document.getElementById('scoreNivel');
+    if (nivelEl) nivelEl.textContent = d.nivel;
+    var saudEl = document.getElementById('scoreSaudacao');
+    if (saudEl) saudEl.textContent = d.saudacao + ', ' + d.nome + '!';
+    var resEl = document.getElementById('scoreResumo');
+    if (resEl) resEl.textContent = d.kmSemana + 'km em ' + d.treinosSemana + ' treinos | streak ' + d.streak + ' dias';
+    // Missão
+    if (d.missao) {
+      missaoAtual = d.missao;
+      document.getElementById('missaoCard').style.display = 'block';
+      document.getElementById('missaoIcon').textContent = d.missao.icon;
+      document.getElementById('missaoTitulo').textContent = d.missao.titulo;
+      document.getElementById('missaoDesc').textContent = d.missao.desc;
+      document.getElementById('missaoPontos').textContent = d.missao.pontos > 0 ? '+' + d.missao.pontos + 'pts' : 'Concluido';
+      var btn = document.getElementById('missaoBtn');
+      if (d.missao.action === 'concluido') { btn.textContent = 'DIA COMPLETO'; btn.style.background = '#27AE60'; }
+    }
+    // Fatores
+    var fatEl = document.getElementById('scoreFatores');
+    if (fatEl && d.fatores) {
+      var fats = [
+        {n:'Treino',v:d.fatores.treino,m:30,c:'#27AE60'},
+        {n:'Sono',v:d.fatores.sono,m:25,c:'#6366f1'},
+        {n:'HRV',v:d.fatores.hrv,m:15,c:'#E040FB'},
+        {n:'Nutri',v:d.fatores.nutri,m:15,c:'#F7931A'},
+        {n:'Streak',v:d.fatores.consist,m:15,c:'#06b6d4'}
+      ];
+      fatEl.innerHTML = fats.map(function(f) {
+        return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 10px;min-width:55px"><div style="font-size:14px;font-weight:800;color:' + f.c + '">' + f.v + '</div><div style="font-size:9px;color:var(--muted)">' + f.n + '</div></div>';
+      }).join('');
+    }
+  } catch(e) { console.error('Score error:', e); }
+}
+function executarMissao() {
+  if (!missaoAtual) return;
+  if (missaoAtual.action === 'checkin') window.location.href = '/cobaia.html';
+  else if (missaoAtual.action === 'treino') window.location.href = '/ia.html';
+  else if (missaoAtual.action === 'nutricao') window.location.href = '/cobaia.html';
+  else if (missaoAtual.action === 'descanso') showToast('Bom descanso! Yoga ou caminhada leve.');
+  else showToast('Parabens! Dia completo!');
+}
+
+</script>
+
+</body>
+</html>
