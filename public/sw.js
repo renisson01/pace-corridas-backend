@@ -1,5 +1,5 @@
 // PACE Corridas — Service Worker v1.0
-const CACHE = 'pace-v2';
+const CACHE = 'regeni-v4';
 const OFFLINE = ['/atleta.html', '/entrar.html', '/corridas-abertas.html', '/ia.html', '/cobaia.html', '/perfil.html', '/exames.html', '/cobaia-resultados.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
@@ -23,7 +23,7 @@ self.addEventListener('fetch', e => {
 
 // Push notifications
 self.addEventListener('push', e => {
-  const data = e.data?.json() || { title: 'PACE', body: 'Nova notificação' };
+  const data = e.data?.json() || { title: 'REGENI', body: 'Nova notificação' };
   e.waitUntil(self.registration.showNotification(data.title, {
     body: data.body, icon: '/icon-192.png', badge: '/icon-192.png',
     data: { url: data.url || '/atleta.html' }
