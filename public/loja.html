@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EstamPace — Camisetas de Corrida</title>
+<title>EstamRegeni — Camisetas de Corrida</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--neon:#00D4FF;--laranja:#FF6D00;--laranja2:#FF8F00;--text:#f0f0f8;--muted:#6b6b85;--red:#ff1744}
@@ -133,7 +133,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <section class="hero">
   <div class="hero-badge">🔥 OFERTA RELÂMPAGO — TEMPO LIMITADO</div>
   <h1 class="hero-title">Veste quem<br><em>corre</em> de <span>verdade</span></h1>
-  <p class="hero-sub">Camiseta esportiva premium para atletas de rua. Dry-fit, corte anatômico, bordado PACE.</p>
+  <p class="hero-sub">Camiseta esportiva premium para atletas de rua. Dry-fit, corte anatômico, bordado REGENI.</p>
   <div class="hero-preco">
     <div class="preco-antigo">R$ 299,90</div>
     <div>
@@ -156,7 +156,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <div class="galeria-wrap">
   <div id="galeriaMain" class="galeria-main-ph">
     <div style="font-size:56px">👕</div>
-    <div style="font-size:15px;font-weight:700">Camiseta EstamPace</div>
+    <div style="font-size:15px;font-weight:700">Camiseta EstamRegeni</div>
     <div style="font-size:12px;margin-top:4px">Fotos carregando...</div>
   </div>
   <div class="galeria-thumbs" id="galleryThumbs"></div>
@@ -165,9 +165,9 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <div class="produto-wrap" id="comprar-anchor">
   <div class="produto-card">
     <div class="produto-header">
-      <div class="produto-tag">🏃 EstamPace Oficial</div>
-      <div class="produto-nome">Camiseta EstamPace</div>
-      <div class="produto-sub">Dry-fit premium · Bordado PACE · Corte atlético</div>
+      <div class="produto-tag">🏃 EstamRegeni Oficial</div>
+      <div class="produto-nome">Camiseta EstamRegeni</div>
+      <div class="produto-sub">Dry-fit premium · Bordado REGENI · Corte atlético</div>
       <div class="preco-row">
         <div class="preco-de">R$ 299,90</div>
         <div class="preco-por"><sup>R$</sup><span id="precoDisplay">149,90</span></div>
@@ -252,13 +252,13 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </div>
 
 <div class="specs-wrap">
-  <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;margin-bottom:16px">⚡ Por que a EstamPace?</div>
+  <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;margin-bottom:16px">⚡ Por que a EstamRegeni?</div>
   <div class="specs-grid">
     <div class="spec-card"><span class="spec-icon">🧵</span><div><div class="spec-lbl">Material</div><div class="spec-val">Dry-fit 100% Premium</div></div></div>
     <div class="spec-card"><span class="spec-icon">💧</span><div><div class="spec-lbl">Tecnologia</div><div class="spec-val">Absorção de suor</div></div></div>
     <div class="spec-card"><span class="spec-icon">🎽</span><div><div class="spec-lbl">Corte</div><div class="spec-val">Atlético masculino</div></div></div>
     <div class="spec-card"><span class="spec-icon">🏃</span><div><div class="spec-lbl">Ideal para</div><div class="spec-val">Corrida de rua</div></div></div>
-    <div class="spec-card"><span class="spec-icon">🏅</span><div><div class="spec-lbl">Bordado</div><div class="spec-val">Logo PACE oficial</div></div></div>
+    <div class="spec-card"><span class="spec-icon">🏅</span><div><div class="spec-lbl">Bordado</div><div class="spec-val">Logo REGENI oficial</div></div></div>
     <div class="spec-card"><span class="spec-icon">📦</span><div><div class="spec-lbl">Entrega</div><div class="spec-val">Frete grátis em SE</div></div></div>
   </div>
 </div>
@@ -267,7 +267,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="pix-sheet">
     <div class="pix-handle"></div>
     <div class="pix-title">💳 Pagar com Pix</div>
-    <div class="pix-sub" id="pixProdutoInfo">Camiseta EstamPace</div>
+    <div class="pix-sub" id="pixProdutoInfo">Camiseta EstamRegeni</div>
     <div class="pix-valor" id="pixValor">R$ 149,90</div>
     <div class="pix-qr" id="pixQRWrap"><div style="font-size:40px;color:#ccc">⏳</div></div>
     <div class="pix-codigo" id="pixCodigo">Gerando código Pix...</div>
@@ -326,7 +326,7 @@ async function carregarFotos() {
     const fotos = prod.fotos.split(',').filter(Boolean);
     if(!fotos.length) return;
     const mainEl = document.getElementById('galeriaMain');
-    mainEl.outerHTML = `<img class="galeria-main" id="galeriaMain" src="${fotos[0]}" alt="Camiseta EstamPace" onerror="this.style.display='none'">`;
+    mainEl.outerHTML = `<img class="galeria-main" id="galeriaMain" src="${fotos[0]}" alt="Camiseta EstamRegeni" onerror="this.style.display='none'">`;
     document.getElementById('galleryThumbs').innerHTML = fotos.map((f,i)=>
       `<img class="galeria-thumb${i===0?' active':''}" src="${f}" onclick="selecionarFoto(this,'${f}')" onerror="this.style.display='none'">`
     ).join('');
@@ -410,14 +410,14 @@ async function checkout(tipo){
   if(tipo==='pix'){
     document.getElementById('pixModal').classList.add('open');
     document.getElementById('pixValor').textContent=`R$ ${total.toFixed(2).replace('.',',')}`;
-    document.getElementById('pixProdutoInfo').textContent=`${qtd}x Camiseta EstamPace ${corSel} — Tam. ${tamSel}${gratis>0?` (${gratis} grátis!)`:''}`;
+    document.getElementById('pixProdutoInfo').textContent=`${qtd}x Camiseta EstamRegeni ${corSel} — Tam. ${tamSel}${gratis>0?` (${gratis} grátis!)`:''}`;
     document.getElementById('pixCodigo').textContent='Gerando código Pix...';
     document.getElementById('pixQRWrap').innerHTML='<div style="font-size:40px;color:#888">⏳</div>';
     try{
       const r=await fetch('/loja/comprar',{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN||''}`},
-        body:JSON.stringify({produtoNome:'Camiseta EstamPace',tamanho:tamSel,cor:corSel,quantidade:qtd,valorUnit:PRECO_PROMO,promocao,nomeCliente:nome,whatsappCliente:wpp,enderecoRua:rua,enderecoNum:num,enderecoBairro:bairro,enderecoCidade:cidade,enderecoEstado:estado,enderecoCEP:cep,obs})
+        body:JSON.stringify({produtoNome:'Camiseta EstamRegeni',tamanho:tamSel,cor:corSel,quantidade:qtd,valorUnit:PRECO_PROMO,promocao,nomeCliente:nome,whatsappCliente:wpp,enderecoRua:rua,enderecoNum:num,enderecoBairro:bairro,enderecoCidade:cidade,enderecoEstado:estado,enderecoCEP:cep,obs})
       });
       const d=await r.json();
       if(d.pixCode){
@@ -437,12 +437,12 @@ async function checkout(tipo){
   }
   // WhatsApp
   const msg=encodeURIComponent(
-    `🏃 *Pedido EstamPace*\n\n👕 Camiseta EstamPace\n🎨 Cor: ${corSel}\n📏 Tamanho: ${tamSel}\n🔢 Quantidade: ${qtd}${gratis>0?` (${gratis} grátis 🎁)`:''}\n💰 Total: R$ ${total.toFixed(2).replace('.',',')}`+
+    `🏃 *Pedido EstamRegeni*\n\n👕 Camiseta EstamRegeni\n🎨 Cor: ${corSel}\n📏 Tamanho: ${tamSel}\n🔢 Quantidade: ${qtd}${gratis>0?` (${gratis} grátis 🎁)`:''}\n💰 Total: R$ ${total.toFixed(2).replace('.',',')}`+
     (nome?`\n👤 ${nome}`:'')+
     (wpp?`\n📱 ${wpp}`:'')+
     (rua?`\n\n📦 Endereço:\n${rua} ${num}, ${bairro}\n${cidade}/${estado} — CEP: ${cep}`:'')+
     (obs?`\n💬 ${obs}`:'')+
-    `\n\n_PACE Corridas_`
+    `\n\n_REGENI_`
   );
   window.open(`https://wa.me/${WHATSAPP}?text=${msg}`,'_blank');
 }
@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
-<!-- PACE NAV -->
+<!-- REGENI NAV -->
 <style>
 .pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — EstamPace</title>
+<title>Admin — EstamRegeni</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--neon:#00D4FF;--laranja:#FF6D00;--text:#f0f0f8;--muted:#6b6b85;--red:#ff1744;--blue:#448aff;--yellow:#ffd600}
@@ -135,9 +135,9 @@ textarea.field-input{resize:vertical;min-height:80px}
   <div class="section" id="sec-produto">
     <div class="card">
       <div class="card-title">✏️ Configurações do Produto</div>
-      <div class="field-group"><label class="field-label">Nome do Produto</label><input class="field-input" id="prodNome" value="Camiseta EstamPace"></div>
+      <div class="field-group"><label class="field-label">Nome do Produto</label><input class="field-input" id="prodNome" value="Camiseta EstamRegeni"></div>
       <div class="field-group"><label class="field-label">Preço Promocional (R$)</label><input class="field-input" id="prodPreco" type="number" value="149.90" step="0.01"></div>
-      <div class="field-group"><label class="field-label">Descrição</label><textarea class="field-input" id="prodDesc">Camiseta esportiva dry-fit premium para corrida de rua. Bordado PACE oficial.</textarea></div>
+      <div class="field-group"><label class="field-label">Descrição</label><textarea class="field-input" id="prodDesc">Camiseta esportiva dry-fit premium para corrida de rua. Bordado REGENI oficial.</textarea></div>
       <div class="field-group"><label class="field-label">Tamanhos disponíveis</label><input class="field-input" id="prodTamanhos" value="PP,P,M,G,GG,XGG"></div>
       <div class="field-group"><label class="field-label">Estoque total</label><input class="field-input" id="prodEstoque" type="number" value="100"></div>
       <button class="btn-primary" onclick="salvarProduto()">💾 Salvar Configurações</button>
@@ -210,7 +210,7 @@ function renderPedido(p){
   const data = new Date(p.criadoEm).toLocaleString('pt-BR');
   const tel = (p.whatsappCliente||'').replace(/\D/g,'');
   const wppMsg = encodeURIComponent(
-    `Olá ${p.nomeCliente||''}! Seu pedido EstamPace foi confirmado! 🏃\n`+
+    `Olá ${p.nomeCliente||''}! Seu pedido EstamRegeni foi confirmado! 🏃\n`+
     `👕 ${p.produtoNome} — ${p.tamanho} / ${p.cor} x${p.quantidade}\n`+
     `💰 R$ ${p.valorTotal?.toFixed(2)?.replace('.',',')}\n\n`+
     `Em breve você receberá as informações de envio. Obrigado! 🙏`
@@ -306,7 +306,7 @@ async function uploadFotos(files){
       await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({fotos:todasFotos})}).catch(()=>{});
       toast(`✅ ${urls.length} foto(s) adicionadas!`);
     } else {
-      await fetch('/loja/produtos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({nome:'Camiseta EstamPace',preco:149.90,fotos:urls.join(','),tamanhos:'PP,P,M,G,GG,XGG',categoria:'camisa',estoque:100,descricao:'Camiseta esportiva dry-fit premium para corrida de rua.'})}).catch(()=>{});
+      await fetch('/loja/produtos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({nome:'Camiseta EstamRegeni',preco:149.90,fotos:urls.join(','),tamanhos:'PP,P,M,G,GG,XGG',categoria:'camisa',estoque:100,descricao:'Camiseta esportiva dry-fit premium para corrida de rua.'})}).catch(()=>{});
       toast(`✅ Produto criado com ${urls.length} foto(s)!`);
     }
     carregarFotos();

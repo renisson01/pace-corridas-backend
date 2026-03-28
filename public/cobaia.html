@@ -273,7 +273,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
         • Temperatura do quarto: 18-20°C (ventilador/ar condicionado)<br>
         • Sem telas 1h antes de dormir (ativa melatonina natural)<br>
         • Magnésio glicinato 400mg 30min antes de dormir<br><br>
-        <b style="color:#00D4FF;">Adaptação PACE (Renisson):</b><br>
+        <b style="color:#00D4FF;">Adaptação REGENI (Renisson):</b><br>
         • Treinar às 18h → jantar 19:30 → sem telas 22h → dormir 23h → acordar 7h<br>
         • Nos dias sem Vyvanse: sono mais profundo naturalmente<br>
         • Sauna 20min antes de dormir (queda de temperatura induz sono)<br><br>
@@ -299,7 +299,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
         • 1h exercício/dia, 7 dias/semana<br>
         • Backwards sled (trenó reverso) — protege joelhos<br>
         • HIIT 3x/semana (reduz idade transcriptômica 3.6 anos)<br><br>
-        <b style="color:#00D4FF;">Seu protocolo PACE (Semana atual):</b><br>
+        <b style="color:#00D4FF;">Seu protocolo REGENI (Semana atual):</b><br>
         • SEG: Easy Run 6-8km Z2<br>
         • TER: Intervalos 5x1000m ou Fartlek<br>
         • QUA: Descanso + Força (core + glúteo)<br>
@@ -328,7 +328,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
         • 4-7x/semana, 20min a 80°C+ (HSPs +50%)<br>
         • Ativa gene FOXO3 (centenários têm mais)<br>
         • Contraste: sauna + frio = norepinefrina +200-300%<br><br>
-        <b style="color:#00D4FF;">Seu protocolo PACE:</b><br>
+        <b style="color:#00D4FF;">Seu protocolo REGENI:</b><br>
         • Sala infravermelho em construção (próxima semana)<br>
         • Pós-treino: 30min a 45-55°C (recovery)<br>
         • Dia descanso: 20min a 55-60°C (longevidade)<br>
@@ -350,7 +350,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
         • Super Veggie (brócolis, couve, lentilha)<br>
         • Azeite extra virgem 30ml/dia<br>
         • Última refeição às 11h (jejum 18:6)<br><br>
-        <b style="color:#00D4FF;">Adaptação PACE Brasil (Renisson 54kg, atleta):</b><br>
+        <b style="color:#00D4FF;">Adaptação REGENI (Renisson 54kg, atleta):</b><br>
         • <b>Café:</b> 4 ovos + banana + café arábico<br>
         • <b>Almoço:</b> Carne (colchão mole) + arroz + beterraba + cenoura + azeite<br>
         • <b>Pré-treino (16h):</b> Batata doce roxa + banana + mel<br>
@@ -402,7 +402,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
       <div style="color:#2980B9;font-weight:700;font-size:13px;margin-bottom:8px;">"Você não pode melhorar o que não mede" — Bryan Johnson</div>
       <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
         <b style="color:#00D4FF;">Bryan Johnson mede:</b> 100+ biomarcadores a cada 3 meses<br>
-        <b style="color:#00D4FF;">Nosso protocolo PACE (27 marcadores):</b><br><br>
+        <b style="color:#00D4FF;">Nosso protocolo REGENI (27 marcadores):</b><br><br>
         <b>Prioridade 1 (esta semana):</b><br>
         • PCR ultrassensível (inflamação — meta &lt;0.5)<br>
         • HbA1c (controle glicêmico — meta &lt;5.0%)<br>
@@ -436,7 +436,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
         <b style="color:#00D4FF;">Protocolo TDAH (Renisson):</b><br>
         • <b>Dias COM Vyvanse:</b> Usar o foco para trabalho + documentação. Treinar mais leve (FC elevada).<br>
         • <b>Dias SEM Vyvanse:</b> Treino intenso (dopamina natural). Contraste térmico (norepinefrina +200%). Café arábico pra foco.<br>
-        • <b>Estrutura externa:</b> O app PACE é sua "muleta cognitiva" — checklists, lembretes, rotina fixa<br>
+        • <b>Estrutura externa:</b> O app REGENI é sua "muleta cognitiva" — checklists, lembretes, rotina fixa<br>
         • <b>Magnésio à noite</b> ajuda sono (Vyvanse prejudica sono profundo)<br><br>
         <b style="color:#27AE60;">O exercício é o melhor "remédio" para TDAH — libera dopamina e norepinefrina por 2-4h pós-treino</b>
       </div>
@@ -844,7 +844,7 @@ function renderTreinos(treinos) {
       '<div class="stats">' +
         '<div class="stat"><div class="val">' + t.distanciaKm + '</div><div class="lbl">KM</div></div>' +
         '<div class="stat"><div class="val">' + durMin + ':' + String(durSeg).padStart(2,'0') + '</div><div class="lbl">TEMPO</div></div>' +
-        '<div class="stat"><div class="val">' + (t.paceMedio||'-') + '</div><div class="lbl">PACE</div></div>' +
+        '<div class="stat"><div class="val">' + (t.paceMedio||'-') + '</div><div class="lbl">REGENI</div></div>' +
         '<div class="stat"><div class="val">' + vel + '</div><div class="lbl">KM/H</div></div>' +
       '</div></div>';
   }).join('');
@@ -1062,7 +1062,7 @@ function gerarPlanoDia() {
 
 </script>
 
-<!-- PACE NAV -->
+<!-- REGENI NAV -->
 <style>
 .pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
