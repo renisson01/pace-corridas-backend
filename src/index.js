@@ -82,6 +82,11 @@ for (const pg of pages) {
   });
 }
 
+app.get('/regeni.css', async (req, reply) => {
+  try { reply.type('text/css').header('Cache-Control','public,max-age=3600').send(fs.readFileSync(path.join(__dirname, '../public/regeni.css'), 'utf-8')); }
+  catch { reply.code(404).send(''); }
+});
+
 app.get('/manifest.json', async (req, reply) => {
   try { reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/manifest.json'),'utf-8')); }
   catch { reply.send('{}'); }
