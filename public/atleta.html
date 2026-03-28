@@ -1243,16 +1243,16 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.querySelector('.greeting').innerHTML = getGreeting() + ', <span id="topNome2">' + firstName + '</span> \u{1F44B}';
   document.getElementById('topAvatar').textContent = firstName[0].toUpperCase();
 
-  await carregarPerfil();
-  carregarTreinoHoje();
-  carregarSemana();
-  carregarCorridasProximas();
-  carregarScoreDia();
-  carregarDailyCoach();
-  carregarAtividades();
-  carregarConquistas();
-  carregarRanking();
-  carregarFeed();
+  try { await carregarPerfil(); } catch(e) { console.error("perfil:",e); }
+  try { carregarScoreDia(); } catch(e) { console.error("score:",e); }
+  try { carregarTreinoHoje(); } catch(e) { console.error("treino:",e); }
+  try { carregarSemana(); } catch(e) { console.error("semana:",e); }
+  try { carregarCorridasProximas(); } catch(e) { console.error("corridas:",e); }
+  try { carregarDailyCoach(); } catch(e) { console.error("coach:",e); }
+  try { carregarAtividades(); } catch(e) { console.error("atividades:",e); }
+  try { carregarConquistas(); } catch(e) { console.error("conquistas:",e); }
+  try { carregarRanking(); } catch(e) { console.error("ranking:",e); }
+  try { carregarFeed(); } catch(e) { console.error("feed:",e); }
 });
 
 // ═══════════════════════════════════════
