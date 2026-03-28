@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EstamRegeni — Camisetas de Corrida</title>
+<title>REGENI Performance — Produtos de Performance</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--neon:#00D4FF;--laranja:#FF6D00;--laranja2:#FF8F00;--text:#f0f0f8;--muted:#6b6b85;--red:#ff1744}
@@ -156,7 +156,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <div class="galeria-wrap">
   <div id="galeriaMain" class="galeria-main-ph">
     <div style="font-size:56px">👕</div>
-    <div style="font-size:15px;font-weight:700">Camiseta EstamRegeni</div>
+    <div style="font-size:15px;font-weight:700">Camiseta REGENI Performance</div>
     <div style="font-size:12px;margin-top:4px">Fotos carregando...</div>
   </div>
   <div class="galeria-thumbs" id="galleryThumbs"></div>
@@ -165,8 +165,8 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <div class="produto-wrap" id="comprar-anchor">
   <div class="produto-card">
     <div class="produto-header">
-      <div class="produto-tag">🏃 EstamRegeni Oficial</div>
-      <div class="produto-nome">Camiseta EstamRegeni</div>
+      <div class="produto-tag">🏃 REGENI Performance Oficial</div>
+      <div class="produto-nome">Camiseta REGENI Performance</div>
       <div class="produto-sub">Dry-fit premium · Bordado REGENI · Corte atlético</div>
       <div class="preco-row">
         <div class="preco-de">R$ 299,90</div>
@@ -252,7 +252,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </div>
 
 <div class="specs-wrap">
-  <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;margin-bottom:16px">⚡ Por que a EstamRegeni?</div>
+  <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;margin-bottom:16px">⚡ Por que a REGENI Performance?</div>
   <div class="specs-grid">
     <div class="spec-card"><span class="spec-icon">🧵</span><div><div class="spec-lbl">Material</div><div class="spec-val">Dry-fit 100% Premium</div></div></div>
     <div class="spec-card"><span class="spec-icon">💧</span><div><div class="spec-lbl">Tecnologia</div><div class="spec-val">Absorção de suor</div></div></div>
@@ -267,7 +267,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="pix-sheet">
     <div class="pix-handle"></div>
     <div class="pix-title">💳 Pagar com Pix</div>
-    <div class="pix-sub" id="pixProdutoInfo">Camiseta EstamRegeni</div>
+    <div class="pix-sub" id="pixProdutoInfo">Camiseta REGENI Performance</div>
     <div class="pix-valor" id="pixValor">R$ 149,90</div>
     <div class="pix-qr" id="pixQRWrap"><div style="font-size:40px;color:#ccc">⏳</div></div>
     <div class="pix-codigo" id="pixCodigo">Gerando código Pix...</div>
@@ -326,7 +326,7 @@ async function carregarFotos() {
     const fotos = prod.fotos.split(',').filter(Boolean);
     if(!fotos.length) return;
     const mainEl = document.getElementById('galeriaMain');
-    mainEl.outerHTML = `<img class="galeria-main" id="galeriaMain" src="${fotos[0]}" alt="Camiseta EstamRegeni" onerror="this.style.display='none'">`;
+    mainEl.outerHTML = `<img class="galeria-main" id="galeriaMain" src="${fotos[0]}" alt="Camiseta REGENI Performance" onerror="this.style.display='none'">`;
     document.getElementById('galleryThumbs').innerHTML = fotos.map((f,i)=>
       `<img class="galeria-thumb${i===0?' active':''}" src="${f}" onclick="selecionarFoto(this,'${f}')" onerror="this.style.display='none'">`
     ).join('');
@@ -410,14 +410,14 @@ async function checkout(tipo){
   if(tipo==='pix'){
     document.getElementById('pixModal').classList.add('open');
     document.getElementById('pixValor').textContent=`R$ ${total.toFixed(2).replace('.',',')}`;
-    document.getElementById('pixProdutoInfo').textContent=`${qtd}x Camiseta EstamRegeni ${corSel} — Tam. ${tamSel}${gratis>0?` (${gratis} grátis!)`:''}`;
+    document.getElementById('pixProdutoInfo').textContent=`${qtd}x Camiseta REGENI Performance ${corSel} — Tam. ${tamSel}${gratis>0?` (${gratis} grátis!)`:''}`;
     document.getElementById('pixCodigo').textContent='Gerando código Pix...';
     document.getElementById('pixQRWrap').innerHTML='<div style="font-size:40px;color:#888">⏳</div>';
     try{
       const r=await fetch('/loja/comprar',{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN||''}`},
-        body:JSON.stringify({produtoNome:'Camiseta EstamRegeni',tamanho:tamSel,cor:corSel,quantidade:qtd,valorUnit:PRECO_PROMO,promocao,nomeCliente:nome,whatsappCliente:wpp,enderecoRua:rua,enderecoNum:num,enderecoBairro:bairro,enderecoCidade:cidade,enderecoEstado:estado,enderecoCEP:cep,obs})
+        body:JSON.stringify({produtoNome:'Camiseta REGENI Performance',tamanho:tamSel,cor:corSel,quantidade:qtd,valorUnit:PRECO_PROMO,promocao,nomeCliente:nome,whatsappCliente:wpp,enderecoRua:rua,enderecoNum:num,enderecoBairro:bairro,enderecoCidade:cidade,enderecoEstado:estado,enderecoCEP:cep,obs})
       });
       const d=await r.json();
       if(d.pixCode){
@@ -437,7 +437,7 @@ async function checkout(tipo){
   }
   // WhatsApp
   const msg=encodeURIComponent(
-    `🏃 *Pedido EstamRegeni*\n\n👕 Camiseta EstamRegeni\n🎨 Cor: ${corSel}\n📏 Tamanho: ${tamSel}\n🔢 Quantidade: ${qtd}${gratis>0?` (${gratis} grátis 🎁)`:''}\n💰 Total: R$ ${total.toFixed(2).replace('.',',')}`+
+    `🏃 *Pedido REGENI Performance*\n\n👕 Camiseta REGENI Performance\n🎨 Cor: ${corSel}\n📏 Tamanho: ${tamSel}\n🔢 Quantidade: ${qtd}${gratis>0?` (${gratis} grátis 🎁)`:''}\n💰 Total: R$ ${total.toFixed(2).replace('.',',')}`+
     (nome?`\n👤 ${nome}`:'')+
     (wpp?`\n📱 ${wpp}`:'')+
     (rua?`\n\n📦 Endereço:\n${rua} ${num}, ${bairro}\n${cidade}/${estado} — CEP: ${cep}`:'')+
