@@ -514,12 +514,12 @@ async function montarContexto(userId, contextoLoja, intencao) {
       where: { athlete: { user: { id: userId } } },
       include: { race: { select: { name: true, date: true } } },
       orderBy: { createdAt: 'desc' },
-      take: 15
+      take: 5
     }).catch(() => []),
     prisma.atividadeGPS.findMany({
       where: { userId },
       orderBy: { iniciadoEm: 'desc' },
-      take: 20,
+      take: 8,
       select: {
         tipo: true, distanciaKm: true, duracaoSeg: true, paceMedio: true,
         elevacaoGanho: true, temperatura: true, iniciadoEm: true, fonte: true
@@ -715,7 +715,7 @@ export async function iaRoutes(fastify) {
 
       const conversa = await prisma.iaConversa.findUnique({ where: { userId: u.userId } }).catch(() => null);
       let historico = [];
-      try { if (conversa?.mensagens) historico = JSON.parse(conversa.mensagens).slice(-10); } catch {}
+      try { if (conversa?.mensagens) historico = JSON.parse(conversa.mensagens).slice(-6); } catch {}
 
       const perfil = await prisma.iaPerfilCorredor.findUnique({ where: { userId: u.userId } }).catch(() => null);
 
@@ -724,7 +724,7 @@ export async function iaRoutes(fastify) {
         headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': apiKey },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1200,
+          max_tokens: 700,
           system,
           messages: [
             ...historico,
@@ -742,7 +742,7 @@ export async function iaRoutes(fastify) {
       const resposta = data.content?.[0]?.text || 'Erro ao processar!';
 
       // Salvar histórico
-      const novoHist = [...historico, { role: 'user', content: mensagem }, { role: 'assistant', content: resposta }].slice(-20);
+      const novoHist = [...historico, { role: 'user', content: mensagem }, { role: 'assistant', content: resposta }].slice(-12);
       const histStr = JSON.stringify(novoHist);
       if (conversa) {
         await prisma.iaConversa.update({ where: { userId: u.userId }, data: { mensagens: histStr } });
@@ -811,7 +811,7 @@ export async function iaRoutes(fastify) {
         headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': apiKey },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 2500,
+          max_tokens: 1200,
           system: SYSTEM_TREINO,
           messages: [{ role: 'user', content: prompt }]
         })
@@ -885,7 +885,7 @@ Responda com análise profissional:
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': apiKey },
-        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 800, system: SYSTEM_TREINO, messages: [{ role: 'user', content: prompt }] })
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 500, system: SYSTEM_TREINO, messages: [{ role: 'user', content: prompt }] })
       });
 
       const data = await resp.json();
@@ -924,7 +924,7 @@ Responda com análise profissional:
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': apiKey },
         body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001', max_tokens: 250, system: SYSTEM_BASE,
+          model: 'claude-haiku-4-5-20251001', max_tokens: 150, system: SYSTEM_BASE,
           messages: [{
             role: 'user',
             content: `É ${dia} no Brasil, calor tropical. Dê UMA dica prática e CIENTÍFICA sobre: ${tema}.
@@ -976,7 +976,7 @@ Com base nesses dados:
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': apiKey },
         body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001', max_tokens: 700, system: SYSTEM_TREINO,
+          model: 'claude-haiku-4-5-20251001', max_tokens: 450, system: SYSTEM_TREINO,
           messages: [{ role: 'user', content: prompt }]
         })
       });
@@ -1061,7 +1061,7 @@ Regras:
         headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 2500,
+          max_tokens: 1200,
           system: SYSTEM_TREINO,
           messages: [{ role: 'user', content: prompt }]
         })
