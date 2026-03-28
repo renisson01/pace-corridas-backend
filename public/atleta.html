@@ -447,7 +447,7 @@ body::after {
   <div class="hero-hoje" id="heroHoje">
     <div class="hero-top">
       <div class="hero-tag">🗓️ Treino de Hoje</div>
-      <div class="hero-title" id="heroTitulo">Carregando...</div>
+      <div class="hero-title" id="heroTitulo">Sem treino agendado</div>
       <div class="hero-sub" id="heroSub"></div>
     </div>
     <div class="hero-stats" id="heroStats"></div>
@@ -2474,7 +2474,7 @@ async function conectarStrava() {
   try {
     const r = await fetch(API + '/integracoes/strava/connect', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
       body: '{}'
     });
     const d = await r.json();
@@ -2492,7 +2492,7 @@ async function syncStrava() {
   try {
     const r = await fetch(API + '/integracoes/strava/sync', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
       body: '{}'
     });
     const d = await r.json();
@@ -2517,7 +2517,7 @@ function assinarLongevidade() {
   showToast("⏳ Gerando Pix Longevidade...");
   fetch("/pagamentos/longevidade", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + TOKEN },
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
     body: "{}"
   })
   .then(function(r) { return r.json(); })
@@ -2552,7 +2552,7 @@ async function iniciarConexaoStrava() {
   try {
     var r = await fetch(API + '/integracoes/strava/connect', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
       body: '{}'
     });
     var d = await r.json();
@@ -2571,7 +2571,7 @@ async function syncStrava() {
   try {
     var r = await fetch(API + '/integracoes/strava/sync', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
       body: '{}'
     });
     var d = await r.json();

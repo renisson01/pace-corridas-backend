@@ -23,7 +23,7 @@ export async function subscriptionRoutes(fastify) {
     },
     iaTreinadora: {
       mensal: 29.90,
-      desc: 'IA Treinadora PACE — planilha personalizada + chat ilimitado + análise completa'
+      desc: 'IA Treinadora REGENI — planilha personalizada + chat ilimitado + análise completa'
     }
   }));
 }
