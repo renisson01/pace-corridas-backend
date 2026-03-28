@@ -396,7 +396,7 @@ body::after {
 <!-- TOPBAR -->
 <header class="topbar">
   <div class="topbar-left">
-    <div class="logo">PACE</div>
+    <div class="logo">REGENI</div>
     <div class="greeting">Olá, <span id="topNome">Atleta</span> 👋</div>
   </div>
   <div class="topbar-right">
@@ -2687,7 +2687,7 @@ async function carregarScoreDia() {
         return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 10px;min-width:55px"><div style="font-size:14px;font-weight:800;color:' + f.c + '">' + f.v + '</div><div style="font-size:9px;color:var(--muted)">' + f.n + '</div></div>';
       }).join('');
     }
-  } catch(e) { console.error('Score error:', e); }
+  } catch(e) { console.error('Score error:', e); document.getElementById('scoreNumber').textContent='0'; document.getElementById('scoreNivel').textContent='FAZER CHECK-IN'; }
 }
 function executarMissao() {
   if (!missaoAtual) return;
