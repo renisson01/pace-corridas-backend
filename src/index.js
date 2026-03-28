@@ -61,12 +61,15 @@ await app.register(rateLimit, {
 
 const htmlCache = {};
 const pages = [
-  'index''entrar''perfil''comunidade''perfil-atleta''calendario''resultados''''elite''''faixas''calculadoras''loja''loja-admin''meu-resultado''ia''ia-avatar''admin-pedidos''scraper''importar-resultado''comunidades''gps''corridas-abertas''corridas-realizadas''atleta''amigo-pace''treinador''cobaia''exames''privacidade''termos''cobaia-resultados'
-];
+  'index','entrar','perfil','comunidade','perfil-atleta','calendario','resultados','elite',
+  'faixas','calculadoras','loja','loja-admin','meu-resultado','ia','admin-pedidos',
+  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace',
+  'treinador','cobaia','exames','privacidade','termos','cobaia-resultados'
+]
 
 for (const pg of pages) {
   const file = pg === 'index' ? 'index.html' : `${pg}.html`;
-  try { htmlCache[pg] = fs.readFileSync(path.join(__dirname'../public', file)'utf-8'); }
+  try { htmlCache[pg] = fs.readFileSync(path.join(__dirname, '../public', file), 'utf-8'); }
   catch { htmlCache[pg] = null; }
 }
 for (const pg of pages) {
