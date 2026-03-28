@@ -65,7 +65,7 @@ await app.register(rateLimit, {
 
 const htmlCache = {};
 const pages = [
-  'index','entrar','perfil','calendario','resultados','social','elite',
+  'index','entrar','perfil', 'comunidade', 'perfil-atleta','calendario','resultados','social','elite',
   'pacematch','organizador','stats','faixas','calculadoras',
   'assessorias','assessoria','loja','loja-admin','meu-resultado',
   'ia','ia-avatar','admin-pedidos','scraper','importar-resultado',

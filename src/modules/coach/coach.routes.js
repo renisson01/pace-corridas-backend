@@ -126,7 +126,7 @@ export async function coachRoutes(fastify) {
       const treinosSemana = await prisma.treino.findMany({
         where: {
           dataEspecifica: { gte: inicioSemana },
-          comunidade: { adminId: u.userId }
+          comunidade: { criadorId: u.userId }
         },
         include: { confirmacoes: true },
         orderBy: { dataEspecifica: 'asc' }
@@ -313,11 +313,11 @@ export async function coachRoutes(fastify) {
             dataEspecifica, horario, local, observacoes, etapas } = req.body || {};
     if (!titulo) return reply.code(400).send({ error: 'Título obrigatório' });
     try {
-      let comunidade = await prisma.comunidade.findFirst({ where: { adminId: u.userId } }).catch(() => null);
+      let comunidade = await prisma.comunidade.findFirst({ where: { criadorId: u.userId } }).catch(() => null);
       if (!comunidade) {
         comunidade = await prisma.comunidade.create({
           data: { nome: 'Equipe do Treinador', slug: `coach-${u.userId}-${Date.now()}`,
-            descricao: 'Equipe do painel do treinador', adminId: u.userId,
+            descricao: 'Equipe do painel do treinador', criadorId: u.userId,
             cidade: '', estado: '', tipo: 'privada' }
         }).catch(() => null);
       }
@@ -390,7 +390,7 @@ export async function coachRoutes(fastify) {
     const { atletaId } = req.query;
     try {
       const comunidades = await prisma.comunidade.findMany({
-        where: { adminId: u.userId }, select: { id: true }
+        where: { criadorId: u.userId }, select: { id: true }
       }).catch(() => []);
       const ids = comunidades.map(c => c.id);
       if (!ids.length) return { treinos: [], total: 0 };
@@ -457,7 +457,7 @@ export async function coachRoutes(fastify) {
 
       // Buscar treinos do atleta nesta semana
       const comunidades = await prisma.comunidade.findMany({
-        where: { adminId: u.userId }, select: { id: true }
+        where: { criadorId: u.userId }, select: { id: true }
       }).catch(() => []);
       const comIds = comunidades.map(c => c.id);
 
