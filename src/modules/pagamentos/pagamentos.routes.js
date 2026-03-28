@@ -3,6 +3,7 @@ import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 
 const BASE_URL = process.env.BASE_URL || 'https://web-production-990e7.up.railway.app';
 const TAXA_PLATAFORMA = 0.15;
+const votosX1 = { pedro: 0, tiago: 0, doacoes: [] };
 
 // Lê o token em runtime (não no carregamento do módulo)
 function getMPClient() {
@@ -34,6 +35,8 @@ export async function pagamentosRoutes(fastify) {
     }
   });
 
+  fastify.post('/pagamentos/doacao-x1', async (req, reply) => {
+    if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
     try {
       const { valor, atletaApoio, doadorNome, doadorEmail } = req.body || {};
       if (!valor || valor < 5) return reply.code(400).send({ error: 'Valor mínimo R$ 5,00' });
@@ -86,6 +89,15 @@ export async function pagamentosRoutes(fastify) {
     }
   });
 
+  fastify.get('/pagamentos/x1/votos', async (req, reply) => {
+    try {
+      const doacoes = await prisma.pagamentoRegistro.findMany({ where: { tipo: 'x1', status: 'aprovado' }, orderBy: { criadoEm: 'desc' } }).catch(() => []);
+      const placar = { pedro: 0, tiago: 0, totalArrecadado: 0, doacoes: [] };
+      doacoes.forEach(d => {
+        if (d.atletaRef === 'pedro') placar.pedro += d.valor;
+        else if (d.atletaRef === 'tiago') placar.tiago += d.valor;
+        placar.totalArrecadado += d.valor;
+        placar.doacoes.push({ atleta: d.atletaRef, valor: d.valor, doador: d.doadorNome || 'Anônimo', quando: d.criadoEm });
       });
       if (placar.totalArrecadado === 0 && votosX1.doacoes.length > 0) return { ...votosX1, fonte: 'memoria' };
       return { ...placar, fonte: 'banco' };
@@ -114,6 +126,13 @@ export async function pagamentosRoutes(fastify) {
         await prisma.pagamentoRegistro.upsert({ where: { paymentId: String(data.id) }, create: { paymentId: String(data.id), tipo: 'loja', valor, doadorNome, doadorEmail, ref, status: 'aprovado' }, update: { status: 'aprovado' } }).catch(() => {});
         console.log('[WEBHOOK] ✅ Loja paga:', ref);
       }
+      if (ref.startsWith('x1-')) {
+        const atletaRef = ref.split('-')[1];
+        if (atletaRef === 'pedro') votosX1.pedro += valor;
+        else if (atletaRef === 'tiago') votosX1.tiago += valor;
+        votosX1.doacoes.push({ atleta: atletaRef, valor, doador: doadorNome, quando: new Date() });
+        await prisma.pagamentoRegistro.upsert({ where: { paymentId: String(data.id) }, create: { paymentId: String(data.id), tipo: 'x1', atletaRef, valor, doadorNome, doadorEmail, ref, status: 'aprovado' }, update: { status: 'aprovado' } }).catch(() => {});
+        console.log('[WEBHOOK] ✅ X1 doação:', atletaRef, 'R$', valor);
       }
 
       // === COACH ADESÃO ===
@@ -388,6 +407,7 @@ export async function pagamentosRoutes(fastify) {
     return {
       configurado: !!token,
       modo: token.startsWith('APP_USR') ? 'producao' : token.includes('TEST') ? 'sandbox' : 'nao_configurado',
+      linkDoacaoX1: 'https://link.mercadopago.com.br/rnestampace'
     };
   });
 
