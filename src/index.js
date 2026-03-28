@@ -61,11 +61,12 @@ await app.register(rateLimit, {
 
 const htmlCache = {};
 const pages = [
-  'index','entrar','perfil','comunidade','perfil-atleta','calendario','resultados','elite',
-  'faixas','calculadoras','loja','loja-admin','meu-resultado','ia','admin-pedidos',
-  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace',
-  'treinador','cobaia','exames','privacidade','termos','cobaia-resultados'
-]
+  'index','entrar','perfil', 'comunidade', 'perfil-atleta','calendario','resultados','elite',
+  'faixas','calculadoras',
+  'loja','loja-admin','meu-resultado',
+  'ia','admin-pedidos','importar-resultado',
+  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador','cobaia','exames','privacidade','termos','cobaia-resultados'
+];
 
 for (const pg of pages) {
   const file = pg === 'index' ? 'index.html' : `${pg}.html`;
@@ -82,16 +83,16 @@ for (const pg of pages) {
 }
 
 app.get('/manifest.json', async (req, reply) => {
-  try { reply.type('application/json').send(fs.readFileSync(path.join(__dirname'../public/manifest.json')'utf-8')); }
+  try { reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/manifest.json'),'utf-8')); }
   catch { reply.send('{}'); }
 });
 app.get('/.well-known/assetlinks.json', async (req, reply) => {
-  try { reply.type('application/json').send(fs.readFileSync(path.join(__dirname'../public/.well-known/assetlinks.json')'utf-8')); }
+  try { reply.type('application/json').send(fs.readFileSync(path.join(__dirname,'../public/.well-known/assetlinks.json'),'utf-8')); }
   catch { reply.send('[]'); }
 });
 
 app.get('/sw.js', async (req, reply) => {
-  try { reply.type('application/javascript').send(fs.readFileSync(path.join(__dirname'../public/sw.js')'utf-8')); }
+  try { reply.type('application/javascript').send(fs.readFileSync(path.join(__dirname,'../public/sw.js'),'utf-8')); }
   catch { reply.send(''); }
 });
 
@@ -102,7 +103,7 @@ app.addHook('onRequest', async (req, reply) => {
   if (req.url === '/treinador.html') {
     try {
       const token = req.headers.cookie?.match(/pace_token=([^;]+)/)?.[1]
-        || req.headers.authorization?.replace('Bearer ', ''');
+        || req.headers.authorization?.replace('Bearer ', '');
       if (!token) return; // deixa carregar, JS redireciona
       const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
       const decoded = jwt_guard.verify(token, JWT);
