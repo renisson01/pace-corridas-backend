@@ -251,14 +251,14 @@ async function enviar(){
     document.getElementById('sbtn').disabled=false;
     if(d.error){
       if(r.status===429){
-        addMsg('Você atingiu o limite gratuito (5 msgs/hora). Assine o Premium por R$29,90/mês e tenha 60 msgs/hora + planilha personalizada! 🧡','ia');
+        addMsg('Você atingiu o limite gratuito (5 msgs/hora). Assine o Premium por R$ 9,99/mês e tenha 60 msgs/hora + planilha personalizada! 🧡','ia');
         // Adicionar botão de upgrade
         const lastMsg = document.querySelector('.msgs .msg.ia:last-child .bubble');
         if(lastMsg){
           const btn = document.createElement('button');
           btn.style.cssText='display:block;margin-top:10px;background:linear-gradient(135deg,#ff6b00,#ff9f00);color:#000;border:none;padding:10px 20px;border-radius:20px;font-weight:700;font-size:13px;cursor:pointer;width:100%';
-          btn.textContent='⭐ Assinar Premium R$29,90/mês';
-          btn.onclick=function(){ btn.textContent='⏳ Gerando Pix...'; btn.disabled=true; fetch('/pagamentos/premium',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:'{}'}).then(function(r){return r.json()}).then(function(d){ btn.textContent='⭐ Assinar Premium R$29,90/mês'; btn.disabled=false; if(d.error){addMsg('❌ '+d.error,'ia');return;} addMsg('✅ Pix gerado! Copie o código abaixo e pague no seu banco:\n\n'+d.qrCode,'ia'); }).catch(function(){btn.textContent='⭐ Assinar Premium R$29,90/mês';btn.disabled=false;addMsg('❌ Erro. Tente novamente.','ia');}); };
+          btn.textContent='⭐ Assinar Premium R$ 9,99/mês';
+          btn.onclick=function(){ btn.textContent='⏳ Gerando Pix...'; btn.disabled=true; fetch('/pagamentos/premium',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:'{}'}).then(function(r){return r.json()}).then(function(d){ btn.textContent='⭐ Assinar Premium R$ 9,99/mês'; btn.disabled=false; if(d.error){addMsg('❌ '+d.error,'ia');return;} addMsg('✅ Pix gerado! Copie o código abaixo e pague no seu banco:\n\n'+d.qrCode,'ia'); }).catch(function(){btn.textContent='⭐ Assinar Premium R$ 9,99/mês';btn.disabled=false;addMsg('❌ Erro. Tente novamente.','ia');}); };
           lastMsg.appendChild(btn);
         }
       }

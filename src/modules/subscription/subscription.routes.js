@@ -22,7 +22,7 @@ export async function subscriptionRoutes(fastify) {
       desc: 'Adesão única R$99,90 + R$3,99/atleta/mês'
     },
     iaTreinadora: {
-      mensal: 29.90,
+      mensal: 9.99,
       desc: 'IA Treinadora REGENI — planilha personalizada + chat ilimitado + análise completa'
     }
   }));

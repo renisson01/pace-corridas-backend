@@ -595,7 +595,7 @@ body::after {
         <div class="premium-item">Dashboard de idade biológica</div>
         <div class="premium-item">Protocolos Bryan Johnson adaptados</div>
       </div>
-      <button class="btn-premium" onclick="assinarPremium()">⭐ Premium R$29,90/mês</button>
+      <button class="btn-premium" onclick="assinarPremium()">⭐ Premium R$ 9,99/mês</button>
     </div>
   </div>
 
@@ -2076,12 +2076,12 @@ function assinarPremium() {
   })
   .then(r => r.json())
   .then(d => {
-    if (btn) { btn.textContent = '⭐ Assinar por R$29,90/mês'; btn.disabled = false; }
+    if (btn) { btn.textContent = '⭐ Assinar por R$ 9,99/mês'; btn.disabled = false; }
     if (d.error) { showToast('❌ ' + d.error); return; }
     mostrarPixModal(d);
   })
   .catch(e => {
-    if (btn) { btn.textContent = '⭐ Assinar por R$29,90/mês'; btn.disabled = false; }
+    if (btn) { btn.textContent = '⭐ Assinar por R$ 9,99/mês'; btn.disabled = false; }
     showToast('❌ Erro ao gerar pagamento');
   });
 }
@@ -2103,7 +2103,7 @@ function mostrarPixModal(d) {
   var html = '<div style="background:#171726;border:1px solid #242438;border-radius:24px;max-width:400px;width:100%;padding:28px 24px;text-align:center;position:relative">';
   html += '<div style="font-size:48px;margin-bottom:8px">⭐</div>';
   html += '<div style="font-family:Space Grotesk,sans-serif;font-size:24px;font-weight:900;margin-bottom:4px">PACE Premium</div>';
-  html += '<div style="color:#8888aa;font-size:14px;margin-bottom:20px">R$ 29,90 / mes</div>';
+  html += '<div style="color:#8888aa;font-size:14px;margin-bottom:20px">R$ 9,99 / mes</div>';
   html += imgHtml;
   html += '<div style="background:#141422;border:1px solid #242438;border-radius:12px;padding:12px;margin-bottom:16px">';
   html += '<div style="font-size:11px;color:#8888aa;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Pix Copia e Cola</div>';

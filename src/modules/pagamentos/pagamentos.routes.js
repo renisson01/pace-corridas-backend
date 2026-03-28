@@ -313,7 +313,7 @@ export async function pagamentosRoutes(fastify) {
     }
   });
 
-  // POST /pagamentos/premium — IA Treinadora R$29,90/mês
+  // POST /pagamentos/premium — IA Treinadora R$9,99/mês
   fastify.post('/pagamentos/premium', async (req, reply) => {
     if (!mpConfigurado()) return reply.code(503).send({ error: 'Pagamentos não configurados.' });
     const jwt = await import('jsonwebtoken');
@@ -332,7 +332,7 @@ export async function pagamentosRoutes(fastify) {
       const externalRef = `premium-${u.userId}-${Date.now()}`;
       const paymentApi = new Payment(getMPClient());
       const result = await paymentApi.create({ body: {
-        transaction_amount: 29.90,
+        transaction_amount: 9.99,
         description: 'REGENI — IA Treinadora Premium (30 dias)',
         payment_method_id: 'pix',
         external_reference: externalRef,
