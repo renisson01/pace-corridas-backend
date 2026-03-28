@@ -74,9 +74,9 @@ for (const pg of pages) {
 }
 for (const pg of pages) {
   const route = pg === 'index' ? '/' : `/${pg}.html`;
-  if (pg === 'index') app.get('/index.html', async (req, reply) => reply.type('text/html').header('Cache-Control''no-store,no-cache,must-revalidate').send(htmlCache['index']));
+  if (pg === 'index') app.get('/index.html', async (req, reply) => reply.type('text/html').header('Cache-Control','no-store,no-cache,must-revalidate').send(htmlCache['index']));
   app.get(route, async (req, reply) => {
-    if (htmlCache[pg]) return reply.type('text/html').header('Cache-Control''no-store,no-cache,must-revalidate').send(htmlCache[pg]);
+    if (htmlCache[pg]) return reply.type('text/html').header('Cache-Control','no-store,no-cache,must-revalidate').send(htmlCache[pg]);
     return reply.code(404).send('Not found');
   });
 }
@@ -102,7 +102,7 @@ app.addHook('onRequest', async (req, reply) => {
   if (req.url === '/treinador.html') {
     try {
       const token = req.headers.cookie?.match(/pace_token=([^;]+)/)?.[1]
-        || req.headers.authorization?.replace('Bearer ''');
+        || req.headers.authorization?.replace('Bearer ', ''');
       if (!token) return; // deixa carregar, JS redireciona
       const JWT = process.env.JWT_SECRET || 'pace-secret-2026';
       const decoded = jwt_guard.verify(token, JWT);
