@@ -1226,6 +1226,7 @@ body::after {
 // INIT
 // ═══════════════════════════════════════
 const token = localStorage.getItem('pace_token');
+var API = window.location.origin;
 const user = JSON.parse(localStorage.getItem('pace_user') || '{}');
 if (!token) window.location.href = '/entrar.html';
 
@@ -2644,7 +2645,6 @@ async function carregarDailyCoach() {
 
 
 // ═══ SCORE DO DIA ═══
-var API = window.location.origin;
 var missaoAtual = null;
 async function carregarScoreDia() {
   try {

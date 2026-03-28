@@ -1,4 +1,4 @@
-// PACE Corridas — Service Worker v1.0
+// REGENI — Service Worker v1.0
 const CACHE = 'regeni-v4';
 const OFFLINE = ['/atleta.html', '/entrar.html', '/corridas-abertas.html', '/ia.html', '/cobaia.html', '/perfil.html', '/exames.html', '/cobaia-resultados.html', '/manifest.json'];
 
