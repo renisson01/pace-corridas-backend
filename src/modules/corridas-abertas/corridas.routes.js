@@ -118,7 +118,7 @@ export async function corridasAbertasRoutes(fastify) {
     const favs = await prisma.favoritoCorrida.findMany({
       where: { userId: u.userId },
       include: { corrida: true },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { criadoEm: 'desc' }
     });
     return { corridas: favs.map(f => f.corrida).filter(Boolean) };
   });
