@@ -5,7 +5,7 @@
   "start_url": "/atleta.html",
   "display": "standalone",
   "background_color": "#04060b",
-  "theme_color": "#F7931A",
+  "theme_color": "#00D4FF",
   "orientation": "portrait",
   "icons": [
     {

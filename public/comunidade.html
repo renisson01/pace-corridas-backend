@@ -14,7 +14,7 @@
   --card2:  #181830;
   --border: #1e1e3a;
   --b2:     #28284a;
-  --neon:   #F7931A;
+  --neon:   #00D4FF;
   --neon2:  #E8850C;
   --orange: #ff6b35;
   --red:    #ff3b5c;
@@ -538,7 +538,7 @@ select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 
     <label class="field-label">Cor do Grupo</label>
     <div class="cor-grid">
-      <div class="cor-opt on" style="background:#F7931A" data-cor="#F7931A" onclick="selectCor(this)"></div>
+      <div class="cor-opt on" style="background:#00D4FF" data-cor="#00D4FF" onclick="selectCor(this)"></div>
       <div class="cor-opt" style="background:#ff6b35" data-cor="#ff6b35" onclick="selectCor(this)"></div>
       <div class="cor-opt" style="background:#4c9eff" data-cor="#4c9eff" onclick="selectCor(this)"></div>
       <div class="cor-opt" style="background:#ffd60a" data-cor="#ffd60a" onclick="selectCor(this)"></div>
@@ -903,7 +903,7 @@ function renderMensagens(msgs, container) {
 }
 
 function stringToColor(str) {
-  const colors = ['#ff6b35','#4c9eff','#c084fc','#ffd60a','#34c759','#ff3b5c','#F7931A','#ff9f0a'];
+  const colors = ['#ff6b35','#4c9eff','#c084fc','#ffd60a','#34c759','#ff3b5c','#00D4FF','#ff9f0a'];
   let hash = 0;
   for (let c of str) hash = c.charCodeAt(0) + ((hash << 5) - hash);
   return colors[Math.abs(hash) % colors.length];
@@ -1158,7 +1158,7 @@ async function confirmarEncerrar() {
 // CRIAR GRUPO
 // ══════════════════════════════════════════
 let criarTipo = 'assessoria';
-let criarCor = '#F7931A';
+let criarCor = '#00D4FF';
 
 function abrirModalCriar() { document.getElementById('modalCriar').classList.add('open'); }
 function fecharModalCriar() { document.getElementById('modalCriar').classList.remove('open'); }

@@ -12,7 +12,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,sans-serif; 
 .header .sub { color:#8899bb; font-size:12px; margin-top:4px; }
 
 .section { padding:16px; }
-.section-title { color:#F7931A; font-size:14px; font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+.section-title { color:#00D4FF; font-size:14px; font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
 
 .exame-group { margin-bottom:20px; }
 .exame-group h3 { color:#27AE60; font-size:13px; font-weight:700; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; padding:8px 12px; background:#0a1a0f; border-radius:8px; }
@@ -24,7 +24,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,sans-serif; 
 .exame-row input:focus { border-color:#27AE60; outline:none; }
 .status-dot { width:12px; height:12px; border-radius:50%; margin:0 auto; }
 .status-dot.green { background:#27AE60; }
-.status-dot.yellow { background:#F7931A; }
+.status-dot.yellow { background:#00D4FF; }
 .status-dot.red { background:#E74C3C; }
 .status-dot.gray { background:#333; }
 
@@ -35,12 +35,12 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,sans-serif; 
 .date-select { background:#0d1117; border:1px solid #1e2d3d; color:#e2e8f0; padding:10px 14px; border-radius:10px; font-size:15px; width:100%; margin-bottom:16px; }
 
 .results-card { background:#0d1117; border:1px solid #1e2d3d; border-radius:14px; padding:16px; margin-bottom:12px; }
-.results-card h4 { color:#F7931A; font-size:14px; margin-bottom:8px; }
+.results-card h4 { color:#00D4FF; font-size:14px; margin-bottom:8px; }
 .result-item { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #0a1020; }
 .result-item .name { color:#c0ccdd; font-size:13px; }
 .result-item .value { font-weight:700; font-size:14px; }
 .result-item .value.normal { color:#27AE60; }
-.result-item .value.attention { color:#F7931A; }
+.result-item .value.attention { color:#00D4FF; }
 .result-item .value.critical { color:#E74C3C; }
 
 
@@ -255,7 +255,7 @@ else { document.getElementById('dataExame').value = new Date().toISOString().spl
 <style>
 .pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#F7931A}
+.pace-nav a.active{color:#00D4FF}
 .pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
 body{padding-bottom:64px!important}
 </style>

@@ -6,38 +6,38 @@
 <title>Calculadoras — REGENI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#F7931A;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+:root{--verde:#00D4FF;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(8,11,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.topbar-logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:22px;color:#F7931A;letter-spacing:2px;text-decoration:none}
+.topbar-logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:22px;color:#00D4FF;letter-spacing:2px;text-decoration:none}
 .topbar-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
 .page-hero{padding:24px 20px;text-align:center;background:linear-gradient(135deg,rgba(247,147,26,0.06),transparent);border-bottom:1px solid var(--border)}
-.page-label{font-size:10px;font-weight:700;color:#F7931A;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.page-label{font-size:10px;font-weight:700;color:#00D4FF;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
 .page-title{font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
 .page-sub{font-size:13px;color:var(--muted)}
 .tabs{display:flex;gap:8px;padding:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex-shrink:0;padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s}
-.tab.ativo{background:var(--verde);color:#080B10;border-color:#F7931A}
+.tab.ativo{background:var(--verde);color:#080B10;border-color:#00D4FF}
 .panel{display:none;padding:0 16px}
 .panel.ativo{display:block}
 .calc-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px}
 .calc-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px}
 .calc-desc{font-size:12px;color:var(--muted);margin-bottom:20px}
 .field-group{margin-bottom:16px}
-.field-label{font-size:11px;font-weight:700;color:#F7931A;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block}
+.field-label{font-size:11px;font-weight:700;color:#00D4FF;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block}
 .field-row{display:flex;gap:8px}
 .field-input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;font-size:16px;font-family:'Space Grotesk',sans-serif;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
-.field-input:focus{border-color:#F7931A}
+.field-input:focus{border-color:#00D4FF}
 .field-input::placeholder{color:var(--muted)}
 .field-unit{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;white-space:nowrap}
 .btn-calc{width:100%;padding:14px;background:var(--verde);color:#080B10;border:none;border-radius:50px;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;margin-top:4px}
 .btn-calc:hover{background:var(--verde2);transform:scale(1.02)}
 .resultado{background:var(--bg3);border:1px solid rgba(247,147,26,0.2);border-radius:14px;padding:16px;margin-top:16px;display:none;text-align:center}
 .resultado.show{display:block}
-.resultado-label{font-size:11px;font-weight:700;color:#F7931A;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.resultado-valor{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:900;color:#F7931A;line-height:1}
+.resultado-label{font-size:11px;font-weight:700;color:#00D4FF;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.resultado-valor{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:900;color:#00D4FF;line-height:1}
 .resultado-unit{font-size:14px;color:var(--muted);margin-top:4px}
 .resultado-extra{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .extra-item{background:var(--bg2);border-radius:10px;padding:10px;text-align:center}
@@ -49,12 +49,12 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .tabela-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px}
 .tabela-row:last-child{border-bottom:none}
 .tabela-row.head{background:var(--bg3);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.dist-val{color:#F7931A;font-weight:700}
+.dist-val{color:#00D4FF;font-weight:700}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 0 12px;z-index:100}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;padding:4px 12px}
 .nav-icon{font-size:20px}
 .nav-label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.nav-item.ativo .nav-label{color:#F7931A}
+.nav-item.ativo .nav-label{color:#00D4FF}
 </style>
 </head>
 <body>
@@ -65,7 +65,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </div>
 <div class="page-hero">
   <div class="page-label">⚡ Ferramentas do corredor</div>
-  <div class="page-title">CALCULA<span style="color:#F7931A">DORAS</span></div>
+  <div class="page-title">CALCULA<span style="color:#00D4FF">DORAS</span></div>
   <div class="page-sub">Pace, tempo de prova e zonas de treino</div>
 </div>
 <div class="tabs">
@@ -307,11 +307,11 @@ function calcFC(){
   const zonas=[
     {nome:'Z1 — Recuperacao',pct:[50,60],cor:'#64748B',desc:'Aquecimento e recuperacao ativa'},
     {nome:'Z2 — Base Aerobica',pct:[60,70],cor:'#3b82f6',desc:'Queima de gordura, base de resistencia'},
-    {nome:'Z3 — Aerobico Moderado',pct:[70,80],cor:'#F7931A',desc:'Melhora resistencia cardiovascular'},
+    {nome:'Z3 — Aerobico Moderado',pct:[70,80],cor:'#00D4FF',desc:'Melhora resistencia cardiovascular'},
     {nome:'Z4 — Limiar',pct:[80,90],cor:'#FF6D00',desc:'Aumenta limiar de lactato'},
     {nome:'Z5 — Maximo',pct:[90,100],cor:'#ef4444',desc:'Velocidade e potencia maxima'},
   ];
-  document.getElementById('res-fc-zonas').innerHTML='<div style="text-align:center;margin-bottom:12px"><span style="font-family:Space Grotesk,sans-serif;font-size:32px;font-weight:900;color:#F7931A">'+fcMax+' bpm</span><span style="font-size:12px;color:var(--muted);display:block">FC Maxima</span></div>'+zonas.map(z=>'<div style="margin-bottom:8px;background:var(--bg2);border-radius:12px;padding:12px;border-left:3px solid '+z.cor+'"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:Space Grotesk,sans-serif;font-size:15px;font-weight:700;color:'+z.cor+'">'+z.nome+'</span><span style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:900">'+Math.round(fcMax*z.pct[0]/100)+'–'+Math.round(fcMax*z.pct[1]/100)+' bpm</span></div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+z.desc+'</div></div>').join('');
+  document.getElementById('res-fc-zonas').innerHTML='<div style="text-align:center;margin-bottom:12px"><span style="font-family:Space Grotesk,sans-serif;font-size:32px;font-weight:900;color:#00D4FF">'+fcMax+' bpm</span><span style="font-size:12px;color:var(--muted);display:block">FC Maxima</span></div>'+zonas.map(z=>'<div style="margin-bottom:8px;background:var(--bg2);border-radius:12px;padding:12px;border-left:3px solid '+z.cor+'"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:Space Grotesk,sans-serif;font-size:15px;font-weight:700;color:'+z.cor+'">'+z.nome+'</span><span style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:900">'+Math.round(fcMax*z.pct[0]/100)+'–'+Math.round(fcMax*z.pct[1]/100)+' bpm</span></div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+z.desc+'</div></div>').join('');
   document.getElementById('res-fc').classList.add('show');
 }
 </script>
@@ -320,7 +320,7 @@ function calcFC(){
 <style>
 .pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#F7931A}
+.pace-nav a.active{color:#00D4FF}
 .pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
 body{padding-bottom:64px!important}
 </style>

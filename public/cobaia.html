@@ -9,21 +9,21 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding-bottom:80px; }
 
-.header { background:linear-gradient(135deg,#0a0f1a 0%,#1a0f00 100%); padding:20px 16px; border-bottom:2px solid #F7931A; }
-.header h1 { color:#F7931A; font-size:22px; font-weight:900; letter-spacing:2px; }
+.header { background:linear-gradient(135deg,#0a0f1a 0%,#1a0f00 100%); padding:20px 16px; border-bottom:2px solid #00D4FF; }
+.header h1 { color:#00D4FF; font-size:22px; font-weight:900; letter-spacing:2px; }
 .header .sub { color:#8899bb; font-size:12px; margin-top:4px; }
-.dia-badge { display:inline-block; background:#F7931A; color:#000; font-weight:900; padding:4px 12px; border-radius:20px; font-size:14px; margin-top:8px; }
+.dia-badge { display:inline-block; background:#00D4FF; color:#000; font-weight:900; padding:4px 12px; border-radius:20px; font-size:14px; margin-top:8px; }
 .streak-badge { display:inline-block; background:#27AE60; color:#fff; font-weight:700; padding:4px 12px; border-radius:20px; font-size:13px; margin-left:8px; }
 
 .tabs { display:flex; background:#0a0f1a; border-bottom:1px solid #1e2d3d; overflow-x:auto; }
 .tab { flex:1; text-align:center; padding:12px 8px; font-size:11px; font-weight:700; color:#556677; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
-.tab.active { color:#F7931A; border-bottom-color:#F7931A; }
+.tab.active { color:#00D4FF; border-bottom-color:#00D4FF; }
 
 .tab-content { display:none; }
 .tab-content.active { display:block; }
 
 .section { padding:16px; }
-.section-title { color:#F7931A; font-size:14px; font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+.section-title { color:#00D4FF; font-size:14px; font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
 .card { background:#0d1117; border:1px solid #1e2d3d; border-radius:14px; padding:16px; margin-bottom:12px; }
 
 .actions { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; padding:12px 16px; }
@@ -34,14 +34,14 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
 
 .metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
 .metric { text-align:center; padding:12px 6px; background:#080c14; border-radius:10px; }
-.metric .value { font-size:20px; font-weight:900; color:#F7931A; }
+.metric .value { font-size:20px; font-weight:900; color:#00D4FF; }
 .metric .label { font-size:10px; color:#667788; margin-top:2px; }
 .metric.green .value { color:#27AE60; }
 .metric.blue .value { color:#2980B9; }
 .metric.red .value { color:#E74C3C; }
 
 .chart-container { background:#0d1117; border:1px solid #1e2d3d; border-radius:14px; padding:16px; margin:0 16px 12px; }
-.chart-container h3 { color:#F7931A; font-size:13px; margin-bottom:10px; }
+.chart-container h3 { color:#00D4FF; font-size:13px; margin-bottom:10px; }
 .chart-container canvas { max-height:200px; }
 
 /* Training Card */
@@ -50,14 +50,14 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
 .treino-card .meta { color:#667788; font-size:12px; margin-top:4px; }
 .treino-card .stats { display:flex; gap:16px; margin-top:8px; }
 .treino-card .stat { text-align:center; }
-.treino-card .stat .val { color:#F7931A; font-weight:900; font-size:16px; }
+.treino-card .stat .val { color:#00D4FF; font-weight:900; font-size:16px; }
 .treino-card .stat .lbl { color:#556677; font-size:10px; }
 
 /* Bio Age */
 .bio-age { text-align:center; padding:24px; background:linear-gradient(135deg,#0a1a0f,#0d1117); border:1px solid #27AE60; border-radius:16px; margin:0 16px 12px; }
 .bio-age .age-number { font-size:64px; font-weight:900; color:#27AE60; line-height:1; }
 .bio-age .age-label { color:#8899bb; font-size:13px; margin-top:4px; }
-.bio-age .age-diff { color:#F7931A; font-size:16px; font-weight:700; margin-top:8px; }
+.bio-age .age-diff { color:#00D4FF; font-size:16px; font-weight:700; margin-top:8px; }
 
 /* Protocol */
 .protocol-item { display:flex; align-items:center; gap:12px; padding:12px; background:#080c14; border-radius:10px; margin-bottom:8px; }
@@ -68,31 +68,31 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
 .protocol-status { font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; }
 .status-active { background:#27AE60; color:#fff; }
 .status-pending { background:#1e2d3d; color:#8899bb; }
-.status-soon { background:#F7931A22; color:#F7931A; }
+.status-soon { background:#00D4FF22; color:#00D4FF; }
 
 /* Forms */
 .form-group { margin-bottom:14px; }
 .form-group label { display:block; color:#8899bb; font-size:11px; font-weight:600; margin-bottom:4px; text-transform:uppercase; }
 .form-group input, .form-group select, .form-group textarea { width:100%; background:#080c14; border:1px solid #1e2d3d; color:#e2e8f0; padding:10px 12px; border-radius:10px; font-size:15px; outline:none; }
-.form-group input:focus { border-color:#F7931A; }
+.form-group input:focus { border-color:#00D4FF; }
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.btn-primary { background:#F7931A; color:#000; font-weight:800; border:none; padding:14px; border-radius:12px; width:100%; font-size:16px; cursor:pointer; margin-top:10px; }
-.btn-sync { background:#1e2d3d; color:#F7931A; font-weight:700; border:1px solid #F7931A; padding:12px; border-radius:10px; width:100%; font-size:14px; cursor:pointer; margin-top:8px; }
+.btn-primary { background:#00D4FF; color:#000; font-weight:800; border:none; padding:14px; border-radius:12px; width:100%; font-size:16px; cursor:pointer; margin-top:10px; }
+.btn-sync { background:#1e2d3d; color:#00D4FF; font-weight:700; border:1px solid #00D4FF; padding:12px; border-radius:10px; width:100%; font-size:14px; cursor:pointer; margin-top:8px; }
 
 .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; }
 .toggle { width:50px; height:28px; background:#1e2d3d; border-radius:14px; position:relative; cursor:pointer; transition:background 0.3s; }
-.toggle.on { background:#F7931A; }
+.toggle.on { background:#00D4FF; }
 .toggle::after { content:''; position:absolute; top:3px; left:3px; width:22px; height:22px; background:#fff; border-radius:50%; transition:left 0.3s; }
 .toggle.on::after { left:25px; }
 
 .rating { display:flex; gap:4px; margin-top:4px; }
 .rating-btn { width:32px; height:32px; border-radius:50%; background:#1e2d3d; border:none; color:#8899bb; font-weight:700; font-size:13px; cursor:pointer; }
-.rating-btn.active { background:#F7931A; color:#000; }
+.rating-btn.active { background:#00D4FF; color:#000; }
 
 .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:100; align-items:flex-end; justify-content:center; }
 .modal-overlay.show { display:flex; }
-.modal { background:#0d1117; border-top:2px solid #F7931A; border-radius:20px 20px 0 0; width:100%; max-width:500px; max-height:85vh; overflow-y:auto; padding:24px 16px 40px; }
-.modal h2 { color:#F7931A; font-size:18px; margin-bottom:16px; }
+.modal { background:#0d1117; border-top:2px solid #00D4FF; border-radius:20px 20px 0 0; width:100%; max-width:500px; max-height:85vh; overflow-y:auto; padding:24px 16px 40px; }
+.modal h2 { color:#00D4FF; font-size:18px; margin-bottom:16px; }
 .modal-close { float:right; background:none; border:none; color:#667788; font-size:24px; cursor:pointer; }
 
 
@@ -165,8 +165,8 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
     <!-- PLANO DO DIA — Decision Engine -->
     <div class="card" id="planoDiaCard" style="margin-top:16px;border:1px solid rgba(247,147,26,.3);background:linear-gradient(135deg,#0d1117,#111827)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <h3 style="color:#F7931A;font-size:16px;font-weight:800;margin:0">🎯 Plano do Dia</h3>
-        <button onclick="gerarPlanoDia()" id="btnPlanoDia" style="background:#F7931A22;color:#F7931A;border:1px solid #F7931A44;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Atualizar</button>
+        <h3 style="color:#00D4FF;font-size:16px;font-weight:800;margin:0">🎯 Plano do Dia</h3>
+        <button onclick="gerarPlanoDia()" id="btnPlanoDia" style="background:#00D4FF22;color:#00D4FF;border:1px solid #00D4FF44;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Atualizar</button>
       </div>
       <div id="coachMsg" style="background:#080c14;border-radius:12px;padding:14px;margin-bottom:12px;font-size:14px;color:#e2e8f0;line-height:1.6;display:none"></div>
       <div id="planoPrioridades" style="margin-bottom:12px"></div>
@@ -253,9 +253,9 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
 <div class="tab-content" id="tab-protocolos">
 
   <div class="section">
-    <div class="section-title" style="color:#F7931A;font-size:16px;">🧬 PROTOCOLOS BILIONÁRIOS — Adaptados pra Você</div>
-    <div class="card" style="border-color:#F7931A33;background:linear-gradient(135deg,#0d1117,#1a0f00);">
-      <div style="font-size:12px;color:#F7931A;font-weight:700;margin-bottom:6px;">BASEADO EM: Bryan Johnson (Blueprint) • Peter Attia • David Sinclair • Rhonda Patrick</div>
+    <div class="section-title" style="color:#00D4FF;font-size:16px;">🧬 PROTOCOLOS BILIONÁRIOS — Adaptados pra Você</div>
+    <div class="card" style="border-color:#00D4FF33;background:linear-gradient(135deg,#0d1117,#1a0f00);">
+      <div style="font-size:12px;color:#00D4FF;font-weight:700;margin-bottom:6px;">BASEADO EM: Bryan Johnson (Blueprint) • Peter Attia • David Sinclair • Rhonda Patrick</div>
       <div style="font-size:11px;color:#667788;">Bryan Johnson gasta US$2M/ano, mas 80% dos resultados vêm de 5 coisas simples. Aqui estão os protocolos que FUNCIONAM, adaptados pro Brasil.</div>
     </div>
   </div>
@@ -266,14 +266,14 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
     <div class="card">
       <div style="color:#2980B9;font-weight:700;font-size:13px;margin-bottom:8px;">"Se você só fizer UMA coisa, durma." — Bryan Johnson</div>
       <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
-        <b style="color:#F7931A;">Meta:</b> 8-9h por noite, dormir antes das 23h, acordar no mesmo horário todo dia<br><br>
-        <b style="color:#F7931A;">Protocolo Bryan Johnson:</b><br>
+        <b style="color:#00D4FF;">Meta:</b> 8-9h por noite, dormir antes das 23h, acordar no mesmo horário todo dia<br><br>
+        <b style="color:#00D4FF;">Protocolo Bryan Johnson:</b><br>
         • Última refeição 6h antes de dormir (ex: janta às 17h se dorme 23h)<br>
         • Quarto 100% escuro (blackout total)<br>
         • Temperatura do quarto: 18-20°C (ventilador/ar condicionado)<br>
         • Sem telas 1h antes de dormir (ativa melatonina natural)<br>
         • Magnésio glicinato 400mg 30min antes de dormir<br><br>
-        <b style="color:#F7931A;">Adaptação PACE (Renisson):</b><br>
+        <b style="color:#00D4FF;">Adaptação PACE (Renisson):</b><br>
         • Treinar às 18h → jantar 19:30 → sem telas 22h → dormir 23h → acordar 7h<br>
         • Nos dias sem Vyvanse: sono mais profundo naturalmente<br>
         • Sauna 20min antes de dormir (queda de temperatura induz sono)<br><br>
@@ -289,17 +289,17 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
     <div class="card">
       <div style="color:#27AE60;font-weight:700;font-size:13px;margin-bottom:8px;">"Cada 1 MET de VO2max = 11-17% menos mortalidade" — Peter Attia</div>
       <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
-        <b style="color:#F7931A;">Meta:</b> VDOT 70 (VO2max ~70 ml/kg/min) — 5km em 15:00<br><br>
-        <b style="color:#F7931A;">Protocolo Peter Attia (Zone 2 + VO2max):</b><br>
+        <b style="color:#00D4FF;">Meta:</b> VDOT 70 (VO2max ~70 ml/kg/min) — 5km em 15:00<br><br>
+        <b style="color:#00D4FF;">Protocolo Peter Attia (Zone 2 + VO2max):</b><br>
         • 3-4x/semana: Zona 2 (45-60min) — base mitocondrial<br>
         • 1-2x/semana: Intervalos VO2max (4x4min a 90-95% FCmax, 3min rec)<br>
         • 2-3x/semana: Força (agachamento, levantamento terra, supino)<br>
         • 1x/semana: Longão progressivo<br><br>
-        <b style="color:#F7931A;">Protocolo Bryan Johnson:</b><br>
+        <b style="color:#00D4FF;">Protocolo Bryan Johnson:</b><br>
         • 1h exercício/dia, 7 dias/semana<br>
         • Backwards sled (trenó reverso) — protege joelhos<br>
         • HIIT 3x/semana (reduz idade transcriptômica 3.6 anos)<br><br>
-        <b style="color:#F7931A;">Seu protocolo PACE (Semana atual):</b><br>
+        <b style="color:#00D4FF;">Seu protocolo PACE (Semana atual):</b><br>
         • SEG: Easy Run 6-8km Z2<br>
         • TER: Intervalos 5x1000m ou Fartlek<br>
         • QUA: Descanso + Força (core + glúteo)<br>
@@ -319,16 +319,16 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
     <div class="card">
       <div style="color:#E74C3C;font-weight:700;font-size:13px;margin-bottom:8px;">"Sauna reduziu mortalidade cardiovascular em 63%" — Estudo Finlandês (20 anos)</div>
       <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
-        <b style="color:#F7931A;">Protocolo Bryan Johnson:</b><br>
+        <b style="color:#00D4FF;">Protocolo Bryan Johnson:</b><br>
         • 3-5x/semana, 15-20min a 80-90°C<br>
         • Após treino (recovery muscular)<br>
         • 15 sessões eliminaram toxinas antes indetectáveis<br>
         • Pressão arterial biológica caiu para &lt;20 anos<br><br>
-        <b style="color:#F7931A;">Protocolo Rhonda Patrick:</b><br>
+        <b style="color:#00D4FF;">Protocolo Rhonda Patrick:</b><br>
         • 4-7x/semana, 20min a 80°C+ (HSPs +50%)<br>
         • Ativa gene FOXO3 (centenários têm mais)<br>
         • Contraste: sauna + frio = norepinefrina +200-300%<br><br>
-        <b style="color:#F7931A;">Seu protocolo PACE:</b><br>
+        <b style="color:#00D4FF;">Seu protocolo PACE:</b><br>
         • Sala infravermelho em construção (próxima semana)<br>
         • Pós-treino: 30min a 45-55°C (recovery)<br>
         • Dia descanso: 20min a 55-60°C (longevidade)<br>
@@ -343,21 +343,21 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
   <div class="section">
     <div class="section-title">🥩 #4 NUTRIÇÃO — ANTI-INFLAMATÓRIA</div>
     <div class="card">
-      <div style="color:#F7931A;font-weight:700;font-size:13px;margin-bottom:8px;">"Dieta + sono + exercício = -4.6 anos em 8 semanas" — Fitzgerald 2023</div>
+      <div style="color:#00D4FF;font-weight:700;font-size:13px;margin-bottom:8px;">"Dieta + sono + exercício = -4.6 anos em 8 semanas" — Fitzgerald 2023</div>
       <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
-        <b style="color:#F7931A;">Bryan Johnson (2.250 cal/dia):</b><br>
+        <b style="color:#00D4FF;">Bryan Johnson (2.250 cal/dia):</b><br>
         • Nutty Pudding (nozes, berries, cacau) no café<br>
         • Super Veggie (brócolis, couve, lentilha)<br>
         • Azeite extra virgem 30ml/dia<br>
         • Última refeição às 11h (jejum 18:6)<br><br>
-        <b style="color:#F7931A;">Adaptação PACE Brasil (Renisson 54kg, atleta):</b><br>
+        <b style="color:#00D4FF;">Adaptação PACE Brasil (Renisson 54kg, atleta):</b><br>
         • <b>Café:</b> 4 ovos + banana + café arábico<br>
         • <b>Almoço:</b> Carne (colchão mole) + arroz + beterraba + cenoura + azeite<br>
         • <b>Pré-treino (16h):</b> Batata doce roxa + banana + mel<br>
         • <b>Pós-treino:</b> Whey + água de coco<br>
         • <b>Janta:</b> Ovos + salada + abacate<br>
         • <b>Hidratação:</b> 40ml/kg = 2.2L água + coco verde<br><br>
-        <b style="color:#F7931A;">Alimentos-chave longevidade:</b><br>
+        <b style="color:#00D4FF;">Alimentos-chave longevidade:</b><br>
         • Beterraba (nitratos → VO2max +3-5%)<br>
         • Ovos (colina → metilação DNA)<br>
         • Carne vermelha (ferro, B12, creatina natural)<br>
@@ -374,7 +374,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
     <div class="card">
       <div style="color:#8E44AD;font-weight:700;font-size:13px;margin-bottom:8px;">"Bryan toma 100+ pílulas, mas 5 fazem 80% do efeito"</div>
       <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
-        <b style="color:#F7931A;">TOP 5 com mais evidência (acessíveis no Brasil):</b><br><br>
+        <b style="color:#00D4FF;">TOP 5 com mais evidência (acessíveis no Brasil):</b><br><br>
         <b>1. Creatina Monohidratada (5g/dia)</b><br>
         <span style="color:#667788;">Cognição (+15% memória), força, massa muscular. R$40-60/mês. O suplemento mais estudado do mundo.</span><br><br>
         <b>2. Omega-3 EPA/DHA (2-4g/dia)</b><br>
@@ -385,7 +385,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
         <span style="color:#667788;">Sono profundo, HRV, recuperação, cãibras. R$30-50/mês.</span><br><br>
         <b>5. Colágeno + Vitamina C (15g + 500mg)</b><br>
         <span style="color:#667788;">Tendões, ligamentos. Crucial no retorno de pausa. R$40-60/mês.</span><br><br>
-        <b style="color:#F7931A;">Avançados (com prescrição médica):</b><br>
+        <b style="color:#00D4FF;">Avançados (com prescrição médica):</b><br>
         • NMN/NR (NAD+ precursor) — mitocôndrias, energia celular<br>
         • Espermidina — autofagia (reciclagem celular)<br>
         • Metformina — sensibilidade insulina (off-label longevidade)<br>
@@ -401,8 +401,8 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
     <div class="card">
       <div style="color:#2980B9;font-weight:700;font-size:13px;margin-bottom:8px;">"Você não pode melhorar o que não mede" — Bryan Johnson</div>
       <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
-        <b style="color:#F7931A;">Bryan Johnson mede:</b> 100+ biomarcadores a cada 3 meses<br>
-        <b style="color:#F7931A;">Nosso protocolo PACE (27 marcadores):</b><br><br>
+        <b style="color:#00D4FF;">Bryan Johnson mede:</b> 100+ biomarcadores a cada 3 meses<br>
+        <b style="color:#00D4FF;">Nosso protocolo PACE (27 marcadores):</b><br><br>
         <b>Prioridade 1 (esta semana):</b><br>
         • PCR ultrassensível (inflamação — meta &lt;0.5)<br>
         • HbA1c (controle glicêmico — meta &lt;5.0%)<br>
@@ -418,7 +418,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
         • VO2max lab (ergoespirometria)<br>
         • Composição corporal (DEXA/BIA)<br>
         • Índice Omega-3<br><br>
-        <a href="/exames.html" style="color:#F7931A;font-weight:700;text-decoration:underline;">→ Registrar exames no app</a>
+        <a href="/exames.html" style="color:#00D4FF;font-weight:700;text-decoration:underline;">→ Registrar exames no app</a>
       </div>
     </div>
   </div>
@@ -427,13 +427,13 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
   <div class="section">
     <div class="section-title">🧠 #7 MENTAL + TDAH — O CÉREBRO É O CENTRO</div>
     <div class="card">
-      <div style="color:#F7931A;font-weight:700;font-size:13px;margin-bottom:8px;">"Evening Bryan, you're fired." — Bryan Johnson sobre autocontrole</div>
+      <div style="color:#00D4FF;font-weight:700;font-size:13px;margin-bottom:8px;">"Evening Bryan, you're fired." — Bryan Johnson sobre autocontrole</div>
       <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
-        <b style="color:#F7931A;">Protocolo Mental Bryan Johnson:</b><br>
+        <b style="color:#00D4FF;">Protocolo Mental Bryan Johnson:</b><br>
         • Identifique a versão de você que sabota (ele chamou de "Evening Bryan")<br>
         • Não permita decisões de saúde após 17h<br>
         • Meditação/respiração 10min/dia<br><br>
-        <b style="color:#F7931A;">Protocolo TDAH (Renisson):</b><br>
+        <b style="color:#00D4FF;">Protocolo TDAH (Renisson):</b><br>
         • <b>Dias COM Vyvanse:</b> Usar o foco para trabalho + documentação. Treinar mais leve (FC elevada).<br>
         • <b>Dias SEM Vyvanse:</b> Treino intenso (dopamina natural). Contraste térmico (norepinefrina +200%). Café arábico pra foco.<br>
         • <b>Estrutura externa:</b> O app PACE é sua "muleta cognitiva" — checklists, lembretes, rotina fixa<br>
@@ -448,7 +448,7 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
     <div class="section-title">📅 SEMANA MODELO — PROTOCOLO COBAIA</div>
     <div class="card" style="overflow-x:auto;">
       <table style="width:100%;font-size:11px;color:#c0ccdd;border-collapse:collapse;">
-        <tr style="color:#F7931A;font-weight:700;border-bottom:1px solid #1e2d3d;">
+        <tr style="color:#00D4FF;font-weight:700;border-bottom:1px solid #1e2d3d;">
           <td style="padding:6px;">DIA</td><td style="padding:6px;">TREINO</td><td style="padding:6px;">SAUNA</td><td style="padding:6px;">NUTRIÇÃO</td><td style="padding:6px;">SONO</td></tr>
         <tr style="border-bottom:1px solid #0a1020;"><td style="padding:6px;font-weight:700;">SEG</td><td>Easy 8km Z2</td><td>Pós-treino 30min</td><td>Alta proteína</td><td>23h-7h</td></tr>
         <tr style="background:#080c14;border-bottom:1px solid #0a1020;"><td style="padding:6px;font-weight:700;">TER</td><td>Intervalos VO2max</td><td>Recovery 20min</td><td>+Carb (batata doce)</td><td>23h-7h</td></tr>
@@ -479,33 +479,33 @@ body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSyst
 <div class="tab-content" id="tab-rodavida">
   <div class="card" style="text-align:center;margin-bottom:16px">
     <div style="font-size:36px;margin-bottom:8px">🎯</div>
-    <h2 style="color:#F7931A;font-size:20px;margin-bottom:4px">Roda da Vida</h2>
+    <h2 style="color:#00D4FF;font-size:20px;margin-bottom:4px">Roda da Vida</h2>
     <p style="color:#667788;font-size:13px">Método Paul J. Meyer — Avalie 12 dimensões da sua vida de 1 a 10</p>
   </div>
 
   <!-- RADAR CHART -->
   <div class="card" id="rodaChartCard" style="display:none">
-    <h3 style="color:#F7931A;font-size:15px;margin-bottom:12px">Sua Roda Atual</h3>
+    <h3 style="color:#00D4FF;font-size:15px;margin-bottom:12px">Sua Roda Atual</h3>
     <div style="height:320px;position:relative">
       <canvas id="chartRodaVida"></canvas>
     </div>
     <div style="text-align:center;margin-top:8px">
-      <span id="rodaScore" style="background:#F7931A22;color:#F7931A;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">Score: --/120</span>
+      <span id="rodaScore" style="background:#00D4FF22;color:#00D4FF;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">Score: --/120</span>
       <span id="rodaDate" style="color:#667788;font-size:11px;margin-left:8px"></span>
     </div>
   </div>
 
   <!-- FORMULÁRIO -->
   <div class="card" id="rodaForm">
-    <h3 style="color:#F7931A;font-size:15px;margin-bottom:16px">Nova Avaliação</h3>
+    <h3 style="color:#00D4FF;font-size:15px;margin-bottom:16px">Nova Avaliação</h3>
     <div id="rodaSliders"></div>
     <textarea id="rodaObs" placeholder="Observações, reflexões, metas..." style="width:100%;min-height:60px;margin:12px 0;padding:12px;background:#080c14;border:1px solid #1e2d3d;border-radius:10px;color:#e2e8f0;font-family:inherit;font-size:13px;resize:vertical"></textarea>
-    <button onclick="salvarRodaVida()" style="width:100%;padding:14px;background:#F7931A;color:#000;border:none;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit">💾 SALVAR AVALIAÇÃO</button>
+    <button onclick="salvarRodaVida()" style="width:100%;padding:14px;background:#00D4FF;color:#000;border:none;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit">💾 SALVAR AVALIAÇÃO</button>
   </div>
 
   <!-- EVOLUÇÃO -->
   <div class="card" id="rodaEvolucao" style="display:none">
-    <h3 style="color:#F7931A;font-size:15px;margin-bottom:8px">📈 Evolução</h3>
+    <h3 style="color:#00D4FF;font-size:15px;margin-bottom:8px">📈 Evolução</h3>
     <div id="rodaHistorico"></div>
   </div>
 </div>
@@ -615,7 +615,7 @@ async function salvarCheckin() {
   const body = { peso:parseFloat(document.getElementById('cPeso').value)||null, fcRepouso:parseInt(document.getElementById('cFcRep').value)||null, horasSono:parseFloat(document.getElementById('cSono').value)||null, qualidadeSono:parseInt(document.getElementById('rSono')?.dataset.value)||null, horasDormir:document.getElementById('cDormir').value||null, horasAcordar:document.getElementById('cAcordar').value||null, humor:parseInt(document.getElementById('rHumor')?.dataset.value)||null, energia:parseInt(document.getElementById('rEnergia')?.dataset.value)||null, vyvanse:document.getElementById('tVyvanse').classList.contains('on'), notas:document.getElementById('cNotas').value||null };
   const r = await fetch(API+'/cobaia/checkin',{method:'POST',headers:H,body:JSON.stringify(body)});
   const d = await r.json();
-  if(d.success){fecharModal('checkin');var t=document.querySelector('.btn-primary');if(t){t.textContent='✅ Salvo!';t.style.background='#27AE60';setTimeout(function(){t.textContent='💾 SALVAR';t.style.background='#F7931A';},2000);}carregarDados();}else{var t=document.querySelector('.btn-primary');if(t){t.textContent='❌ '+(d.error||'Erro');setTimeout(function(){t.textContent='💾 SALVAR';},2000);}}
+  if(d.success){fecharModal('checkin');var t=document.querySelector('.btn-primary');if(t){t.textContent='✅ Salvo!';t.style.background='#27AE60';setTimeout(function(){t.textContent='💾 SALVAR';t.style.background='#00D4FF';},2000);}carregarDados();}else{var t=document.querySelector('.btn-primary');if(t){t.textContent='❌ '+(d.error||'Erro');setTimeout(function(){t.textContent='💾 SALVAR';},2000);}}
 }
 async function salvarAlimentacao() {
   const body = { refeicao:document.getElementById('aRefeicao').value, descricao:document.getElementById('aDesc').value, horario:document.getElementById('aHorario').value||null };
@@ -690,7 +690,7 @@ function renderCharts(data) {
       data:{
         labels: treinos.map(t => new Date(t.iniciadoEm).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})),
         datasets:[{ label:'Pace (min/km)', data: treinos.map(t => paceToMin(t.paceMedio)),
-          borderColor:'#F7931A', backgroundColor:'#F7931A22', fill:true, tension:0.3, pointRadius:4, pointBackgroundColor:'#F7931A' }]
+          borderColor:'#00D4FF', backgroundColor:'#00D4FF22', fill:true, tension:0.3, pointRadius:4, pointBackgroundColor:'#00D4FF' }]
       },
       options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{reverse:true, ticks:{color:'#667788'}, grid:{color:'#1e2d3d'}}, x:{ticks:{color:'#667788',maxRotation:45}, grid:{display:false}} } }
     });
@@ -727,7 +727,7 @@ function renderCharts(data) {
       data:{
         labels: Object.keys(semanas).slice(-10),
         datasets:[{ label:'KM', data: Object.values(semanas).slice(-10),
-          backgroundColor:'#F7931A44', borderColor:'#F7931A', borderWidth:1, borderRadius:6 }]
+          backgroundColor:'#00D4FF44', borderColor:'#00D4FF', borderWidth:1, borderRadius:6 }]
       },
       options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:'#667788'}, grid:{color:'#1e2d3d'}}, x:{ticks:{color:'#667788'}, grid:{display:false}} } }
     });
@@ -778,8 +778,8 @@ function renderBioAge(data) {
   document.getElementById('bioAgeDiff').innerHTML=diff>0?'↓ '+diff+' anos abaixo da cronológica':'Calculando...';
   
   var factors=document.getElementById('bioFactors');
-  if(data.scoreFatores){var labels={vo2:{i:'🫀',n:'VO2max'},hrv:{i:'💓',n:'HRV'},sleep:{i:'😴',n:'Sono'},training:{i:'🏃',n:'Treino'},body:{i:'⚖️',n:'Corpo'},stress:{i:'🧠',n:'Stress'}};var h='';for(var k in data.scoreFatores){var v=data.scoreFatores[k];var l=labels[k]||{i:'📊',n:k};var cor=v>=80?'#27AE60':v>=50?'#F7931A':'#E74C3C';h+='<div class="protocol-item"><div class="protocol-icon">'+l.i+'</div><div class="protocol-info"><div class="name">'+l.n+'</div><div style="height:4px;background:#1e2d3d;border-radius:2px;margin-top:4px"><div style="height:100%;width:'+v+'%;background:'+cor+';border-radius:2px"></div></div></div><div style="font-size:14px;font-weight:800;color:'+cor+'">'+v+'</div></div>';}factors.innerHTML=h;}else{var bio=calcBioAge(data);factors.innerHTML=[{icon:'🫀',name:'VO2max',val:bio.factors.vo2,desc:'Elite'},{icon:'😴',name:'Sono',val:bio.factors.sono,desc:'8h+'},{icon:'🏃',name:'Treino',val:bio.factors.treino,desc:'Consistência'},{icon:'⚖️',name:'Corpo',val:bio.factors.peso,desc:'Peso'}].map(function(f){return'<div class="protocol-item"><div class="protocol-icon">'+f.icon+'</div><div class="protocol-info"><div class="name">'+f.name+'</div><div class="desc">'+f.desc+'</div></div><span class="protocol-status '+(f.val<0?'status-active':'status-pending')+'">'+(f.val<0?f.val:'+'+f.val)+' anos</span></div>';}).join('');}
-  if(data.score!==undefined){var badge=document.createElement('div');badge.style.cssText='text-align:center;margin-top:8px';badge.innerHTML='<span style="background:#F7931A22;color:#F7931A;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">Score: '+data.score+'/100</span>';document.getElementById('bioAgeCard').appendChild(badge);}
+  if(data.scoreFatores){var labels={vo2:{i:'🫀',n:'VO2max'},hrv:{i:'💓',n:'HRV'},sleep:{i:'😴',n:'Sono'},training:{i:'🏃',n:'Treino'},body:{i:'⚖️',n:'Corpo'},stress:{i:'🧠',n:'Stress'}};var h='';for(var k in data.scoreFatores){var v=data.scoreFatores[k];var l=labels[k]||{i:'📊',n:k};var cor=v>=80?'#27AE60':v>=50?'#00D4FF':'#E74C3C';h+='<div class="protocol-item"><div class="protocol-icon">'+l.i+'</div><div class="protocol-info"><div class="name">'+l.n+'</div><div style="height:4px;background:#1e2d3d;border-radius:2px;margin-top:4px"><div style="height:100%;width:'+v+'%;background:'+cor+';border-radius:2px"></div></div></div><div style="font-size:14px;font-weight:800;color:'+cor+'">'+v+'</div></div>';}factors.innerHTML=h;}else{var bio=calcBioAge(data);factors.innerHTML=[{icon:'🫀',name:'VO2max',val:bio.factors.vo2,desc:'Elite'},{icon:'😴',name:'Sono',val:bio.factors.sono,desc:'8h+'},{icon:'🏃',name:'Treino',val:bio.factors.treino,desc:'Consistência'},{icon:'⚖️',name:'Corpo',val:bio.factors.peso,desc:'Peso'}].map(function(f){return'<div class="protocol-item"><div class="protocol-icon">'+f.icon+'</div><div class="protocol-info"><div class="name">'+f.name+'</div><div class="desc">'+f.desc+'</div></div><span class="protocol-status '+(f.val<0?'status-active':'status-pending')+'">'+(f.val<0?f.val:'+'+f.val)+' anos</span></div>';}).join('');}
+  if(data.score!==undefined){var badge=document.createElement('div');badge.style.cssText='text-align:center;margin-top:8px';badge.innerHTML='<span style="background:#00D4FF22;color:#00D4FF;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">Score: '+data.score+'/100</span>';document.getElementById('bioAgeCard').appendChild(badge);}
 }
 
 // Main load
@@ -809,8 +809,8 @@ async function carregarDados() {
     const rf = d.alimentacaoHoje||[];
     const ag = d.agendaHoje||[];
     let h = '';
-    if(rf.length) h += '<b style="color:#F7931A">🍽️ Refeições:</b><br>'+rf.map(r=>'<span style="color:#8899bb">'+r.refeicao+':</span> '+r.descricao).join('<br>')+'<br><br>';
-    if(ag.length) h += '<b style="color:#F7931A">📅 Agenda:</b><br>'+ag.map(a=>'['+(a.completado?'✓':'○')+'] '+a.titulo+(a.horario?' às '+a.horario:'')).join('<br>');
+    if(rf.length) h += '<b style="color:#00D4FF">🍽️ Refeições:</b><br>'+rf.map(r=>'<span style="color:#8899bb">'+r.refeicao+':</span> '+r.descricao).join('<br>')+'<br><br>';
+    if(ag.length) h += '<b style="color:#00D4FF">📅 Agenda:</b><br>'+ag.map(a=>'['+(a.completado?'✓':'○')+'] '+a.titulo+(a.horario?' às '+a.horario:'')).join('<br>');
     if(!h) h = '<div class="empty">Nenhum registro hoje. Use os botões acima!</div>';
     hoje.innerHTML = h;
     
@@ -884,7 +884,7 @@ function salvarRodaVida() {
       if (btn) { btn.disabled = false; }
       if (d.success) {
         if (btn) { btn.textContent = 'Salvo!'; btn.style.background = '#27AE60'; }
-        setTimeout(function() { if (btn) { btn.textContent = 'SALVAR'; btn.style.background = '#F7931A'; } }, 2000);
+        setTimeout(function() { if (btn) { btn.textContent = 'SALVAR'; btn.style.background = '#00D4FF'; } }, 2000);
         carregarRodaVida();
       } else {
         if (btn) { btn.textContent = 'Erro'; }
@@ -937,7 +937,7 @@ function renderRodaChart(atual) {
   if (!ctx) return;
   chartRodaVida = new Chart(ctx, {
     type: 'radar',
-    data: { labels: labels, datasets: [{ label: 'Atual', data: values, backgroundColor: 'rgba(247,147,26,0.15)', borderColor: '#F7931A', borderWidth: 2, pointBackgroundColor: '#F7931A', pointRadius: 4 }] },
+    data: { labels: labels, datasets: [{ label: 'Atual', data: values, backgroundColor: 'rgba(247,147,26,0.15)', borderColor: '#00D4FF', borderWidth: 2, pointBackgroundColor: '#00D4FF', pointRadius: 4 }] },
     options: { scales: { r: { beginAtZero: true, max: 10, min: 0, ticks: { stepSize: 2, color: '#667788', backdropColor: 'transparent' }, grid: { color: 'rgba(30,45,61,0.5)' }, pointLabels: { color: '#e2e8f0', font: { size: 10 } } } }, plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }
   });
 }
@@ -960,7 +960,7 @@ function gerarPlanoDia() {
         if (emptyEl) emptyEl.style.display = 'none';
         var html = '';
         var icons = { 'manha': '\u{1F305}', 'tarde': '\u2600', 'noite': '\u{1F319}', 'qualquer_momento': '\u23F0' };
-        var cores = { treino: '#27AE60', sauna: '#E74C3C', sono: '#6366f1', stress: '#F7931A' };
+        var cores = { treino: '#27AE60', sauna: '#E74C3C', sono: '#6366f1', stress: '#00D4FF' };
         for (var i = 0; i < d.dayPlan.length; i++) {
           var item = d.dayPlan[i];
           var icon = icons[item.time] || '\u{1F4CB}';
@@ -985,7 +985,7 @@ function gerarPlanoDia() {
 <style>
 .pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#F7931A}
+.pace-nav a.active{color:#00D4FF}
 .pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
 body{padding-bottom:64px!important}
 </style>
