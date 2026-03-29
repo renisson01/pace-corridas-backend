@@ -104,12 +104,12 @@ let races=[];
 
 async function init(){
   try{
-    const s=await fetch('/scraper/status').then(r=>r.json());
+    const s=await fetch('/analytics').then(r=>r.json());
     document.getElementById('status').innerHTML=
-      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-blue-400">'+s.totalRaces+'</div><div class="text-xs text-slate-400">Corridas</div></div>'+
-      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-green-400">'+s.totalResults+'</div><div class="text-xs text-slate-400">Resultados</div></div>'+
-      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-yellow-400">'+s.athletes+'</div><div class="text-xs text-slate-400">Atletas</div></div>';
-  }catch(e){}
+      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-blue-400">'+(s.totalRaces || 0)+'</div><div class="text-xs text-slate-400">Corridas</div></div>'+
+      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-green-400">'+(s.totalResults || 0)+'</div><div class="text-xs text-slate-400">Resultados</div></div>'+
+      '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-yellow-400">'+(s.totalAthletes || 0)+'</div><div class="text-xs text-slate-400">Atletas</div></div>';
+  }catch(e){console.error('Analytics load failed:', e)}
   try{
     races=await fetch('/races').then(r=>r.json());
     races.sort((a,b)=>new Date(a.date)-new Date(b.date));
