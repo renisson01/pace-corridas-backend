@@ -65,7 +65,7 @@ const pages = [
   'faixas','calculadoras',
   'loja','loja-admin','meu-resultado',
   'ia','admin-pedidos','importar-resultado',
-  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador','cobaia','exames','privacidade','termos','cobaia-resultados'
+  'comunidades','gps','corridas-abertas','corridas-realizadas','atleta','amigo-pace','treinador','cobaia','exames','privacidade','termos','cobaia-resultados','centro'
 ];
 
 for (const pg of pages) {
