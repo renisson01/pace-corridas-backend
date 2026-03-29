@@ -65,7 +65,7 @@ export async function cobaiaRoutes(fastify) {
       const scoreObj = calcularScore({ horasSono: ultimo.horasSono||0, hrvMedia: ultimo.hrvMedia||0, fcRepouso: ultimo.fcRepouso||60, gorduraPct: ultimo.gorduraPct||15, treinouHoje: treinos.some(t => { const d = new Date(t.iniciadoEm); d.setHours(0,0,0,0); return d.getTime()===hoje.getTime(); }), streak });
       const bioAge = calcularIdadeBiologica(user?.age || 31, scoreObj);
       // BioAgeRecord auto-save
-      try { await prisma.bioAgeRecord.create({ data: { userId, bioAge: bioAge, chronoAge: user?.age || 31, delta: (user?.age || 31) - bioAge, score: scoreObj.total, factors: scoreObj.fatores || {} } }).catch(() => {}); } catch(e) {}
+      try { await prisma.bioAgeRecord.create({ data: { userId, bioAge: bioAge, chronoAge: user?.age || 31, delta: (user?.age || 31) - bioAge, score: scoreObj.total,  } }).catch(() => {}); } catch(e) {}
       return { bioAge, score: scoreObj.total, scoreFatores: scoreObj.fatores, scoreDetalhes: scoreObj.detalhes, atleta: user, diaProtocolo: Math.min(Math.max(diaProtocolo,1),60), streak, diarios: diarios.reverse(), alimentacaoHoje: alimentacao.filter(a => { const d=new Date(a.createdAt);d.setHours(0,0,0,0);const h=new Date();h.setHours(0,0,0,0);return d.getTime()===h.getTime(); }), agendaHoje: agenda.filter(a => { const d=new Date(a.data);d.setHours(0,0,0,0);const h=new Date();h.setHours(0,0,0,0);return d.getTime()===h.getTime(); }), saunas, exames, treinos, totais: { diasRegistrados: diarios.length, sessSauna: saunas.length, examesFeitos: exames.length, treinosFeitos: treinos.filter(t=>t.distanciaKm>0.5).length, kmTotal: treinos.reduce((s,t)=>s+(t.distanciaKm||0),0).toFixed(1) } };
     } catch(e) { return reply.code(500).send({ error: e.message }); }
   });
