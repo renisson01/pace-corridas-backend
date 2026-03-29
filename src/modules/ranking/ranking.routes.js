@@ -109,7 +109,7 @@ export async function rankingRoutes(fastify) {
       include: {
         results: {
           orderBy: { createdAt: 'desc' },
-          include: { race: { select: { id:true, name:true, date:true, city:true, distance:true } } }
+          include: { race: { select: { id:true, name:true, date:true, city:true, distances:true } } }
         }
       }
     });
@@ -217,13 +217,13 @@ export async function rankingRoutes(fastify) {
     const races = await prisma.race.findMany({
       orderBy: { date: 'desc' },
       select: {
-        id:true, name:true, date:true, city:true, state:true, distance:true,
+        id:true, name:true, date:true, city:true, state:true, distances:true,
         _count: { select: { results: true } }
       }
     });
     return races.map(r => ({
       id: r.id, name: r.name, date: r.date,
-      city: r.city, state: r.state, distance: r.distance,
+      city: r.city, state: r.state, distances: r.distances,
       totalResultados: r._count.results
     }));
   });
