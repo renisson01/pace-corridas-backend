@@ -1757,7 +1757,7 @@ async function carregarConquistas() {
 // ═══════════════════════════════════════
 async function carregarRanking() {
   try {
-    const data = await api('/ranking/5km?limit=5');
+    const data = await api('/ranking?limit=5');
     const items = Array.isArray(data) ? data : (data.ranking || data.data || []);
     const meuId = user.id;
     const cores = ['gold','silver','bronze'];
