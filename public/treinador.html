@@ -1436,14 +1436,14 @@ function logout(){localStorage.removeItem('pace_token');localStorage.removeItem(
 body{padding-bottom:64px!important}
 </style>
 <nav class="pace-nav">
-<a href="/" class="n-home"><span class="ni">🏠</span>INÍCIO</a>
+<a href="/atleta.html" class="n-home"><span class="ni">🏠</span>INÍCIO</a>
 <a href="/corridas-abertas.html" class="n-corridas"><span class="ni">🏁</span>CORRIDAS</a>
 <a href="/ia.html" class="n-ia"><span class="ni">🤖</span>IA</a>
 <a href="/cobaia.html" class="n-cobaia"><span class="ni">🧬</span>COBAIA</a>
 <a href="/perfil.html" class="n-perfil"><span class="ni">👤</span>PERFIL</a>
 </nav>
 <script>
-(function(){var p=location.pathname;var logged=!!localStorage.getItem('pace_token');document.querySelectorAll('.pace-nav a').forEach(function(a){if(a.classList.contains('n-home')&&logged){a.href='/atleta.html';}if(p===a.getAttribute('href')||(p==='/atleta.html'&&a.classList.contains('n-home'))||(p==='/exames.html'&&a.classList.contains('n-cobaia'))||(p==='/cobaia-resultados.html'&&a.classList.contains('n-cobaia')))a.classList.add('active');});})();
+(function(){var p=location.pathname;document.querySelectorAll(".pace-nav a").forEach(function(a){if(p===a.getAttribute("href")||(p==="/exames.html"&&a.classList.contains("n-cobaia"))||(p==="/cobaia-resultados.html"&&a.classList.contains("n-cobaia")))a.classList.add("active");});})();
 </script>
 <!-- /REGENI NAV -->
 </body>
