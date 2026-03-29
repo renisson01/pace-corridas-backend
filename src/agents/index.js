@@ -217,5 +217,52 @@ cron.schedule('0 12 * * *', async () => {
   } catch(e) { log('NUTRI', 'Erro: ' + e.message); }
 });
 
-log('AGENTS', '✅ Todos os 10 agentes autônomos iniciados');
+
+// ─── AGENTE 11: Scraper Automático (Dom 6h + Qua 6h) ───
+cron.schedule('0 6 * * 0,3', async () => {
+  log('SCRAPER-AUTO', 'Iniciando scraping automático...');
+  try {
+    const fetch = (await import('node-fetch')).default;
+    const BASE = 'http://localhost:' + (process.env.PORT || 8080);
+    
+    // Executar scraper Tier 1
+    const r = await fetch(BASE + '/scraper/executar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tier: 1 })
+    });
+    const result = await r.json();
+    log('SCRAPER-AUTO', 'Scraping concluído: ' + JSON.stringify(result?.resumo || result).substring(0, 200));
+  } catch(e) { log('SCRAPER-AUTO', 'Erro: ' + e.message); }
+});
+
+// ─── AGENTE 12: Scraper de Resultados (Seg 8h + Qui 8h) ───
+cron.schedule('0 8 * * 1,4', async () => {
+  log('RESULTADOS-AUTO', 'Buscando resultados de corridas do fim de semana...');
+  try {
+    // Buscar corridas que aconteceram nos últimos 3 dias
+    const tresDias = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+    const corridas = await prisma.race.findMany({
+      where: { date: { gte: tresDias, lte: new Date() } },
+      select: { id: true, name: true, city: true, state: true }
+    });
+    log('RESULTADOS-AUTO', corridas.length + ' corridas recentes encontradas');
+    
+    // Buscar corridas abertas que já passaram
+    const abertas = await prisma.corridaAberta.findMany({
+      where: { data: { gte: tresDias, lte: new Date() } },
+      select: { id: true, nome: true, cidade: true, estado: true, linkResultado: true }
+    });
+    log('RESULTADOS-AUTO', abertas.length + ' corridas abertas recentes');
+    
+    // Futuro: para cada corrida com linkResultado, scrape os resultados
+    for (const c of abertas) {
+      if (c.linkResultado) {
+        log('RESULTADOS-AUTO', 'Resultado disponível: ' + c.nome + ' → ' + c.linkResultado);
+      }
+    }
+  } catch(e) { log('RESULTADOS-AUTO', 'Erro: ' + e.message); }
+});
+
+log('AGENTS', '✅ Todos os 12 agentes autônomos iniciados');
 export default {};
