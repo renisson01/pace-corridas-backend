@@ -477,12 +477,12 @@ body::after {
   
   <!-- DAILY COACH -->
   <div class="section" id="dailyCoachSection">
-    <div id="dailyCoachCards" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div id="dailyCoachCards" style="display:flex;flex-direction:column;gap:8px;max-height:200px;overflow:hidden"></div>
   </div>
 
   <!-- IA TREINADORA -->
   <div class="section">
-    <div class="ia-card" id="iaCard">
+    <div class="ia-card" id="iaCard" style="display:none">
       <div class="ia-header">
         <div class="ia-orb">🤖</div>
         <div>
@@ -540,7 +540,7 @@ body::after {
 
   
   <!-- IDADE BIOLÓGICA -->
-  <div class="section" id="bioAgeHome">
+  <div class="section" id="bioAgeHome" style="display:none">
     <div class="section-header">
       <div class="section-title">🧬 Idade Biológica</div>
       <div class="section-link" onclick="window.location.href='/cobaia.html'">Ver Cobaia →</div>
@@ -563,7 +563,7 @@ body::after {
   </div>
 
   <!-- STRAVA SYNC -->
-  <div class="section">
+  <div class="section" style="display:none">
     <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
       <div style="width:44px;height:44px;background:#FC4C02;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⚡</div>
       <div style="flex:1">
@@ -575,7 +575,7 @@ body::after {
   </div>
 
   <!-- PREMIUM (se não for) -->
-  <div class="section" id="premiumCard">
+  <div class="section" id="premiumCard" style="display:none">
     <div class="premium-card">
       <div class="premium-tag">⭐ PREMIUM</div>
       <div class="premium-title">Eleve seu Treino + Longevidade</div>
@@ -592,9 +592,7 @@ body::after {
   </div>
 
   <!-- MAIS OPÇÕES -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">⚡ Mais</div>
+  <div class="section" style="display:none"><div class="section-header"><div class="section-title">⚡ Mais</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <button onclick="showPage('ranking')" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:600">
@@ -737,9 +735,7 @@ body::after {
     </div>
   </div>
 
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">📈 Records Pessoais</div>
+  <div class="section" style="display:none"><div class="section-header"><div class="section-title">📈 Records Pessoais</div>
       <div class="section-link" onclick="window.location.href='/perfil.html'">Editar</div>
     </div>
     <div class="records-grid" id="recordsGrid">
