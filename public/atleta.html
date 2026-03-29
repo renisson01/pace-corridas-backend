@@ -1762,19 +1762,20 @@ async function carregarConquistas() {
 async function carregarRanking() {
   try {
     const data = await api('/ranking/5km?limit=5');
-    const items = data.ranking || data.data || [];
+    const items = Array.isArray(data) ? data : (data.ranking || data.data || []);
     const meuId = user.id;
     const cores = ['gold','silver','bronze'];
     document.getElementById('rankingMini').innerHTML = items.length ?
       items.map((r,i) => `
         <div class="ranking-row">
-          <div class="ranking-pos ${r.userId===meuId?'me':cores[i]||''}">${i+1}</div>
-          <div class="ranking-nome">${r.nome||r.name} ${r.userId===meuId?'(você)':''}</div>
-          <div class="ranking-tempo">${r.tempo5k||r.tempo||'--'}</div>
+          <div class="ranking-pos ${r.id===meuId?'me':cores[i]||''}">${i+1}</div>
+          <div class="ranking-nome">${r.nome||r.name} ${r.id===meuId?'(você)':''}</div>
+          <div class="ranking-tempo">${r.melhorTempo||r.tempo5k||r.tempo||'--'}</div>
         </div>
       `).join('') :
       '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px">Sem dados de ranking</div>';
-  } catch {
+  } catch(e) {
+    console.error('carregarRanking error:', e);
     document.getElementById('rankingMini').innerHTML = `
       <div class="ranking-row"><div class="ranking-pos gold">1</div><div class="ranking-nome">Seu nome aqui</div><div class="ranking-tempo">--:--</div></div>
       <div class="ranking-row" style="opacity:0.3"><div class="ranking-pos silver">2</div><div class="ranking-nome">---</div><div class="ranking-tempo">--:--</div></div>
