@@ -1766,7 +1766,7 @@ async function carregarRanking() {
         <div class="ranking-row">
           <div class="ranking-pos ${r.id===meuId?'me':cores[i]||''}">${i+1}</div>
           <div class="ranking-nome">${r.nome||r.name} ${r.id===meuId?'(você)':''}</div>
-          <div class="ranking-tempo">${r.melhorTempo||r.tempo5k||r.tempo||'--'}</div>
+          <div class="ranking-tempo">${r.totalPoints+'pts'}</div>
         </div>
       `).join('') :
       '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px">Sem dados de ranking</div>';
