@@ -1,16 +1,32 @@
 /**
  * Salva resultados do JSON de backup para o banco via Prisma
+ * Usage: node save-results-to-db.cjs [5KM] [10KM] [24KM]
+ * Default: all modalities
  */
 
 const { PrismaClient } = require('@prisma/client');
 const fs = require('fs');
+const path = require('path');
 
 const prisma = new PrismaClient();
-const MODALITY = '5KM';
+
+const ALL_MODALITIES = ['5KM', '10KM', '24KM'];
 
 async function main() {
-  const athletes = JSON.parse(fs.readFileSync('/tmp/41corrida_5km_results.json', 'utf8'));
-  console.log(`Loaded ${athletes.length} athletes from backup\n`);
+  const modalities = process.argv.length > 2 ? process.argv.slice(2) : ALL_MODALITIES;
+  
+  let allAthletes = [];
+  for (const mod of modalities) {
+    const file = path.join(__dirname, '..', 'data', `41corrida_${mod.toLowerCase()}_results.json`);
+    if (!fs.existsSync(file)) {
+      console.log(`⚠ File not found: ${file}, skipping ${mod}`);
+      continue;
+    }
+    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    allAthletes.push(...data.map(a => ({ ...a, _modality: mod })));
+    console.log(`  ${mod}: ${data.length} athletes`);
+  }
+  console.log(`\nTotal: ${allAthletes.length} athletes to import\n`);
 
   // 1. Find or create Race
   let race = await prisma.race.findFirst({
@@ -39,18 +55,36 @@ async function main() {
   let created = 0, updated = 0, results = 0, errors = 0;
   const BATCH = 20;
 
-  for (let i = 0; i < athletes.length; i += BATCH) {
-    const batch = athletes.slice(i, i + BATCH);
+  for (let i = 0; i < allAthletes.length; i += BATCH) {
+    const batch = allAthletes.slice(i, i + BATCH);
 
     for (const a of batch) {
       try {
         const genderRank = parseInt(String(a.genderPlacement).replace(/[^0-9]/g, '')) || null;
         const overallRank = a.generalPlacement || null;
+        const modality = a._modality || a.modality || '5KM';
 
-        // Upsert athlete by name + gender
+        // Find athlete by name + gender that doesn't already have a result
+        // in this race (handles namesakes across modalities)
         let athlete = await prisma.athlete.findFirst({
-          where: { name: a.name, gender: a.gender },
+          where: {
+            name: a.name,
+            gender: a.gender,
+            results: { none: { raceId: race.id } },
+          },
         });
+
+        // If not found without result, check if same athlete already has
+        // a result with the SAME distance (update case)
+        if (!athlete) {
+          athlete = await prisma.athlete.findFirst({
+            where: {
+              name: a.name,
+              gender: a.gender,
+              results: { some: { raceId: race.id, distance: modality } },
+            },
+          });
+        }
 
         if (!athlete) {
           athlete = await prisma.athlete.create({
@@ -86,7 +120,7 @@ async function main() {
             overallRank,
             genderRank,
             ageGroup: a.category,
-            distance: MODALITY,
+            distance: modality,
           },
           create: {
             athleteId: athlete.id,
@@ -96,7 +130,7 @@ async function main() {
             overallRank,
             genderRank,
             ageGroup: a.category,
-            distance: MODALITY,
+            distance: modality,
           },
         });
         results++;
@@ -106,7 +140,7 @@ async function main() {
       }
     }
 
-    process.stdout.write(`\r  Progress: ${Math.min(i + BATCH, athletes.length)}/${athletes.length} | Athletes: +${created} ~${updated} | Results: ${results} | Errors: ${errors}`);
+    process.stdout.write(`\r  Progress: ${Math.min(i + BATCH, allAthletes.length)}/${allAthletes.length} | Athletes: +${created} ~${updated} | Results: ${results} | Errors: ${errors}`);
   }
 
   console.log(`\n\n✅ Done!`);
