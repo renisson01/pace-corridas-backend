@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>REGENI — Meu Treino</title>
+<title>REGENI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -460,36 +460,38 @@ body::after {
     </div>
   </div>
 
-  <!-- TREINO DO DIA -->
-  <div class="hero-hoje" id="heroHoje">
-    <div class="hero-top">
-      <div class="hero-tag">🗓️ Treino de Hoje</div>
-      <div class="hero-title" id="heroTitulo">Sem treino agendado</div>
-      <div class="hero-sub" id="heroSub"></div>
-    </div>
-    <div class="hero-stats" id="heroStats"></div>
-    <div class="hero-action">
-      <button class="btn-iniciar" onclick="showPage('gps')">▶ Iniciar GPS</button>
-      <button class="btn-detalhes" onclick="verDetalheTreino()">Ver detalhes</button>
-    </div>
-  </div>
-
   
-  <!-- DAILY COACH -->
-  <div class="section" id="dailyCoachSection" style="display:none">
-    <div id="dailyCoachCards" style="display:flex;flex-direction:column;gap:8px;max-height:200px;overflow:hidden"></div>
+  <!-- ATALHOS RÁPIDOS -->
+  <div class="section" style="padding:8px 16px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <a href="/ia.html" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;text-decoration:none">
+        <div style="font-size:24px;margin-bottom:4px">🤖</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text)">IA Coach</div>
+      </a>
+      <a href="/cobaia.html" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;text-decoration:none">
+        <div style="font-size:24px;margin-bottom:4px">🧬</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text)">Cobaia</div>
+      </a>
+      <a href="/resultados.html" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;text-decoration:none">
+        <div style="font-size:24px;margin-bottom:4px">🏆</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text)">Resultados</div>
+      </a>
+    </div>
   </div>
 
-  <!-- IA TREINADORA -->
-  <div class="section">
-    <div class="ia-card" id="iaCard" style="display:none">
-      <div class="ia-header">
-        <div class="ia-orb">🤖</div>
+  <!-- TREINO DO DIA -->
+  <div class="section" id="heroHoje" style="padding:0 16px">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
         <div>
-          <div class="ia-title">IA Treinadora + 3 Agentes</div>
-          <div class="ia-sub" id="iaSubtitle">Treinador | Médico | Nutricionista | Psicólogo</div>
+          <div style="font-size:10px;color:#00D4FF;font-weight:700;letter-spacing:2px">TREINO DE HOJE</div>
+          <div id="heroTitulo" style="font-size:15px;font-weight:800;margin-top:4px">Carregando...</div>
+          <div id="heroSub" style="font-size:12px;color:var(--muted2);margin-top:2px"></div>
         </div>
+        <a href="/ia.html" style="background:#00D4FF;color:#000;padding:10px 16px;border-radius:12px;font-size:12px;font-weight:800;text-decoration:none">Ver treino</a>
       </div>
+    </div>
+  </div>
       <div class="ia-msg" id="iaMsgHoje">⏳ Analisando seu perfil...</div>
       <div class="chips-row">
         <div class="chip" onclick="irParaIA('Como está meu treino dessa semana?')">📊 Minha semana</div>
@@ -539,29 +541,6 @@ body::after {
   </div>
 
   
-  <!-- IDADE BIOLÓGICA -->
-  <div class="section" id="bioAgeHome" style="display:none">
-    <div class="section-header">
-      <div class="section-title">🧬 Idade Biológica</div>
-      <div class="section-link" onclick="window.location.href='/cobaia.html'">Ver Cobaia →</div>
-    </div>
-    <div style="background:linear-gradient(135deg,#0a1a0f,var(--card));border:1px solid #27AE6044;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;cursor:pointer" onclick="window.location.href='/cobaia.html'">
-      <div style="text-align:center">
-        <div id="homeBioAge" style="font-size:42px;font-weight:900;color:#27AE60;line-height:1">--</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:4px">IDADE BIO</div>
-      </div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Protocolo Cobaia</div>
-        <div style="font-size:12px;color:var(--muted)">Sono, treino, composição corporal e biomarcadores calculam sua idade real.</div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <div style="font-size:10px;background:rgba(247,147,26,.1);color:#00D4FF;padding:3px 8px;border-radius:10px;font-weight:700" id="homeBioScore">Score: --</div>
-          <div style="font-size:10px;background:rgba(39,174,96,.1);color:#27AE60;padding:3px 8px;border-radius:10px;font-weight:700" id="homeBioDiff">-- anos</div>
-        </div>
-      </div>
-      <div style="font-size:24px;color:var(--muted)">→</div>
-    </div>
-  </div>
-
   <!-- STRAVA SYNC -->
   <div class="section" style="display:none">
     <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
@@ -571,23 +550,6 @@ body::after {
         <div style="font-size:11px;color:var(--muted)" id="stravaStatusHome">Sincronize seus treinos</div>
       </div>
       <button onclick="conectarOuSyncStrava()" style="background:#FC4C02;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Sync</button>
-    </div>
-  </div>
-
-  <!-- PREMIUM (se não for) -->
-  <div class="section" id="premiumCard" style="display:none">
-    <div class="premium-card">
-      <div class="premium-tag">⭐ PREMIUM</div>
-      <div class="premium-title">Eleve seu Treino + Longevidade</div>
-      <div class="premium-list">
-        <div class="premium-item">Planilha semanal com IA personalizada</div>
-        <div class="premium-item">60 mensagens/hora com a IA</div>
-        <div class="premium-item">Análise de evolução avançada</div>
-        <div class="premium-item">Treinador humano integrado</div>
-        <div class="premium-item">Dashboard de idade biológica</div>
-        <div class="premium-item">Protocolos Bryan Johnson adaptados</div>
-      </div>
-      <button class="btn-premium" onclick="assinarPremium()">⭐ Premium R$ 9,99/mês</button>
     </div>
   </div>
 
