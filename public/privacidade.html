@@ -17,6 +17,10 @@ a{color:#00D4FF}
 .back{display:inline-block;margin-top:24px;color:#00D4FF;text-decoration:none;font-weight:700}
 </style>
 <link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 <h1>Política de Privacidade</h1>
@@ -73,5 +77,6 @@ a{color:#00D4FF}
 <p>Responsável: Renisson Nascimento Aragão — Itabaiana/SE</p>
 
 <a href="/" class="back">← Voltar ao REGENI</a>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>

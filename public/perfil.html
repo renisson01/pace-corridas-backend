@@ -13,6 +13,10 @@ body{background:#04060b;}
 ::-webkit-scrollbar{display:none;}
 </style>
 <link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body class="text-white min-h-screen pb-24">
 
@@ -322,5 +326,6 @@ async function enviarFoto(input) {
 var savedAvatar = localStorage.getItem('pace_avatar');
 if (savedAvatar) { var av=document.getElementById('avatar'); if(av){av.style.backgroundImage='url('+savedAvatar+')';av.style.backgroundSize='cover';av.textContent='';} }
 </script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>

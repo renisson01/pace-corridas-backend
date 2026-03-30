@@ -7,6 +7,10 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>body{background:#0f172a;}</style>
 <link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body class="text-white min-h-screen pb-24">
 <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex justify-between items-center sticky top-0 z-40">
@@ -122,5 +126,6 @@ load();
   <a href="/ia.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">🏃</span><span>REGENI IA</span></a>
   <a href="/perfil.html" class="flex flex-col items-center text-xs py-1 px-2 text-slate-400"><span class="text-xl">👤</span><span>Perfil</span></a>
 </nav>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>

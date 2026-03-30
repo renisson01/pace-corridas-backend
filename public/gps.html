@@ -60,6 +60,10 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .nav-item.ativo .nav-label{color:var(--verde)}
 </style>
 <link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 <div class="topbar">
@@ -208,5 +212,6 @@ body{padding-bottom:64px!important}
 (function(){var p=location.pathname;var logged=!!localStorage.getItem('pace_token');document.querySelectorAll('.pace-nav a').forEach(function(a){if(a.classList.contains('n-home')&&logged){a.href='/atleta.html';}if(p===a.getAttribute('href')||(p==='/atleta.html'&&a.classList.contains('n-home'))||(p==='/exames.html'&&a.classList.contains('n-cobaia'))||(p==='/cobaia-resultados.html'&&a.classList.contains('n-cobaia')))a.classList.add('active');});})();
 </script>
 <!-- /REGENI NAV -->
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>

@@ -297,6 +297,10 @@ select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 }
 </style>
 <link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
@@ -1206,5 +1210,6 @@ async function criarGrupo() {
 // ══════════════════════════════════════════
 carregarExplorar();
 </script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>

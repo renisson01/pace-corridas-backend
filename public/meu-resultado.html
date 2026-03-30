@@ -56,6 +56,10 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
 </style>
 <link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 <div class="topbar">
@@ -249,5 +253,6 @@ async function carregarHistorico(){
 }
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 </script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>
