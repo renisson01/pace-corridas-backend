@@ -60,7 +60,7 @@ export async function raceRoutes(fastify) {
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const [total, results] = await Promise.all([
       prisma.result.count({ where }),
-      prisma.result.findMany({ where, orderBy: { overallRank: 'asc' }, skip, take: parseInt(limit) })
+      prisma.result.findMany({ where, orderBy: { overallRank: 'asc' }, skip, take: parseInt(limit), include: { athlete: true } })
     ]);
     return { total, page: parseInt(page), results };
   });
@@ -70,13 +70,24 @@ export async function raceRoutes(fastify) {
     const where = { raceId: req.params.id };
     if (distance) where.distance = distance;
     const results = await prisma.result.findMany({
-      where, orderBy: { ageGroupRank: 'asc' }
+      where, orderBy: { ageGroupRank: 'asc' },
+      include: { athlete: true }
     });
     const grupos = {};
     results.forEach(r => {
-      const key = `${r.ageGroup}-${r.gender}`;
-      if (!grupos[key]) grupos[key] = { ageGroup: r.ageGroup, gender: r.gender, results: [] };
-      if (grupos[key].results.length < 3) grupos[key].results.push(r);
+      const key = `${r.ageGroup || 'GERAL'}-${r.athlete?.gender || 'M'}`;
+      if (!grupos[key]) grupos[key] = {
+        ageGroup: r.ageGroup || 'GERAL',
+        gender: r.athlete?.gender || '',
+        results: []
+      };
+      if (grupos[key].results.length < 3) grupos[key].results.push({
+        pos: r.ageGroupRank || r.overallRank,
+        nome: r.athlete?.name || '',
+        tempo: r.time,
+        pace: r.pace || '',
+        cidade: r.athlete?.state || ''
+      });
     });
     return Object.values(grupos);
   });
