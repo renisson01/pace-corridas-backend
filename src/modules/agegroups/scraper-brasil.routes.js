@@ -6,7 +6,7 @@ import prisma from '../../lib/prisma.js';
 const PONTOS_GERAL = [100,85,75,65,55,48,42,37,33,30,27,24,21,18,16,14,12,10,9,8,7,6,5,4,3,2,1];
 const PONTOS_FAIXA = [40,30,20,15,10,8,6,4,2,1];
 
-export default async function rankingRoutes(fastify) {
+export default async function scraperBrasilRoutes(fastify) {
 
   // STATUS
   fastify.get('/scraper/status', async (req,reply) => {
