@@ -31,16 +31,28 @@ export default async function scraperBrasilRoutes(fastify) {
       try {
         let athlete = await prisma.athlete.findFirst({where:{name:{equals:r.name,mode:'insensitive'}}});
         if (!athlete) athlete = await prisma.athlete.create({data:{name:r.name,age:r.age||0,gender:r.gender||'M',city:r.city||race.city,state:r.state||race.state}});
-        await prisma.result.create({data:{
-          raceId, athleteId:athlete.id,
-          distance:distance||r.distance||'0',
-          time:r.time||'00:00:00',
-          pace:r.pace||calcPace(r.time,distance),
-          overallRank:r.overallRank||0,
-          genderRank:r.genderRank||0,
-          ageGroupRank:r.ageGroupRank||0,
-          ageGroup:r.ageGroup||'Geral'
-        }});
+        await prisma.result.upsert({
+          where: { athleteId_raceId: { athleteId: athlete.id, raceId } },
+          update: {
+            distance:distance||r.distance||'0',
+            time:r.time||'00:00:00',
+            pace:r.pace||calcPace(r.time,distance),
+            overallRank:r.overallRank||0,
+            genderRank:r.genderRank||0,
+            ageGroupRank:r.ageGroupRank||0,
+            ageGroup:r.ageGroup||'Geral'
+          },
+          create: {
+            raceId, athleteId:athlete.id,
+            distance:distance||r.distance||'0',
+            time:r.time||'00:00:00',
+            pace:r.pace||calcPace(r.time,distance),
+            overallRank:r.overallRank||0,
+            genderRank:r.genderRank||0,
+            ageGroupRank:r.ageGroupRank||0,
+            ageGroup:r.ageGroup||'Geral'
+          }
+        });
         ok++;
       } catch(e) { err++; console.error('IMPORT ERR:', r.name, e.message); }
     }
