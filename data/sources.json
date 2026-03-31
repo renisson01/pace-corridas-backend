@@ -1,0 +1,209 @@
+{
+  "description": "Fontes de resultados de corrida de rua - Brasil",
+  "sources": [
+    {
+      "id": "runking",
+      "name": "Go RunKing / Chronomax (Speed)",
+      "url": "https://resultados.runking.com.br",
+      "type": "nextjs-rsc-aes",
+      "status": "cracked",
+      "notes": "AES decrypt com chave {eventSlug}CIPHER$#. Dados paginados 20/page."
+    },
+    {
+      "id": "chronomax",
+      "name": "Chronomax Calendário",
+      "url": "https://chronomax.com.br/calendario",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "morro-mt",
+      "name": "Morro MT",
+      "url": "https://morro-mt.com.br/#eventos",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "cronoscariri",
+      "name": "Cronos Cariri",
+      "url": "https://cronoscariri.com.br/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "supercrono",
+      "name": "Super Crono",
+      "url": "https://supercrono.com.br/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "cronotag",
+      "name": "CronoTag",
+      "url": "https://www.cronotag.com.br/v2/eventos.php",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "estounessa",
+      "name": "Estou Nessa",
+      "url": "https://estounessa.com.br/#/calendario",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "incentivoesporte",
+      "name": "Incentivo Esporte",
+      "url": "https://www.incentivoesporte.com.br/#/calendario",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "chipower",
+      "name": "ChiPower",
+      "url": "https://www.chipower.com.br/eventos",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "cronoserv",
+      "name": "CronoServ",
+      "url": "https://www.cronoserv.com.br/eventos",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "iguanasports",
+      "name": "Iguana Sports",
+      "url": "https://iguanasports.com.br/blogs/calendario-corridas-de-rua",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "chiptiming",
+      "name": "ChipTiming",
+      "url": "https://eventos.chiptiming.com.br",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "esportecorrida",
+      "name": "Esporte Corrida",
+      "url": "https://esportecorrida.com.br/v1/eventos.php",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "roadrunners",
+      "name": "Road Runners",
+      "url": "https://roadrunners.run/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "centralderesultados",
+      "name": "Central de Resultados",
+      "url": "https://centralderesultados.com.br/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "onsports",
+      "name": "OnSports",
+      "url": "https://www.onsportsoficial.com.br",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "tbhesportes",
+      "name": "TBH Esportes",
+      "url": "https://www.tbhesportes.com.br/eventos-2026/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "tfsports",
+      "name": "TF Sports / Run Series",
+      "url": "https://www.tfsports.com.br/run-series/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "ravelisports",
+      "name": "Raveli Sports",
+      "url": "https://www.ravelisports.com.br/eventos",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "cronoschip",
+      "name": "CronosChip",
+      "url": "https://cronoschip.com.br/provas",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "cronocorridas",
+      "name": "Crono Corridas",
+      "url": "https://www.cronocorridas.com.br/eventos",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "o2corre",
+      "name": "O2 Corre",
+      "url": "https://www.o2corre.com.br/calendario/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "correparaiba",
+      "name": "Corre Paraíba",
+      "url": "https://correparaiba.com/resultados/g-live.html?f=eventos",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "picrono",
+      "name": "PiCrono / RaceTag",
+      "url": "https://picrono.com.br/racetag/#/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "ingresso84",
+      "name": "Ingresso 84",
+      "url": "https://www.ingresso84.com.br/eventos",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "sporttimer",
+      "name": "SportTimer",
+      "url": "https://www.sporttimer.com.br/site/calendario.php",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "assessocor",
+      "name": "Assessocor",
+      "url": "https://www.assessocor.online/eventos",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "acronoesportes",
+      "name": "Acrono Esportes / RaceTag",
+      "url": "https://acronoesportes.com.br/resultados/racetag/#/",
+      "type": "unknown",
+      "status": "pending"
+    },
+    {
+      "id": "trichip",
+      "name": "TriChip",
+      "url": "https://www.trichip.com.br/eventos",
+      "type": "unknown",
+      "status": "pending"
+    }
+  ]
+}
