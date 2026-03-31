@@ -27,17 +27,19 @@ export async function raceRoutes(fastify) {
     const where = { raceId: id };
     if (distance) where.distance = distance;
     const results = await prisma.result.findMany({
-      where, orderBy: { overallRank: 'asc' }, take: 100
+      where, orderBy: { overallRank: 'asc' }, take: 200,
+      include: { athlete: true }
     });
     const race = await prisma.race.findUnique({ where: { id } });
-    const masc = results.filter(r => r.gender === 'M').slice(0, 5).map(r => ({
-      pos: r.genderRank || r.overallRank, nome: r.name,
-      cidade: r.city || '', tempo: r.time, pace: r.pace || '', faixa: r.ageGroup || ''
-    }));
-    const fem = results.filter(r => r.gender === 'F').slice(0, 5).map(r => ({
-      pos: r.genderRank || r.overallRank, nome: r.name,
-      cidade: r.city || '', tempo: r.time, pace: r.pace || '', faixa: r.ageGroup || ''
-    }));
+    const toRow = r => ({
+      pos: r.genderRank || r.overallRank,
+      nome: r.athlete?.name || '',
+      cidade: r.athlete?.state || '',
+      tempo: r.time, pace: r.pace || '',
+      faixa: r.ageGroup || ''
+    });
+    const masc = results.filter(r => r.athlete?.gender === 'M').slice(0, 5).map(toRow);
+    const fem  = results.filter(r => r.athlete?.gender === 'F').slice(0, 5).map(toRow);
     return { race: race?.name || '', masculino: masc, feminino: fem };
   });
 
