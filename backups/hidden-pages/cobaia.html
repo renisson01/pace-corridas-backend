@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>REGENI COBAIA — Protocolo 60 Dias</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#04060b; color:#e2e8f0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding-bottom:80px; }
+
+.header { background:linear-gradient(135deg,#0a0f1a 0%,#1a0f00 100%); padding:20px 16px; border-bottom:2px solid #00D4FF; }
+.header h1 { color:#00D4FF; font-size:22px; font-weight:900; letter-spacing:2px; }
+.header .sub { color:#8899bb; font-size:12px; margin-top:4px; }
+.dia-badge { display:inline-block; background:#00D4FF; color:#000; font-weight:900; padding:4px 12px; border-radius:20px; font-size:14px; margin-top:8px; }
+.streak-badge { display:inline-block; background:#27AE60; color:#fff; font-weight:700; padding:4px 12px; border-radius:20px; font-size:13px; margin-left:8px; }
+
+.tabs { display:flex; background:#0a0f1a; border-bottom:1px solid #1e2d3d; overflow-x:auto; }
+.tab { flex:1; text-align:center; padding:12px 8px; font-size:11px; font-weight:700; color:#556677; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
+.tab.active { color:#00D4FF; border-bottom-color:#00D4FF; }
+
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+.section { padding:16px; }
+.section-title { color:#00D4FF; font-size:14px; font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; }
+.card { background:#0d1117; border:1px solid #1e2d3d; border-radius:14px; padding:16px; margin-bottom:12px; }
+
+.actions { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; padding:12px 16px; }
+.action-btn { background:#0d1117; border:1px solid #1e2d3d; border-radius:12px; padding:12px 6px; text-align:center; cursor:pointer; transition:all 0.2s; }
+.action-btn:active { transform:scale(0.96); background:#1a2332; }
+.action-btn .icon { font-size:24px; margin-bottom:4px; }
+.action-btn .label { font-size:10px; color:#8899bb; font-weight:600; }
+
+.metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.metric { text-align:center; padding:12px 6px; background:#080c14; border-radius:10px; }
+.metric .value { font-size:20px; font-weight:900; color:#00D4FF; }
+.metric .label { font-size:10px; color:#667788; margin-top:2px; }
+.metric.green .value { color:#27AE60; }
+.metric.blue .value { color:#2980B9; }
+.metric.red .value { color:#E74C3C; }
+
+.chart-container { background:#0d1117; border:1px solid #1e2d3d; border-radius:14px; padding:16px; margin:0 16px 12px; }
+.chart-container h3 { color:#00D4FF; font-size:13px; margin-bottom:10px; }
+.chart-container canvas { max-height:200px; }
+
+/* Training Card */
+.treino-card { background:#0d1117; border:1px solid #1e2d3d; border-radius:12px; padding:14px; margin-bottom:10px; }
+.treino-card .title { color:#e2e8f0; font-weight:700; font-size:14px; }
+.treino-card .meta { color:#667788; font-size:12px; margin-top:4px; }
+.treino-card .stats { display:flex; gap:16px; margin-top:8px; }
+.treino-card .stat { text-align:center; }
+.treino-card .stat .val { color:#00D4FF; font-weight:900; font-size:16px; }
+.treino-card .stat .lbl { color:#556677; font-size:10px; }
+
+/* Bio Age */
+.bio-age { text-align:center; padding:24px; background:linear-gradient(135deg,#0a1a0f,#0d1117); border:1px solid #27AE60; border-radius:16px; margin:0 16px 12px; }
+.bio-age .age-number { font-size:64px; font-weight:900; color:#27AE60; line-height:1; }
+.bio-age .age-label { color:#8899bb; font-size:13px; margin-top:4px; }
+.bio-age .age-diff { color:#00D4FF; font-size:16px; font-weight:700; margin-top:8px; }
+
+/* Protocol */
+.protocol-item { display:flex; align-items:center; gap:12px; padding:12px; background:#080c14; border-radius:10px; margin-bottom:8px; }
+.protocol-icon { font-size:28px; }
+.protocol-info { flex:1; }
+.protocol-info .name { color:#e2e8f0; font-weight:700; font-size:14px; }
+.protocol-info .desc { color:#667788; font-size:12px; margin-top:2px; }
+.protocol-status { font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; }
+.status-active { background:#27AE60; color:#fff; }
+.status-pending { background:#1e2d3d; color:#8899bb; }
+.status-soon { background:#00D4FF22; color:#00D4FF; }
+
+/* Forms */
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; color:#8899bb; font-size:11px; font-weight:600; margin-bottom:4px; text-transform:uppercase; }
+.form-group input, .form-group select, .form-group textarea { width:100%; background:#080c14; border:1px solid #1e2d3d; color:#e2e8f0; padding:10px 12px; border-radius:10px; font-size:15px; outline:none; }
+.form-group input:focus { border-color:#00D4FF; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.btn-primary { background:#00D4FF; color:#000; font-weight:800; border:none; padding:14px; border-radius:12px; width:100%; font-size:16px; cursor:pointer; margin-top:10px; }
+.btn-sync { background:#1e2d3d; color:#00D4FF; font-weight:700; border:1px solid #00D4FF; padding:12px; border-radius:10px; width:100%; font-size:14px; cursor:pointer; margin-top:8px; }
+
+.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; }
+.toggle { width:50px; height:28px; background:#1e2d3d; border-radius:14px; position:relative; cursor:pointer; transition:background 0.3s; }
+.toggle.on { background:#00D4FF; }
+.toggle::after { content:''; position:absolute; top:3px; left:3px; width:22px; height:22px; background:#fff; border-radius:50%; transition:left 0.3s; }
+.toggle.on::after { left:25px; }
+
+.rating { display:flex; gap:4px; margin-top:4px; }
+.rating-btn { width:32px; height:32px; border-radius:50%; background:#1e2d3d; border:none; color:#8899bb; font-weight:700; font-size:13px; cursor:pointer; }
+.rating-btn.active { background:#00D4FF; color:#000; }
+
+.modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:100; align-items:flex-end; justify-content:center; }
+.modal-overlay.show { display:flex; }
+.modal { background:#0d1117; border-top:2px solid #00D4FF; border-radius:20px 20px 0 0; width:100%; max-width:500px; max-height:85vh; overflow-y:auto; padding:24px 16px 40px; }
+.modal h2 { color:#00D4FF; font-size:18px; margin-bottom:16px; }
+.modal-close { float:right; background:none; border:none; color:#667788; font-size:24px; cursor:pointer; }
+
+
+
+.empty { text-align:center; padding:20px; color:#445566; font-size:13px; }
+
+@media (max-width: 480px) {
+  .tabs { font-size: 11px; gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab { padding: 8px 10px; white-space: nowrap; }
+  .actions { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .action-btn { padding: 12px 4px; }
+  .action-btn .icon { font-size: 24px; }
+  .action-btn .label { font-size: 9px; }
+  .metrics { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .metric .value { font-size: 18px; }
+  .card { padding: 14px; margin: 0 8px 12px; }
+  h1 { font-size: 20px; }
+  .header { padding: 16px 12px; }
+  body { padding-bottom: 70px; }
+}
+</style>
+<link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+<div class="header">
+  <h1>🧬 REGENI COBAIA</h1>
+  <div class="sub">Protocolo de Otimização Biológica — 60 Dias</div>
+  <div>
+    <span class="dia-badge" id="diaBadge">DIA 2/60</span>
+    <span class="streak-badge" id="streakBadge">🔥 0 dias</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('dashboard')">DASHBOARD</div>
+  <div class="tab" onclick="showTab('treinos')">TREINOS</div>
+  <div class="tab" onclick="showTab('bioage')">IDADE BIO</div>
+  <div class="tab" onclick="showTab('protocolos')">PROTOCOLOS</div>
+    <div class="tab" onclick="showTab('rodavida')" style="color:#E040FB">🎯 RODA</div>
+</div>
+
+<!-- ==================== TAB: DASHBOARD ==================== -->
+<div class="tab-content active" id="tab-dashboard">
+  <div class="actions">
+    <div class="action-btn" onclick="abrirModal('checkin')"><div class="icon">📊</div><div class="label">CHECK-IN</div></div>
+    <div class="action-btn" onclick="abrirModal('alimentacao')"><div class="icon">🍽️</div><div class="label">COMIDA</div></div>
+    <div class="action-btn" onclick="abrirModal('sauna')"><div class="icon">🔥</div><div class="label">SAUNA</div></div>
+    <div class="action-btn" onclick="abrirModal('agenda')"><div class="icon">📅</div><div class="label">AGENDA</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📈 Resumo</div>
+    <div class="metrics" id="metricas">
+      <div class="metric"><div class="value" id="mKm">-</div><div class="label">KM TOTAL</div></div>
+      <div class="metric"><div class="value" id="mTreinos">-</div><div class="label">TREINOS</div></div>
+      <div class="metric green"><div class="value" id="mSono">-</div><div class="label">SONO MÉD</div></div>
+      <div class="metric blue"><div class="value" id="mHumor">-</div><div class="label">HUMOR</div></div>
+      <div class="metric"><div class="value" id="mSaunas">-</div><div class="label">SAUNAS</div></div>
+      <div class="metric red"><div class="value" id="mExames">-</div><div class="label">EXAMES</div></div>
+    </div>
+  </div>
+
+  <!-- Gráfico Pace -->
+  <div class="chart-container">
+    <h3>🏃 Evolução do Pace (min/km)</h3>
+    <canvas id="chartPace"></canvas>
+  </div>
+
+  <!-- Gráfico Sono/Humor -->
+  <div class="chart-container">
+    <h3>😴 Sono e Humor</h3>
+    <canvas id="chartSono"></canvas>
+  </div>
+
+  <!-- Gráfico Volume -->
+  <div class="chart-container">
+    <h3>📊 Volume Semanal (km)</h3>
+    <canvas id="chartVolume"></canvas>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Hoje</div>
+    <div class="card" id="hojeContent"><div class="empty">Carregando...</div></div>
+    <!-- PLANO DO DIA — Decision Engine -->
+    <div class="card" id="planoDiaCard" style="margin-top:16px;border:1px solid rgba(247,147,26,.3);background:linear-gradient(135deg,#0d1117,#111827)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <h3 style="color:#00D4FF;font-size:16px;font-weight:800;margin:0">🎯 Plano do Dia</h3>
+        <button onclick="gerarPlanoDia()" id="btnPlanoDia" style="background:#00D4FF22;color:#00D4FF;border:1px solid #00D4FF44;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Atualizar</button>
+      </div>
+      <div id="coachMsg" style="background:#080c14;border-radius:12px;padding:14px;margin-bottom:12px;font-size:14px;color:#e2e8f0;line-height:1.6;display:none"></div>
+      <div id="planoPrioridades" style="margin-bottom:12px"></div>
+      <div id="planoDia" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div id="planoEmpty" style="text-align:center;padding:20px;color:#667788;font-size:13px">
+        Faça um check-in e clique "Atualizar" para gerar seu plano personalizado do dia
+      </div>
+    </div>
+
+  </div>
+
+  <button class="btn-sync" onclick="syncStrava()" style="margin:0 16px;">⚡ SINCRONIZAR STRAVA</button>
+</div>
+
+<!-- ==================== TAB: TREINOS ==================== -->
+<div class="tab-content" id="tab-treinos">
+  <div class="section">
+    <div class="section-title">🏃 Últimos Treinos (Strava)</div>
+    <div id="treinosList"><div class="empty">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- ==================== TAB: IDADE BIOLÓGICA ==================== -->
+<div class="tab-content" id="tab-bioage">
+  <div class="bio-age" id="bioAgeCard">
+    <div class="age-label">IDADE BIOLÓGICA ESTIMADA</div>
+    <div class="age-number" id="bioAgeNumber">--</div>
+    <div class="age-diff" id="bioAgeDiff">Registre dados para calcular</div>
+    <div style="margin-top:12px;color:#667788;font-size:11px;">Baseado em: VO2max, sono, HRV, peso, consistência de treino</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🧬 Fatores da Idade Biológica</div>
+    <div id="bioFactors"></div>
+  </div>
+
+  <div class="chart-container">
+    <h3>📉 Projeção — Redução em 60 Dias</h3>
+    <canvas id="chartBioAge"></canvas>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Protocolos de Redução</div>
+    <div class="protocol-item">
+      <div class="protocol-icon">🏃</div>
+      <div class="protocol-info"><div class="name">VO2max Training</div><div class="desc">Intervalos 2x/semana elevam VO2max 5-8% em 8 semanas. Cada 1ml/kg/min = ~0.5 ano biológico.</div></div>
+      <span class="protocol-status status-active">ATIVO</span>
+    </div>
+    <div class="protocol-item">
+      <div class="protocol-icon">😴</div>
+      <div class="protocol-info"><div class="name">Otimização do Sono</div><div class="desc">7-9h consistentes. Sono profundo repara DNA e reduz inflamação. Meta: qualidade 4+/5.</div></div>
+      <span class="protocol-status status-active">ATIVO</span>
+    </div>
+    <div class="protocol-item">
+      <div class="protocol-icon">🔥</div>
+      <div class="protocol-info"><div class="name">Heat Shock Proteins</div><div class="desc">Sauna 4-7x/semana ativa HSPs, FOXO3, reduz mortalidade 40% (estudo finlandês).</div></div>
+      <span class="protocol-status status-soon">EM BREVE</span>
+    </div>
+    <div class="protocol-item">
+      <div class="protocol-icon">🥩</div>
+      <div class="protocol-info"><div class="name">Dieta Anti-inflamatória</div><div class="desc">Proteína animal + vegetais + omega-3. Reduz PCR e IL-6. Monitorar com exames.</div></div>
+      <span class="protocol-status status-active">ATIVO</span>
+    </div>
+    <div class="protocol-item">
+      <div class="protocol-icon">🧊</div>
+      <div class="protocol-info"><div class="name">Contraste Térmico</div><div class="desc">Sauna + frio. Norepinefrina +200-300%. Especialmente útil nos dias sem Vyvanse.</div></div>
+      <span class="protocol-status status-soon">EM BREVE</span>
+    </div>
+    <div class="protocol-item">
+      <div class="protocol-icon">🩸</div>
+      <div class="protocol-info"><div class="name">Biomarcadores de Sangue</div><div class="desc">Hemograma, hormonal, inflamatórios, vitaminas. Baseline → 60 dias → comparação.</div></div>
+      <span class="protocol-status status-pending">AGENDAR</span>
+    </div>
+    <div class="protocol-item">
+      <div class="protocol-icon">💊</div>
+      <div class="protocol-info"><div class="name">Suplementação Baseada em Exames</div><div class="desc">Omega-3, Vit D, Creatina, Magnésio. Só com prescrição do médico após exames.</div></div>
+      <span class="protocol-status status-pending">AGUARDANDO EXAMES</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: PROTOCOLOS ==================== -->
+<!-- ==================== TAB: PROTOCOLOS ==================== -->
+<div class="tab-content" id="tab-protocolos">
+<div class="card" id="piramide-regen" style="margin-top:16px">
+      <h3 style="color:#00D4FF;font-size:16px;font-weight:800;margin-bottom:4px;text-align:center">Piramide da Medicina Regenerativa</h3>
+      <p style="color:#667788;font-size:11px;text-align:center;margin-bottom:16px">Aniversarios Negativos — O caminho para rejuvenescer</p>
+      
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <!-- Topo -->
+        <div style="background:linear-gradient(135deg,#0a1a2a,#0d2035);border:1px solid #00D4FF44;border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:20px;margin-bottom:4px">🧬</div>
+          <div style="font-size:13px;font-weight:800;color:#00D4FF">Celulas Tronco / Terapia Genica</div>
+          <div style="font-size:10px;color:#667788">Nivel 5 — Regeneracao avancada</div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:#0d1a28;border:1px solid #1e3a5d;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:16px">🧪</div>
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Exossomas</div>
+            <div style="font-size:9px;color:#667788">Microenxerto</div>
+          </div>
+          <div style="background:#0d1a28;border:1px solid #1e3a5d;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:16px">🛡️</div>
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Gero Protetores</div>
+            <div style="font-size:9px;color:#667788">Anti-envelhecimento</div>
+          </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:#0d1a28;border:1px solid #1e3a5d;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:16px">🫧</div>
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Oxigenoterapia</div>
+            <div style="font-size:9px;color:#667788">Hiperbarica</div>
+          </div>
+          <div style="background:#0d1a28;border:1px solid #1e3a5d;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:16px">🧬</div>
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Epigenetica</div>
+            <div style="font-size:9px;color:#667788">Metabolomica</div>
+          </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:#0d1a28;border:1px solid #1e3a5d;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:16px">🔬</div>
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Idade Biologica</div>
+            <div style="font-size:9px;color:#667788">Testes e monitoramento</div>
+          </div>
+          <div style="background:#0d1a28;border:1px solid #1e3a5d;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:16px">💊</div>
+            <div style="font-size:11px;font-weight:700;color:#e2e8f0">Hormonios</div>
+            <div style="font-size:9px;color:#667788">Niveis otimos</div>
+          </div>
+        </div>
+        
+        <!-- Base -->
+        <div style="background:linear-gradient(135deg,#0a2a1a,#0d3520);border:1px solid #27AE6044;border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:24px;margin-bottom:4px">🏃💤🥗</div>
+          <div style="font-size:13px;font-weight:800;color:#27AE60">Base: Sono + Comida de Verdade + Exercicio</div>
+          <div style="font-size:10px;color:#667788;margin-top:2px">Nivel 1 — Onde tudo comeca (REGENI foca aqui)</div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:linear-gradient(135deg,#1a0a00,#251500);border:1px solid #00D4FF33;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:14px">🌱</div>
+            <div style="font-size:11px;font-weight:700;color:#00D4FF">Terreno Biologico</div>
+            <div style="font-size:9px;color:#667788">Fundacao de tudo</div>
+          </div>
+          <div style="background:linear-gradient(135deg,#1a0a00,#251500);border:1px solid #00D4FF33;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:14px">🔋</div>
+            <div style="font-size:11px;font-weight:700;color:#00D4FF">Nutricao Celular</div>
+            <div style="font-size:9px;color:#667788">Mitocondrias</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-top:12px;background:#080c14;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:12px;color:#00D4FF;font-weight:700">Voce esta aqui: Nivel 1-2</div>
+        <div style="font-size:11px;color:#667788;margin-top:4px">REGENI monitora sua base e te guia para os proximos niveis</div>
+      </div>
+    </div>
+
+
+  <div class="section">
+    <div class="section-title" style="color:#00D4FF;font-size:16px;">🧬 PROTOCOLOS BILIONÁRIOS — Adaptados pra Você</div>
+    <div class="card" style="border-color:#00D4FF33;background:linear-gradient(135deg,#0d1117,#1a0f00);">
+      <div style="font-size:12px;color:#00D4FF;font-weight:700;margin-bottom:6px;">BASEADO EM: Bryan Johnson (Blueprint) • Peter Attia • David Sinclair • Rhonda Patrick</div>
+      <div style="font-size:11px;color:#667788;">Bryan Johnson gasta US$2M/ano, mas 80% dos resultados vêm de 5 coisas simples. Aqui estão os protocolos que FUNCIONAM, adaptados pro Brasil.</div>
+    </div>
+  </div>
+
+  <!-- PROTOCOLO 1: SONO -->
+  <div class="section">
+    <div class="section-title">😴 #1 SONO — O PROTOCOLO MAIS IMPORTANTE</div>
+    <div class="card">
+      <div style="color:#2980B9;font-weight:700;font-size:13px;margin-bottom:8px;">"Se você só fizer UMA coisa, durma." — Bryan Johnson</div>
+      <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
+        <b style="color:#00D4FF;">Meta:</b> 8-9h por noite, dormir antes das 23h, acordar no mesmo horário todo dia<br><br>
+        <b style="color:#00D4FF;">Protocolo Bryan Johnson:</b><br>
+        • Última refeição 6h antes de dormir (ex: janta às 17h se dorme 23h)<br>
+        • Quarto 100% escuro (blackout total)<br>
+        • Temperatura do quarto: 18-20°C (ventilador/ar condicionado)<br>
+        • Sem telas 1h antes de dormir (ativa melatonina natural)<br>
+        • Magnésio glicinato 400mg 30min antes de dormir<br><br>
+        <b style="color:#00D4FF;">Adaptação REGENI (Renisson):</b><br>
+        • Treinar às 18h → jantar 19:30 → sem telas 22h → dormir 23h → acordar 7h<br>
+        • Nos dias sem Vyvanse: sono mais profundo naturalmente<br>
+        • Sauna 20min antes de dormir (queda de temperatura induz sono)<br><br>
+        <b style="color:#27AE60;">Impacto na idade biológica: -2 a -4 anos</b><br>
+        <span style="color:#667788;font-size:11px;">Fonte: Fitzgerald 2023 (8 semanas dieta+sono = -4.6 anos idade bio)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROTOCOLO 2: EXERCÍCIO -->
+  <div class="section">
+    <div class="section-title">🏃 #2 EXERCÍCIO — VO2MAX É O PREDITOR #1</div>
+    <div class="card">
+      <div style="color:#27AE60;font-weight:700;font-size:13px;margin-bottom:8px;">"Cada 1 MET de VO2max = 11-17% menos mortalidade" — Peter Attia</div>
+      <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
+        <b style="color:#00D4FF;">Meta:</b> VDOT 70 (VO2max ~70 ml/kg/min) — 5km em 15:00<br><br>
+        <b style="color:#00D4FF;">Protocolo Peter Attia (Zone 2 + VO2max):</b><br>
+        • 3-4x/semana: Zona 2 (45-60min) — base mitocondrial<br>
+        • 1-2x/semana: Intervalos VO2max (4x4min a 90-95% FCmax, 3min rec)<br>
+        • 2-3x/semana: Força (agachamento, levantamento terra, supino)<br>
+        • 1x/semana: Longão progressivo<br><br>
+        <b style="color:#00D4FF;">Protocolo Bryan Johnson:</b><br>
+        • 1h exercício/dia, 7 dias/semana<br>
+        • Backwards sled (trenó reverso) — protege joelhos<br>
+        • HIIT 3x/semana (reduz idade transcriptômica 3.6 anos)<br><br>
+        <b style="color:#00D4FF;">Seu protocolo REGENI (Semana atual):</b><br>
+        • SEG: Easy Run 6-8km Z2<br>
+        • TER: Intervalos 5x1000m ou Fartlek<br>
+        • QUA: Descanso + Força (core + glúteo)<br>
+        • QUI: Tempo Run 25min Z3<br>
+        • SEX: Easy Run + Strides 6x100m<br>
+        • SÁB: Longão progressivo 12-15km<br>
+        • DOM: Descanso total<br><br>
+        <b style="color:#27AE60;">Impacto: -3.6 anos (HIIT) + telômeros mais longos</b><br>
+        <span style="color:#667788;font-size:11px;">Fonte: Loma Linda 2023, Meta-análise Journals of Gerontology 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROTOCOLO 3: SAUNA -->
+  <div class="section">
+    <div class="section-title">🔥 #3 SAUNA — HEAT SHOCK PROTEINS</div>
+    <div class="card">
+      <div style="color:#E74C3C;font-weight:700;font-size:13px;margin-bottom:8px;">"Sauna reduziu mortalidade cardiovascular em 63%" — Estudo Finlandês (20 anos)</div>
+      <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
+        <b style="color:#00D4FF;">Protocolo Bryan Johnson:</b><br>
+        • 3-5x/semana, 15-20min a 80-90°C<br>
+        • Após treino (recovery muscular)<br>
+        • 15 sessões eliminaram toxinas antes indetectáveis<br>
+        • Pressão arterial biológica caiu para &lt;20 anos<br><br>
+        <b style="color:#00D4FF;">Protocolo Rhonda Patrick:</b><br>
+        • 4-7x/semana, 20min a 80°C+ (HSPs +50%)<br>
+        • Ativa gene FOXO3 (centenários têm mais)<br>
+        • Contraste: sauna + frio = norepinefrina +200-300%<br><br>
+        <b style="color:#00D4FF;">Seu protocolo REGENI:</b><br>
+        • Sala infravermelho em construção (próxima semana)<br>
+        • Pós-treino: 30min a 45-55°C (recovery)<br>
+        • Dia descanso: 20min a 55-60°C (longevidade)<br>
+        • Contraste: sauna + ducha fria (especialmente dias sem Vyvanse)<br><br>
+        <b style="color:#27AE60;">Impacto: -40% mortalidade geral, -66% demência</b><br>
+        <span style="color:#667788;font-size:11px;">Fonte: Laukkanen 2015, Patrick 2021 (Experimental Gerontology)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROTOCOLO 4: NUTRIÇÃO -->
+  <div class="section">
+    <div class="section-title">🥩 #4 NUTRIÇÃO — ANTI-INFLAMATÓRIA</div>
+    <div class="card">
+      <div style="color:#00D4FF;font-weight:700;font-size:13px;margin-bottom:8px;">"Dieta + sono + exercício = -4.6 anos em 8 semanas" — Fitzgerald 2023</div>
+      <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
+        <b style="color:#00D4FF;">Bryan Johnson (2.250 cal/dia):</b><br>
+        • Nutty Pudding (nozes, berries, cacau) no café<br>
+        • Super Veggie (brócolis, couve, lentilha)<br>
+        • Azeite extra virgem 30ml/dia<br>
+        • Última refeição às 11h (jejum 18:6)<br><br>
+        <b style="color:#00D4FF;">Adaptação REGENI (Renisson 54kg, atleta):</b><br>
+        • <b>Café:</b> 4 ovos + banana + café arábico<br>
+        • <b>Almoço:</b> Carne (colchão mole) + arroz + beterraba + cenoura + azeite<br>
+        • <b>Pré-treino (16h):</b> Batata doce roxa + banana + mel<br>
+        • <b>Pós-treino:</b> Whey + água de coco<br>
+        • <b>Janta:</b> Ovos + salada + abacate<br>
+        • <b>Hidratação:</b> 40ml/kg = 2.2L água + coco verde<br><br>
+        <b style="color:#00D4FF;">Alimentos-chave longevidade:</b><br>
+        • Beterraba (nitratos → VO2max +3-5%)<br>
+        • Ovos (colina → metilação DNA)<br>
+        • Carne vermelha (ferro, B12, creatina natural)<br>
+        • Abacate (gordura mono → anti-inflamação)<br>
+        • Suco de uva integral (resveratrol → sirtuínas)<br><br>
+        <b style="color:#27AE60;">Impacto: -4.6 anos (Horvath clock) + PCR reduzido</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROTOCOLO 5: SUPLEMENTAÇÃO -->
+  <div class="section">
+    <div class="section-title">💊 #5 SUPLEMENTAÇÃO — BASEADA EM EXAMES</div>
+    <div class="card">
+      <div style="color:#8E44AD;font-weight:700;font-size:13px;margin-bottom:8px;">"Bryan toma 100+ pílulas, mas 5 fazem 80% do efeito"</div>
+      <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
+        <b style="color:#00D4FF;">TOP 5 com mais evidência (acessíveis no Brasil):</b><br><br>
+        <b>1. Creatina Monohidratada (5g/dia)</b><br>
+        <span style="color:#667788;">Cognição (+15% memória), força, massa muscular. R$40-60/mês. O suplemento mais estudado do mundo.</span><br><br>
+        <b>2. Omega-3 EPA/DHA (2-4g/dia)</b><br>
+        <span style="color:#667788;">Anti-inflamação, coração, cérebro. Medir índice Omega-3 (meta >8%). R$60-100/mês.</span><br><br>
+        <b>3. Vitamina D3 + K2 (5.000UI + 200mcg)</b><br>
+        <span style="color:#667788;">Só se exame mostrar &lt;40ng/mL. Imunidade, ossos, hormônios. R$20-40/mês.</span><br><br>
+        <b>4. Magnésio Glicinato (400mg à noite)</b><br>
+        <span style="color:#667788;">Sono profundo, HRV, recuperação, cãibras. R$30-50/mês.</span><br><br>
+        <b>5. Colágeno + Vitamina C (15g + 500mg)</b><br>
+        <span style="color:#667788;">Tendões, ligamentos. Crucial no retorno de pausa. R$40-60/mês.</span><br><br>
+        <b style="color:#00D4FF;">Avançados (com prescrição médica):</b><br>
+        • NMN/NR (NAD+ precursor) — mitocôndrias, energia celular<br>
+        • Espermidina — autofagia (reciclagem celular)<br>
+        • Metformina — sensibilidade insulina (off-label longevidade)<br>
+        • Rapamicina — mTOR (experimental, Bryan Johnson usa)<br><br>
+        <b style="color:#E74C3C;">⚠️ REGRA: Nenhum suplemento sem exame de sangue antes</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROTOCOLO 6: BIOMARKERS -->
+  <div class="section">
+    <div class="section-title">🩸 #6 BIOMARCADORES — MEDIR PARA MELHORAR</div>
+    <div class="card">
+      <div style="color:#2980B9;font-weight:700;font-size:13px;margin-bottom:8px;">"Você não pode melhorar o que não mede" — Bryan Johnson</div>
+      <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
+        <b style="color:#00D4FF;">Bryan Johnson mede:</b> 100+ biomarcadores a cada 3 meses<br>
+        <b style="color:#00D4FF;">Nosso protocolo REGENI (27 marcadores):</b><br><br>
+        <b>Prioridade 1 (esta semana):</b><br>
+        • PCR ultrassensível (inflamação — meta &lt;0.5)<br>
+        • HbA1c (controle glicêmico — meta &lt;5.0%)<br>
+        • Vitamina D (meta 40-60 ng/mL)<br>
+        • Testosterona total (meta &gt;500 ng/dL)<br>
+        • Hemoglobina (capacidade de O2 — meta &gt;15)<br><br>
+        <b>Prioridade 2 (próximas 2 semanas):</b><br>
+        • Lipidograma completo (LDL, HDL, ApoB)<br>
+        • Hormonal (cortisol, TSH, T4)<br>
+        • Ferritina, ferro, B12<br>
+        • Glicose jejum + insulina (HOMA-IR)<br><br>
+        <b>Prioridade 3 (mensal):</b><br>
+        • VO2max lab (ergoespirometria)<br>
+        • Composição corporal (DEXA/BIA)<br>
+        • Índice Omega-3<br><br>
+        <a href="/exames.html" style="color:#00D4FF;font-weight:700;text-decoration:underline;">→ Registrar exames no app</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROTOCOLO 7: MENTAL -->
+  <div class="section">
+    <div class="section-title">🧠 #7 MENTAL + TDAH — O CÉREBRO É O CENTRO</div>
+    <div class="card">
+      <div style="color:#00D4FF;font-weight:700;font-size:13px;margin-bottom:8px;">"Evening Bryan, you're fired." — Bryan Johnson sobre autocontrole</div>
+      <div style="font-size:12px;color:#c0ccdd;line-height:1.6;">
+        <b style="color:#00D4FF;">Protocolo Mental Bryan Johnson:</b><br>
+        • Identifique a versão de você que sabota (ele chamou de "Evening Bryan")<br>
+        • Não permita decisões de saúde após 17h<br>
+        • Meditação/respiração 10min/dia<br><br>
+        <b style="color:#00D4FF;">Protocolo TDAH (Renisson):</b><br>
+        • <b>Dias COM Vyvanse:</b> Usar o foco para trabalho + documentação. Treinar mais leve (FC elevada).<br>
+        • <b>Dias SEM Vyvanse:</b> Treino intenso (dopamina natural). Contraste térmico (norepinefrina +200%). Café arábico pra foco.<br>
+        • <b>Estrutura externa:</b> O app REGENI é sua "muleta cognitiva" — checklists, lembretes, rotina fixa<br>
+        • <b>Magnésio à noite</b> ajuda sono (Vyvanse prejudica sono profundo)<br><br>
+        <b style="color:#27AE60;">O exercício é o melhor "remédio" para TDAH — libera dopamina e norepinefrina por 2-4h pós-treino</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELA SEMANAL -->
+  <div class="section">
+    <div class="section-title">📅 SEMANA MODELO — PROTOCOLO COBAIA</div>
+    <div class="card" style="overflow-x:auto;">
+      <table style="width:100%;font-size:11px;color:#c0ccdd;border-collapse:collapse;">
+        <tr style="color:#00D4FF;font-weight:700;border-bottom:1px solid #1e2d3d;">
+          <td style="padding:6px;">DIA</td><td style="padding:6px;">TREINO</td><td style="padding:6px;">SAUNA</td><td style="padding:6px;">NUTRIÇÃO</td><td style="padding:6px;">SONO</td></tr>
+        <tr style="border-bottom:1px solid #0a1020;"><td style="padding:6px;font-weight:700;">SEG</td><td>Easy 8km Z2</td><td>Pós-treino 30min</td><td>Alta proteína</td><td>23h-7h</td></tr>
+        <tr style="background:#080c14;border-bottom:1px solid #0a1020;"><td style="padding:6px;font-weight:700;">TER</td><td>Intervalos VO2max</td><td>Recovery 20min</td><td>+Carb (batata doce)</td><td>23h-7h</td></tr>
+        <tr style="border-bottom:1px solid #0a1020;"><td style="padding:6px;font-weight:700;">QUA</td><td>Descanso + Força</td><td>Longevidade 25min</td><td>Anti-inflam</td><td>22:30-7h</td></tr>
+        <tr style="background:#080c14;border-bottom:1px solid #0a1020;"><td style="padding:6px;font-weight:700;">QUI</td><td>Tempo Run Z3</td><td>Pós-treino 20min</td><td>+Carb + beterraba</td><td>23h-7h</td></tr>
+        <tr style="border-bottom:1px solid #0a1020;"><td style="padding:6px;font-weight:700;">SEX</td><td>Easy + Strides</td><td>Sono 20min</td><td>Normal</td><td>23h-7h</td></tr>
+        <tr style="background:#080c14;border-bottom:1px solid #0a1020;"><td style="padding:6px;font-weight:700;">SÁB</td><td>Longão 12-15km</td><td>Recovery 30min</td><td>+Carb loading</td><td>22:30-7h</td></tr>
+        <tr><td style="padding:6px;font-weight:700;color:#27AE60;">DOM</td><td style="color:#27AE60;">Descanso total</td><td>Contraste opcional</td><td>Leve, hidratação</td><td style="color:#27AE60;">22h-8h</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- METAS -->
+  <div class="section">
+    <div class="section-title">🎯 METAS 60 DIAS</div>
+    <div class="protocol-item"><div class="protocol-icon">🏃</div><div class="protocol-info"><div class="name">5km sub-15:00</div><div class="desc">Atual: 17:40 → Meta: 15:00 (pace 3:00/km). VDOT 63.9 → 70</div></div><span class="protocol-status status-active">-2:40</span></div>
+    <div class="protocol-item"><div class="protocol-icon">🏃</div><div class="protocol-info"><div class="name">10km sub-32:00</div><div class="desc">Atual: 36:30 → Meta: 32:00 (pace 3:12/km)</div></div><span class="protocol-status status-active">-4:30</span></div>
+    <div class="protocol-item"><div class="protocol-icon">🧬</div><div class="protocol-info"><div class="name">Idade biológica: 23 anos</div><div class="desc">Atual: 25.5 → Meta: 23 (8 anos abaixo da cronológica)</div></div><span class="protocol-status status-active">-2.5</span></div>
+    <div class="protocol-item"><div class="protocol-icon">😴</div><div class="protocol-info"><div class="name">Sono médio 8h+ qualidade 4+</div><div class="desc">Consistência é mais importante que quantidade</div></div><span class="protocol-status status-active">TRACKING</span></div>
+    <div class="protocol-item"><div class="protocol-icon">🩸</div><div class="protocol-info"><div class="name">Biomarcadores todos verdes</div><div class="desc">27 marcadores. Meta: zero em "atenção"</div></div><span class="protocol-status status-pending">EXAMES</span></div>
+    <div class="protocol-item"><div class="protocol-icon">🔥</div><div class="protocol-info"><div class="name">30 sessões de sauna</div><div class="desc">HSPs ativadas. Recovery otimizada. Toxinas eliminadas.</div></div><span class="protocol-status status-soon">SALA EM CONSTRUÇÃO</span></div>
+    <div class="protocol-item"><div class="protocol-icon">📊</div><div class="protocol-info"><div class="name">45+ check-ins em 60 dias</div><div class="desc">75% dos dias registrados. Dados alimentam IA.</div></div><span class="protocol-status status-active" id="metaCheckins">0/45</span></div>
+  </div>
+
+
+    <!-- PIRÂMIDE MEDICINA REGENERATIVA -->
+    
+
+</div>
+
+
+
+<div class="tab-content" id="tab-rodavida">
+  <div class="card" style="text-align:center;margin-bottom:16px">
+    <div style="font-size:36px;margin-bottom:8px">🎯</div>
+    <h2 style="color:#00D4FF;font-size:20px;margin-bottom:4px">Roda da Vida</h2>
+    <p style="color:#667788;font-size:13px">Método Paul J. Meyer — Avalie 12 dimensões da sua vida de 1 a 10</p>
+  </div>
+
+  <!-- RADAR CHART -->
+  <div class="card" id="rodaChartCard" style="display:none">
+    <h3 style="color:#00D4FF;font-size:15px;margin-bottom:12px">Sua Roda Atual</h3>
+    <div style="height:320px;position:relative">
+      <canvas id="chartRodaVida"></canvas>
+    </div>
+    <div style="text-align:center;margin-top:8px">
+      <span id="rodaScore" style="background:#00D4FF22;color:#00D4FF;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">Score: --/120</span>
+      <span id="rodaDate" style="color:#667788;font-size:11px;margin-left:8px"></span>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="card" id="rodaForm">
+    <h3 style="color:#00D4FF;font-size:15px;margin-bottom:16px">Nova Avaliação</h3>
+    <div id="rodaSliders"></div>
+    <textarea id="rodaObs" placeholder="Observações, reflexões, metas..." style="width:100%;min-height:60px;margin:12px 0;padding:12px;background:#080c14;border:1px solid #1e2d3d;border-radius:10px;color:#e2e8f0;font-family:inherit;font-size:13px;resize:vertical"></textarea>
+    <button onclick="salvarRodaVida()" style="width:100%;padding:14px;background:#00D4FF;color:#000;border:none;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit">💾 SALVAR AVALIAÇÃO</button>
+  </div>
+
+  <!-- EVOLUÇÃO -->
+  <div class="card" id="rodaEvolucao" style="display:none">
+    <h3 style="color:#00D4FF;font-size:15px;margin-bottom:8px">📈 Evolução</h3>
+    <div id="rodaHistorico"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalCheckin">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('checkin')">&times;</button>
+    <h2>📊 Check-in Diário</h2>
+    <div class="form-row">
+      <div class="form-group"><label>Peso (kg)</label><input type="number" step="0.1" id="cPeso" placeholder="72.5"></div>
+      <div class="form-group"><label>FC Repouso</label><input type="number" id="cFcRep" placeholder="55"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Horas de sono</label><input type="number" step="0.5" id="cSono" placeholder="7.5"></div>
+      <div class="form-group"><label>Qualidade sono (1-5)</label><div class="rating" id="rSono"></div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Hora dormir</label><input type="time" id="cDormir"></div>
+      <div class="form-group"><label>Hora acordar</label><input type="time" id="cAcordar"></div>
+    </div>
+    <div class="form-group"><label>Humor (1-10)</label><div class="rating" id="rHumor"></div></div>
+    <div class="form-group"><label>Energia (1-10)</label><div class="rating" id="rEnergia"></div></div>
+    <div class="toggle-row">
+      <span style="color:#8899bb;font-weight:600">💊 Vyvanse hoje?</span>
+      <div class="toggle" id="tVyvanse" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="form-group"><label>Notas</label><textarea id="cNotas" rows="2" placeholder="Como se sente..."></textarea></div>
+    <button class="btn-primary" onclick="salvarCheckin()">SALVAR CHECK-IN</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalAlimentacao">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('alimentacao')">&times;</button>
+    <h2>🍽️ Registrar Refeição</h2>
+    <div class="form-group"><label>Refeição</label><select id="aRefeicao"><option value="cafe">Café da manhã</option><option value="almoco">Almoço</option><option value="janta">Jantar</option><option value="snack">Lanche</option><option value="pos-treino">Pós-treino</option></select></div>
+    <div class="form-group"><label>O que comeu</label><textarea id="aDesc" rows="3" placeholder="3 ovos, banana..."></textarea></div>
+    <div class="form-group"><label>Horário</label><input type="time" id="aHorario"></div>
+    <button class="btn-primary" onclick="salvarAlimentacao()">REGISTRAR</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalSauna">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('sauna')">&times;</button>
+    <h2>🔥 Sessão de Sauna</h2>
+    <div class="form-group"><label>Protocolo</label><select id="sProtocolo"><option value="pos-treino">Pós-treino</option><option value="longevidade">Longevidade (HSP)</option><option value="sono">Sono/Relaxamento</option><option value="contraste">Contraste (quente+frio)</option></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Duração (min)</label><input type="number" id="sDuracao" placeholder="30"></div>
+      <div class="form-group"><label>Temp °C</label><input type="number" id="sTemp" placeholder="50"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>FC antes</label><input type="number" id="sFcAntes"></div>
+      <div class="form-group"><label>FC depois</label><input type="number" id="sFcDepois"></div>
+    </div>
+    <div class="form-group"><label>Sensação (1-10)</label><div class="rating" id="rSauna"></div></div>
+    <button class="btn-primary" onclick="salvarSauna()">REGISTRAR</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalAgenda">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('agenda')">&times;</button>
+    <h2>📅 Agenda</h2>
+    <div class="form-group"><label>Tipo</label><select id="gTipo"><option value="treino">Treino</option><option value="consulta">Consulta</option><option value="exame">Exame</option><option value="sauna">Sauna</option><option value="outro">Outro</option></select></div>
+    <div class="form-group"><label>Título</label><input type="text" id="gTitulo" placeholder="Ex: Longão 10km"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Horário</label><input type="time" id="gHorario"></div>
+      <div class="form-group"><label>Duração (min)</label><input type="number" id="gDuracao"></div>
+    </div>
+    <button class="btn-primary" onclick="salvarAgenda()">ADICIONAR</button>
+  </div>
+</div>
+
+
+<script>
+const API = window.location.origin;
+const TOKEN = localStorage.getItem('pace_token');
+const H = { 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN };
+
+// Tabs
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  try{event.target.classList.add('active');}catch(e){}
+  if(name==='rodavida') carregarRodaVida();
+}
+
+// Ratings
+function criarRating(id, max) {
+  const el = document.getElementById(id); if(!el) return;
+  for(let i=1;i<=max;i++){
+    const b = document.createElement('button');
+    b.className='rating-btn'; b.textContent=i;
+    b.onclick=()=>{ el.querySelectorAll('.rating-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); el.dataset.value=i; };
+    el.appendChild(b);
+  }
+}
+criarRating('rSono',5); criarRating('rHumor',10); criarRating('rEnergia',10); criarRating('rSauna',10);
+
+function abrirModal(n) { document.getElementById('modal'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('show'); }
+function fecharModal(n) { document.getElementById('modal'+n.charAt(0).toUpperCase()+n.slice(1)).classList.remove('show'); }
+
+// Save functions
+async function salvarCheckin() {
+  const body = { peso:parseFloat(document.getElementById('cPeso').value)||null, fcRepouso:parseInt(document.getElementById('cFcRep').value)||null, horasSono:parseFloat(document.getElementById('cSono').value)||null, qualidadeSono:parseInt(document.getElementById('rSono')?.dataset.value)||null, horasDormir:document.getElementById('cDormir').value||null, horasAcordar:document.getElementById('cAcordar').value||null, humor:parseInt(document.getElementById('rHumor')?.dataset.value)||null, energia:parseInt(document.getElementById('rEnergia')?.dataset.value)||null, vyvanse:document.getElementById('tVyvanse').classList.contains('on'), notas:document.getElementById('cNotas').value||null };
+  const r = await fetch(API+'/cobaia/checkin',{method:'POST',headers:H,body:JSON.stringify(body)});
+  const d = await r.json();
+  if(d.success){fecharModal('checkin');var t=document.querySelector('.btn-primary');if(t){t.textContent='✅ Salvo!';t.style.background='#27AE60';setTimeout(function(){t.textContent='💾 SALVAR';t.style.background='#00D4FF';},2000);}carregarDados();}else{var t=document.querySelector('.btn-primary');if(t){t.textContent='❌ '+(d.error||'Erro');setTimeout(function(){t.textContent='💾 SALVAR';},2000);}}
+}
+async function salvarAlimentacao() {
+  const body = { refeicao:document.getElementById('aRefeicao').value, descricao:document.getElementById('aDesc').value, horario:document.getElementById('aHorario').value||null };
+  if(!body.descricao) return alert('Descreva!');
+  const r = await fetch(API+'/cobaia/alimentacao',{method:'POST',headers:H,body:JSON.stringify(body)});
+  const d = await r.json();
+  if(d.success){fecharModal('alimentacao');carregarDados();}else{console.error(d.error);}
+}
+async function salvarSauna() {
+  const body = { protocolo:document.getElementById('sProtocolo').value, duracaoMin:parseInt(document.getElementById('sDuracao').value)||0, tempMedia:parseFloat(document.getElementById('sTemp').value)||null, fcAntes:parseInt(document.getElementById('sFcAntes').value)||null, fcDepois:parseInt(document.getElementById('sFcDepois').value)||null, sensacao:parseInt(document.getElementById('rSauna')?.dataset.value)||null };
+  if(!body.duracaoMin) return alert('Duração!');
+  const r = await fetch(API+'/cobaia/sauna',{method:'POST',headers:H,body:JSON.stringify(body)});
+  const d = await r.json();
+  if(d.success){fecharModal('sauna');carregarDados();}else{console.error(d.error);}
+}
+async function salvarAgenda() {
+  const body = { tipo:document.getElementById('gTipo').value, titulo:document.getElementById('gTitulo').value, horario:document.getElementById('gHorario').value||null, duracao:parseInt(document.getElementById('gDuracao').value)||null };
+  if(!body.titulo) return alert('Título!');
+  const r = await fetch(API+'/cobaia/agenda',{method:'POST',headers:H,body:JSON.stringify(body)});
+  const d = await r.json();
+  if(d.success){fecharModal('agenda');carregarDados();}else{console.error(d.error);}
+}
+async function syncStrava() {
+  const r = await fetch(API+'/integracoes/strava/sync',{method:'POST',headers:H});
+  const d = await r.json();
+  var btn=document.querySelector('.btn-sync');if(btn){btn.textContent=d.success?'✅ '+(d.sincronizadas||0)+' treinos sincronizados!':'❌ '+(d.error||'Erro');setTimeout(function(){btn.textContent='⚡ SINCRONIZAR STRAVA';},3000);}
+  carregarDados();
+}
+
+// Charts
+let chartPace, chartSono, chartVolume, chartBioAge;
+
+function paceToMin(pace) {
+  if(!pace) return null;
+  const p = pace.split(':');
+  return parseInt(p[0]) + parseInt(p[1]||0)/60;
+}
+
+function calcBioAge(data) {
+  // Estimativa simplificada de idade biológica
+  // Baseada em: VO2max, sono, consistência, peso
+  let age = 31; // idade cronológica estimada
+  let bioAge = age;
+  
+  // VO2max (VDOT 63.9 ~ VO2max 63) = reduz ~3 anos
+  const vo2Bonus = -3;
+  
+  // Sono (8h+ = -1 ano, <6h = +1 ano)
+  const sonoArr = data.diarios?.filter(d=>d.horasSono).map(d=>d.horasSono) || [];
+  const sonoMed = sonoArr.length ? sonoArr.reduce((a,b)=>a+b,0)/sonoArr.length : 7;
+  const sonoBonus = sonoMed >= 8 ? -1 : sonoMed >= 7 ? -0.5 : sonoMed < 6 ? 1 : 0;
+  
+  // Consistência treino (treina 4+/semana = -1 ano)
+  const treinoBonus = (data.totais?.treinosFeitos || 0) >= 4 ? -1 : 0;
+  
+  // Peso (54kg para corredor é ótimo = -0.5)
+  const pesoBonus = -0.5;
+  
+  bioAge = age + vo2Bonus + sonoBonus + treinoBonus + pesoBonus;
+  
+  return { bioAge: Math.round(bioAge * 10) / 10, factors: { vo2: vo2Bonus, sono: sonoBonus, treino: treinoBonus, peso: pesoBonus } };
+}
+
+function renderCharts(data) {
+  const treinos = (data.treinos || []).filter(t => t.distanciaKm > 1 && paceToMin(t.paceMedio) < 10).reverse();
+  
+  // Pace Chart
+  if(chartPace) chartPace.destroy();
+  if(treinos.length > 1) {
+    chartPace = new Chart(document.getElementById('chartPace'), {
+      type:'line',
+      data:{
+        labels: treinos.map(t => new Date(t.iniciadoEm).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})),
+        datasets:[{ label:'Pace (min/km)', data: treinos.map(t => paceToMin(t.paceMedio)),
+          borderColor:'#00D4FF', backgroundColor:'#00D4FF22', fill:true, tension:0.3, pointRadius:4, pointBackgroundColor:'#00D4FF' }]
+      },
+      options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{reverse:true, ticks:{color:'#667788'}, grid:{color:'#1e2d3d'}}, x:{ticks:{color:'#667788',maxRotation:45}, grid:{display:false}} } }
+    });
+  }
+
+  // Sono/Humor Chart
+  const diarios = (data.diarios || []).slice(-14);
+  if(chartSono) chartSono.destroy();
+  if(diarios.length > 0) {
+    chartSono = new Chart(document.getElementById('chartSono'), {
+      type:'bar',
+      data:{
+        labels: diarios.map(d => new Date(d.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})),
+        datasets:[
+          { label:'Sono (h)', data: diarios.map(d=>d.horasSono), backgroundColor:'#2980B966', borderColor:'#2980B9', borderWidth:1 },
+          { label:'Humor', data: diarios.map(d=>d.humor), backgroundColor:'#27AE6066', borderColor:'#27AE60', borderWidth:1 }
+        ]
+      },
+      options:{ responsive:true, plugins:{legend:{labels:{color:'#8899bb',font:{size:10}}}}, scales:{ y:{ticks:{color:'#667788'}, grid:{color:'#1e2d3d'}}, x:{ticks:{color:'#667788'}, grid:{display:false}} } }
+    });
+  }
+
+  // Volume Chart
+  if(chartVolume) chartVolume.destroy();
+  if(treinos.length > 2) {
+    const semanas = {};
+    treinos.forEach(t => {
+      const d = new Date(t.iniciadoEm);
+      const w = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+      semanas[w] = (semanas[w]||0) + t.distanciaKm;
+    });
+    chartVolume = new Chart(document.getElementById('chartVolume'), {
+      type:'bar',
+      data:{
+        labels: Object.keys(semanas).slice(-10),
+        datasets:[{ label:'KM', data: Object.values(semanas).slice(-10),
+          backgroundColor:'#00D4FF44', borderColor:'#00D4FF', borderWidth:1, borderRadius:6 }]
+      },
+      options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:'#667788'}, grid:{color:'#1e2d3d'}}, x:{ticks:{color:'#667788'}, grid:{display:false}} } }
+    });
+  }
+
+  // Bio Age Chart
+  if(chartBioAge) chartBioAge.destroy();
+  chartBioAge = new Chart(document.getElementById('chartBioAge'), {
+    type:'line',
+    data:{
+      labels: ['Início','Sem 2','Sem 4','Sem 6','Sem 8 (Meta)'],
+      datasets:[
+        { label:'Idade Cronológica', data:[31,31,31,31,31], borderColor:'#E74C3C', borderDash:[5,5], pointRadius:0 },
+        { label:'Idade Biológica (projeção)', data:[26,25.5,25,24.5,24], borderColor:'#27AE60', backgroundColor:'#27AE6022', fill:true, tension:0.3 }
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{labels:{color:'#8899bb',font:{size:10}}}}, scales:{ y:{ticks:{color:'#667788'}, grid:{color:'#1e2d3d'}}, x:{ticks:{color:'#667788'}, grid:{display:false}} } }
+  });
+}
+
+function renderTreinos(treinos) {
+  const list = document.getElementById('treinosList');
+  if(!treinos || !treinos.length) { list.innerHTML = '<div class="empty">Nenhum treino sincronizado</div>'; return; }
+  
+  list.innerHTML = treinos.filter(t=>t.distanciaKm>0.5).slice(0,15).map(t => {
+    const durMin = Math.floor(t.duracaoSeg/60);
+    const durSeg = t.duracaoSeg%60;
+    const vel = t.distanciaKm > 0 ? (t.distanciaKm/(t.duracaoSeg/3600)).toFixed(1) : '-';
+    const data = new Date(t.iniciadoEm).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+    return '<div class="treino-card">' +
+      '<div class="title">' + (t.titulo||'Corrida') + '</div>' +
+      '<div class="meta">' + data + ' • ' + (t.fonte||'manual') + '</div>' +
+      '<div class="stats">' +
+        '<div class="stat"><div class="val">' + t.distanciaKm + '</div><div class="lbl">KM</div></div>' +
+        '<div class="stat"><div class="val">' + durMin + ':' + String(durSeg).padStart(2,'0') + '</div><div class="lbl">TEMPO</div></div>' +
+        '<div class="stat"><div class="val">' + (t.paceMedio||'-') + '</div><div class="lbl">REGENI</div></div>' +
+        '<div class="stat"><div class="val">' + vel + '</div><div class="lbl">KM/H</div></div>' +
+      '</div></div>';
+  }).join('');
+}
+
+function renderBioAge(data) {
+  var useBE=data.bioAge!==undefined;
+  var bioAge=useBE?data.bioAge:calcBioAge(data).bioAge;
+  var age=data.atleta?.age||31;
+  var diff=(age-bioAge).toFixed(1);
+  document.getElementById('bioAgeNumber').textContent=bioAge;
+  document.getElementById('bioAgeDiff').innerHTML=diff>0?'↓ '+diff+' anos abaixo da cronológica':'Calculando...';
+  
+  var factors=document.getElementById('bioFactors');
+  if(data.scoreFatores){var labels={vo2:{i:'🫀',n:'VO2max'},hrv:{i:'💓',n:'HRV'},sleep:{i:'😴',n:'Sono'},training:{i:'🏃',n:'Treino'},body:{i:'⚖️',n:'Corpo'},stress:{i:'🧠',n:'Stress'}};var h='';for(var k in data.scoreFatores){var v=data.scoreFatores[k];var l=labels[k]||{i:'📊',n:k};var cor=v>=80?'#27AE60':v>=50?'#00D4FF':'#E74C3C';h+='<div class="protocol-item"><div class="protocol-icon">'+l.i+'</div><div class="protocol-info"><div class="name">'+l.n+'</div><div style="height:4px;background:#1e2d3d;border-radius:2px;margin-top:4px"><div style="height:100%;width:'+v+'%;background:'+cor+';border-radius:2px"></div></div></div><div style="font-size:14px;font-weight:800;color:'+cor+'">'+v+'</div></div>';}factors.innerHTML=h;}else{var bio=calcBioAge(data);factors.innerHTML=[{icon:'🫀',name:'VO2max',val:bio.factors.vo2,desc:'Elite'},{icon:'😴',name:'Sono',val:bio.factors.sono,desc:'8h+'},{icon:'🏃',name:'Treino',val:bio.factors.treino,desc:'Consistência'},{icon:'⚖️',name:'Corpo',val:bio.factors.peso,desc:'Peso'}].map(function(f){return'<div class="protocol-item"><div class="protocol-icon">'+f.icon+'</div><div class="protocol-info"><div class="name">'+f.name+'</div><div class="desc">'+f.desc+'</div></div><span class="protocol-status '+(f.val<0?'status-active':'status-pending')+'">'+(f.val<0?f.val:'+'+f.val)+' anos</span></div>';}).join('');}
+  if(data.score!==undefined){var badge=document.createElement('div');badge.style.cssText='text-align:center;margin-top:8px';badge.innerHTML='<span style="background:#00D4FF22;color:#00D4FF;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700">Score: '+data.score+'/100</span>';document.getElementById('bioAgeCard').appendChild(badge);}
+}
+
+// Main load
+async function carregarDados() {
+  document.getElementById("mKm").textContent="...";
+  document.getElementById("mTreinos").textContent="...";
+  console.log("carregarDados called");
+  try {
+    const r = await fetch(API+'/cobaia/dashboard',{headers:H});
+    const d = await r.json();
+    
+    document.getElementById('diaBadge').textContent = 'DIA '+(d.diaProtocolo||1)+'/60';
+    document.getElementById('streakBadge').textContent = '🔥 '+(d.streak||0)+' dias';
+    document.getElementById('mKm').textContent = d.totais?.kmTotal || '0';
+    document.getElementById('mTreinos').textContent = d.totais?.treinosFeitos || '0';
+    document.getElementById('mSaunas').textContent = d.totais?.sessSauna || '0';
+    document.getElementById('mExames').textContent = d.totais?.examesFeitos || '0';
+    document.getElementById('metaCheckins').textContent = (d.totais?.diasRegistrados||0)+'/30';
+    
+    const sonoArr = (d.diarios||[]).filter(x=>x.horasSono).map(x=>x.horasSono);
+    const humorArr = (d.diarios||[]).filter(x=>x.humor).map(x=>x.humor);
+    document.getElementById('mSono').textContent = sonoArr.length ? (sonoArr.reduce((a,b)=>a+b,0)/sonoArr.length).toFixed(1)+'h' : '-';
+    document.getElementById('mHumor').textContent = humorArr.length ? (humorArr.reduce((a,b)=>a+b,0)/humorArr.length).toFixed(1) : '-';
+    
+    // Hoje
+    const hoje = document.getElementById('hojeContent');
+    const rf = d.alimentacaoHoje||[];
+    const ag = d.agendaHoje||[];
+    let h = '';
+    if(rf.length) h += '<b style="color:#00D4FF">🍽️ Refeições:</b><br>'+rf.map(r=>'<span style="color:#8899bb">'+r.refeicao+':</span> '+r.descricao).join('<br>')+'<br><br>';
+    if(ag.length) h += '<b style="color:#00D4FF">📅 Agenda:</b><br>'+ag.map(a=>'['+(a.completado?'✓':'○')+'] '+a.titulo+(a.horario?' às '+a.horario:'')).join('<br>');
+    if(!h) h = '<div class="empty">Nenhum registro hoje. Use os botões acima!</div>';
+    hoje.innerHTML = h;
+    
+    renderCharts(d);
+    renderTreinos(d.treinos);
+    renderBioAge(d);
+  } catch(e) { console.error("COBAIA ERR:",e); document.getElementById("mKm").textContent="ERR"; document.getElementById("hojeContent").innerHTML="<div style=color:red>Erro: "+e.message+"</div>"; }
+}
+
+if(!TOKEN) window.location.href='/entrar.html';
+else { carregarDados().catch(function(e){console.error(e);}); }
+
+
+
+
+// ═══ RODA DA VIDA ═══
+var RODA_DIMS = [
+  {key:'carreira',label:'Carreira',color:'#6366f1',icon:'\u{1F4BC}'},
+  {key:'financas',label:'Finan\u00e7as',color:'#f59e0b',icon:'\u{1F4B0}'},
+  {key:'saude',label:'Sa\u00fade & Fitness',color:'#22c55e',icon:'\u{1F4AA}'},
+  {key:'familia',label:'Fam\u00edlia',color:'#f97316',icon:'\u{1F468}'},
+  {key:'amorRomance',label:'Amor',color:'#ec4899',icon:'\u2764'},
+  {key:'vidaSocial',label:'Social',color:'#06b6d4',icon:'\u{1F465}'},
+  {key:'crescimentoPessoal',label:'Crescimento',color:'#8b5cf6',icon:'\u{1F9E0}'},
+  {key:'recreacao',label:'Diversao',color:'#14b8a6',icon:'\u{1F3AE}'},
+  {key:'ambienteFisico',label:'Ambiente',color:'#a78bfa',icon:'\u{1F3E0}'},
+  {key:'contribuicao',label:'Impacto',color:'#7c3aed',icon:'\u{1F30D}'},
+  {key:'espiritualidade',label:'Espiritual',color:'#d946ef',icon:'\u{1F64F}'},
+  {key:'saudeMental',label:'Mental',color:'#f43f5e',icon:'\u{1F9D8}'}
+];
+var rodaVidaAtual = {};
+var chartRodaVida = null;
+
+function initRodaSliders() {
+  var container = document.getElementById('rodaSliders');
+  if (!container) return;
+  var html = '';
+  for (var d = 0; d < RODA_DIMS.length; d++) {
+    var dim = RODA_DIMS[d];
+    var val = rodaVidaAtual[dim.key] || 5;
+    html += '<div style="margin-bottom:14px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+    html += '<span style="font-size:13px;font-weight:600">' + dim.icon + ' ' + dim.label + '</span>';
+    html += '<span id="val-' + dim.key + '" style="font-size:18px;font-weight:900;color:' + dim.color + '">' + val + '</span>';
+    html += '</div>';
+    html += '<input type="range" min="1" max="10" value="' + val + '" data-key="' + dim.key + '" oninput="rodaSliderChange(this)" style="width:100%;accent-color:' + dim.color + ';height:6px">';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function rodaSliderChange(el) {
+  var key = el.getAttribute('data-key');
+  var val = parseInt(el.value);
+  document.getElementById('val-' + key).textContent = val;
+  rodaVidaAtual[key] = val;
+}
+
+function salvarRodaVida() {
+  var body = {};
+  for (var d = 0; d < RODA_DIMS.length; d++) {
+    body[RODA_DIMS[d].key] = rodaVidaAtual[RODA_DIMS[d].key] || 5;
+  }
+  var obs = document.getElementById('rodaObs');
+  body.observacoes = obs ? obs.value : '';
+  var btn = document.querySelector('#rodaForm button');
+  if (btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
+  fetch(API + '/cobaia/roda-vida', { method: 'POST', headers: H, body: JSON.stringify(body) })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (btn) { btn.disabled = false; }
+      if (d.success) {
+        if (btn) { btn.textContent = 'Salvo!'; btn.style.background = '#27AE60'; }
+        setTimeout(function() { if (btn) { btn.textContent = 'SALVAR'; btn.style.background = '#00D4FF'; } }, 2000);
+        carregarRodaVida();
+      } else {
+        if (btn) { btn.textContent = 'Erro'; }
+        setTimeout(function() { if (btn) { btn.textContent = 'SALVAR'; } }, 2000);
+      }
+    })
+    .catch(function() { if (btn) { btn.textContent = 'SALVAR'; btn.disabled = false; } });
+}
+
+function carregarRodaVida() {
+  fetch(API + '/cobaia/roda-vida', { headers: H })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.rodas && d.rodas.length > 0) {
+        var ultima = d.rodas[0];
+        for (var i = 0; i < RODA_DIMS.length; i++) {
+          rodaVidaAtual[RODA_DIMS[i].key] = ultima[RODA_DIMS[i].key] || 5;
+        }
+        initRodaSliders();
+        renderRodaChart(ultima);
+      } else {
+        for (var j = 0; j < RODA_DIMS.length; j++) {
+          rodaVidaAtual[RODA_DIMS[j].key] = 5;
+        }
+        initRodaSliders();
+      }
+    })
+    .catch(function() { initRodaSliders(); });
+}
+
+function renderRodaChart(atual) {
+  var card = document.getElementById('rodaChartCard');
+  if (!card) return;
+  card.style.display = 'block';
+  var labels = [];
+  var values = [];
+  var total = 0;
+  for (var i = 0; i < RODA_DIMS.length; i++) {
+    labels.push(RODA_DIMS[i].label);
+    var v = atual[RODA_DIMS[i].key] || 5;
+    values.push(v);
+    total += v;
+  }
+  var scoreEl = document.getElementById('rodaScore');
+  if (scoreEl) scoreEl.textContent = 'Score: ' + total + '/120';
+  var dateEl = document.getElementById('rodaDate');
+  if (dateEl) dateEl.textContent = new Date(atual.data).toLocaleDateString('pt-BR');
+  if (chartRodaVida) chartRodaVida.destroy();
+  var ctx = document.getElementById('chartRodaVida');
+  if (!ctx) return;
+  chartRodaVida = new Chart(ctx, {
+    type: 'radar',
+    data: { labels: labels, datasets: [{ label: 'Atual', data: values, backgroundColor: 'rgba(247,147,26,0.15)', borderColor: '#00D4FF', borderWidth: 2, pointBackgroundColor: '#00D4FF', pointRadius: 4 }] },
+    options: { scales: { r: { beginAtZero: true, max: 10, min: 0, ticks: { stepSize: 2, color: '#667788', backdropColor: 'transparent' }, grid: { color: 'rgba(30,45,61,0.5)' }, pointLabels: { color: '#e2e8f0', font: { size: 10 } } } }, plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }
+  });
+}
+
+// ═══ PLANO DO DIA ═══
+function gerarPlanoDia() {
+  var btn = document.getElementById('btnPlanoDia');
+  if (btn) { btn.textContent = 'Gerando...'; btn.disabled = true; }
+  var estado = { chronoAge: 31, vo2max: 63 };
+  fetch(API + '/decision/next-step', { method: 'POST', headers: H, body: JSON.stringify(estado) })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (btn) { btn.textContent = 'Atualizar'; btn.disabled = false; }
+      if (d.error) return;
+      var msgEl = document.getElementById('coachMsg');
+      if (msgEl && d.coachMessage) { msgEl.style.display = 'block'; msgEl.textContent = d.coachMessage; }
+      var planEl = document.getElementById('planoDia');
+      var emptyEl = document.getElementById('planoEmpty');
+      if (planEl && d.dayPlan && d.dayPlan.length > 0) {
+        if (emptyEl) emptyEl.style.display = 'none';
+        var html = '';
+        var icons = { 'manha': '\u{1F305}', 'tarde': '\u2600', 'noite': '\u{1F319}', 'qualquer_momento': '\u23F0' };
+        var cores = { treino: '#27AE60', sauna: '#E74C3C', sono: '#6366f1', stress: '#00D4FF' };
+        for (var i = 0; i < d.dayPlan.length; i++) {
+          var item = d.dayPlan[i];
+          var icon = icons[item.time] || '\u{1F4CB}';
+          var cor = cores[item.category] || '#667788';
+          var nome = item.name || (item.protocol ? item.protocol.name : item.category);
+          html += '<div style="background:#080c14;border:1px solid #1e2d3d;border-left:3px solid ' + cor + ';border-radius:10px;padding:12px;margin-bottom:6px">';
+          html += '<div style="display:flex;align-items:center;gap:8px">';
+          html += '<span style="font-size:18px">' + icon + '</span>';
+          html += '<span style="font-size:14px;font-weight:700;color:' + cor + '">' + nome + '</span>';
+          html += '<span style="font-size:10px;color:#667788;margin-left:auto">' + item.time + '</span>';
+          html += '</div></div>';
+        }
+        planEl.innerHTML = html;
+      }
+    })
+    .catch(function() { if (btn) { btn.textContent = 'Atualizar'; btn.disabled = false; } });
+}
+
+</script>
+
+<!-- REGENI NAV -->
+<style>
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
+.pace-nav a.active{color:#00D4FF}
+.pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
+body{padding-bottom:64px!important}
+</style>
+<nav class="pace-nav">
+<a href="/atleta.html" class="n-home"><span class="ni">🏠</span>INÍCIO</a>
+<a href="/corridas-abertas.html" class="n-corridas"><span class="ni">🏁</span>CORRIDAS</a>
+<a href="/ia.html" class="n-ia"><span class="ni">🤖</span>IA</a>
+<a href="/cobaia.html" class="n-cobaia"><span class="ni">🧬</span>COBAIA</a>
+<a href="/perfil.html" class="n-perfil"><span class="ni">👤</span>PERFIL</a>
+</nav>
+<script>
+(function(){var p=location.pathname;document.querySelectorAll(".pace-nav a").forEach(function(a){if(p===a.getAttribute("href")||(p==="/exames.html"&&a.classList.contains("n-cobaia"))||(p==="/cobaia-resultados.html"&&a.classList.contains("n-cobaia")))a.classList.add("active");});})();
+</script>
+<!-- /REGENI NAV -->
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GPS Tracker — REGENI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#00D4FF;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(8,11,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
+.topbar-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.gps-hero{background:linear-gradient(135deg,rgba(247,147,26,0.08),rgba(0,200,83,0.03));border-bottom:1px solid var(--border);padding:24px 20px;text-align:center}
+.gps-hero-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.gps-hero-title{font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.gps-hero-sub{font-size:13px;color:var(--muted)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:20px 16px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
+.stat-card .valor{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;color:var(--verde);display:block;line-height:1}
+.stat-card .label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;display:block}
+.tracker-box{margin:0 16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.tracker-header{padding:20px;border-bottom:1px solid var(--border);text-align:center}
+.tracker-status{display:inline-flex;align-items:center;gap:6px;background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.2);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:16px}
+.tracker-status.ativo{background:rgba(247,147,26,0.1);border-color:rgba(247,147,26,0.2);color:var(--verde)}
+.tracker-status::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.tracker-status.ativo::before{animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.tempo-display{font-family:'Space Grotesk',sans-serif;font-size:72px;font-weight:900;line-height:1;letter-spacing:-3px;color:var(--text);font-variant-numeric:tabular-nums}
+.tempo-display.correndo{color:var(--verde)}
+.metricas-live{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.metrica{text-align:center}
+.metrica .val{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:900;color:var(--text)}
+.metrica .val.verde{color:var(--verde)}
+.metrica .uni{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.btn-area{padding:16px 20px}
+.btn-iniciar{width:100%;padding:18px;background:var(--verde);color:#080B10;border:none;border-radius:50px;font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-iniciar:hover{background:var(--verde2);transform:scale(1.02);box-shadow:0 0 30px rgba(247,147,26,0.3)}
+.btn-parar{width:100%;padding:18px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:50px;font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:none;align-items:center;justify-content:center;gap:10px}
+.btn-parar:hover{background:rgba(239,68,68,0.25)}
+.historico-section{padding:0 16px 20px}
+.sec-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:900;margin-bottom:14px}
+.ativ-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:all 0.2s}
+.ativ-card:hover{border-color:var(--verde);background:var(--bg3)}
+.ativ-icon{width:44px;height:44px;background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ativ-info{flex:1}
+.ativ-titulo{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700}
+.ativ-data{font-size:11px;color:var(--muted);margin-top:2px}
+.ativ-stats{text-align:right}
+.ativ-km{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;color:var(--verde);line-height:1}
+.ativ-pace{font-size:11px;color:var(--muted)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+
+
+
+
+.nav-item.ativo 
+</style>
+<link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+<div class="topbar">
+  <a href="/" class="topbar-logo">REGENI</a>
+  <span class="topbar-title">📡 GPS Tracker</span>
+  <span style="width:52px"></span>
+</div>
+<div class="gps-hero">
+  <div class="gps-hero-label">🏃 Rastreie seu treino</div>
+  <div class="gps-hero-title">GPS <span style="color:var(--verde)">TRACKER</span></div>
+  <div class="gps-hero-sub">Distância, pace e rota em tempo real</div>
+</div>
+<div class="stats-grid">
+  <div class="stat-card"><span class="valor" id="totalKm">0</span><span class="label">KM Total</span></div>
+  <div class="stat-card"><span class="valor" id="totalAtiv">0</span><span class="label">Corridas</span></div>
+  <div class="stat-card"><span class="valor" id="semanaKm">0</span><span class="label">KM Semana</span></div>
+  <div class="stat-card"><span class="valor" id="totalCal">0</span><span class="label">Calorias</span></div>
+</div>
+<div class="tracker-box">
+  <div class="tracker-header">
+    <div class="tracker-status" id="statusBadge">Aguardando início</div>
+    <div class="tempo-display" id="timer">00:00:00</div>
+  </div>
+  <div class="metricas-live">
+    <div class="metrica">
+      <div class="val verde"><span id="distancia">0.00</span> <span style="font-size:16px">km</span></div>
+      <div class="uni">Distância</div>
+    </div>
+    <div class="metrica">
+      <div class="val"><span id="paceAtual">--:--</span></div>
+      <div class="uni">Pace /km</div>
+    </div>
+  </div>
+  <div class="btn-area">
+    <button class="btn-iniciar" id="btnIniciar" onclick="iniciarGPS()">▶ INICIAR CORRIDA</button>
+    <button class="btn-parar" id="btnParar" onclick="pararGPS()">⏹ PARAR E SALVAR</button>
+  </div>
+</div>
+<div class="historico-section" id="historicoSection">
+  <div class="sec-label">Seu histórico</div>
+  <div class="sec-title">Últimas Corridas</div>
+  <div id="listaAtiv"><div class="empty-state"><div class="empty-icon">🏃</div><div>Carregando...</div></div></div>
+</div>
+<script>
+const API='';
+const token=localStorage.getItem('pace_token');
+const headers={'Content-Type':'application/json'};
+if(token)headers['Authorization']='Bearer '+token;
+let watchId=null,pontos=[],startTime=null,timerInterval=null,distTotal=0;
+function toRad(d){return d*Math.PI/180}
+function haversine(la1,lo1,la2,lo2){const R=6371,dLa=toRad(la2-la1),dLo=toRad(lo2-lo1),a=Math.sin(dLa/2)**2+Math.cos(toRad(la1))*Math.cos(toRad(la2))*Math.sin(dLo/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+function fmtTime(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=Math.floor(s%60);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
+function calcPace(km,sec){if(km<=0)return'--:--';const p=sec/km,m=Math.floor(p/60),s=Math.floor(p%60);return m+':'+String(s).padStart(2,'0')}
+function iniciarGPS(){
+  if(!token){alert('Faca login primeiro!');sessionStorage.setItem('pace_redirect','/gps.html');location.href='/entrar.html';return}
+  if(!navigator.geolocation){alert('GPS nao disponivel');return}
+  pontos=[];distTotal=0;startTime=Date.now();
+  document.getElementById('btnIniciar').style.display='none';
+  document.getElementById('btnParar').style.display='flex';
+  document.getElementById('timer').classList.add('correndo');
+  const b=document.getElementById('statusBadge');
+  b.textContent='Correndo...';b.className='tracker-status ativo';
+  document.getElementById('historicoSection').style.display='none';
+  timerInterval=setInterval(()=>{document.getElementById('timer').textContent=fmtTime((Date.now()-startTime)/1000)},1000);
+  watchId=navigator.geolocation.watchPosition(pos=>{
+    const p={lat:pos.coords.latitude,lng:pos.coords.longitude,ts:Date.now()};
+    if(pontos.length>0){const l=pontos[pontos.length-1],d=haversine(l.lat,l.lng,p.lat,p.lng);if(d>0.003){distTotal+=d;pontos.push(p)}}
+    else pontos.push(p);
+    document.getElementById('distancia').textContent=distTotal.toFixed(2);
+    document.getElementById('paceAtual').textContent=calcPace(distTotal,(Date.now()-startTime)/1000);
+  },err=>console.warn(err.message),{enableHighAccuracy:true,maximumAge:3000,timeout:10000});
+}
+async function pararGPS(){
+  if(watchId)navigator.geolocation.clearWatch(watchId);
+  if(timerInterval)clearInterval(timerInterval);
+  const dur=Math.floor((Date.now()-startTime)/1000);
+  if(distTotal<0.01){alert('Distancia muito curta.');resetUI();return}
+  try{
+    const body={tipo:'corrida',distanciaKm:parseFloat(distTotal.toFixed(3)),duracaoSeg:dur,pontosRota:pontos,inicioLat:pontos[0]?.lat,inicioLng:pontos[0]?.lng,fimLat:pontos[pontos.length-1]?.lat,fimLng:pontos[pontos.length-1]?.lng,iniciadoEm:new Date(startTime).toISOString(),finalizadoEm:new Date().toISOString(),compartilhado:true};
+    const res=await fetch(API+'/gps/atividade',{method:'POST',headers,body:JSON.stringify(body)});
+    const data=await res.json();
+    if(data.success)alert('Atividade salva!\n'+data.atividade.distanciaKm+' km | Pace '+data.atividade.paceMedio+'\n+'+data.atividade.pontosGanhos+' pontos!');
+    else alert('Erro: '+(data.error||'Tente novamente'));
+  }catch(e){alert('Erro ao salvar: '+e.message)}
+  resetUI();carregarStats();carregarHistorico();
+}
+function resetUI(){
+  document.getElementById('btnIniciar').style.display='flex';
+  document.getElementById('btnParar').style.display='none';
+  document.getElementById('timer').classList.remove('correndo');
+  document.getElementById('timer').textContent='00:00:00';
+  document.getElementById('distancia').textContent='0.00';
+  document.getElementById('paceAtual').textContent='--:--';
+  const b=document.getElementById('statusBadge');b.textContent='Aguardando inicio';b.className='tracker-status';
+  document.getElementById('historicoSection').style.display='block';
+}
+async function carregarStats(){
+  if(!token)return;
+  try{const res=await fetch(API+'/gps/stats',{headers});const d=await res.json();
+    document.getElementById('totalKm').textContent=d.totalKm||0;
+    document.getElementById('totalAtiv').textContent=d.totalAtividades||0;
+    document.getElementById('semanaKm').textContent=d.semana?.km||0;
+    document.getElementById('totalCal').textContent=d.totalCalorias||0;
+  }catch(e){}
+}
+async function carregarHistorico(){
+  const el=document.getElementById('listaAtiv');
+  if(!token){el.innerHTML='<div class="empty-state"><div class="empty-icon">🔒</div><div>Faca login para ver seu historico</div></div>';return}
+  try{
+    const res=await fetch(API+'/gps/atividades?limit=8',{headers});
+    const data=await res.json();
+    if(!data.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🏃</div><div>Nenhuma atividade ainda. Comece agora!</div></div>';return}
+    el.innerHTML=data.map(a=>{
+      const dt=new Date(a.iniciadoEm);
+      const ds=dt.toLocaleDateString('pt-BR')+' as '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      return'<div class="ativ-card"><div class="ativ-icon">🏃</div><div class="ativ-info"><div class="ativ-titulo">'+(a.titulo||'Corrida')+'</div><div class="ativ-data">'+ds+'</div></div><div class="ativ-stats"><div class="ativ-km">'+a.distanciaKm.toFixed(2)+' km</div><div class="ativ-pace">'+(a.paceMedio||'--')+' /km</div></div></div>';
+    }).join('');
+  }catch(e){el.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div>Erro ao carregar</div></div>'}
+}
+carregarStats();carregarHistorico();
+</script>
+
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<!-- REGENI NAV -->
+<style>
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
+.pace-nav a.active{color:#00D4FF}
+.pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
+body{padding-bottom:64px!important}
+</style>
+<nav class="pace-nav">
+<a href="/" class="n-home"><span class="ni">🏠</span>INÍCIO</a>
+<a href="/corridas-abertas.html" class="n-corridas"><span class="ni">🏁</span>CORRIDAS</a>
+<a href="/ia.html" class="n-ia"><span class="ni">🤖</span>IA</a>
+<a href="/cobaia.html" class="n-cobaia"><span class="ni">🧬</span>COBAIA</a>
+<a href="/perfil.html" class="n-perfil"><span class="ni">👤</span>PERFIL</a>
+</nav>
+<script>
+(function(){var p=location.pathname;var logged=!!localStorage.getItem('pace_token');document.querySelectorAll('.pace-nav a').forEach(function(a){if(a.classList.contains('n-home')&&logged){a.href='/atleta.html';}if(p===a.getAttribute('href')||(p==='/atleta.html'&&a.classList.contains('n-home'))||(p==='/exames.html'&&a.classList.contains('n-cobaia'))||(p==='/cobaia-resultados.html'&&a.classList.contains('n-cobaia')))a.classList.add('active');});})();
+</script>
+<!-- /REGENI NAV -->
+
+</body>
+</html>

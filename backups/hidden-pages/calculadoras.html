@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Calculadoras — REGENI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#00D4FF;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(8,11,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:22px;color:#00D4FF;letter-spacing:2px;text-decoration:none}
+.topbar-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.page-hero{padding:24px 20px;text-align:center;background:linear-gradient(135deg,rgba(247,147,26,0.06),transparent);border-bottom:1px solid var(--border)}
+.page-label{font-size:10px;font-weight:700;color:#00D4FF;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.page-title{font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:8px;padding:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.tab.ativo{background:var(--verde);color:#080B10;border-color:#00D4FF}
+.panel{display:none;padding:0 16px}
+.panel.ativo{display:block}
+.calc-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px}
+.calc-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px}
+.calc-desc{font-size:12px;color:var(--muted);margin-bottom:20px}
+.field-group{margin-bottom:16px}
+.field-label{font-size:11px;font-weight:700;color:#00D4FF;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block}
+.field-row{display:flex;gap:8px}
+.field-input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;font-size:16px;font-family:'Space Grotesk',sans-serif;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
+.field-input:focus{border-color:#00D4FF}
+.field-input::placeholder{color:var(--muted)}
+.field-unit{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;white-space:nowrap}
+.btn-calc{width:100%;padding:14px;background:var(--verde);color:#080B10;border:none;border-radius:50px;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:all 0.2s;margin-top:4px}
+.btn-calc:hover{background:var(--verde2);transform:scale(1.02)}
+.resultado{background:var(--bg3);border:1px solid rgba(247,147,26,0.2);border-radius:14px;padding:16px;margin-top:16px;display:none;text-align:center}
+.resultado.show{display:block}
+.resultado-label{font-size:11px;font-weight:700;color:#00D4FF;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.resultado-valor{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:900;color:#00D4FF;line-height:1}
+.resultado-unit{font-size:14px;color:var(--muted);margin-top:4px}
+.resultado-extra{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.extra-item{background:var(--bg2);border-radius:10px;padding:10px;text-align:center}
+.extra-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:900;color:var(--text)}
+.extra-lbl{font-size:10px;color:var(--muted);margin-top:2px}
+.tabela-ref{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:16px}
+.tabela-header{padding:14px 16px;border-bottom:1px solid var(--border)}
+.tabela-header-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900}
+.tabela-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px}
+.tabela-row:last-child{border-bottom:none}
+.tabela-row.head{background:var(--bg3);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.dist-val{color:#00D4FF;font-weight:700}
+
+
+
+
+.nav-item.ativo 
+</style>
+<link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+<div class="topbar">
+  <a href="/" class="topbar-logo">REGENI</a>
+  <span class="topbar-title">⏱️ Calculadoras</span>
+  <span style="width:52px"></span>
+</div>
+<div class="page-hero">
+  <div class="page-label">⚡ Ferramentas do corredor</div>
+  <div class="page-title">CALCULA<span style="color:#00D4FF">DORAS</span></div>
+  <div class="page-sub">Pace, tempo de prova e zonas de treino</div>
+</div>
+<div class="tabs">
+  <button class="tab ativo" onclick="mudarTab('pace')">⏱️ Pace</button>
+  <button class="tab" onclick="mudarTab('tempo')">🏁 Tempo de Prova</button>
+  <button class="tab" onclick="mudarTab('distancia')">📏 Distância</button>
+  <button class="tab" onclick="mudarTab('fc')">❤️ Zonas FC</button>
+  <button class="tab" onclick="mudarTab('referencia')">📊 Referência</button>
+</div>
+
+<div class="panel ativo" id="panel-pace">
+  <div class="calc-card">
+    <div class="calc-title">Calcular Pace</div>
+    <div class="calc-desc">Informe distância e tempo para descobrir seu pace médio</div>
+    <div class="field-group">
+      <span class="field-label">Distância</span>
+      <div class="field-row">
+        <input class="field-input" id="pace-dist" type="number" placeholder="Ex: 10" step="0.1">
+        <div class="field-unit">km</div>
+      </div>
+    </div>
+    <div class="field-group">
+      <span class="field-label">Tempo total</span>
+      <div class="field-row">
+        <input class="field-input" id="pace-h" type="number" placeholder="HH" min="0" max="99" style="text-align:center">
+        <div class="field-unit">h</div>
+        <input class="field-input" id="pace-m" type="number" placeholder="MM" min="0" max="59" style="text-align:center">
+        <div class="field-unit">min</div>
+        <input class="field-input" id="pace-s" type="number" placeholder="SS" min="0" max="59" style="text-align:center">
+        <div class="field-unit">seg</div>
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calcPace()">CALCULAR REGENI</button>
+    <div class="resultado" id="res-pace">
+      <div class="resultado-label">Seu pace médio</div>
+      <div class="resultado-valor" id="res-pace-val">--:--</div>
+      <div class="resultado-unit">min/km</div>
+      <div class="resultado-extra">
+        <div class="extra-item"><div class="extra-val" id="res-pace-vel">--</div><div class="extra-lbl">km/h</div></div>
+        <div class="extra-item"><div class="extra-val" id="res-pace-cat">--</div><div class="extra-lbl">Nível</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-tempo">
+  <div class="calc-card">
+    <div class="calc-title">Tempo de Prova</div>
+    <div class="calc-desc">Informe pace e distância para calcular o tempo estimado</div>
+    <div class="field-group">
+      <span class="field-label">Distância</span>
+      <div class="field-row">
+        <select class="field-input" id="tempo-dist-sel" onchange="toggleDistCustom()">
+          <option value="5">5 km</option>
+          <option value="10" selected>10 km</option>
+          <option value="15">15 km</option>
+          <option value="21.097">Meia Maratona</option>
+          <option value="42.195">Maratona</option>
+          <option value="custom">Personalizado</option>
+        </select>
+      </div>
+      <div id="tempo-dist-custom" style="display:none;margin-top:8px">
+        <div class="field-row">
+          <input class="field-input" id="tempo-dist" type="number" placeholder="km" step="0.1">
+          <div class="field-unit">km</div>
+        </div>
+      </div>
+    </div>
+    <div class="field-group">
+      <span class="field-label">Pace alvo</span>
+      <div class="field-row">
+        <input class="field-input" id="tempo-pace-m" type="number" placeholder="Min" min="2" max="20" style="text-align:center">
+        <div class="field-unit">min</div>
+        <input class="field-input" id="tempo-pace-s" type="number" placeholder="Seg" min="0" max="59" style="text-align:center">
+        <div class="field-unit">seg /km</div>
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calcTempo()">CALCULAR TEMPO</button>
+    <div class="resultado" id="res-tempo">
+      <div class="resultado-label">Tempo estimado</div>
+      <div class="resultado-valor" id="res-tempo-val">--:--:--</div>
+      <div class="resultado-unit" id="res-tempo-dist">--</div>
+      <div class="resultado-extra">
+        <div class="extra-item"><div class="extra-val" id="res-tempo-vel">--</div><div class="extra-lbl">km/h médio</div></div>
+        <div class="extra-item"><div class="extra-val" id="res-tempo-cat">--</div><div class="extra-lbl">Nível</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-distancia">
+  <div class="calc-card">
+    <div class="calc-title">Distância Percorrida</div>
+    <div class="calc-desc">Informe pace e tempo para calcular a distância</div>
+    <div class="field-group">
+      <span class="field-label">Pace</span>
+      <div class="field-row">
+        <input class="field-input" id="dist-pace-m" type="number" placeholder="Min" style="text-align:center">
+        <div class="field-unit">min</div>
+        <input class="field-input" id="dist-pace-s" type="number" placeholder="Seg" min="0" max="59" style="text-align:center">
+        <div class="field-unit">seg /km</div>
+      </div>
+    </div>
+    <div class="field-group">
+      <span class="field-label">Tempo corrido</span>
+      <div class="field-row">
+        <input class="field-input" id="dist-h" type="number" placeholder="HH" style="text-align:center">
+        <div class="field-unit">h</div>
+        <input class="field-input" id="dist-m" type="number" placeholder="MM" min="0" max="59" style="text-align:center">
+        <div class="field-unit">min</div>
+        <input class="field-input" id="dist-s" type="number" placeholder="SS" min="0" max="59" style="text-align:center">
+        <div class="field-unit">seg</div>
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calcDistancia()">CALCULAR DISTÂNCIA</button>
+    <div class="resultado" id="res-dist">
+      <div class="resultado-label">Distância percorrida</div>
+      <div class="resultado-valor" id="res-dist-val">--</div>
+      <div class="resultado-unit">km</div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-fc">
+  <div class="calc-card">
+    <div class="calc-title">Zonas de Frequência Cardíaca</div>
+    <div class="calc-desc">Calcule suas zonas de treino pela FC máxima ou idade</div>
+    <div class="field-group">
+      <span class="field-label">Sua idade</span>
+      <div class="field-row">
+        <input class="field-input" id="fc-idade" type="number" placeholder="Ex: 35" min="10" max="100">
+        <div class="field-unit">anos</div>
+      </div>
+    </div>
+    <div class="field-group">
+      <span class="field-label">Ou insira sua FC máxima real</span>
+      <div class="field-row">
+        <input class="field-input" id="fc-max" type="number" placeholder="Ex: 185" min="100" max="250">
+        <div class="field-unit">bpm</div>
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calcFC()">CALCULAR ZONAS</button>
+    <div class="resultado" id="res-fc" style="text-align:left">
+      <div class="resultado-label" style="text-align:center">Suas zonas de treino</div>
+      <div id="res-fc-zonas"></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-referencia">
+  <div class="tabela-ref">
+    <div class="tabela-header"><div class="tabela-header-title">⏱️ Pace × Tempos de Prova</div></div>
+    <div class="tabela-row head"><div>Pace</div><div>5 km</div><div>10 km</div><div>21,1 km</div></div>
+    <div class="tabela-row"><div class="dist-val">3:30/km</div><div>17:30</div><div>35:00</div><div>1:14:00</div></div>
+    <div class="tabela-row"><div class="dist-val">4:00/km</div><div>20:00</div><div>40:00</div><div>1:24:23</div></div>
+    <div class="tabela-row"><div class="dist-val">4:30/km</div><div>22:30</div><div>45:00</div><div>1:34:56</div></div>
+    <div class="tabela-row"><div class="dist-val">5:00/km</div><div>25:00</div><div>50:00</div><div>1:45:29</div></div>
+    <div class="tabela-row"><div class="dist-val">5:30/km</div><div>27:30</div><div>55:00</div><div>1:56:02</div></div>
+    <div class="tabela-row"><div class="dist-val">6:00/km</div><div>30:00</div><div>1:00:00</div><div>2:06:35</div></div>
+    <div class="tabela-row"><div class="dist-val">6:30/km</div><div>32:30</div><div>1:05:00</div><div>2:17:08</div></div>
+    <div class="tabela-row"><div class="dist-val">7:00/km</div><div>35:00</div><div>1:10:00</div><div>2:27:41</div></div>
+    <div class="tabela-row"><div class="dist-val">7:30/km</div><div>37:30</div><div>1:15:00</div><div>2:38:14</div></div>
+    <div class="tabela-row"><div class="dist-val">8:00/km</div><div>40:00</div><div>1:20:00</div><div>2:48:47</div></div>
+  </div>
+  <div class="tabela-ref">
+    <div class="tabela-header"><div class="tabela-header-title">🏆 Maratona × Nível</div></div>
+    <div class="tabela-row head"><div>Tempo</div><div>Pace</div><div>Vel.</div><div>Nível</div></div>
+    <div class="tabela-row"><div class="dist-val">Sub 2:30</div><div>3:33/km</div><div>16,9</div><div>Elite</div></div>
+    <div class="tabela-row"><div class="dist-val">Sub 3:00</div><div>4:15/km</div><div>14,1</div><div>Avançado</div></div>
+    <div class="tabela-row"><div class="dist-val">Sub 3:30</div><div>4:58/km</div><div>12,1</div><div>Intermediário</div></div>
+    <div class="tabela-row"><div class="dist-val">Sub 4:00</div><div>5:41/km</div><div>10,5</div><div>Regular</div></div>
+    <div class="tabela-row"><div class="dist-val">Sub 4:30</div><div>6:24/km</div><div>9,4</div><div>Iniciante+</div></div>
+    <div class="tabela-row"><div class="dist-val">Sub 5:00</div><div>7:06/km</div><div>8,4</div><div>Iniciante</div></div>
+  </div>
+</div>
+
+<script>
+function mudarTab(id){
+  const ids=['pace','tempo','distancia','fc','referencia'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('ativo',ids[i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('ativo'));
+  document.getElementById('panel-'+id).classList.add('ativo');
+}
+function fmtPace(s){const m=Math.floor(s/60),ss=Math.floor(s%60);return m+':'+String(ss).padStart(2,'0')}
+function fmtTempo(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=Math.floor(s%60);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
+function nivel(p){if(p<240)return'Elite';if(p<300)return'Avancado';if(p<360)return'Intermediario';if(p<480)return'Regular';return'Iniciante'}
+function calcPace(){
+  const dist=parseFloat(document.getElementById('pace-dist').value)||0;
+  const h=parseInt(document.getElementById('pace-h').value)||0;
+  const m=parseInt(document.getElementById('pace-m').value)||0;
+  const s=parseInt(document.getElementById('pace-s').value)||0;
+  if(!dist||(!h&&!m&&!s)){alert('Preencha distancia e tempo!');return}
+  const tot=h*3600+m*60+s,pace=tot/dist;
+  document.getElementById('res-pace-val').textContent=fmtPace(pace);
+  document.getElementById('res-pace-vel').textContent=(dist/(tot/3600)).toFixed(1);
+  document.getElementById('res-pace-cat').textContent=nivel(pace);
+  document.getElementById('res-pace').classList.add('show');
+}
+function toggleDistCustom(){
+  document.getElementById('tempo-dist-custom').style.display=document.getElementById('tempo-dist-sel').value==='custom'?'block':'none';
+}
+function calcTempo(){
+  const sel=document.getElementById('tempo-dist-sel').value;
+  const dist=sel==='custom'?parseFloat(document.getElementById('tempo-dist').value)||0:parseFloat(sel);
+  const pm=parseInt(document.getElementById('tempo-pace-m').value)||0;
+  const ps=parseInt(document.getElementById('tempo-pace-s').value)||0;
+  if(!dist||!pm){alert('Preencha distancia e pace!');return}
+  const pace=pm*60+ps,tot=pace*dist;
+  document.getElementById('res-tempo-val').textContent=fmtTempo(tot);
+  document.getElementById('res-tempo-dist').textContent=dist+' km a '+fmtPace(pace)+'/km';
+  document.getElementById('res-tempo-vel').textContent=(dist/(tot/3600)).toFixed(1);
+  document.getElementById('res-tempo-cat').textContent=nivel(pace);
+  document.getElementById('res-tempo').classList.add('show');
+}
+function calcDistancia(){
+  const pm=parseInt(document.getElementById('dist-pace-m').value)||0;
+  const ps=parseInt(document.getElementById('dist-pace-s').value)||0;
+  const h=parseInt(document.getElementById('dist-h').value)||0;
+  const m=parseInt(document.getElementById('dist-m').value)||0;
+  const s=parseInt(document.getElementById('dist-s').value)||0;
+  if(!pm||(!h&&!m&&!s)){alert('Preencha pace e tempo!');return}
+  const pace=pm*60+ps,tot=h*3600+m*60+s;
+  document.getElementById('res-dist-val').textContent=(tot/pace).toFixed(2);
+  document.getElementById('res-dist').classList.add('show');
+}
+function calcFC(){
+  const idade=parseInt(document.getElementById('fc-idade').value)||0;
+  let fcMax=parseInt(document.getElementById('fc-max').value)||0;
+  if(!fcMax&&!idade){alert('Informe sua idade ou FC maxima!');return}
+  if(!fcMax)fcMax=220-idade;
+  const zonas=[
+    {nome:'Z1 — Recuperacao',pct:[50,60],cor:'#64748B',desc:'Aquecimento e recuperacao ativa'},
+    {nome:'Z2 — Base Aerobica',pct:[60,70],cor:'#3b82f6',desc:'Queima de gordura, base de resistencia'},
+    {nome:'Z3 — Aerobico Moderado',pct:[70,80],cor:'#00D4FF',desc:'Melhora resistencia cardiovascular'},
+    {nome:'Z4 — Limiar',pct:[80,90],cor:'#FF6D00',desc:'Aumenta limiar de lactato'},
+    {nome:'Z5 — Maximo',pct:[90,100],cor:'#ef4444',desc:'Velocidade e potencia maxima'},
+  ];
+  document.getElementById('res-fc-zonas').innerHTML='<div style="text-align:center;margin-bottom:12px"><span style="font-family:Space Grotesk,sans-serif;font-size:32px;font-weight:900;color:#00D4FF">'+fcMax+' bpm</span><span style="font-size:12px;color:var(--muted);display:block">FC Maxima</span></div>'+zonas.map(z=>'<div style="margin-bottom:8px;background:var(--bg2);border-radius:12px;padding:12px;border-left:3px solid '+z.cor+'"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:Space Grotesk,sans-serif;font-size:15px;font-weight:700;color:'+z.cor+'">'+z.nome+'</span><span style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:900">'+Math.round(fcMax*z.pct[0]/100)+'–'+Math.round(fcMax*z.pct[1]/100)+' bpm</span></div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+z.desc+'</div></div>').join('');
+  document.getElementById('res-fc').classList.add('show');
+}
+</script>
+
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<!-- REGENI NAV -->
+<style>
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
+.pace-nav a.active{color:#00D4FF}
+.pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
+body{padding-bottom:64px!important}
+</style>
+<nav class="pace-nav">
+<a href="/" class="n-home"><span class="ni">🏠</span>INÍCIO</a>
+<a href="/corridas-abertas.html" class="n-corridas"><span class="ni">🏁</span>CORRIDAS</a>
+<a href="/ia.html" class="n-ia"><span class="ni">🤖</span>IA</a>
+<a href="/cobaia.html" class="n-cobaia"><span class="ni">🧬</span>COBAIA</a>
+<a href="/perfil.html" class="n-perfil"><span class="ni">👤</span>PERFIL</a>
+</nav>
+<script>
+(function(){var p=location.pathname;var logged=!!localStorage.getItem('pace_token');document.querySelectorAll('.pace-nav a').forEach(function(a){if(a.classList.contains('n-home')&&logged){a.href='/atleta.html';}if(p===a.getAttribute('href')||(p==='/atleta.html'&&a.classList.contains('n-home'))||(p==='/exames.html'&&a.classList.contains('n-cobaia'))||(p==='/cobaia-resultados.html'&&a.classList.contains('n-cobaia')))a.classList.add('active');});})();
+</script>
+<!-- /REGENI NAV -->
+
+</body>
+</html>

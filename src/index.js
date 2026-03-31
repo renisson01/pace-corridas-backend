@@ -40,6 +40,8 @@ import { amigoPaceRoutes }       from './modules/amigo-pace/amigo-pace.routes.js
 import { predictionRoutes } from './modules/prediction/prediction.routes.js';
 import { integracoesRoutes }    from './modules/integracoes/integracoes.routes.js';
 import { leagueRoutes } from './modules/league/league.routes.js';
+import { organizerRoutes }       from "./modules/organizer/organizer.routes.js";
+import scraperBrasilRoutes from "./modules/agegroups/scraper-brasil.routes.js";
 import { passportRoutes } from './modules/passport/passport.routes.js';
 import { subscriptionRoutes } from './modules/subscription/subscription.routes.js';
 import { cobaiaRoutes } from './modules/cobaia/cobaia.routes.js';
@@ -155,6 +157,8 @@ try {
   await app.register(leagueRoutes);
   await app.register(passportRoutes);
   await app.register(subscriptionRoutes);
+  await app.register(organizerRoutes);
+  await app.register(scraperBrasilRoutes);
   await app.register(cobaiaRoutes);
   await app.register(bioageRoutes);
   await app.register(decisionRoutes);

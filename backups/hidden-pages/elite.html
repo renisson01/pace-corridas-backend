@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>REGENI — Resultados & Ranking Brasil</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#00D4FF;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
+
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(8,11,16,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px}
+.stats-row{display:flex;gap:16px}
+.stat-item{text-align:center}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900;color:var(--laranja);line-height:1}
+.stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+.main-tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.main-tabs::-webkit-scrollbar{display:none}
+.main-tab{flex-shrink:0;padding:11px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--muted);border:none;background:transparent;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer}
+.main-tab.ativo{color:var(--verde);border-bottom-color:var(--verde)}
+
+.secao{display:none;padding:12px 16px}
+.secao.ativo{display:block}
+
+/* Seletor corrida */
+.selector-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+.selector-box label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px}
+.sel-corrida{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:10px;font-size:13px;font-family:'Space Grotesk',sans-serif;outline:none;cursor:pointer}
+.sel-corrida:focus{border-color:var(--verde)}
+.info-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.itag{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted)}
+.itag strong{color:var(--text)}
+
+/* Sub-tabs corrida */
+.sub-tabs{display:flex;gap:6px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:10px;overflow-x:auto;scrollbar-width:none}
+.sub-tab{flex-shrink:0;padding:6px 14px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);border:none;background:transparent;border-radius:20px;cursor:pointer;transition:all .2s}
+.sub-tab.sel{background:var(--verde);color:#080B10}
+
+/* Dist tabs */
+.dist-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.dtab{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s}
+.dtab.sel{background:var(--verde);color:#080B10;border-color:var(--verde)}
+
+/* Filtros */
+.filtros-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.btn-gen{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-gen.sel{background:var(--verde);color:#080B10;border-color:var(--verde)}
+.input-filtro{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-size:12px;font-family:'Space Grotesk',sans-serif;outline:none;min-width:120px;flex:1}
+.input-filtro:focus{border-color:var(--verde)}
+.sel-faixa{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-size:12px;font-family:'Space Grotesk',sans-serif;outline:none;cursor:pointer}
+
+/* Cartaz */
+.cartaz-wrap{margin-bottom:12px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,109,0,.25)}
+.cartaz-wrap img{width:100%;display:block}
+
+/* Resultado card */
+.res-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;cursor:pointer;transition:all .15s;text-decoration:none;color:inherit}
+.res-card:hover{border-color:rgba(247,147,26,.3);background:rgba(247,147,26,.03)}
+.pos-badge{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:900;flex-shrink:0}
+.p1{background:linear-gradient(135deg,#FFD700,#FFA500);color:#080B10}
+.p2{background:linear-gradient(135deg,#C0C0C0,#909090);color:#080B10}
+.p3{background:linear-gradient(135deg,#CD7F32,#8B5020);color:#fff}
+.pn{background:var(--bg3);color:var(--muted)}
+.res-info{flex:1;min-width:0}
+.res-nome{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.res-sub{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res-tempo{text-align:right;flex-shrink:0}
+.res-tempo p{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1}
+.res-tempo span{font-size:10px;color:var(--muted)}
+
+/* Faixa card */
+.faixa-header{background:var(--bg2);border:1px solid rgba(247,147,26,.2);border-radius:12px;padding:10px 14px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faixa-titulo{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:900;color:var(--verde)}
+.faixa-total{font-size:11px;color:var(--muted)}
+.faixa-body{display:none;margin-bottom:8px}
+.faixa-body.open{display:block}
+
+/* Ranking */
+.rank-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;cursor:pointer;transition:border-color .15s}
+.rank-card:hover{border-color:rgba(247,147,26,.3)}
+.nivel-badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
+.nv-em{background:rgba(255,215,0,.15);color:#FFD700;border:1px solid rgba(255,215,0,.3)}
+.nv-en{background:rgba(255,109,0,.15);color:#FF6D00;border:1px solid rgba(255,109,0,.3)}
+.nv-er{background:rgba(59,130,246,.15);color:#60A5FA;border:1px solid rgba(59,130,246,.3)}
+.nv-se{background:rgba(247,147,26,.15);color:var(--verde);border:1px solid rgba(247,147,26,.3)}
+.nv-av{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
+
+.loading{text-align:center;padding:32px;color:var(--muted);font-size:26px}
+.empty{text-align:center;padding:32px;color:var(--muted);font-size:13px}
+.secao-lbl{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:900;margin-bottom:10px;color:var(--text)}
+
+
+
+.nav-item.ativo{color:var(--laranja)}
+
+
+
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1C2333;border:1px solid rgba(247,147,26,.3);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;display:none;white-space:nowrap}
+</style>
+<link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/" class="logo">REGENI</a>
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-num" id="sCorridas">—</div><div class="stat-lbl">Corridas</div></div>
+    <div class="stat-item"><div class="stat-num" id="sResultados">—</div><div class="stat-lbl">Resultados</div></div>
+    <div class="stat-item"><div class="stat-num" id="sAtletas">—</div><div class="stat-lbl">Atletas</div></div>
+  </div>
+</div>
+
+<div class="main-tabs">
+  <button class="main-tab ativo" onclick="aba('resultados')" id="mt-resultados">🏅 Resultados</button>
+  <button class="main-tab" onclick="aba('ranking')" id="mt-ranking">🇧🇷 Ranking BR</button>
+  <button class="main-tab" onclick="aba('pontuacao')" id="mt-pontuacao">⭐ Pontuação</button>
+</div>
+
+<!-- ===== ABA RESULTADOS ===== -->
+<div class="secao ativo" id="secao-resultados">
+
+  <div class="selector-box">
+    <label>Selecionar prova</label>
+    <select class="sel-corrida" id="selCorrida" onchange="corridaSelecionada()">
+      <option value="">⏳ Carregando...</option>
+    </select>
+    <div class="info-tags" id="infoTags" style="display:none">
+      <span class="itag">📅 <strong id="tagData"></strong></span>
+      <span class="itag">📍 <strong id="tagLocal"></strong></span>
+      <span class="itag">👟 <strong id="tagTotal"></strong> atletas</span>
+    </div>
+    <div class="dist-row" id="distRow"></div>
+  </div>
+
+  <div class="cartaz-wrap" id="cartazWrap" style="display:none">
+    <img id="cartazImg" src="" alt="Cartaz">
+  </div>
+
+  <div class="sub-tabs" id="subTabs" style="display:none">
+    <button class="sub-tab sel" onclick="subAba('top50')" id="st-top50">🏆 Top 50</button>
+    <button class="sub-tab" onclick="subAba('todos')" id="st-todos">👥 Todos</button>
+    <button class="sub-tab" onclick="subAba('faixas')" id="st-faixas">🎂 Faixas Etárias</button>
+  </div>
+
+  <!-- TOP 50 -->
+  <div id="area-top50">
+    <div class="loading" id="loadTop50">Selecione uma prova acima ☝️</div>
+    <div id="top50M" style="display:none"></div>
+    <div id="top50F" style="display:none"></div>
+  </div>
+
+  <!-- TODOS -->
+  <div id="area-todos" style="display:none">
+    <div class="filtros-row">
+      <input class="input-filtro" id="inputBusca" type="text" placeholder="🔍 Nome ou equipe..." oninput="filtrarTodos()">
+      <button class="btn-gen sel" onclick="setGenTodos('')" id="gt-">Todos</button>
+      <button class="btn-gen" onclick="setGenTodos('M')" id="gt-M">👨</button>
+      <button class="btn-gen" onclick="setGenTodos('F')" id="gt-F">👩</button>
+    </div>
+    <div class="filtros-row">
+      <input class="input-filtro" id="inputCidade" type="text" placeholder="📍 Cidade/Estado..." oninput="filtrarTodos()">
+      <select class="sel-faixa" id="selFaixaTodos" onchange="filtrarTodos()">
+        <option value="">🎂 Faixa</option>
+      </select>
+    </div>
+    <div id="todosContent"></div>
+  </div>
+
+  <!-- FAIXAS -->
+  <div id="area-faixas" style="display:none">
+    <div class="filtros-row">
+      <button class="btn-gen sel" onclick="setGenFaixas('')" id="gf-">Todos</button>
+      <button class="btn-gen" onclick="setGenFaixas('M')" id="gf-M">👨 Masc</button>
+      <button class="btn-gen" onclick="setGenFaixas('F')" id="gf-F">👩 Fem</button>
+    </div>
+    <div id="faixasContent"></div>
+  </div>
+
+</div>
+
+<!-- ===== ABA RANKING ===== -->
+<div class="secao" id="secao-ranking">
+  <div class="dist-row" style="margin-bottom:10px">
+    <button class="dtab sel" onclick="loadRanking('geral')" id="rt-geral">🏆 Geral</button>
+    <button class="dtab" onclick="loadRanking('42km')" id="rt-42km">42km</button>
+    <button class="dtab" onclick="loadRanking('21km')" id="rt-21km">21km</button>
+    <button class="dtab" onclick="loadRanking('10km')" id="rt-10km">10km</button>
+    <button class="dtab" onclick="loadRanking('5km')" id="rt-5km">5km</button>
+    <button class="dtab" onclick="loadRanking('3km')" id="rt-3km">3km</button>
+  </div>
+  <div class="filtros-row">
+    <button class="btn-gen sel" onclick="setGenRanking('')" id="rg-">Todos</button>
+    <button class="btn-gen" onclick="setGenRanking('M')" id="rg-M">👨 Masc</button>
+    <button class="btn-gen" onclick="setGenRanking('F')" id="rg-F">👩 Fem</button>
+  </div>
+  <div id="rankingContent"><div class="loading">⏳</div></div>
+</div>
+
+<!-- ===== ABA PONTUAÇÃO ===== -->
+<div class="secao" id="secao-pontuacao">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px">
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900;margin-bottom:14px">⭐ Sistema de Pontuação REGENI</p>
+    <div style="display:grid;gap:8px">
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:10px"><span style="font-weight:700">⭐ Elite Mundial</span><span style="color:#FFD700;font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">12.000+ pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(255,109,0,.08);border:1px solid rgba(255,109,0,.2);border-radius:10px"><span style="font-weight:700">🔥 Elite Nacional</span><span style="color:#FF6D00;font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">7.000+ pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px"><span style="font-weight:700">💪 Elite Regional</span><span style="color:#60A5FA;font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">3.000+ pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(247,147,26,.08);border:1px solid rgba(247,147,26,.2);border-radius:10px"><span style="font-weight:700">📈 Sub-Elite</span><span style="color:var(--verde);font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">1.000+ pts</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px"><span style="font-weight:700">🌱 Avançado</span><span style="color:var(--muted);font-weight:900;font-family:'Space Grotesk',sans-serif;font-size:16px">0 pts</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// Cartazes das provas (adicione o URL da imagem quando tiver)
+const CARTAZES = {
+  'fruticultura9_2026': '',
+  'cmmcchb4s0000mj010dll0t8j': ''
+};
+
+let corridaAtual = null, distAtual = '', subAbaAtual = 'top50';
+let todosResultados = [], faixasDisponiveis = [];
+let genTodos = '', genFaixas = '', genRanking = '', rankingAba = 'geral';
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init() {
+  // Stats
+  fetch('/ranking/stats').then(r=>r.json()).then(d=>{
+    document.getElementById('sCorridas').textContent = d.totalCorridas||'—';
+    document.getElementById('sResultados').textContent = (d.totalResultados||0).toLocaleString('pt-BR');
+    document.getElementById('sAtletas').textContent = (d.totalAtletas||0).toLocaleString('pt-BR');
+  }).catch(()=>{});
+
+  // Corridas
+  try {
+    const corridas = await fetch('/corridas').then(r=>r.json());
+    const sel = document.getElementById('selCorrida');
+    sel.innerHTML = '<option value="">— Selecione uma prova —</option>';
+    corridas.forEach(c => {
+      const data = c.date ? new Date(c.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = `${data ? data+' - ' : ''}${c.name}`;
+      opt.dataset.city = c.city||'';
+      opt.dataset.total = c.totalResultados||0;
+      opt.dataset.date = c.date||'';
+      sel.appendChild(opt);
+    });
+  } catch(e) { toast('❌ Erro ao carregar corridas'); }
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+function aba(id) {
+  document.querySelectorAll('.secao').forEach(s=>s.classList.remove('ativo'));
+  document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('ativo'));
+  document.getElementById('secao-'+id).classList.add('ativo');
+  document.getElementById('mt-'+id).classList.add('ativo');
+  if (id === 'ranking') loadRanking(rankingAba);
+}
+
+function subAba(id) {
+  subAbaAtual = id;
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('st-'+id).classList.add('sel');
+  document.getElementById('area-top50').style.display = id==='top50' ? 'block':'none';
+  document.getElementById('area-todos').style.display = id==='todos' ? 'block':'none';
+  document.getElementById('area-faixas').style.display = id==='faixas' ? 'block':'none';
+  if (id==='top50' && corridaAtual) renderTop50();
+  if (id==='todos' && corridaAtual) renderTodos();
+  if (id==='faixas' && corridaAtual) renderFaixas();
+}
+
+// ── CORRIDA SELECIONADA ────────────────────────────────────────
+async function corridaSelecionada() {
+  const sel = document.getElementById('selCorrida');
+  const opt = sel.options[sel.selectedIndex];
+  corridaAtual = sel.value;
+  if (!corridaAtual) return;
+
+  // Info tags
+  const data = opt.dataset.date ? new Date(opt.dataset.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+  document.getElementById('tagData').textContent = data;
+  document.getElementById('tagLocal').textContent = opt.dataset.city||'—';
+  document.getElementById('tagTotal').textContent = opt.dataset.total||'—';
+  document.getElementById('infoTags').style.display = 'flex';
+
+  // Cartaz
+  const cartazUrl = CARTAZES[corridaAtual];
+  if (cartazUrl) {
+    document.getElementById('cartazImg').src = cartazUrl;
+    document.getElementById('cartazWrap').style.display = 'block';
+  } else {
+    document.getElementById('cartazWrap').style.display = 'none';
+  }
+
+  // Distâncias
+  document.getElementById('distRow').innerHTML = '<span style="font-size:11px;color:var(--muted)">⏳</span>';
+  try {
+    const dists = await fetch(`/corrida/${corridaAtual}/distancias`).then(r=>r.json());
+    const row = document.getElementById('distRow');
+    row.innerHTML = '';
+    if (dists.length > 1) {
+      const all = document.createElement('button');
+      all.className = 'dtab sel'; all.textContent = 'Todas';
+      all.onclick = () => { distAtual=''; row.querySelectorAll('.dtab').forEach(b=>b.classList.remove('sel')); all.classList.add('sel'); carregarResultados(); };
+      row.appendChild(all);
+    }
+    dists.forEach(d => {
+      const btn = document.createElement('button');
+      btn.className = 'dtab' + (dists.length===1?' sel':'');
+      btn.textContent = d.distance;
+      btn.onclick = () => { distAtual=d.distance.replace('km',''); row.querySelectorAll('.dtab').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); carregarResultados(); };
+      row.appendChild(btn);
+      if (dists.length===1) distAtual = d.distance.replace('km','');
+    });
+  } catch(e) {}
+
+  document.getElementById('subTabs').style.display = 'flex';
+  await carregarResultados();
+}
+
+async function carregarResultados() {
+  if (!corridaAtual) return;
+  document.getElementById('loadTop50').style.display = 'block';
+  document.getElementById('top50M').style.display = 'none';
+  document.getElementById('top50F').style.display = 'none';
+
+  try {
+    const params = new URLSearchParams({ limit: 200 });
+    if (distAtual) params.set('dist', distAtual);
+    const data = await fetch(`/corrida/${corridaAtual}/resultados?${params}`).then(r=>r.json());
+    todosResultados = data.resultados || [];
+
+    // Faixas
+    const fp = new URLSearchParams();
+    if (distAtual) fp.set('dist', distAtual);
+    const faixasData = await fetch(`/corrida/${corridaAtual}/faixas?${fp}`).then(r=>r.json()).catch(()=>[]);
+    faixasDisponiveis = faixasData;
+
+    // Popular select de faixas
+    const sf = document.getElementById('selFaixaTodos');
+    sf.innerHTML = '<option value="">🎂 Faixa</option>';
+    faixasDisponiveis.forEach(f => {
+      const o = document.createElement('option');
+      o.value = f.faixa; o.textContent = `${f.faixa} (${f.total})`;
+      sf.appendChild(o);
+    });
+
+    document.getElementById('loadTop50').style.display = 'none';
+    if (subAbaAtual==='top50') renderTop50();
+    else if (subAbaAtual==='todos') renderTodos();
+    else renderFaixas();
+  } catch(e) {
+    document.getElementById('loadTop50').innerHTML = '❌ Erro ao carregar resultados';
+  }
+}
+
+// ── TOP 50 ────────────────────────────────────────────────────
+function renderTop50() {
+  const masc = todosResultados.filter(r=>r.genero==='M').slice(0,50);
+  const fem  = todosResultados.filter(r=>r.genero==='F').slice(0,50);
+
+  document.getElementById('top50M').style.display = 'block';
+  document.getElementById('top50F').style.display = 'block';
+
+  document.getElementById('top50M').innerHTML =
+    `<p class="secao-lbl" style="margin-bottom:8px">👨 Top ${masc.length} Masculino</p>` +
+    (masc.length ? masc.map((r,i)=>resCard(r,i)).join('') : '<div class="empty">Nenhum resultado</div>');
+
+  document.getElementById('top50F').innerHTML =
+    `<p class="secao-lbl" style="margin-top:14px;margin-bottom:8px">👩 Top ${fem.length} Feminino</p>` +
+    (fem.length ? fem.map((r,i)=>resCard(r,i)).join('') : '<div class="empty">Nenhum resultado</div>');
+}
+
+function resCard(r, i) {
+  const posCls = i===0?'p1':i===1?'p2':i===2?'p3':'pn';
+  const sub = [r.equipe, r.cidade&&r.estado?`${r.cidade}/${r.estado}`:r.estado||r.cidade, r.faixaEtaria, r.velocidade].filter(Boolean).join(' · ');
+  return `<a class="res-card" href="/perfil-atleta.html?id=${r.atletaId}">
+    <div class="pos-badge ${posCls}">${i+1}</div>
+    <div class="res-info">
+      <div class="res-nome">${r.nome}</div>
+      ${sub?`<div class="res-sub">${sub}</div>`:''}
+    </div>
+    <div class="res-tempo">
+      <p>${r.tempo||'—'}</p>
+      <span>${r.pace ? r.pace+'/km' : ''}</span>
+    </div>
+  </a>`;
+}
+
+// ── TODOS ─────────────────────────────────────────────────────
+function filtrarTodos() { renderTodos(); }
+
+function setGenTodos(g) {
+  genTodos = g;
+  document.querySelectorAll('[id^="gt-"]').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('gt-'+g).classList.add('sel');
+  renderTodos();
+}
+
+function renderTodos() {
+  const busca = document.getElementById('inputBusca').value.toLowerCase();
+  const cidade = document.getElementById('inputCidade').value.toLowerCase();
+  const faixa = document.getElementById('selFaixaTodos').value;
+
+  let lista = todosResultados.filter(r => {
+    if (genTodos && r.genero !== genTodos) return false;
+    if (faixa && r.faixaEtaria !== faixa) return false;
+    if (busca && !r.nome.toLowerCase().includes(busca) && !(r.equipe||'').toLowerCase().includes(busca)) return false;
+    if (cidade && !(r.cidade||'').toLowerCase().includes(cidade) && !(r.estado||'').toLowerCase().includes(cidade)) return false;
+    return true;
+  });
+
+  const el = document.getElementById('todosContent');
+  el.innerHTML = lista.length
+    ? `<p style="font-size:11px;color:var(--muted);margin-bottom:8px">${lista.length} atleta${lista.length!==1?'s':''}</p>` + lista.map((r,i)=>resCard(r,i)).join('')
+    : '<div class="empty">Nenhum resultado encontrado</div>';
+}
+
+// ── FAIXAS ────────────────────────────────────────────────────
+function setGenFaixas(g) {
+  genFaixas = g;
+  document.querySelectorAll('[id^="gf-"]').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('gf-'+g).classList.add('sel');
+  renderFaixas();
+}
+
+function renderFaixas() {
+  const el = document.getElementById('faixasContent');
+  if (!faixasDisponiveis.length) { el.innerHTML = '<div class="empty">Sem faixas etárias registradas</div>'; return; }
+
+  el.innerHTML = faixasDisponiveis.map(f => {
+    const atletas = todosResultados.filter(r =>
+      r.faixaEtaria === f.faixa && (!genFaixas || r.genero === genFaixas)
+    ).slice(0,20);
+    if (!atletas.length) return '';
+    return `<div class="faixa-header" onclick="toggleFaixa('f${f.faixa.replace(/\s/g,'')}')">
+      <span class="faixa-titulo">🎂 ${f.faixa}</span>
+      <span class="faixa-total">${atletas.length} atletas</span>
+    </div>
+    <div class="faixa-body" id="f${f.faixa.replace(/\s/g,'')}">
+      ${atletas.map((r,i)=>resCard(r,i)).join('')}
+    </div>`;
+  }).join('');
+}
+
+function toggleFaixa(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+// ── RANKING ───────────────────────────────────────────────────
+function setGenRanking(g) {
+  genRanking = g;
+  document.querySelectorAll('[id^="rg-"]').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('rg-'+g).classList.add('sel');
+  loadRanking(rankingAba);
+}
+
+async function loadRanking(tipo) {
+  rankingAba = tipo;
+  document.querySelectorAll('[id^="rt-"]').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('rt-'+tipo).classList.add('sel');
+  document.getElementById('rankingContent').innerHTML = '<div class="loading">⏳</div>';
+  try {
+    let url = tipo==='geral' ? '/ranking' : `/ranking/${tipo}`;
+    if (genRanking) url += `?genero=${genRanking}`;
+    const dados = await fetch(url).then(r=>r.json());
+    if (!dados.length) { document.getElementById('rankingContent').innerHTML = '<div class="empty">Sem dados para esta distância</div>'; return; }
+    document.getElementById('rankingContent').innerHTML = dados.map((a,i) => {
+      const nc = a.nivel?.includes('Mundial')?'nv-em':a.nivel?.includes('Nacional')?'nv-en':a.nivel?.includes('Regional')?'nv-er':a.nivel?.includes('Sub')?'nv-se':'nv-av';
+      const tempo = a.melhorTempo ? `<p style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1">${a.melhorTempo}</p><span style="font-size:10px;color:var(--muted)">melhor tempo</span>` :
+        `<p style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;color:var(--verde);line-height:1">${(a.totalPoints||0).toLocaleString()}</p><span style="font-size:10px;color:var(--muted)">${a.totalRaces||0} provas</span>`;
+      const posCls = i===0?'p1':i===1?'p2':i===2?'p3':'pn';
+      return `<div class="rank-card" onclick="location.href='/perfil-atleta.html?id=${a.id}'">
+        <div class="pos-badge ${posCls}">${i+1}</div>
+        <div style="flex:1;min-width:0">
+          <p style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.name}</p>
+          <p style="font-size:10px;color:var(--muted);margin-top:2px">${[a.equipe,a.state].filter(Boolean).join(' · ')}</p>
+          <span class="nivel-badge ${nc}" style="margin-top:3px;display:inline-block">${a.nivel}</span>
+        </div>
+        <div style="text-align:right;flex-shrink:0">${tempo}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { document.getElementById('rankingContent').innerHTML = '<div class="empty">❌ Erro ao carregar ranking</div>'; }
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._t); t._t = setTimeout(()=>t.style.display='none', 3000);
+}
+
+init();
+</script>
+
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<!-- REGENI NAV -->
+<style>
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
+.pace-nav a.active{color:#00D4FF}
+.pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
+body{padding-bottom:64px!important}
+</style>
+<nav class="pace-nav">
+<a href="/" class="n-home"><span class="ni">🏠</span>INÍCIO</a>
+<a href="/corridas-abertas.html" class="n-corridas"><span class="ni">🏁</span>CORRIDAS</a>
+<a href="/ia.html" class="n-ia"><span class="ni">🤖</span>IA</a>
+<a href="/cobaia.html" class="n-cobaia"><span class="ni">🧬</span>COBAIA</a>
+<a href="/perfil.html" class="n-perfil"><span class="ni">👤</span>PERFIL</a>
+</nav>
+<script>
+(function(){var p=location.pathname;var logged=!!localStorage.getItem('pace_token');document.querySelectorAll('.pace-nav a').forEach(function(a){if(a.classList.contains('n-home')&&logged){a.href='/atleta.html';}if(p===a.getAttribute('href')||(p==='/atleta.html'&&a.classList.contains('n-home'))||(p==='/exames.html'&&a.classList.contains('n-cobaia'))||(p==='/cobaia-resultados.html'&&a.classList.contains('n-cobaia')))a.classList.add('active');});})();
+</script>
+<!-- /REGENI NAV -->
+
+</body>
+</html>

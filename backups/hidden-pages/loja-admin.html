@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — REGENI Performance</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c26;--border:#2a2a38;--neon:#00D4FF;--laranja:#FF6D00;--text:#f0f0f8;--muted:#6b6b85;--red:#ff1744;--blue:#448aff;--yellow:#ffd600}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;color:var(--laranja)}
+.logo span{color:var(--neon)}
+.content{max-width:900px;margin:0 auto;padding:24px 16px}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab.active{color:var(--neon);border-bottom-color:var(--neon)}
+.section{display:none}.section.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat-val{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:900;color:var(--neon);line-height:1}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.pedido-row{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.pedido-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pedido-nome{font-size:14px;font-weight:700}
+.pedido-info{font-size:12px;color:var(--muted);line-height:1.6}
+.pedido-endereco{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;line-height:1.8}
+.badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700}
+.badge-pendente{background:rgba(255,214,0,.15);color:var(--yellow)}
+.badge-pago{background:rgba(247,147,26,.15);color:var(--neon)}
+.badge-enviado{background:rgba(68,138,255,.15);color:var(--blue)}
+.badge-cancelado{background:rgba(255,23,68,.15);color:var(--red)}
+.btn-status{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none}
+.btn-enviado{background:rgba(68,138,255,.2);color:var(--blue);border:1px solid rgba(68,138,255,.3)}
+.btn-pago{background:rgba(247,147,26,.2);color:var(--neon);border:1px solid rgba(247,147,26,.3)}
+.btn-cancel{background:rgba(255,23,68,.1);color:var(--red);border:1px solid rgba(255,23,68,.2)}
+.btn-wa{background:rgba(37,211,102,.15);color:#25D366;border:1px solid rgba(37,211,102,.3);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.field-group{margin-bottom:14px}
+.field-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
+.field-input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;width:100%;outline:none}
+.field-input:focus{border-color:var(--neon)}
+textarea.field-input{resize:vertical;min-height:80px}
+.btn-primary{background:var(--laranja);color:white;border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%}
+.btn-upload{background:var(--bg3);border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border .2s}
+.btn-upload:hover{border-color:var(--neon)}
+.fotos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.foto-item{position:relative;aspect-ratio:3/4;background:var(--bg3);border-radius:10px;overflow:hidden}
+.foto-item img{width:100%;height:100%;object-fit:cover}
+.foto-del{position:absolute;top:4px;right:4px;background:rgba(255,23,68,.85);color:white;border:none;border-radius:6px;padding:2px 8px;font-size:12px;cursor:pointer;font-weight:700}
+.loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:32px;color:var(--muted);font-size:13px}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--neon);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+.filtros{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filtro-btn{padding:6px 14px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
+.filtro-btn.active{background:rgba(247,147,26,.15);border-color:var(--neon);color:var(--neon)}
+.acesso-negado{display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:999}
+.acesso-negado.show{display:flex}
+</style>
+<link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+<div class="acesso-negado" id="acessoNegado">
+  <div style="font-size:48px">🔐</div>
+  <div style="font-size:20px;font-weight:700;color:var(--red)">Acesso Restrito</div>
+  <div style="font-size:14px;color:var(--muted)">Faça login como administrador</div>
+  <a href="/entrar.html" style="background:var(--laranja);color:white;padding:12px 24px;border-radius:12px;text-decoration:none;font-weight:700">Fazer Login</a>
+</div>
+
+<header class="topbar">
+  <div class="logo">Estam<span>Pace</span> <span style="font-size:14px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600">Admin</span></div>
+  <a href="/loja.html" style="font-size:13px;color:var(--muted);text-decoration:none">← Ver Loja</a>
+</header>
+
+<div class="content">
+  <div class="tabs">
+    <div class="tab active" onclick="abaAtiva('pedidos',this)">📦 Pedidos do Dia</div>
+    <div class="tab" onclick="abaAtiva('todos',this)">📋 Todos os Pedidos</div>
+    <div class="tab" onclick="abaAtiva('fotos',this)">📸 Fotos</div>
+    <div class="tab" onclick="abaAtiva('produto',this)">✏️ Produto</div>
+  </div>
+
+  <div class="section active" id="sec-pedidos">
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-val" id="statPedidos">--</div><div class="stat-label">Pedidos Hoje</div></div>
+      <div class="stat"><div class="stat-val" id="statReceita" style="color:var(--neon)">--</div><div class="stat-label">Receita Hoje</div></div>
+      <div class="stat"><div class="stat-val" id="statEnviar" style="color:var(--yellow)">--</div><div class="stat-label">Para Enviar</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        📦 Pedidos de Hoje
+        <button onclick="carregarPedidos('hoje')" style="background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:8px;font-size:12px;cursor:pointer">↻ Atualizar</button>
+      </div>
+      <div id="pedidosHoje"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+    </div>
+  </div>
+
+  <div class="section" id="sec-todos">
+    <div class="filtros">
+      <button class="filtro-btn active" onclick="filtrarStatus('',this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrarStatus('aguardando_pagamento',this)">⏳ Aguardando</button>
+      <button class="filtro-btn" onclick="filtrarStatus('pago',this)">✅ Pago</button>
+      <button class="filtro-btn" onclick="filtrarStatus('enviado',this)">📮 Enviado</button>
+      <button class="filtro-btn" onclick="filtrarStatus('cancelado',this)">❌ Cancelado</button>
+    </div>
+    <div id="todosPedidos"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+  </div>
+
+  <div class="section" id="sec-fotos">
+    <div class="card">
+      <div class="card-title">📸 Upload de Fotos das Camisetas</div>
+      <div class="btn-upload" onclick="document.getElementById('inputFoto').click()">
+        <div style="font-size:40px;margin-bottom:8px">📷</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Clique para selecionar fotos</div>
+        <div style="font-size:12px;color:var(--muted)">JPG, PNG até 5MB · Proporção 3:4 recomendada · Pode selecionar várias</div>
+      </div>
+      <input type="file" id="inputFoto" accept="image/*" multiple style="display:none" onchange="uploadFotos(this.files)">
+      <div id="uploadProgress" style="display:none;margin-top:12px">
+        <div style="background:var(--bg3);border-radius:8px;height:8px;overflow:hidden">
+          <div id="progressBar" style="height:100%;background:var(--neon);width:0%;transition:width .3s;border-radius:8px"></div>
+        </div>
+        <div id="progressText" style="font-size:12px;color:var(--muted);margin-top:6px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🖼️ Fotos Cadastradas</div>
+      <div class="fotos-grid" id="fotosGrid"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section" id="sec-produto">
+    <div class="card">
+      <div class="card-title">✏️ Configurações do Produto</div>
+      <div class="field-group"><label class="field-label">Nome do Produto</label><input class="field-input" id="prodNome" value="Camiseta REGENI Performance"></div>
+      <div class="field-group"><label class="field-label">Preço Promocional (R$)</label><input class="field-input" id="prodPreco" type="number" value="149.90" step="0.01"></div>
+      <div class="field-group"><label class="field-label">Descrição</label><textarea class="field-input" id="prodDesc">Camiseta esportiva dry-fit premium para corrida de rua. Bordado REGENI oficial.</textarea></div>
+      <div class="field-group"><label class="field-label">Tamanhos disponíveis</label><input class="field-input" id="prodTamanhos" value="PP,P,M,G,GG,XGG"></div>
+      <div class="field-group"><label class="field-label">Estoque total</label><input class="field-input" id="prodEstoque" type="number" value="100"></div>
+      <button class="btn-primary" onclick="salvarProduto()">💾 Salvar Configurações</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_KEY = '3b77d62cb40acbbe091abf119204cd5fd3371c47e68e47cf9698088a1d1a18d6';
+const token = localStorage.getItem('pace_token');
+const USER = JSON.parse(localStorage.getItem('pace_user') || '{}');
+let produtoId = null, statusFiltro = '';
+
+// Verificar acesso
+if (!USER.isAdmin) {
+  document.getElementById('acessoNegado').classList.add('show');
+}
+
+function abaAtiva(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sec-'+id).classList.add('active');
+  if(id==='pedidos') carregarPedidos('hoje');
+  if(id==='todos') carregarPedidos('todos');
+  if(id==='fotos') carregarFotos();
+  if(id==='produto') carregarProduto();
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+async function carregarPedidos(tipo){
+  const hoje = new Date().toISOString().split('T')[0];
+  const url = tipo==='hoje'
+    ? `/loja/admin/pedidos?data=${hoje}`
+    : `/loja/admin/pedidos${statusFiltro?'?status='+statusFiltro:''}`;
+  try{
+    const d = await fetch(url,{headers:{'x-admin-key':ADMIN_KEY}}).then(r=>r.json());
+    const pedidos = d.pedidos||[];
+    const resumo = d.resumo||{};
+    if(tipo==='hoje'){
+      document.getElementById('statPedidos').textContent = resumo.pedidosHoje||0;
+      document.getElementById('statReceita').textContent = `R$ ${(resumo.receitaHoje||0).toFixed(2).replace('.',',')}`;
+      document.getElementById('statEnviar').textContent = pedidos.filter(p=>p.status==='pago').length;
+      document.getElementById('pedidosHoje').innerHTML = pedidos.length
+        ? pedidos.map(p=>renderPedido(p)).join('')
+        : '<div style="text-align:center;padding:32px;color:var(--muted)">Nenhum pedido hoje ainda 📭</div>';
+    } else {
+      document.getElementById('todosPedidos').innerHTML = pedidos.length
+        ? pedidos.map(p=>renderPedido(p)).join('')
+        : '<div style="text-align:center;padding:32px;color:var(--muted)">Nenhum pedido encontrado</div>';
+    }
+  }catch(e){ toast('Erro: '+e.message); }
+}
+
+function renderPedido(p){
+  const statusMap = {
+    aguardando_pagamento:'<span class="badge badge-pendente">⏳ Aguardando Pag.</span>',
+    pago:'<span class="badge badge-pago">✅ Pago</span>',
+    enviado:'<span class="badge badge-enviado">📮 Enviado</span>',
+    cancelado:'<span class="badge badge-cancelado">❌ Cancelado</span>'
+  };
+  const status = statusMap[p.status]||`<span class="badge badge-pendente">${p.status}</span>`;
+  const data = new Date(p.criadoEm).toLocaleString('pt-BR');
+  const tel = (p.whatsappCliente||'').replace(/\D/g,'');
+  const wppMsg = encodeURIComponent(
+    `Olá ${p.nomeCliente||''}! Seu pedido REGENI Performance foi confirmado! 🏃\n`+
+    `👕 ${p.produtoNome} — ${p.tamanho} / ${p.cor} x${p.quantidade}\n`+
+    `💰 R$ ${p.valorTotal?.toFixed(2)?.replace('.',',')}\n\n`+
+    `Em breve você receberá as informações de envio. Obrigado! 🙏`
+  );
+  return `<div class="pedido-row">
+    <div class="pedido-header">
+      <div>
+        <div class="pedido-nome">${p.nomeCliente||p.user?.name||'Cliente'}</div>
+        <div style="font-size:11px;color:var(--muted)">#${p.id.substring(0,8)} · ${data}</div>
+      </div>
+      <div style="text-align:right">
+        ${status}
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;color:var(--neon);margin-top:4px;font-weight:900">R$ ${p.valorTotal?.toFixed(2)?.replace('.',',')}</div>
+      </div>
+    </div>
+    <div class="pedido-info">
+      👕 ${p.produtoNome} · 📏 ${p.tamanho} · 🎨 ${p.cor} · 🔢 ${p.quantidade}x
+      ${p.promocao==='leve3pague2'?'&nbsp;🎁 Leve 3 Pague 2':''}
+    </div>
+    ${p.enderecoRua?`<div class="pedido-endereco">
+      <strong>📦 Endereço de entrega:</strong><br>
+      ${p.enderecoRua}, ${p.enderecoNum} — ${p.enderecoBairro||''}<br>
+      ${p.enderecoCidade||''}/${p.enderecoEstado||''} · CEP: ${p.enderecoCEP||'--'}
+      ${p.whatsappCliente?`<br>📱 WhatsApp: <strong>${p.whatsappCliente}</strong>`:''}
+      ${p.obs?`<br>💬 Obs: ${p.obs}`:''}
+    </div>`:'<div style="font-size:12px;color:var(--muted);margin-top:6px">Sem endereço informado — contate pelo WhatsApp</div>'}
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      ${p.status!=='enviado'&&p.status!=='cancelado'?`<button class="btn-status btn-enviado" onclick="updateStatus('${p.id}','enviado')">📮 Marcar Enviado</button>`:''}
+      ${p.status==='aguardando_pagamento'?`<button class="btn-status btn-pago" onclick="updateStatus('${p.id}','pago')">✅ Confirmar Pago</button>`:''}
+      ${tel?`<a class="btn-wa" href="https://wa.me/55${tel}?text=${wppMsg}" target="_blank">💬 WhatsApp</a>`:''}
+      ${p.status!=='cancelado'?`<button class="btn-status btn-cancel" onclick="updateStatus('${p.id}','cancelado')">✕</button>`:''}
+    </div>
+  </div>`;
+}
+
+async function updateStatus(id,status){
+  try{
+    await fetch(`/loja/admin/pedidos/${id}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','x-admin-key':ADMIN_KEY},
+      body:JSON.stringify({status})
+    });
+    toast(`✅ Status atualizado: ${status}`);
+    setTimeout(()=>carregarPedidos(document.getElementById('sec-pedidos').classList.contains('active')?'hoje':'todos'),500);
+  }catch(e){toast('Erro: '+e.message);}
+}
+
+function filtrarStatus(s,btn){
+  statusFiltro=s;
+  document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  carregarPedidos('todos');
+}
+
+async function carregarFotos(){
+  try{
+    const produtos = await fetch('/loja/produtos').then(r=>r.json());
+    const prod = Array.isArray(produtos)?produtos[0]:null;
+    produtoId = prod?.id||null;
+    const fotos = (prod?.fotos||'').split(',').filter(Boolean);
+    const grid = document.getElementById('fotosGrid');
+    grid.innerHTML = fotos.length
+      ? fotos.map((f,i)=>`<div class="foto-item"><img src="${f}" onerror="this.src='https://placehold.co/200x260/1c1c26/6b6b85?text=Foto'"><button class="foto-del" onclick="deletarFoto(${i})">✕</button></div>`).join('')
+      : '<div style="color:var(--muted);font-size:13px;padding:12px;grid-column:span 3">Nenhuma foto cadastrada. Faça upload acima!</div>';
+  }catch(e){document.getElementById('fotosGrid').innerHTML='<div style="color:var(--muted);padding:12px">Erro ao carregar</div>';}
+}
+
+async function uploadFotos(files){
+  if(!files?.length) return;
+  const prog=document.getElementById('uploadProgress');
+  const bar=document.getElementById('progressBar');
+  const txt=document.getElementById('progressText');
+  prog.style.display='block';
+  const urls=[];
+  for(let i=0;i<files.length;i++){
+    txt.textContent=`Enviando foto ${i+1} de ${files.length}...`;
+    bar.style.width=`${(i/files.length)*100}%`;
+    const form=new FormData();form.append('file',files[i]);
+    try{
+      const r=await fetch('/loja/upload-foto',{method:'POST',headers:{'Authorization':`Bearer ${token}`},body:form});
+      const d=await r.json();
+      if(d.url) urls.push(d.url);
+    }catch(e){toast('Erro no upload: '+e.message);}
+  }
+  bar.style.width='100%';
+  txt.textContent=`✅ ${urls.length} foto(s) enviadas com sucesso!`;
+  if(urls.length){
+    const produtos=await fetch('/loja/produtos').then(r=>r.json()).catch(()=>[]);
+    const prod=Array.isArray(produtos)?produtos[0]:null;
+    const fotasAtuais=(prod?.fotos||'').split(',').filter(Boolean);
+    const todasFotos=[...fotasAtuais,...urls].join(',');
+    if(prod?.id){
+      await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({fotos:todasFotos})}).catch(()=>{});
+      toast(`✅ ${urls.length} foto(s) adicionadas!`);
+    } else {
+      await fetch('/loja/produtos',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({nome:'Camiseta REGENI Performance',preco:149.90,fotos:urls.join(','),tamanhos:'PP,P,M,G,GG,XGG',categoria:'camisa',estoque:100,descricao:'Camiseta esportiva dry-fit premium para corrida de rua.'})}).catch(()=>{});
+      toast(`✅ Produto criado com ${urls.length} foto(s)!`);
+    }
+    carregarFotos();
+  }
+  setTimeout(()=>{prog.style.display='none';bar.style.width='0%';},3000);
+}
+
+async function deletarFoto(idx){
+  if(!confirm('Remover esta foto?')) return;
+  const produtos=await fetch('/loja/produtos').then(r=>r.json()).catch(()=>[]);
+  const prod=Array.isArray(produtos)?produtos[0]:null;
+  if(!prod) return;
+  const fotos=prod.fotos.split(',').filter((_,i)=>i!==idx).join(',');
+  await fetch(`/loja/produtos/${prod.id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({fotos})});
+  toast('Foto removida!');carregarFotos();
+}
+
+async function carregarProduto(){
+  const produtos=await fetch('/loja/produtos').then(r=>r.json()).catch(()=>[]);
+  const prod=Array.isArray(produtos)?produtos[0]:null;
+  if(prod){
+    produtoId=prod.id;
+    document.getElementById('prodNome').value=prod.nome||'';
+    document.getElementById('prodPreco').value=prod.preco||149.90;
+    document.getElementById('prodDesc').value=prod.descricao||'';
+    document.getElementById('prodTamanhos').value=prod.tamanhos||'PP,P,M,G,GG,XGG';
+    document.getElementById('prodEstoque').value=prod.estoque||0;
+  }
+}
+
+async function salvarProduto(){
+  const data={nome:document.getElementById('prodNome').value,preco:parseFloat(document.getElementById('prodPreco').value),descricao:document.getElementById('prodDesc').value,tamanhos:document.getElementById('prodTamanhos').value,estoque:parseInt(document.getElementById('prodEstoque').value)||0};
+  const url=produtoId?`/loja/produtos/${produtoId}`:'/loja/produtos';
+  const method=produtoId?'PATCH':'POST';
+  try{
+    const r=await fetch(url,{method,headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({...data,categoria:'camisa'})});
+    const d=await r.json();
+    if(d.id){produtoId=d.id;toast('✅ Produto salvo com sucesso!');}
+    else toast('Erro: '+(d.error||'Desconhecido'));
+  }catch(e){toast('Erro: '+e.message);}
+}
+
+document.addEventListener('DOMContentLoaded',()=>carregarPedidos('hoje'));
+</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+</body>
+</html>

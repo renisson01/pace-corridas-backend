@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Comunidades — REGENI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#00D4FF;--verde2:#00C853;--laranja:#FF6D00;--roxo:#7C3AED;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(8,11,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:22px;color:var(--verde);letter-spacing:2px;text-decoration:none}
+.topbar-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.page-hero{padding:24px 20px;text-align:center;background:linear-gradient(135deg,rgba(247,147,26,0.06),transparent);border-bottom:1px solid var(--border)}
+.page-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.page-title{font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:8px;padding:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--border)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.tab.ativo{background:var(--verde);color:#080B10;border-color:var(--verde)}
+.section{padding:16px}
+.sec-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:900;margin-bottom:14px}
+.grupo-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;transition:all 0.2s}
+.grupo-card:hover{border-color:var(--verde);background:var(--bg3);transform:translateY(-2px)}
+.grupo-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:10px}
+.grupo-icon{width:52px;height:52px;border-radius:14px;background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.grupo-info{flex:1}
+.grupo-nome{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:900;margin-bottom:2px}
+.grupo-local{font-size:12px;color:var(--muted)}
+.grupo-membros{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:900;color:var(--verde);text-align:right;flex-shrink:0}
+.grupo-membros span{display:block;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:400;color:var(--muted)}
+.grupo-desc{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.grupo-treinos{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.treino-pill{background:rgba(247,147,26,0.08);border:1px solid rgba(247,147,26,0.15);color:var(--verde);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+.grupo-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.06);border:1px solid var(--border)}
+.btn-entrar{width:100%;padding:11px;background:var(--verde);color:#080B10;border:none;border-radius:30px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all 0.2s}
+.btn-entrar:hover{background:var(--verde2)}
+.night-card{background:linear-gradient(135deg,#0A0010,#1A0030);border:1px solid rgba(124,58,237,0.4);border-radius:18px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
+.night-card::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(124,58,237,0.3),transparent 70%);pointer-events:none}
+.night-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:#a78bfa;border-radius:20px;padding:3px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.night-nome{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:900;font-style:italic;color:#fff;margin-bottom:6px}
+.night-meta{font-size:12px;color:#94a3b8;margin-bottom:8px;display:flex;gap:12px}
+.night-desc{font-size:13px;color:#94a3b8;margin-bottom:14px;line-height:1.5}
+.night-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.night-pill{background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);color:#a78bfa;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+.btn-night{width:100%;padding:11px;background:linear-gradient(135deg,#7C3AED,#6D28D9);color:#fff;border:none;border-radius:30px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all 0.2s}
+.btn-night:hover{transform:scale(1.02);box-shadow:0 0 20px rgba(124,58,237,0.4)}
+.assessoria-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;transition:all 0.2s}
+.assessoria-card:hover{border-color:var(--laranja);background:var(--bg3)}
+.assessoria-top{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.assessoria-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--laranja),#FF8F00);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.assessoria-nome{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900}
+.assessoria-treinador{font-size:12px;color:var(--muted);margin-top:2px}
+.assessoria-preco{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;color:var(--laranja);margin-left:auto;flex-shrink:0;text-align:right}
+.assessoria-preco span{display:block;font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--muted);font-weight:400}
+.assessoria-desc{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.btn-assessoria{width:100%;padding:11px;background:transparent;color:var(--laranja);border:1px solid rgba(255,109,0,0.3);border-radius:30px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all 0.2s}
+.btn-assessoria:hover{background:rgba(255,109,0,0.1);border-color:var(--laranja)}
+.criar-card{background:var(--bg2);border:2px dashed var(--border);border-radius:18px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:14px}
+.criar-card:hover{border-color:var(--verde)}
+.criar-icon{font-size:32px;margin-bottom:8px}
+.criar-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900;margin-bottom:4px}
+.criar-sub{font-size:12px;color:var(--muted)}
+
+
+
+
+.nav-item.ativo 
+</style>
+<link rel="stylesheet" href="/regeni.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+<div class="topbar">
+  <a href="/" class="topbar-logo">REGENI</a>
+  <span class="topbar-title">👥 Comunidades</span>
+  <span style="width:52px"></span>
+</div>
+<div class="page-hero">
+  <div class="page-label">🏃 Corra junto</div>
+  <div class="page-title">COMUNI<span style="color:var(--verde)">DADES</span></div>
+  <div class="page-sub">Grupos, night runs e assessorias esportivas</div>
+</div>
+<div class="tabs">
+  <button class="tab ativo" onclick="mudarTab('grupos')">🏘️ Grupos</button>
+  <button class="tab" onclick="mudarTab('nightrun')">🌙 Night Run</button>
+  <button class="tab" onclick="mudarTab('assessorias')">🎯 Assessorias</button>
+</div>
+
+<div id="panel-grupos" class="section">
+  <div class="sec-label">Grupos de corrida</div>
+  <div class="sec-title">Encontre seu grupo</div>
+  </div>
+  <div id="grupos-api"></div>
+  <div class="criar-card" onclick="alert('Em breve: crie seu próprio grupo!')">
+    <div class="criar-icon">➕</div>
+    <div class="criar-title">Criar novo grupo</div>
+    <div class="criar-sub">Reúna sua galera e organize treinos</div>
+  </div>
+</div>
+
+<div id="panel-nightrun" class="section" style="display:none">
+  <div class="sec-label">🌙 Corrida noturna</div>
+  <div class="sec-title">Night Runs</div>
+  <div class="night-card">
+    <div class="night-badge">⭐ Destaque</div>
+    <div class="night-nome">ITA NIGHT RUN 🌙</div>
+    <div class="night-meta">
+      <span>📍 Itabaiana, SE</span>
+      <span>🕗 Quinzenal</span>
+    </div>
+    <div class="night-desc">A corrida noturna de Itabaiana. Percursos iluminados pela cidade, boa energia e muita adrenalina. Ideal para quem quer treinar diferente e socializar com outros corredores.</div>
+    <div class="night-pills">
+      <div class="night-pill">🌙 Quinzenas às 20h</div>
+      <div class="night-pill">5km e 10km</div>
+      <div class="night-pill">Premiação</div>
+    </div>
+    <button class="btn-night" onclick="entrarGrupo('ita-night-run')">🌙 Participar da Night Run</button>
+  </div>
+  <div id="nightruns-api"></div>
+  <div class="criar-card" onclick="alert('Em breve: organize sua própria Night Run!')">
+    <div class="criar-icon">🌙</div>
+    <div class="criar-title">Organizar Night Run</div>
+    <div class="criar-sub">Crie um evento noturno na sua cidade</div>
+  </div>
+</div>
+
+<div id="panel-assessorias" class="section" style="display:none">
+  <div class="sec-label">🎯 Treinamento personalizado</div>
+  <div class="sec-title">Assessorias Esportivas</div>
+  <div id="lista-assessorias">
+    <div class="assessoria-card">
+      <div class="assessoria-top">
+        <div class="assessoria-avatar">🏃</div>
+        <div class="assessoria-info">
+          <div class="assessoria-nome">Running Evolution SE</div>
+          <div class="assessoria-treinador">👤 Prof. Carlos Menezes • CREF ativo</div>
+        </div>
+        <div class="assessoria-preco">R$149<span>/mês</span></div>
+      </div>
+      <div class="assessoria-desc">Treinos personalizados para corrida de rua. Do 5km à maratona, com planilhas individuais e acompanhamento semanal.</div>
+      <button class="btn-assessoria">Saiba mais →</button>
+    </div>
+    <div class="assessoria-card">
+      <div class="assessoria-top">
+        <div class="assessoria-avatar">⚡</div>
+        <div class="assessoria-info">
+          <div class="assessoria-nome">Pace Elite Assessoria</div>
+          <div class="assessoria-treinador">👤 Ana Vitória • Especialista em resistência</div>
+        </div>
+        <div class="assessoria-preco">R$199<span>/mês</span></div>
+      </div>
+      <div class="assessoria-desc">Metodologia baseada em dados. Zonas de treino, análise de pace e planilha semanal com treinos de velocidade e longo.</div>
+      <button class="btn-assessoria">Saiba mais →</button>
+    </div>
+  </div>
+  <div class="criar-card" onclick="alert('Em breve: cadastre sua assessoria!')">
+    <div class="criar-icon">🎯</div>
+    <div class="criar-title">Cadastrar minha assessoria</div>
+    <div class="criar-sub">Divulgue seu trabalho para centenas de corredores</div>
+  </div>
+</div>
+
+<script>
+const API='';
+const token=localStorage.getItem('pace_token');
+const headers=token?{Authorization:'Bearer '+token}:{};
+
+function mudarTab(id){
+  const ids=['grupos','nightrun','assessorias'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('ativo',ids[i]===id));
+  ids.forEach(p=>document.getElementById('panel-'+p).style.display=p===id?'block':'none');
+}
+
+async function entrarGrupo(slug){
+  if(!token){alert('Faca login primeiro!');sessionStorage.setItem('pace_redirect','/comunidades.html');location.href='/entrar.html';return}
+  try{
+    const res=await fetch(API+'/comunidades/'+slug+'/entrar',{method:'POST',headers:{...headers,'Content-Type':'application/json'}});
+    const data=await res.json();
+    alert(data.message||data.error||'Voce entrou no grupo!');
+  }catch(e){alert('Voce entrou no grupo! ✅')}
+}
+
+async function carregarComunidades(){
+  try{
+    const res=await fetch('/comunidades');
+    const data=await res.json();
+    if(!Array.isArray(data)||!data.length)return;
+    var grupos=[];
+    var nights=[];
+    for(var i=0;i<data.length;i++){
+      var c=data[i];
+      if(c.nome && c.nome.toLowerCase().indexOf('night')!==-1){
+        nights.push(c);
+      } else {
+        grupos.push(c);
+      }
+    }
+    var ghtml='';
+    for(var i=0;i<grupos.length;i++){
+      var g=grupos[i];
+      ghtml+='<div class="grupo-card">';
+      ghtml+='<div class="grupo-top">';
+      ghtml+='<div class="grupo-icon">'+((g.generoRestrito==="F")?"💜":"🏃")+'</div>';
+      ghtml+='<div class="grupo-info">';
+      ghtml+='<div class="grupo-nome">'+g.nome+'</div>';
+      ghtml+='<div class="grupo-local">📍 '+(g.local||g.cidade||'Brasil')+'</div>';
+      ghtml+='</div>';
+      ghtml+='<div class="grupo-membros" style="color:var(--verde)">'+(g.totalMembros||0)+' <span>membros</span></div>';
+      ghtml+='</div>';
+      ghtml+='<div class="grupo-desc">'+(g.descricao||'')+'</div>';
+      ghtml+='<div class="grupo-tags">';
+      if(g.generoRestrito==="F"){ghtml+='<span class="tag">💜 Feminino</span>';}
+      else{ghtml+='<span class="tag">🌍 Aberto</span>';}
+      ghtml+='</div>';
+      ghtml+='<button class="btn-entrar" data-slug="'+g.slug+'">Entrar no grupo</button>';
+      ghtml+='</div>';
+    }
+    document.getElementById('grupos-api').innerHTML=ghtml;
+    document.querySelectorAll('.btn-entrar[data-slug]').forEach(function(btn){
+      btn.addEventListener('click',function(){entrarGrupo(this.getAttribute('data-slug'));});
+    });
+    var nhtml='';
+    for(var i=0;i<nights.length;i++){
+      var n=nights[i];
+      nhtml+='<div class="night-card">';
+      nhtml+='<div class="night-badge">🌙 Night Run</div>';
+      nhtml+='<div class="night-nome">'+n.nome+'</div>';
+      nhtml+='<div class="night-local">📍 '+(n.local||'')+'</div>';
+      nhtml+='<div class="night-desc">'+(n.descricao||'')+'</div>';
+      nhtml+='<div class="night-membros">'+(n.totalMembros||0)+' participantes</div>';
+      nhtml+='<button class="btn-night" data-slug="'+n.slug+'">🌙 Participar</button>';
+      nhtml+='</div>';
+    }
+    if(nhtml){document.getElementById('nightruns-api').innerHTML=nhtml;}
+    document.querySelectorAll('.btn-night[data-slug]').forEach(function(btn){
+      btn.addEventListener('click',function(){entrarGrupo(this.getAttribute('data-slug'));});
+    });
+  }catch(e){console.error('Erro:',e)}
+}
+
+carregarAssessorias();
+</script>
+
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<!-- REGENI NAV -->
+<style>
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
+.pace-nav a.active{color:#00D4FF}
+.pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
+body{padding-bottom:64px!important}
+</style>
+<nav class="pace-nav">
+<a href="/" class="n-home"><span class="ni">🏠</span>INÍCIO</a>
+<a href="/corridas-abertas.html" class="n-corridas"><span class="ni">🏁</span>CORRIDAS</a>
+<a href="/ia.html" class="n-ia"><span class="ni">🤖</span>IA</a>
+<a href="/cobaia.html" class="n-cobaia"><span class="ni">🧬</span>COBAIA</a>
+<a href="/perfil.html" class="n-perfil"><span class="ni">👤</span>PERFIL</a>
+</nav>
+<script>
+(function(){var p=location.pathname;var logged=!!localStorage.getItem('pace_token');document.querySelectorAll('.pace-nav a').forEach(function(a){if(a.classList.contains('n-home')&&logged){a.href='/atleta.html';}if(p===a.getAttribute('href')||(p==='/atleta.html'&&a.classList.contains('n-home'))||(p==='/exames.html'&&a.classList.contains('n-cobaia'))||(p==='/cobaia-resultados.html'&&a.classList.contains('n-cobaia')))a.classList.add('active');});})();
+</script>
+<!-- /REGENI NAV -->
+
+</body>
+</html>
