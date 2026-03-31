@@ -42,7 +42,7 @@ export default async function scraperBrasilRoutes(fastify) {
           ageGroup:r.ageGroup||'Geral'
         }});
         ok++;
-      } catch(e) { err++; }
+      } catch(e) { err++; console.error('IMPORT ERR:', r.name, e.message); }
     }
     
     // RECALCULAR PONTOS APÓS IMPORTAR
