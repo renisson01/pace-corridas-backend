@@ -219,13 +219,7 @@ button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
   </div>
 </div>
 
-<nav class="bottom-nav">
-  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
-  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
-  <a href="/treinador.html" class="nav-item"><span class="nav-icon">📋</span><span class="nav-label">Treinador</span></a>
-  <a href="/elite.html" class="nav-item ativo"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
-  <a href="/x1.html" class="nav-item"><span class="nav-icon">🥊</span><span class="nav-label">X1</span></a>
-</nav>
+
 <div id="toast"></div>
 
 <script>
@@ -250,7 +244,7 @@ async function init() {
 
   // Corridas
   try {
-    const corridas = await fetch('/corridas').then(r=>r.json());
+    const corridas = await fetch('/races').then(r=>r.json());
     const sel = document.getElementById('selCorrida');
     sel.innerHTML = '<option value="">— Selecione uma prova —</option>';
     corridas.forEach(c => {
@@ -313,7 +307,7 @@ async function corridaSelecionada() {
   // Distâncias
   document.getElementById('distRow').innerHTML = '<span style="font-size:11px;color:var(--muted)">⏳</span>';
   try {
-    const dists = await fetch(`/corrida/${corridaAtual}/distancias`).then(r=>r.json());
+    const dists = await fetch(`/races/${corridaAtual}/distances`).then(r=>r.json());
     const row = document.getElementById('distRow');
     row.innerHTML = '';
     if (dists.length > 1) {
@@ -345,13 +339,13 @@ async function carregarResultados() {
   try {
     const params = new URLSearchParams({ limit: 200 });
     if (distAtual) params.set('dist', distAtual);
-    const data = await fetch(`/corrida/${corridaAtual}/resultados?${params}`).then(r=>r.json());
+    const data = await fetch(`/races/${corridaAtual}/results?${params}`).then(r=>r.json());
     todosResultados = data.resultados || [];
 
     // Faixas
     const fp = new URLSearchParams();
     if (distAtual) fp.set('dist', distAtual);
-    const faixasData = await fetch(`/corrida/${corridaAtual}/faixas?${fp}`).then(r=>r.json()).catch(()=>[]);
+    const faixasData = await fetch(`/races/${corridaAtual}/agegroups?${fp}`).then(r=>r.json()).catch(()=>[]);
     faixasDisponiveis = faixasData;
 
     // Popular select de faixas

@@ -267,7 +267,7 @@ async function enviar(){
           lastMsg.appendChild(btn);
         }
       }
-      else if(r.status===401){localStorage.removeItem('token');sessionStorage.setItem('pace_redirect','/ia.html');location.href='/entrar.html';}
+      else if(r.status===401){localStorage.removeItem('pace_token');sessionStorage.setItem('pace_redirect','/ia.html');location.href='/entrar.html';}
       else addMsg('Erro: '+d.error,'ia');
       return;
     }
