@@ -20,7 +20,6 @@ export async function raceRoutes(fastify) {
     if (!race) return reply.code(404).send({ error: 'Corrida não encontrada' });
     return race;
   });
-}
 
   fastify.get('/races/:id/top5', async (req, reply) => {
     const { id } = req.params;
@@ -28,20 +27,16 @@ export async function raceRoutes(fastify) {
     const where = { raceId: id };
     if (distance) where.distance = distance;
     const results = await prisma.result.findMany({
-      where,
-      orderBy: { overallRank: 'asc' },
-      take: 100
+      where, orderBy: { overallRank: 'asc' }, take: 100
     });
     const race = await prisma.race.findUnique({ where: { id } });
     const masc = results.filter(r => r.gender === 'M').slice(0, 5).map(r => ({
-      pos: r.genderRank || r.overallRank,
-      nome: r.name, cidade: r.city || '', tempo: r.time,
-      pace: r.pace || '', faixa: r.ageGroup || ''
+      pos: r.genderRank || r.overallRank, nome: r.name,
+      cidade: r.city || '', tempo: r.time, pace: r.pace || '', faixa: r.ageGroup || ''
     }));
     const fem = results.filter(r => r.gender === 'F').slice(0, 5).map(r => ({
-      pos: r.genderRank || r.overallRank,
-      nome: r.name, cidade: r.city || '', tempo: r.time,
-      pace: r.pace || '', faixa: r.ageGroup || ''
+      pos: r.genderRank || r.overallRank, nome: r.name,
+      cidade: r.city || '', tempo: r.time, pace: r.pace || '', faixa: r.ageGroup || ''
     }));
     return { race: race?.name || '', masculino: masc, feminino: fem };
   });
@@ -83,3 +78,4 @@ export async function raceRoutes(fastify) {
     });
     return Object.values(grupos);
   });
+}
