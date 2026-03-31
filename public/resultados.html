@@ -108,7 +108,7 @@ let races=[];
 
 async function init(){
   try{
-    const s=await fetch('/analytics').then(r=>r.json());
+    const s=await fetch('/analytics/overview').then(r=>r.json());
     document.getElementById('status').innerHTML=
       '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-blue-400">'+(s.totalRaces || 0)+'</div><div class="text-xs text-slate-400">Corridas</div></div>'+
       '<div class="bg-slate-800 rounded-xl p-4 text-center"><div class="text-2xl font-bold text-green-400">'+(s.totalResults || 0)+'</div><div class="text-xs text-slate-400">Resultados</div></div>'+
