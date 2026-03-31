@@ -4,11 +4,7 @@ export async function scrapeResultados(raceUrl, raceId) {
   let browser;
   try {
     // Connect to existing Chromium
-    browser = await puppeteer.launch({
-      executablePath: '/usr/bin/chromium',
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-    });
+    browser = await puppeteer.launch({headless:'new',executablePath:process.env.PUPPETEER_EXECUTABLE_PATH||undefined,args:['--no-sandbox','--disable-setuid-sandbox','--disable-dev-shm-usage','--no-zygote','--single-process','--disable-gpu']});
 
     const page = await browser.newPage();
     await page.goto(raceUrl, { waitUntil: 'networkidle2', timeout: 30000 });
