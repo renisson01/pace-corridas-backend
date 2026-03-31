@@ -51,20 +51,6 @@ export default async function scraperBrasilRoutes(fastify) {
   });
 
   // RESULTADOS DE UMA CORRIDA
-  fastify.get('/races/:id/results', async (req,reply) => {
-    const {id}=req.params;
-    const {distance,gender,ageGroup,page=1,limit=100}=req.query;
-    const where={raceId:id};
-    if(distance) where.distance=distance;
-    if(ageGroup) where.ageGroup=ageGroup;
-    const [results,total]=await Promise.all([
-      prisma.result.findMany({where,include:{athlete:{select:{name:true,gender:true,city:true,state:true,age:true}}},orderBy:{overallRank:'asc'},skip:(page-1)*parseInt(limit),take:parseInt(limit)}),
-      prisma.result.count({where})
-    ]);
-    const filtered = gender ? results.filter(r=>r.athlete?.gender===gender) : results;
-    const race=await prisma.race.findUnique({where:{id}});
-    return {race:race?{id:race.id,name:race.name,date:race.date,city:race.city}:null,total,results:filtered};
-  });
 
   // RANKING BRASIL COM PONTUACAO
   fastify.get('/rankings/brazil', async (req,reply) => {
