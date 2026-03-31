@@ -30,7 +30,7 @@ export default async function scraperBrasilRoutes(fastify) {
     for (const r of results) {
       try {
         let athlete = await prisma.athlete.findFirst({where:{name:{equals:r.name,mode:'insensitive'}}});
-        if (!athlete) athlete = await prisma.athlete.create({data:{name:r.name,age:r.age||0,gender:r.gender||'M',city:r.city||race.city,state:r.state||race.state}});
+        if (!athlete) athlete = await prisma.athlete.create({data:{name:r.name,age:r.age||0,gender:r.gender||'M',state:r.state||race.state}});
         await prisma.result.upsert({
           where: { athleteId_raceId_distance: { athleteId: athlete.id, raceId, distance: distance||r.distance||"0" } },
           update: {
