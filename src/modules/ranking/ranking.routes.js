@@ -231,31 +231,65 @@ export async function rankingRoutes(fastify) {
 }
 
 async function rankingPorDistancia(distKm, genero) {
-  const where = {};
-  if (genero) where.gender = genero;
-  // Map distances: "10" -> "10K", "5" -> "5K", etc
+  // Strategy: query results first (smaller subset), then get athletes
   const distMap = { '5': '5K', '10': '10K', '21': '21K', '42': '42K', '15': '15K', '3': '3K' };
   const normalizedDist = distMap[distKm] || distKm;
   
+  // Get all results for this distance
+  const results = await prisma.result.findMany({
+    where: { distance: normalizedDist },
+    select: { athleteId: true, time: true, overallRank: true },
+    orderBy: { time: 'asc' },
+  });
+  
+  // Get distinct athlete IDs
+  const athleteIds = [...new Set(results.map(r => r.athleteId))];
+  
+  // Get athlete data
   const atletas = await prisma.athlete.findMany({
-    where,
+    where: {
+      id: { in: athleteIds },
+      ...(genero && { gender: genero })
+    },
     select: {
-      id:true, name:true, equipe:true, state:true, gender:true, totalPoints:true,
-      results: { where: { distance: normalizedDist }, select: { time:true, overallRank:true } }
+      id: true,
+      name: true,
+      equipe: true,
+      state: true,
+      gender: true,
+      totalPoints: true
     }
   });
-  return atletas
-    .filter(a => a.results.length > 0)
-    .map(a => {
-      const melhor = a.results.reduce((best, r) =>
-        tempoParaSegundos(r.time) < tempoParaSegundos(best.time) ? r : best
-      );
-      return {
-        id:a.id, name:a.name, equipe:a.equipe||null, state:a.state||null,
-        gender:a.gender, totalPoints:a.totalPoints,
-        nivel:nivelAtleta(a.totalPoints).label, melhorTempo:melhor.time
-      };
-    })
+  
+  // Combine: map results with athlete data
+  const combined = results
+    .filter(r => atletas.find(a => a.id === r.athleteId))
+    .map(r => ({
+      ...atletas.find(a => a.id === r.athleteId),
+      time: r.time,
+      overallRank: r.overallRank
+    }))
+  // Group by athlete and get best time
+  const byAthlete = {};
+  combined.forEach(r => {
+    if (!byAthlete[r.id]) {
+      byAthlete[r.id] = r;
+    } else if (tempoParaSegundos(r.time) < tempoParaSegundos(byAthlete[r.id].time)) {
+      byAthlete[r.id] = r;
+    }
+  });
+
+  return Object.values(byAthlete)
+    .map(a => ({
+      id: a.id,
+      name: a.name,
+      equipe: a.equipe || null,
+      state: a.state || null,
+      gender: a.gender,
+      totalPoints: a.totalPoints,
+      nivel: nivelAtleta(a.totalPoints).label,
+      melhorTempo: a.time
+    }))
     .sort((a, b) => tempoParaSegundos(a.melhorTempo) - tempoParaSegundos(b.melhorTempo))
-    .map((a, i) => ({ ...a, posicao: i+1 }));
+    .map((a, i) => ({ ...a, posicao: i + 1 }));
 }
