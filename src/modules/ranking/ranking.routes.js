@@ -231,56 +231,31 @@ export async function rankingRoutes(fastify) {
 }
 
 async function rankingPorDistancia(distKm, genero) {
-  // Strategy: query results first (smaller subset), then get athletes
   const distMap = { '5': '5K', '10': '10K', '21': '21K', '42': '42K', '15': '15K', '3': '3K' };
   const normalizedDist = distMap[distKm] || distKm;
   
-  // Get all results for this distance
   const results = await prisma.result.findMany({
     where: { distance: normalizedDist },
-    select: { athleteId: true, time: true, overallRank: true },
-    orderBy: { time: 'asc' },
+    include: { athlete: { select: { id: true, name: true, equipe: true, state: true, gender: true, totalPoints: true } } },
+    take: 5000
   });
   
-  // Get distinct athlete IDs
-  const athleteIds = [...new Set(results.map(r => r.athleteId))];
-  
-  // Get athlete data
-  const atletas = await prisma.athlete.findMany({
-    where: {
-      id: { in: athleteIds },
-      ...(genero && { gender: genero })
-    },
-    select: {
-      id: true,
-      name: true,
-      equipe: true,
-      state: true,
-      gender: true,
-      totalPoints: true
-    }
-  });
-  
-  // Combine: map results with athlete data
-  const combined = results
-    .filter(r => atletas.find(a => a.id === r.athleteId))
-    .map(r => ({
-      ...atletas.find(a => a.id === r.athleteId),
-      time: r.time,
-      overallRank: r.overallRank
-    }))
-  // Group by athlete and get best time
   const byAthlete = {};
-  combined.forEach(r => {
-    if (!byAthlete[r.id]) {
-      byAthlete[r.id] = r;
-    } else if (tempoParaSegundos(r.time) < tempoParaSegundos(byAthlete[r.id].time)) {
-      byAthlete[r.id] = r;
+  results.forEach(r => {
+    if (!genero || r.athlete.gender === genero) {
+      const key = r.athleteId;
+      if (!byAthlete[key]) {
+        byAthlete[key] = { ...r.athlete, time: r.time };
+      } else if (tempoParaSegundos(r.time) < tempoParaSegundos(byAthlete[key].time)) {
+        byAthlete[key].time = r.time;
+      }
     }
   });
 
   return Object.values(byAthlete)
-    .map(a => ({
+    .sort((a, b) => tempoParaSegundos(a.time) - tempoParaSegundos(b.time))
+    .map((a, i) => ({
+      posicao: i + 1,
       id: a.id,
       name: a.name,
       equipe: a.equipe || null,
@@ -289,7 +264,5 @@ async function rankingPorDistancia(distKm, genero) {
       totalPoints: a.totalPoints,
       nivel: nivelAtleta(a.totalPoints).label,
       melhorTempo: a.time
-    }))
-    .sort((a, b) => tempoParaSegundos(a.melhorTempo) - tempoParaSegundos(b.melhorTempo))
-    .map((a, i) => ({ ...a, posicao: i + 1 }));
+    }));
 }
