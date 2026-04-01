@@ -127,7 +127,7 @@ export default async function scraperBrasilRoutes(fastify) {
   });
 
   // PERFIL DO ATLETA
-  fastify.get('/atleta/:id', async (req,reply) => {
+  fastify.get('/perfil-atleta/:id', async (req,reply) => {
     const {id} = req.params;
     const athlete = await prisma.athlete.findUnique({
       where: { id },
@@ -173,7 +173,7 @@ export default async function scraperBrasilRoutes(fastify) {
   });
 
   // VINCULAR ATLETA A USUARIO
-  fastify.post('/atleta/:id/vincular', async (req,reply) => {
+  fastify.post('/perfil-atleta/:id/vincular', async (req,reply) => {
     const {id} = req.params;
     const {userId} = req.body;
     if (!userId) return reply.code(400).send({error:'userId obrigatório'});

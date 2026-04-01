@@ -125,7 +125,7 @@ async function carregar() {
     return;
   }
   try {
-    const a = await fetch(`/atleta/${atletaId}`).then(r=>r.json());
+    const a = await fetch(`/perfil-atleta/${atletaId}`).then(r=>r.json());
     if (a.error) throw new Error(a.error);
     renderPerfil(a);
   } catch(e) {
@@ -224,7 +224,7 @@ function solicitarVinculacao(atletaId, atletaNome) {
   // Confirmar vinculação
   const ok = confirm(`Confirmar: Você é ${atletaNome}?\n\nEsta ação vai vincular este perfil de atleta à sua conta.`);
   if (!ok) return;
-  fetch(`/atleta/${atletaId}/vincular`, {
+  fetch(`/perfil-atleta/${atletaId}/vincular`, {
     method: 'POST',
     headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${paceUser.token||''}` },
     body: JSON.stringify({ userId: paceUser.id })
