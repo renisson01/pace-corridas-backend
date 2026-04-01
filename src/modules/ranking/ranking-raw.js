@@ -22,16 +22,17 @@ function nivelAtleta(pts) {
 
 export async function getRankingFor(distance, gender = null) {
   try {
-    // Raw SQL — fast and simple
+    // Raw SQL — get city from Race via Result
     const sql = `
       SELECT 
         a.id, a.name, a.equipe, a.state, a.gender, a.totalPoints,
-        MIN(r.time) as "melhorTempo"
+        MIN(r.time) as "melhorTempo",
+        (SELECT "city" FROM "Race" WHERE id = r."raceId" LIMIT 1) as "city"
       FROM "Athlete" a
       JOIN "Result" r ON a.id = r."athleteId"
       WHERE r.distance = $1
         ${gender ? 'AND a.gender = $2' : ''}
-      GROUP BY a.id, a.name, a.equipe, a.state, a.gender, a.totalPoints
+      GROUP BY a.id, a.name, a.equipe, a.state, a.gender, a.totalPoints, r."raceId"
       ORDER BY MIN(r.time) ASC
       LIMIT 5000
     `;
@@ -47,6 +48,7 @@ export async function getRankingFor(distance, gender = null) {
       name: r.name,
       equipe: r.equipe || null,
       state: r.state || null,
+      city: r.city || null,
       gender: r.gender,
       totalPoints: r.totalPoints,
       nivel: nivelAtleta(r.totalPoints),
