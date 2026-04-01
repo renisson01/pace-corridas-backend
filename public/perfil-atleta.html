@@ -92,12 +92,7 @@ button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
   <div class="loading">⏳</div>
 </div>
 
-<nav class="bottom-nav">
-  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
-  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
-  <a href="/treinador.html" class="nav-item"><span class="nav-icon">📋</span><span class="nav-label">Treinador</span></a>
-  <a href="/elite.html" class="nav-item ativo"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
-  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🥊</span><span class="nav-label">X1</span></a>
+<nav class="bottom-nav" style="display:none">
 </nav>
 <div id="toast"></div>
 
@@ -121,7 +116,7 @@ function fmtData(d) {
 
 async function carregar() {
   if (!atletaId) {
-    document.getElementById('mainContent').innerHTML = '<div class="error-box"><p>❌ Atleta não encontrado</p><a href="/elite.html" style="color:var(--verde);font-size:13px">← Voltar ao ranking</a></div>';
+    document.getElementById('mainContent').innerHTML = '<div class="error-box"><p>❌ Atleta não encontrado</p><a href="/resultados.html" style="color:var(--verde);font-size:13px">← Voltar ao ranking</a></div>';
     return;
   }
   try {
@@ -129,7 +124,7 @@ async function carregar() {
     if (a.error) throw new Error(a.error);
     renderPerfil(a);
   } catch(e) {
-    document.getElementById('mainContent').innerHTML = `<div class="error-box"><p>❌ ${e.message||'Erro ao carregar'}</p><a href="/elite.html" style="color:var(--verde);font-size:13px">← Voltar ao ranking</a></div>`;
+    document.getElementById('mainContent').innerHTML = `<div class="error-box"><p>❌ ${e.message||'Erro ao carregar'}</p><a href="/resultados.html" style="color:var(--verde);font-size:13px">← Voltar ao ranking</a></div>`;
   }
 }
 

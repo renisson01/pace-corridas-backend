@@ -85,9 +85,10 @@ export async function rankingRoutes(fastify) {
   });
 
   fastify.get('/buscar-atletas', async (req) => {
-    const { nome, estado, limit = 20 } = req.query;
+    const { nome, q, estado, limit = 20 } = req.query;
+    const busca = nome || q;
     const where = {};
-    if (nome)   where.name  = { contains: nome, mode: 'insensitive' };
+    if (busca)  where.name  = { contains: busca, mode: 'insensitive' };
     if (estado) where.state = estado;
     const atletas = await prisma.athlete.findMany({
       where, take: parseInt(limit), orderBy: { totalPoints: 'desc' },
