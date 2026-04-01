@@ -182,13 +182,12 @@ async function buscarRanking(){
   const dist=document.getElementById('rdist').value;
   const gen=document.getElementById('rgen').value;
   const age=document.getElementById('rage').value;
-  let url='/rankings/brazil?distance='+(dist||'5km')+'&limit=100';
-  if(gen) url+='&gender='+gen;
-  if(age) url+='&ageGroup='+age;
+  let url='/ranking/'+(dist||'5')+'km';
+  if(gen && gen !== 'Todos') url+='?genero='+gen;
   const d=await fetch(url).then(r=>r.json());
   const el=document.getElementById('rankres');
-  if(!d.total){el.innerHTML='<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem resultados. Importe dados primeiro!</div>';return;}
-  el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking '+dist+'km '+(gen?gen==='M'?'Masc':'Fem':'Geral')+(age?' '+age:'')+'</h3><p class="text-slate-400 text-sm">'+d.total+' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Cidade</th><th class="px-3 py-2 text-left">Tempo</th><th class="px-3 py-2 text-left">Corrida</th></tr></thead><tbody>'+d.ranking.map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.rank<=3?'text-yellow-400':'text-slate-400')+'">'+(M[r.rank-1]||r.rank)+'</td><td class="px-3 py-2 font-medium">'+r.athlete+'</td><td class="px-3 py-2 text-center"><span class="'+(r.gender==='F'?'text-pink-400':'text-blue-400')+'">'+r.gender+'</span></td><td class="px-3 py-2 text-slate-400 text-xs">'+(r.city||'')+'</td><td class="px-3 py-2 font-mono font-bold text-green-400">'+r.time+'</td><td class="px-3 py-2 text-xs text-slate-400">'+(r.race||'-')+'</td></tr>').join('')+'</tbody></table></div></div>';
+  if(!d || !Array.isArray(d) || d.length===0){el.innerHTML='<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem resultados. Importe dados primeiro!</div>';return;}
+  el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking '+dist+'km '+(gen && gen !== 'Todos'?gen==='M'?'Masc':'Fem':'Geral')+'</h3><p class="text-slate-400 text-sm">'+d.length+' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Estado</th><th class="px-3 py-2 text-left">Tempo</th><th class="px-3 py-2 text-left">Nível</th></tr></thead><tbody>'+d.slice(0,100).map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.posicao<=3?'text-yellow-400':'text-slate-400')+'">'+r.posicao+'</td><td class="px-3 py-2 font-medium">'+r.name+'</td><td class="px-3 py-2 text-center"><span class="'+(r.gender==='F'?'text-pink-400':'text-blue-400')+'">'+r.gender+'</span></td><td class="px-3 py-2 text-slate-400 text-xs">'+(r.state||'')+'</td><td class="px-3 py-2 font-mono font-bold text-green-400">'+r.melhorTempo+'</td><td class="px-3 py-2 text-xs">'+r.nivel+'</td></tr>').join('')+'</tbody></table></div></div>';
 }
 
 async function buscarPontos(){
