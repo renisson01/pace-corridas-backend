@@ -71,8 +71,8 @@ export default async function scraperBrasilRoutes(fastify) {
     if(distance) where.distance={contains:distance};
     if(ageGroup) where.ageGroup=ageGroup;
     if(gender||state){where.athlete={};if(gender)where.athlete.gender=gender;if(state)where.athlete.state=state;}
-    const results=await prisma.result.findMany({where,include:{athlete:{select:{name:true,gender:true,city:true,state:true,age:true}},race:{select:{name:true,date:true,city:true}}},orderBy:{time:'asc'},take:parseInt(limit)});
-    return {total:results.length,filters:{distance,gender,ageGroup,state},ranking:results.map((r,i)=>({rank:i+1,athlete:r.athlete?.name,gender:r.athlete?.gender,city:r.athlete?.city,state:r.athlete?.state,time:r.time,pace:r.pace,ageGroup:r.ageGroup,race:r.race?.name,raceDate:r.race?.date}))};
+    const results=await prisma.result.findMany({where,include:{athlete:{select:{name:true,gender:true,state:true,age:true}},race:{select:{name:true,date:true,city:true}}},orderBy:{time:'asc'},take:parseInt(limit)});
+    return {total:results.length,filters:{distance,gender,ageGroup,state},ranking:results.map((r,i)=>({rank:i+1,athlete:r.athlete?.name,gender:r.athlete?.gender,state:r.athlete?.state,time:r.time,pace:r.pace,ageGroup:r.ageGroup,race:r.race?.name,raceDate:r.race?.date}))};
   });
 
   // TOP 5 MASCULINO E FEMININO DE UMA CORRIDA
@@ -81,7 +81,7 @@ export default async function scraperBrasilRoutes(fastify) {
     const {distance}=req.query;
     const where={raceId:id,overallRank:{lte:10}};
     if(distance) where.distance=distance;
-    const all=await prisma.result.findMany({where,include:{athlete:{select:{name:true,gender:true,city:true,state:true}}},orderBy:{overallRank:'asc'}});
+    const all=await prisma.result.findMany({where,include:{athlete:{select:{name:true,gender:true,state:true}}},orderBy:{overallRank:'asc'}});
     const masc=all.filter(r=>r.athlete?.gender==='M').slice(0,5);
     const fem=all.filter(r=>r.athlete?.gender==='F').slice(0,5);
     const race=await prisma.race.findUnique({where:{id}});
@@ -94,7 +94,7 @@ export default async function scraperBrasilRoutes(fastify) {
     const where={};
     if(gender||state){where.athlete={};if(gender)where.athlete.gender=gender;if(state)where.athlete.state=state;}
     
-    const results=await prisma.result.findMany({where,include:{athlete:{select:{id:true,name:true,gender:true,city:true,state:true}}}});
+    const results=await prisma.result.findMany({where,include:{athlete:{select:{id:true,name:true,gender:true,state:true}}}});
     
     // Agrupa por atleta e soma pontos
     const atletaMap={};
