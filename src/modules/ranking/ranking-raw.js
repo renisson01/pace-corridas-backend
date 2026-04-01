@@ -26,9 +26,9 @@ export async function getRankingFor(distance, gender = null) {
     const sql = `
       SELECT 
         a.id, a.name, a.equipe, a.state, a.gender, a.totalPoints,
-        MIN(r.time) as melhorTempo
+        MIN(r.time) as "melhorTempo"
       FROM "Athlete" a
-      JOIN "Result" r ON a.id = r.athleteId
+      JOIN "Result" r ON a.id = r."athleteId"
       WHERE r.distance = $1
         ${gender ? 'AND a.gender = $2' : ''}
       GROUP BY a.id, a.name, a.equipe, a.state, a.gender, a.totalPoints
