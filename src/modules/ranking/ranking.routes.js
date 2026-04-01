@@ -1,5 +1,5 @@
 import prisma from '../../lib/prisma.js';
-import { getRankingFor } from './ranking-raw.js';
+import { getRankingFor, getRankingByRace } from './ranking-raw.js';
 
 function tempoParaSegundos(t) {
   if (!t) return 999999;
@@ -59,6 +59,23 @@ export async function rankingRoutes(fastify) {
   fastify.get('/ranking/10km', async (req) => { return await getRankingFor('10K', req.query.genero); });
   fastify.get('/ranking/5km',  async (req) => { return await getRankingFor('5K',  req.query.genero); });
   fastify.get('/ranking/3km',  async (req) => { return await getRankingFor('3K',  req.query.genero); });
+
+  // RANKING POR PROVA
+  fastify.get('/ranking/prova/:raceId', async (req) => {
+    return await getRankingByRace(req.params.raceId, req.query.distance || null, req.query.genero || null);
+  });
+
+  // LISTA DE PROVAS COM RESULTADOS
+  fastify.get('/provas', async () => {
+    const races = await prisma.race.findMany({
+      select: { id: true, name: true, city: true, state: true, date: true, distances: true, _count: { select: { results: true } } },
+      orderBy: { date: 'desc' }
+    });
+    return races.filter(r => r._count.results > 0).map(r => ({
+      id: r.id, name: r.name, city: r.city, state: r.state,
+      date: r.date, distances: r.distances, totalResults: r._count.results
+    }));
+  });
 
   fastify.get('/ranking/stats', async () => {
     const [totalAtletas, totalResultados, totalCorridas] = await Promise.all([

@@ -10,35 +10,58 @@
 </head>
 <body class="bg-slate-900 text-white min-h-screen pb-20">
 <div class="max-w-6xl mx-auto p-4">
-  <h1 class="text-3xl font-bold text-center py-6">🏆 REGENI — Ranking Brasil</h1>
-  
-  <div class="grid grid-cols-3 gap-3 mb-6">
-    <div class="bg-slate-800 rounded-xl p-4 text-center">
-      <div class="text-2xl font-bold text-blue-400" id="totalRaces">-</div>
+  <h1 class="text-2xl font-bold text-center py-4">🏆 Ranking Brasil</h1>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-3 gap-2 mb-4">
+    <div class="bg-slate-800 rounded-lg p-3 text-center">
+      <div class="text-xl font-bold text-blue-400" id="totalRaces">-</div>
       <div class="text-xs text-slate-400">Corridas</div>
     </div>
-    <div class="bg-slate-800 rounded-xl p-4 text-center">
-      <div class="text-2xl font-bold text-green-400" id="totalResults">-</div>
+    <div class="bg-slate-800 rounded-lg p-3 text-center">
+      <div class="text-xl font-bold text-green-400" id="totalResults">-</div>
       <div class="text-xs text-slate-400">Resultados</div>
     </div>
-    <div class="bg-slate-800 rounded-xl p-4 text-center">
-      <div class="text-2xl font-bold text-yellow-400" id="totalAthletes">-</div>
+    <div class="bg-slate-800 rounded-lg p-3 text-center">
+      <div class="text-xl font-bold text-yellow-400" id="totalAthletes">-</div>
       <div class="text-xs text-slate-400">Atletas</div>
     </div>
   </div>
 
-  <div class="bg-slate-800 rounded-xl p-4 mb-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-      <select id="rdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-        <option value="3">3km / Caminhada</option>
-        <option value="5">5km</option>
-        <option value="10" selected>10km</option>
-        <option value="15">15km</option>
-        <option value="21">21km</option>
-        <option value="42">42km</option>
-      </select>
-      <select id="rfaixa" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-        <option value="">Todas as idades</option>
+  <!-- Tabs -->
+  <div class="flex gap-2 mb-4">
+    <button id="btnRankGeral" onclick="showPanel('geral')" class="flex-1 py-2 rounded-lg text-sm font-bold bg-blue-600">🏅 Ranking Geral</button>
+    <button id="btnRankProva" onclick="showPanel('prova')" class="flex-1 py-2 rounded-lg text-sm font-bold bg-slate-700">📋 Por Prova</button>
+  </div>
+
+  <!-- PAINEL RANKING GERAL -->
+  <div id="panelGeral">
+    <div class="bg-slate-800 rounded-xl p-4 mb-4">
+      <div class="grid grid-cols-2 gap-2 mb-2">
+        <select id="rdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+          <option value="3">3km / Caminhada</option>
+          <option value="5">5km</option>
+          <option value="10" selected>10km</option>
+          <option value="15">15km</option>
+          <option value="21">21km (Meia)</option>
+          <option value="42">42km (Maratona)</option>
+        </select>
+        <select id="rgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+          <option value="">Todos gêneros</option>
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-2 mb-2">
+        <select id="rstate" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600" onchange="carregarCidades()">
+          <option value="">Todos os estados</option>
+        </select>
+        <select id="rcidade" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+          <option value="">Todas as cidades</option>
+        </select>
+      </div>
+      <select id="rfaixa" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 mb-2">
+        <option value="">Todas as faixas etárias</option>
         <option value="16-19">16-19 anos</option>
         <option value="20-24">20-24 anos</option>
         <option value="25-29">25-29 anos</option>
@@ -50,124 +73,127 @@
         <option value="55-59">55-59 anos</option>
         <option value="60+">60+ anos</option>
       </select>
+      <button onclick="buscarRanking()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-lg text-sm font-bold">🔍 Buscar Ranking</button>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-      <select id="rgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-        <option value="">Todos gêneros</option>
-        <option value="M">Masculino</option>
-        <option value="F">Feminino</option>
-      </select>
-      <select id="rstate" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600" onchange="carregarCidades()">
-        <option value="">Todos os estados</option>
-        <option value="AC">Acre</option>
-        <option value="AL">Alagoas</option>
-        <option value="AP">Amapá</option>
-        <option value="AM">Amazonas</option>
-        <option value="BA">Bahia</option>
-        <option value="CE">Ceará</option>
-        <option value="DF">Distrito Federal</option>
-        <option value="ES">Espírito Santo</option>
-        <option value="GO">Goiás</option>
-        <option value="MA">Maranhão</option>
-        <option value="MT">Mato Grosso</option>
-        <option value="MS">Mato Grosso do Sul</option>
-        <option value="MG">Minas Gerais</option>
-        <option value="PA">Pará</option>
-        <option value="PB">Paraíba</option>
-        <option value="PR">Paraná</option>
-        <option value="PE">Pernambuco</option>
-        <option value="PI">Piauí</option>
-        <option value="RJ">Rio de Janeiro</option>
-        <option value="RN">Rio Grande do Norte</option>
-        <option value="RS">Rio Grande do Sul</option>
-        <option value="RO">Rondônia</option>
-        <option value="RR">Roraima</option>
-        <option value="SC">Santa Catarina</option>
-        <option value="SP">São Paulo</option>
-        <option value="SE">Sergipe</option>
-        <option value="TO">Tocantins</option>
-      </select>
-      <select id="rcidade" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-        <option value="">Todas as cidades</option>
-      </select>
-    </div>
-
-    <button onclick="buscarRanking()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-bold">🔍 Buscar Ranking</button>
+    <div id="rankres" class="text-center text-slate-400 py-8">Selecione os filtros e clique em Buscar</div>
   </div>
 
-  <div id="rankres" class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">
-    Clique em "Buscar Ranking" para ver os resultados
+  <!-- PAINEL POR PROVA -->
+  <div id="panelProva" class="hidden">
+    <div class="bg-slate-800 rounded-xl p-4 mb-4">
+      <select id="rprova" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 mb-2">
+        <option value="">Carregando provas...</option>
+      </select>
+      <div class="grid grid-cols-2 gap-2 mb-2">
+        <select id="rpgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+          <option value="">Todos gêneros</option>
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+        </select>
+        <select id="rpdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+          <option value="">Todas distâncias</option>
+        </select>
+      </div>
+      <button onclick="buscarPorProva()" class="w-full bg-green-600 hover:bg-green-700 px-4 py-3 rounded-lg text-sm font-bold">🔍 Ver Resultados da Prova</button>
+    </div>
+    <div id="provares" class="text-center text-slate-400 py-8">Selecione uma prova</div>
   </div>
 </div>
 
+<!-- NAV -->
 <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 flex justify-around text-xs">
-  <a href="/" class="flex-1 text-center py-3 text-slate-400 hover:text-blue-400">🏠 INÍCIO</a>
-  <a href="/corridas-abertas.html" class="flex-1 text-center py-3 text-slate-400 hover:text-blue-400">🏁 CORRIDAS</a>
-  <a href="/ia.html" class="flex-1 text-center py-3 text-slate-400 hover:text-blue-400">🤖 IA</a>
-  <a href="/resultados.html" class="flex-1 text-center py-3 text-blue-400">🏆 RANKING</a>
-  <a href="/perfil.html" class="flex-1 text-center py-3 text-slate-400 hover:text-blue-400">👤 PERFIL</a>
+  <a href="/" class="flex-1 text-center py-3 text-slate-400">🏠 Início</a>
+  <a href="/corridas-abertas.html" class="flex-1 text-center py-3 text-slate-400">🏁 Corridas</a>
+  <a href="/resultados.html" class="flex-1 text-center py-3 text-blue-400 font-bold">🏆 Ranking</a>
+  <a href="/ia.html" class="flex-1 text-center py-3 text-slate-400">🤖 IA</a>
+  <a href="/perfil.html" class="flex-1 text-center py-3 text-slate-400">👤 Perfil</a>
 </nav>
 
 <script>
 const M=['🥇','🥈','🥉'];
+const UFs='AC,AL,AP,AM,BA,CE,DF,ES,GO,MA,MT,MS,MG,PA,PB,PR,PE,PI,RJ,RN,RS,RO,RR,SC,SP,SE,TO'.split(',');
+const UFnomes={AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins'};
 
-// Estados e suas cidades (extraído do banco)
-const estadosCidades = {
-  'AC': ['Rio Branco'],
-  'AL': ['Maceió'],
-  'AP': ['Macapá'],
-  'AM': ['Manaus'],
-  'BA': ['Salvador', 'Feira de Santana', 'Vitória da Conquista'],
-  'CE': ['Fortaleza', 'Caucaia', 'Maracanaú'],
-  'DF': ['Brasília'],
-  'ES': ['Vitória', 'Serra'],
-  'GO': ['Goiânia', 'Anápolis'],
-  'MA': ['São Luís', 'Imperatriz'],
-  'MT': ['Cuiabá'],
-  'MS': ['Campo Grande', 'Dourados'],
-  'MG': ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora'],
-  'PA': ['Belém', 'Ananindeua'],
-  'PB': ['João Pessoa', 'Campina Grande'],
-  'PR': ['Curitiba', 'Londrina', 'Maringá'],
-  'PE': ['Recife', 'Jaboatão dos Guararapes', 'Olinda'],
-  'PI': ['Teresina'],
-  'RJ': ['Rio de Janeiro', 'Niterói', 'Duque de Caxias'],
-  'RN': ['Natal', 'Mossoró'],
-  'RS': ['Porto Alegre', 'Caxias do Sul', 'Pelotas'],
-  'RO': ['Porto Velho', 'Ji-Paraná'],
-  'RR': ['Boa Vista'],
-  'SC': ['Florianópolis', 'Joinville', 'Blumenau'],
-  'SP': ['São Paulo', 'Campinas', 'Santos', 'Sorocaba', 'Ribeirão Preto'],
-  'SE': ['Aracaju'],
-  'TO': ['Palmas']
-};
+let provas = [];
+let allData = [];
 
 async function init() {
   try {
     const s = await fetch('/analytics/overview').then(r => r.json());
-    document.getElementById('totalRaces').textContent = s.totalRaces || 0;
-    document.getElementById('totalResults').textContent = s.totalResults || 0;
-    document.getElementById('totalAthletes').textContent = s.totalAthletes || 0;
-  } catch (e) {
-    console.error('Stats load failed:', e);
-  }
+    document.getElementById('totalRaces').textContent = (s.totalRaces||0).toLocaleString('pt-BR');
+    document.getElementById('totalResults').textContent = (s.totalResults||0).toLocaleString('pt-BR');
+    document.getElementById('totalAthletes').textContent = (s.totalAthletes||0).toLocaleString('pt-BR');
+  } catch(e) {}
+
+  // Populate states
+  const sel = document.getElementById('rstate');
+  UFs.forEach(uf => { const o=document.createElement('option'); o.value=uf; o.textContent=UFnomes[uf]; sel.appendChild(o); });
+
+  // Load provas
+  try {
+    provas = await fetch('/provas').then(r => r.json());
+    const psel = document.getElementById('rprova');
+    psel.innerHTML = '<option value="">Selecione a prova...</option>';
+    provas.forEach(p => {
+      const d = new Date(p.date);
+      const o = document.createElement('option');
+      o.value = p.id;
+      o.textContent = p.name + ' — ' + p.city + ' (' + p.totalResults + ' resultados)';
+      psel.appendChild(o);
+    });
+  } catch(e) {}
+}
+
+function showPanel(which) {
+  document.getElementById('panelGeral').classList.toggle('hidden', which !== 'geral');
+  document.getElementById('panelProva').classList.toggle('hidden', which !== 'prova');
+  document.getElementById('btnRankGeral').className = 'flex-1 py-2 rounded-lg text-sm font-bold ' + (which==='geral' ? 'bg-blue-600' : 'bg-slate-700');
+  document.getElementById('btnRankProva').className = 'flex-1 py-2 rounded-lg text-sm font-bold ' + (which==='prova' ? 'bg-green-600' : 'bg-slate-700');
 }
 
 function carregarCidades() {
   const state = document.getElementById('rstate').value;
-  const cidadeSelect = document.getElementById('rcidade');
-  
-  cidadeSelect.innerHTML = '<option value="">Todas as cidades</option>';
-  
-  if (state && estadosCidades[state]) {
-    estadosCidades[state].forEach(cidade => {
-      const opt = document.createElement('option');
-      opt.value = cidade;
-      opt.textContent = cidade;
-      cidadeSelect.appendChild(opt);
-    });
-  }
+  const sel = document.getElementById('rcidade');
+  sel.innerHTML = '<option value="">Todas as cidades</option>';
+  if (!state || allData.length === 0) return;
+  const cities = [...new Set(allData.filter(r => r.state === state && r.city).map(r => r.city))].sort();
+  cities.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+}
+
+function renderTable(data, showProva) {
+  if (!data || data.length === 0) return '<div class="py-8 text-center text-slate-400">📭 Sem resultados para os filtros selecionados</div>';
+
+  let html = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr>';
+  html += '<th class="px-2 py-2 text-left">#</th>';
+  html += '<th class="px-2 py-2 text-left">Atleta</th>';
+  html += '<th class="px-2 py-2 text-center">G</th>';
+  html += '<th class="px-2 py-2 text-left">Tempo</th>';
+  if (showProva) html += '<th class="px-2 py-2 text-left">Prova</th>';
+  html += '<th class="px-2 py-2 text-left">Cidade</th>';
+  html += '<th class="px-2 py-2 text-left">UF</th>';
+  html += '</tr></thead><tbody>';
+
+  data.slice(0, 200).forEach((r, i) => {
+    const pos = r.posicao || (i + 1);
+    const medal = M[pos - 1] || pos;
+    const cls = pos <= 3 ? 'text-yellow-400' : 'text-slate-400';
+    const gcls = r.gender === 'F' ? 'text-pink-400' : 'text-blue-400';
+    const tempo = r.melhorTempo || r.tempo || '-';
+
+    html += '<tr class="border-t border-slate-700">';
+    html += '<td class="px-2 py-2 font-bold ' + cls + '">' + medal + '</td>';
+    html += '<td class="px-2 py-2 font-medium text-xs">' + r.name + '</td>';
+    html += '<td class="px-2 py-2 text-center"><span class="' + gcls + '">' + (r.gender||'-') + '</span></td>';
+    html += '<td class="px-2 py-2 font-mono font-bold text-green-400 text-xs">' + tempo + '</td>';
+    if (showProva) html += '<td class="px-2 py-2 text-xs text-slate-400">' + (r.prova||'-') + '</td>';
+    html += '<td class="px-2 py-2 text-xs text-slate-400">' + (r.city||'-') + '</td>';
+    html += '<td class="px-2 py-2 text-xs text-slate-400">' + (r.state||'-') + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  if (data.length > 200) html += '<p class="text-center text-slate-400 text-xs py-2">Mostrando 200 de ' + data.length + '</p>';
+  return html;
 }
 
 async function buscarRanking() {
@@ -176,41 +202,59 @@ async function buscarRanking() {
   const state = document.getElementById('rstate').value;
   const cidade = document.getElementById('rcidade').value;
   const faixa = document.getElementById('rfaixa').value;
-  
+
   const el = document.getElementById('rankres');
-  el.innerHTML = '<p class="text-slate-400">⏳ Carregando ranking...</p>';
-  
+  el.innerHTML = '<p class="text-slate-400 py-8">⏳ Carregando...</p>';
+
   try {
-    let url = '/ranking/' + (dist || '10') + 'km';
+    let url = '/ranking/' + dist + 'km';
+    if (gen) url += '?genero=' + gen;
+
+    const d = await fetch(url).then(r => r.json());
+    allData = d;
+
+    // Update cities dropdown
+    carregarCidades();
+
+    let filtered = d;
+    if (state) filtered = filtered.filter(r => r.state === state);
+    if (cidade) filtered = filtered.filter(r => r.city === cidade);
+    if (faixa) filtered = filtered.filter(r => r.faixaEtaria && r.faixaEtaria.includes(faixa));
+
+    // Re-number positions after filtering
+    filtered = filtered.map((r, i) => ({ ...r, posicao: i + 1 }));
+
+    const title = '🇧🇷 Ranking ' + dist + 'km' + (state ? ' — ' + UFnomes[state] : '') + (cidade ? ' — ' + cidade : '');
+    el.innerHTML = '<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700"><h3 class="font-bold text-sm">' + title + '</h3><p class="text-slate-400 text-xs">' + filtered.length + ' atletas</p></div>' + renderTable(filtered, true) + '</div>';
+  } catch(e) {
+    el.innerHTML = '<div class="py-8 text-center text-red-400">❌ Erro: ' + e.message + '</div>';
+  }
+}
+
+async function buscarPorProva() {
+  const raceId = document.getElementById('rprova').value;
+  if (!raceId) { alert('Selecione uma prova!'); return; }
+  const gen = document.getElementById('rpgen').value;
+  const dist = document.getElementById('rpdist').value;
+
+  const el = document.getElementById('provares');
+  el.innerHTML = '<p class="text-slate-400 py-8">⏳ Carregando...</p>';
+
+  try {
+    let url = '/ranking/prova/' + raceId;
     const params = [];
     if (gen) params.push('genero=' + gen);
-    
-    const d = await fetch(url + (params.length ? '?' + params.join('&') : '')).then(r => r.json());
-    
-    if (!d || !Array.isArray(d) || d.length === 0) {
-      el.innerHTML = '<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem resultados</div>';
-      return;
-    }
-    
-    let filtered = d;
-    if (state) {
-      filtered = filtered.filter(r => r.state === state);
-    }
-    if (cidade) {
-      filtered = filtered.filter(r => r.city === cidade);
-    }
-    
-    if (filtered.length === 0) {
-      el.innerHTML = '<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Nenhum resultado para os filtros selecionados</div>';
-      return;
-    }
-    
-    el.innerHTML = '<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking ' + dist + 'km' + (state ? ' - ' + state : '') + (cidade ? ' - ' + cidade : '') + '</h3><p class="text-slate-400 text-sm">' + filtered.length + ' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2 text-center">G</th><th class="px-3 py-2 text-left">Cidade</th><th class="px-3 py-2 text-left">Estado</th><th class="px-3 py-2 text-left">Tempo</th></tr></thead><tbody>' + 
-    filtered.slice(0, 100).map((r, i) => '<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold ' + (r.posicao <= 3 ? 'text-yellow-400' : 'text-slate-400') + '">' + (M[r.posicao - 1] || r.posicao) + '</td><td class="px-3 py-2 font-medium">' + r.name + '</td><td class="px-3 py-2 text-center"><span class="' + (r.gender === 'F' ? 'text-pink-400' : 'text-blue-400') + '">' + r.gender + '</span></td><td class="px-3 py-2 text-slate-400 text-xs">' + (r.city || '-') + '</td><td class="px-3 py-2 text-slate-400 text-xs">' + (r.state || '') + '</td><td class="px-3 py-2 font-mono font-bold text-green-400">' + r.melhorTempo + '</td></tr>').join('') + 
-    '</tbody></table></div></div>';
-  } catch (e) {
-    console.error('Ranking error:', e);
-    el.innerHTML = '<div class="bg-slate-800 rounded-xl p-8 text-center text-red-400">❌ Erro ao carregar ranking: ' + e.message + '</div>';
+    if (dist) params.push('distance=' + dist);
+    if (params.length) url += '?' + params.join('&');
+
+    const d = await fetch(url).then(r => r.json());
+
+    const prova = provas.find(p => p.id === raceId);
+    const title = prova ? prova.name + ' — ' + prova.city : 'Resultados';
+
+    el.innerHTML = '<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700"><h3 class="font-bold text-sm">' + title + '</h3><p class="text-slate-400 text-xs">' + d.length + ' resultados</p></div>' + renderTable(d, false) + '</div>';
+  } catch(e) {
+    el.innerHTML = '<div class="py-8 text-center text-red-400">❌ Erro: ' + e.message + '</div>';
   }
 }
 
