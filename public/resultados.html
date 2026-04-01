@@ -3,258 +3,351 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REGENI - Ranking Brasil</title>
+<title>REGENI - Resultados de Corridas</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#00D4FF">
 </head>
 <body class="bg-slate-900 text-white min-h-screen pb-20">
-<div class="max-w-6xl mx-auto p-4">
-  <h1 class="text-2xl font-bold text-center py-4">🏆 Ranking Brasil</h1>
+<div class="max-w-6xl mx-auto px-3 py-2">
+
+  <!-- Header -->
+  <div class="text-center py-3">
+    <h1 class="text-2xl font-bold">🏃 Resultados de Corridas</h1>
+    <p class="text-slate-400 text-xs">Maior banco de resultados do Nordeste</p>
+  </div>
 
   <!-- Stats -->
-  <div class="grid grid-cols-3 gap-2 mb-4">
-    <div class="bg-slate-800 rounded-lg p-3 text-center">
-      <div class="text-xl font-bold text-blue-400" id="totalRaces">-</div>
-      <div class="text-xs text-slate-400">Corridas</div>
+  <div class="grid grid-cols-3 gap-2 mb-3">
+    <div class="bg-slate-800 rounded-lg p-2 text-center">
+      <div class="text-lg font-bold text-blue-400" id="totalRaces">-</div>
+      <div class="text-[10px] text-slate-400">Corridas</div>
     </div>
-    <div class="bg-slate-800 rounded-lg p-3 text-center">
-      <div class="text-xl font-bold text-green-400" id="totalResults">-</div>
-      <div class="text-xs text-slate-400">Resultados</div>
+    <div class="bg-slate-800 rounded-lg p-2 text-center">
+      <div class="text-lg font-bold text-green-400" id="totalResults">-</div>
+      <div class="text-[10px] text-slate-400">Resultados</div>
     </div>
-    <div class="bg-slate-800 rounded-lg p-3 text-center">
-      <div class="text-xl font-bold text-yellow-400" id="totalAthletes">-</div>
-      <div class="text-xs text-slate-400">Atletas</div>
+    <div class="bg-slate-800 rounded-lg p-2 text-center">
+      <div class="text-lg font-bold text-yellow-400" id="totalAthletes">-</div>
+      <div class="text-[10px] text-slate-400">Atletas</div>
     </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="bg-slate-800 rounded-xl p-3 mb-3">
+    <div class="flex gap-2">
+      <input id="searchInput" type="text" placeholder="🔍 Buscar atleta por nome..." class="flex-1 bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600" onkeyup="if(event.key==='Enter')buscarAtleta()">
+      <button onclick="buscarAtleta()" class="bg-blue-600 px-4 py-2 rounded-lg text-sm font-bold">Buscar</button>
+    </div>
+    <div id="searchRes" class="hidden mt-2"></div>
   </div>
 
   <!-- Tabs -->
-  <div class="flex gap-2 mb-4">
-    <button id="btnRankGeral" onclick="showPanel('geral')" class="flex-1 py-2 rounded-lg text-sm font-bold bg-blue-600">🏅 Ranking Geral</button>
-    <button id="btnRankProva" onclick="showPanel('prova')" class="flex-1 py-2 rounded-lg text-sm font-bold bg-slate-700">📋 Por Prova</button>
+  <div class="flex gap-1 mb-3 text-xs">
+    <button id="btnTab0" onclick="showTab(0)" class="flex-1 py-2 rounded-lg font-bold bg-blue-600">🏅 Ranking</button>
+    <button id="btnTab1" onclick="showTab(1)" class="flex-1 py-2 rounded-lg font-bold bg-slate-700">📋 Por Prova</button>
+    <button id="btnTab2" onclick="showTab(2)" class="flex-1 py-2 rounded-lg font-bold bg-slate-700">🏆 Equipes</button>
   </div>
 
-  <!-- PAINEL RANKING GERAL -->
-  <div id="panelGeral">
-    <div class="bg-slate-800 rounded-xl p-4 mb-4">
-      <div class="grid grid-cols-2 gap-2 mb-2">
-        <select id="rdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-          <option value="3">3km / Caminhada</option>
+  <!-- TAB 0: RANKING GERAL -->
+  <div id="tab0">
+    <div class="bg-slate-800 rounded-xl p-3 mb-3">
+      <div class="grid grid-cols-3 gap-2 mb-2">
+        <select id="rdist" class="bg-slate-700 rounded-lg px-2 py-2 text-xs border border-slate-600">
+          <option value="3">3km</option>
           <option value="5">5km</option>
           <option value="10" selected>10km</option>
           <option value="15">15km</option>
-          <option value="21">21km (Meia)</option>
-          <option value="42">42km (Maratona)</option>
+          <option value="21">Meia (21km)</option>
+          <option value="42">Maratona (42km)</option>
         </select>
-        <select id="rgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-          <option value="">Todos gêneros</option>
-          <option value="M">Masculino</option>
-          <option value="F">Feminino</option>
+        <select id="rgen" class="bg-slate-700 rounded-lg px-2 py-2 text-xs border border-slate-600">
+          <option value="">Geral</option>
+          <option value="M">Masc</option>
+          <option value="F">Fem</option>
+        </select>
+        <select id="rfaixa" class="bg-slate-700 rounded-lg px-2 py-2 text-xs border border-slate-600">
+          <option value="">Todas idades</option>
+          <option value="16-19">16-19</option>
+          <option value="20-24">20-24</option>
+          <option value="25-29">25-29</option>
+          <option value="30-34">30-34</option>
+          <option value="35-39">35-39</option>
+          <option value="40-44">40-44</option>
+          <option value="45-49">45-49</option>
+          <option value="50-54">50-54</option>
+          <option value="55-59">55-59</option>
+          <option value="60-69">60-69</option>
+          <option value="70">70+</option>
         </select>
       </div>
       <div class="grid grid-cols-2 gap-2 mb-2">
-        <select id="rstate" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600" onchange="carregarCidades()">
-          <option value="">Todos os estados</option>
+        <select id="rstate" class="bg-slate-700 rounded-lg px-2 py-2 text-xs border border-slate-600" onchange="updateCidades()">
+          <option value="">Todos estados</option>
         </select>
-        <select id="rcidade" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-          <option value="">Todas as cidades</option>
+        <select id="rcidade" class="bg-slate-700 rounded-lg px-2 py-2 text-xs border border-slate-600">
+          <option value="">Todas cidades</option>
         </select>
       </div>
-      <select id="rfaixa" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 mb-2">
-        <option value="">Todas as faixas etárias</option>
-        <option value="16-19">16-19 anos</option>
-        <option value="20-24">20-24 anos</option>
-        <option value="25-29">25-29 anos</option>
-        <option value="30-34">30-34 anos</option>
-        <option value="35-39">35-39 anos</option>
-        <option value="40-44">40-44 anos</option>
-        <option value="45-49">45-49 anos</option>
-        <option value="50-54">50-54 anos</option>
-        <option value="55-59">55-59 anos</option>
-        <option value="60+">60+ anos</option>
-      </select>
-      <button onclick="buscarRanking()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-lg text-sm font-bold">🔍 Buscar Ranking</button>
+      <button onclick="buscarRanking()" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm font-bold">🔍 Buscar</button>
     </div>
-    <div id="rankres" class="text-center text-slate-400 py-8">Selecione os filtros e clique em Buscar</div>
+    <div id="rankres" class="text-center text-slate-400 text-sm py-4">Selecione filtros e clique Buscar</div>
   </div>
 
-  <!-- PAINEL POR PROVA -->
-  <div id="panelProva" class="hidden">
-    <div class="bg-slate-800 rounded-xl p-4 mb-4">
-      <select id="rprova" class="w-full bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600 mb-2">
+  <!-- TAB 1: POR PROVA -->
+  <div id="tab1" class="hidden">
+    <div class="bg-slate-800 rounded-xl p-3 mb-3">
+      <select id="rprova" class="w-full bg-slate-700 rounded-lg px-2 py-2 text-xs border border-slate-600 mb-2">
         <option value="">Carregando provas...</option>
       </select>
       <div class="grid grid-cols-2 gap-2 mb-2">
-        <select id="rpgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-          <option value="">Todos gêneros</option>
-          <option value="M">Masculino</option>
-          <option value="F">Feminino</option>
+        <select id="rpgen" class="bg-slate-700 rounded-lg px-2 py-2 text-xs border border-slate-600">
+          <option value="">Geral</option>
+          <option value="M">Masc</option>
+          <option value="F">Fem</option>
         </select>
-        <select id="rpdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-          <option value="">Todas distâncias</option>
+        <select id="rpdist" class="bg-slate-700 rounded-lg px-2 py-2 text-xs border border-slate-600">
+          <option value="">Todas dist.</option>
         </select>
       </div>
-      <button onclick="buscarPorProva()" class="w-full bg-green-600 hover:bg-green-700 px-4 py-3 rounded-lg text-sm font-bold">🔍 Ver Resultados da Prova</button>
+      <button onclick="buscarPorProva()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm font-bold">🔍 Ver Resultados</button>
     </div>
-    <div id="provares" class="text-center text-slate-400 py-8">Selecione uma prova</div>
+    <div id="provares" class="text-center text-slate-400 text-sm py-4">Selecione uma prova</div>
   </div>
+
+  <!-- TAB 2: EQUIPES -->
+  <div id="tab2" class="hidden">
+    <div id="equiperes" class="text-center text-slate-400 text-sm py-4">Carregando...</div>
+  </div>
+
 </div>
 
 <!-- NAV -->
-<nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 flex justify-around text-xs">
-  <a href="/" class="flex-1 text-center py-3 text-slate-400">🏠 Início</a>
-  <a href="/corridas-abertas.html" class="flex-1 text-center py-3 text-slate-400">🏁 Corridas</a>
-  <a href="/resultados.html" class="flex-1 text-center py-3 text-blue-400 font-bold">🏆 Ranking</a>
-  <a href="/ia.html" class="flex-1 text-center py-3 text-slate-400">🤖 IA</a>
-  <a href="/perfil.html" class="flex-1 text-center py-3 text-slate-400">👤 Perfil</a>
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 flex text-[10px]">
+  <a href="/" class="flex-1 text-center py-2 text-slate-400">🏠<br>Início</a>
+  <a href="/corridas-abertas.html" class="flex-1 text-center py-2 text-slate-400">🏁<br>Corridas</a>
+  <a href="/resultados.html" class="flex-1 text-center py-2 text-blue-400 font-bold">🏆<br>Resultados</a>
+  <a href="/ia.html" class="flex-1 text-center py-2 text-slate-400">🤖<br>IA Coach</a>
+  <a href="/perfil.html" class="flex-1 text-center py-2 text-slate-400">👤<br>Perfil</a>
 </nav>
 
 <script>
 const M=['🥇','🥈','🥉'];
 const UFs='AC,AL,AP,AM,BA,CE,DF,ES,GO,MA,MT,MS,MG,PA,PB,PR,PE,PI,RJ,RN,RS,RO,RR,SC,SP,SE,TO'.split(',');
-const UFnomes={AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins'};
+const UFn={AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins'};
 
-let provas = [];
-let allData = [];
+let provas=[], allData=[], currentTab=0;
 
-async function init() {
-  try {
-    const s = await fetch('/analytics/overview').then(r => r.json());
-    document.getElementById('totalRaces').textContent = (s.totalRaces||0).toLocaleString('pt-BR');
-    document.getElementById('totalResults').textContent = (s.totalResults||0).toLocaleString('pt-BR');
-    document.getElementById('totalAthletes').textContent = (s.totalAthletes||0).toLocaleString('pt-BR');
-  } catch(e) {}
+async function init(){
+  try{
+    const s=await fetch('/analytics/overview').then(r=>r.json());
+    document.getElementById('totalRaces').textContent=(s.totalRaces||0).toLocaleString('pt-BR');
+    document.getElementById('totalResults').textContent=(s.totalResults||0).toLocaleString('pt-BR');
+    document.getElementById('totalAthletes').textContent=(s.totalAthletes||0).toLocaleString('pt-BR');
+  }catch(e){}
 
-  // Populate states
-  const sel = document.getElementById('rstate');
-  UFs.forEach(uf => { const o=document.createElement('option'); o.value=uf; o.textContent=UFnomes[uf]; sel.appendChild(o); });
+  // States
+  const sel=document.getElementById('rstate');
+  UFs.forEach(uf=>{const o=document.createElement('option');o.value=uf;o.textContent=UFn[uf];sel.appendChild(o);});
 
-  // Load provas
-  try {
-    provas = await fetch('/provas').then(r => r.json());
-    const psel = document.getElementById('rprova');
-    psel.innerHTML = '<option value="">Selecione a prova...</option>';
-    provas.forEach(p => {
-      const d = new Date(p.date);
-      const o = document.createElement('option');
-      o.value = p.id;
-      o.textContent = p.name + ' — ' + p.city + ' (' + p.totalResults + ' resultados)';
-      psel.appendChild(o);
+  // Provas
+  try{
+    provas=await fetch('/provas').then(r=>r.json());
+    const ps=document.getElementById('rprova');
+    ps.innerHTML='<option value="">Selecione a prova...</option>';
+    provas.forEach(p=>{
+      const d=new Date(p.date);
+      const label=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+      const o=document.createElement('option');
+      o.value=p.id;
+      o.textContent=p.name+' — '+((p.city&&p.city!=='')?p.city:'')+ ' ('+label+') — '+p.totalResults+' atl.';
+      ps.appendChild(o);
     });
-  } catch(e) {}
+  }catch(e){}
+
+  // Auto-load ranking
+  buscarRanking();
+
+  // Auto-load equipes
+  loadEquipes();
 }
 
-function showPanel(which) {
-  document.getElementById('panelGeral').classList.toggle('hidden', which !== 'geral');
-  document.getElementById('panelProva').classList.toggle('hidden', which !== 'prova');
-  document.getElementById('btnRankGeral').className = 'flex-1 py-2 rounded-lg text-sm font-bold ' + (which==='geral' ? 'bg-blue-600' : 'bg-slate-700');
-  document.getElementById('btnRankProva').className = 'flex-1 py-2 rounded-lg text-sm font-bold ' + (which==='prova' ? 'bg-green-600' : 'bg-slate-700');
-}
-
-function carregarCidades() {
-  const state = document.getElementById('rstate').value;
-  const sel = document.getElementById('rcidade');
-  sel.innerHTML = '<option value="">Todas as cidades</option>';
-  if (!state || allData.length === 0) return;
-  const cities = [...new Set(allData.filter(r => r.state === state && r.city).map(r => r.city))].sort();
-  cities.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
-}
-
-function renderTable(data, showProva) {
-  if (!data || data.length === 0) return '<div class="py-8 text-center text-slate-400">📭 Sem resultados para os filtros selecionados</div>';
-
-  let html = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr>';
-  html += '<th class="px-2 py-2 text-left">#</th>';
-  html += '<th class="px-2 py-2 text-left">Atleta</th>';
-  html += '<th class="px-2 py-2 text-center">G</th>';
-  html += '<th class="px-2 py-2 text-left">Tempo</th>';
-  if (showProva) html += '<th class="px-2 py-2 text-left">Prova</th>';
-  html += '<th class="px-2 py-2 text-left">Cidade</th>';
-  html += '<th class="px-2 py-2 text-left">UF</th>';
-  html += '</tr></thead><tbody>';
-
-  data.slice(0, 200).forEach((r, i) => {
-    const pos = r.posicao || (i + 1);
-    const medal = M[pos - 1] || pos;
-    const cls = pos <= 3 ? 'text-yellow-400' : 'text-slate-400';
-    const gcls = r.gender === 'F' ? 'text-pink-400' : 'text-blue-400';
-    const tempo = r.melhorTempo || r.tempo || '-';
-
-    html += '<tr class="border-t border-slate-700">';
-    html += '<td class="px-2 py-2 font-bold ' + cls + '">' + medal + '</td>';
-    html += '<td class="px-2 py-2 font-medium text-xs">' + r.name + '</td>';
-    html += '<td class="px-2 py-2 text-center"><span class="' + gcls + '">' + (r.gender||'-') + '</span></td>';
-    html += '<td class="px-2 py-2 font-mono font-bold text-green-400 text-xs">' + tempo + '</td>';
-    if (showProva) html += '<td class="px-2 py-2 text-xs text-slate-400">' + (r.prova||'-') + '</td>';
-    html += '<td class="px-2 py-2 text-xs text-slate-400">' + (r.city||'-') + '</td>';
-    html += '<td class="px-2 py-2 text-xs text-slate-400">' + (r.state||'-') + '</td>';
-    html += '</tr>';
-  });
-
-  html += '</tbody></table></div>';
-  if (data.length > 200) html += '<p class="text-center text-slate-400 text-xs py-2">Mostrando 200 de ' + data.length + '</p>';
-  return html;
-}
-
-async function buscarRanking() {
-  const dist = document.getElementById('rdist').value;
-  const gen = document.getElementById('rgen').value;
-  const state = document.getElementById('rstate').value;
-  const cidade = document.getElementById('rcidade').value;
-  const faixa = document.getElementById('rfaixa').value;
-
-  const el = document.getElementById('rankres');
-  el.innerHTML = '<p class="text-slate-400 py-8">⏳ Carregando...</p>';
-
-  try {
-    let url = '/ranking/' + dist + 'km';
-    if (gen) url += '?genero=' + gen;
-
-    const d = await fetch(url).then(r => r.json());
-    allData = d;
-
-    // Update cities dropdown
-    carregarCidades();
-
-    let filtered = d;
-    if (state) filtered = filtered.filter(r => r.state === state);
-    if (cidade) filtered = filtered.filter(r => r.city === cidade);
-    if (faixa) filtered = filtered.filter(r => r.faixaEtaria && r.faixaEtaria.includes(faixa));
-
-    // Re-number positions after filtering
-    filtered = filtered.map((r, i) => ({ ...r, posicao: i + 1 }));
-
-    const title = '🇧🇷 Ranking ' + dist + 'km' + (state ? ' — ' + UFnomes[state] : '') + (cidade ? ' — ' + cidade : '');
-    el.innerHTML = '<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700"><h3 class="font-bold text-sm">' + title + '</h3><p class="text-slate-400 text-xs">' + filtered.length + ' atletas</p></div>' + renderTable(filtered, true) + '</div>';
-  } catch(e) {
-    el.innerHTML = '<div class="py-8 text-center text-red-400">❌ Erro: ' + e.message + '</div>';
+function showTab(n){
+  currentTab=n;
+  for(let i=0;i<3;i++){
+    document.getElementById('tab'+i).classList.toggle('hidden',i!==n);
+    const colors=['bg-blue-600','bg-green-600','bg-yellow-600'];
+    document.getElementById('btnTab'+i).className='flex-1 py-2 rounded-lg font-bold '+(i===n?colors[i]:'bg-slate-700');
   }
 }
 
-async function buscarPorProva() {
-  const raceId = document.getElementById('rprova').value;
-  if (!raceId) { alert('Selecione uma prova!'); return; }
-  const gen = document.getElementById('rpgen').value;
-  const dist = document.getElementById('rpdist').value;
+function updateCidades(){
+  const state=document.getElementById('rstate').value;
+  const sel=document.getElementById('rcidade');
+  sel.innerHTML='<option value="">Todas cidades</option>';
+  if(!state||!allData.length)return;
+  const cities=[...new Set(allData.filter(r=>r.state===state&&r.city&&r.city!=='').map(r=>r.city))].sort();
+  cities.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+}
 
-  const el = document.getElementById('provares');
-  el.innerHTML = '<p class="text-slate-400 py-8">⏳ Carregando...</p>';
+function calcPace(tempo, distKm){
+  if(!tempo||tempo==='DNS')return'-';
+  const parts=tempo.split(':').map(Number);
+  let secs=0;
+  if(parts.length===3)secs=parts[0]*3600+parts[1]*60+parts[2];
+  else if(parts.length===2)secs=parts[0]*60+parts[1];
+  if(!secs||!distKm)return'-';
+  const paceS=secs/distKm;
+  const pm=Math.floor(paceS/60);
+  const ps=Math.round(paceS%60);
+  return pm+':'+String(ps).padStart(2,'0')+'/km';
+}
 
-  try {
-    let url = '/ranking/prova/' + raceId;
-    const params = [];
-    if (gen) params.push('genero=' + gen);
-    if (dist) params.push('distance=' + dist);
-    if (params.length) url += '?' + params.join('&');
+function renderTable(data, opts){
+  if(!data||!data.length)return'<div class="py-6 text-center text-slate-400 text-sm">📭 Sem resultados</div>';
+  const showProva=opts?.showProva||false;
+  const showPace=opts?.showPace||false;
+  const distKm=opts?.distKm||10;
 
-    const d = await fetch(url).then(r => r.json());
+  let h='<div class="overflow-x-auto"><table class="w-full text-xs"><thead class="bg-slate-700"><tr>';
+  h+='<th class="px-2 py-1.5 text-left w-8">#</th>';
+  h+='<th class="px-2 py-1.5 text-left">Atleta</th>';
+  h+='<th class="px-2 py-1.5 text-center w-6">G</th>';
+  h+='<th class="px-2 py-1.5 text-left">Tempo</th>';
+  if(showPace)h+='<th class="px-2 py-1.5 text-left">Pace</th>';
+  if(showProva)h+='<th class="px-2 py-1.5 text-left">Prova</th>';
+  h+='<th class="px-2 py-1.5 text-left">UF</th>';
+  h+='</tr></thead><tbody>';
 
-    const prova = provas.find(p => p.id === raceId);
-    const title = prova ? prova.name + ' — ' + prova.city : 'Resultados';
+  data.slice(0,300).forEach((r,i)=>{
+    const pos=r.posicao||(i+1);
+    const medal=M[pos-1]||pos;
+    const cls=pos<=3?'text-yellow-400 font-bold':'text-slate-400';
+    const gcls=r.gender==='F'?'text-pink-400':'text-blue-400';
+    const tempo=r.melhorTempo||r.tempo||'-';
+    const equipeTag=r.equipe?'<span class="text-cyan-400 text-[10px]"> · '+r.equipe+'</span>':'';
 
-    el.innerHTML = '<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700"><h3 class="font-bold text-sm">' + title + '</h3><p class="text-slate-400 text-xs">' + d.length + ' resultados</p></div>' + renderTable(d, false) + '</div>';
-  } catch(e) {
-    el.innerHTML = '<div class="py-8 text-center text-red-400">❌ Erro: ' + e.message + '</div>';
+    h+='<tr class="border-t border-slate-700/50 hover:bg-slate-700/30">';
+    h+='<td class="px-2 py-1.5 '+cls+'">'+medal+'</td>';
+    h+='<td class="px-2 py-1.5"><span class="font-medium">'+r.name+'</span>'+equipeTag+'</td>';
+    h+='<td class="px-2 py-1.5 text-center"><span class="'+gcls+'">'+((r.gender)||'-')+'</span></td>';
+    h+='<td class="px-2 py-1.5 font-mono font-bold text-green-400">'+tempo+'</td>';
+    if(showPace)h+='<td class="px-2 py-1.5 text-slate-400">'+calcPace(tempo,distKm)+'</td>';
+    if(showProva)h+='<td class="px-2 py-1.5 text-slate-400 text-[10px]">'+((r.prova)||'-')+'</td>';
+    h+='<td class="px-2 py-1.5 text-slate-400">'+(r.state||'-')+'</td>';
+    h+='</tr>';
+  });
+
+  h+='</tbody></table></div>';
+  if(data.length>300)h+='<p class="text-center text-slate-500 text-[10px] py-1">Mostrando 300 de '+data.length.toLocaleString('pt-BR')+'</p>';
+  return h;
+}
+
+async function buscarRanking(){
+  const dist=document.getElementById('rdist').value;
+  const gen=document.getElementById('rgen').value;
+  const state=document.getElementById('rstate').value;
+  const cidade=document.getElementById('rcidade').value;
+  const faixa=document.getElementById('rfaixa').value;
+
+  const el=document.getElementById('rankres');
+  el.innerHTML='<p class="text-slate-400 py-6 text-sm">⏳ Carregando...</p>';
+
+  try{
+    let url='/ranking/'+dist+'km';
+    if(gen)url+='?genero='+gen;
+
+    const d=await fetch(url).then(r=>r.json());
+    allData=d;
+    updateCidades();
+
+    let filtered=d;
+    if(state)filtered=filtered.filter(r=>r.state===state);
+    if(cidade)filtered=filtered.filter(r=>r.city===cidade);
+    if(faixa)filtered=filtered.filter(r=>r.faixaEtaria&&r.faixaEtaria.includes(faixa));
+    filtered=filtered.map((r,i)=>({...r,posicao:i+1}));
+
+    const title='Ranking '+dist+'km'+(gen?' ('+({M:'Masc',F:'Fem'}[gen])+')':'')+(state?' — '+UFn[state]:'')+(cidade?' — '+cidade:'');
+
+    el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700"><h3 class="font-bold text-sm">🇧🇷 '+title+'</h3><p class="text-slate-400 text-xs">'+filtered.length.toLocaleString('pt-BR')+' atletas</p></div>'+renderTable(filtered,{showProva:true,showPace:true,distKm:parseInt(dist)})+'</div>';
+  }catch(e){
+    el.innerHTML='<div class="py-6 text-center text-red-400">❌ '+e.message+'</div>';
+  }
+}
+
+async function buscarPorProva(){
+  const raceId=document.getElementById('rprova').value;
+  if(!raceId){alert('Selecione uma prova!');return;}
+  const gen=document.getElementById('rpgen').value;
+  const dist=document.getElementById('rpdist').value;
+
+  const el=document.getElementById('provares');
+  el.innerHTML='<p class="text-slate-400 py-6 text-sm">⏳ Carregando...</p>';
+
+  try{
+    let url='/ranking/prova/'+raceId;
+    const p=[];
+    if(gen)p.push('genero='+gen);
+    if(dist)p.push('distance='+dist);
+    if(p.length)url+='?'+p.join('&');
+
+    const d=await fetch(url).then(r=>r.json());
+    const prova=provas.find(pr=>pr.id===raceId);
+    const title=prova?prova.name+(prova.city&&prova.city!==''?' — '+prova.city:''):'Resultados';
+
+    el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700"><h3 class="font-bold text-sm">📋 '+title+'</h3><p class="text-slate-400 text-xs">'+d.length.toLocaleString('pt-BR')+' resultados</p></div>'+renderTable(d,{showProva:false,showPace:true,distKm:10})+'</div>';
+  }catch(e){
+    el.innerHTML='<div class="py-6 text-center text-red-400">❌ '+e.message+'</div>';
+  }
+}
+
+async function buscarAtleta(){
+  const q=document.getElementById('searchInput').value.trim();
+  if(!q||q.length<3){alert('Digite pelo menos 3 letras');return;}
+
+  const el=document.getElementById('searchRes');
+  el.classList.remove('hidden');
+  el.innerHTML='<p class="text-slate-400 text-sm py-2">⏳ Buscando...</p>';
+
+  try{
+    const d=await fetch('/buscar-atletas?q='+encodeURIComponent(q)).then(r=>r.json());
+    if(!d||!d.length){el.innerHTML='<p class="text-slate-400 text-sm py-2">Nenhum atleta encontrado</p>';return;}
+
+    el.innerHTML='<div class="max-h-60 overflow-y-auto">'+d.slice(0,20).map(a=>
+      '<div class="flex justify-between items-center py-2 border-b border-slate-700/50">'
+      +'<div><span class="font-medium text-sm">'+a.name+'</span>'
+      +(a.equipe?'<span class="text-cyan-400 text-xs ml-2">'+a.equipe+'</span>':'')
+      +'<br><span class="text-slate-400 text-xs">'+(a.state||'-')+' · '+a.totalRaces+' provas · '+a.totalPoints+' pts</span></div>'
+      +'<a href="/perfil-atleta.html?id='+a.id+'" class="text-blue-400 text-xs">Ver perfil →</a>'
+      +'</div>'
+    ).join('')+'</div>';
+  }catch(e){
+    el.innerHTML='<p class="text-red-400 text-sm py-2">Erro: '+e.message+'</p>';
+  }
+}
+
+async function loadEquipes(){
+  const el=document.getElementById('equiperes');
+  try{
+    const d=await fetch('/ranking?limit=1').then(r=>r.json());
+    // Use ranking data to extract equipes
+    const equipeMap={};
+    allData.forEach(r=>{
+      if(r.equipe){
+        if(!equipeMap[r.equipe])equipeMap[r.equipe]={name:r.equipe,count:0,best:null};
+        equipeMap[r.equipe].count++;
+        if(!equipeMap[r.equipe].best||r.melhorTempo<equipeMap[r.equipe].best)equipeMap[r.equipe].best=r.melhorTempo;
+      }
+    });
+    const equipes=Object.values(equipeMap).sort((a,b)=>b.count-a.count).slice(0,30);
+
+    if(!equipes.length){el.innerHTML='<p class="text-slate-400 py-6 text-sm">Busque um ranking primeiro para ver equipes</p>';return;}
+
+    el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700"><h3 class="font-bold text-sm">🏆 Top Equipes</h3></div><div class="divide-y divide-slate-700/50">'
+    +equipes.map((e,i)=>'<div class="flex justify-between items-center px-3 py-2"><div><span class="text-yellow-400 font-bold mr-2">'+(i+1)+'.</span><span class="font-medium text-sm">'+e.name+'</span></div><span class="text-slate-400 text-xs">'+e.count+' atletas</span></div>').join('')
+    +'</div></div>';
+  }catch(e){
+    el.innerHTML='<p class="text-red-400 py-6 text-sm">'+e.message+'</p>';
   }
 }
 
