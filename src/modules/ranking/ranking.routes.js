@@ -1,4 +1,5 @@
 import prisma from '../../lib/prisma.js';
+import { getRankingFor } from './ranking-raw.js';
 
 function tempoParaSegundos(t) {
   if (!t) return 999999;
@@ -52,12 +53,12 @@ export async function rankingRoutes(fastify) {
     }));
   });
 
-  fastify.get('/ranking/42km', async (req) => { return await rankingPorDistancia('42', req.query.genero); });
-  fastify.get('/ranking/21km', async (req) => { return await rankingPorDistancia('21', req.query.genero); });
-  fastify.get('/ranking/15km', async (req) => { return await rankingPorDistancia('15', req.query.genero); });
-  fastify.get('/ranking/10km', async (req) => { return await rankingPorDistancia('10', req.query.genero); });
-  fastify.get('/ranking/5km',  async (req) => { return await rankingPorDistancia('5',  req.query.genero); });
-  fastify.get('/ranking/3km',  async (req) => { return await rankingPorDistancia('3',  req.query.genero); });
+  fastify.get('/ranking/42km', async (req) => { return await getRankingFor('42K', req.query.genero); });
+  fastify.get('/ranking/21km', async (req) => { return await getRankingFor('21K', req.query.genero); });
+  fastify.get('/ranking/15km', async (req) => { return await getRankingFor('15K', req.query.genero); });
+  fastify.get('/ranking/10km', async (req) => { return await getRankingFor('10K', req.query.genero); });
+  fastify.get('/ranking/5km',  async (req) => { return await getRankingFor('5K',  req.query.genero); });
+  fastify.get('/ranking/3km',  async (req) => { return await getRankingFor('3K',  req.query.genero); });
 
   fastify.get('/ranking/stats', async () => {
     const [totalAtletas, totalResultados, totalCorridas] = await Promise.all([
