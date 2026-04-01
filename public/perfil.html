@@ -199,15 +199,22 @@ async function carregarResultados(userId) {
     else if (pts >= 7000) nivel = '🔥 Elite Nacional';
     else if (pts >= 3000) nivel = '💪 Elite Regional';
     else if (pts >= 1000) nivel = '📈 Sub-Elite';
-    else if (pts >= 100) nivel = '🏃 Ativo';
+    else if (pts >= 10) nivel = '🏃 Ativo';
     document.getElementById('nivel-badge').textContent = nivel;
 
     // Ranking pessoal
-    if (pts > 0) {
-      const rank = await fetch('/ranking?limit=1000').then(r=>r.json()).catch(()=>[]);
-      const pos = rank.findIndex(a => a.totalPoints <= pts) + 1;
-      document.getElementById('stat-posicao').textContent = pos > 0 ? pos+'º' : '—';
-    }
+    try {
+      const token = localStorage.getItem('pace_token');
+      const u = JSON.parse(localStorage.getItem('pace_user') || '{}');
+      const rank = await fetch('/ranking?limit=10000').then(r=>r.json()).catch(()=>[]);
+      if (Array.isArray(rank) && rank.length) {
+        // Buscar por userId ou nome
+        let pos = rank.findIndex(a => a.id === u.id || a.userId === u.id);
+        if (pos === -1) pos = rank.findIndex(a => (a.name||'').toLowerCase() === (u.name||'').toLowerCase());
+        if (pos === -1) pos = rank.findIndex(a => a.totalPoints <= pts);
+        document.getElementById('stat-posicao').textContent = pos >= 0 ? (pos+1)+'º' : rank.length+'º+';
+      }
+    } catch(e) {}
 
     // Lista de resultados
     const el = document.getElementById('lista-resultados');
