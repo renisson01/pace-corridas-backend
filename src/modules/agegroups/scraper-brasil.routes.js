@@ -9,6 +9,17 @@ const PONTOS_FAIXA = [40,30,20,15,10,8,6,4,2,1];
 export default async function scraperBrasilRoutes(fastify) {
 
   // STATUS
+
+  fastify.get('/buscar-atleta', async (req,reply) => {
+    const {q, limit=20} = req.query;
+    if (!q || q.length < 2) return reply.code(400).send({error:'Query muito curta'});
+    const athletes = await prisma.athlete.findMany({
+      where: { name: { contains: q, mode: 'insensitive' } },
+      select: { id:true, name:true, gender:true, state:true, totalRaces:true, totalPoints:true },
+      take: parseInt(limit),
+      orderBy: { totalPoints: 'desc' }
+    });
+
   fastify.get('/scraper/status', async (req,reply) => {
     const [totalRaces,totalResults,athletes] = await Promise.all([
       prisma.race.count(),
@@ -140,15 +151,6 @@ function calcPace(time,distance){
 
 
   // BUSCAR ATLETA POR NOME
-  fastify.get('/buscar-atleta', async (req,reply) => {
-    const {q, limit=20} = req.query;
-    if (!q || q.length < 2) return reply.code(400).send({error:'Query muito curta'});
-    const athletes = await prisma.athlete.findMany({
-      where: { name: { contains: q, mode: 'insensitive' } },
-      select: { id:true, name:true, gender:true, state:true, totalRaces:true, totalPoints:true },
-      take: parseInt(limit),
-      orderBy: { totalPoints: 'desc' }
-    });
     return athletes;
   });
 
