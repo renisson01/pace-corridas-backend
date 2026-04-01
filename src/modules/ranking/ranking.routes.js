@@ -233,11 +233,15 @@ export async function rankingRoutes(fastify) {
 async function rankingPorDistancia(distKm, genero) {
   const where = {};
   if (genero) where.gender = genero;
+  // Map distances: "10" -> "10K", "5" -> "5K", etc
+  const distMap = { '5': '5K', '10': '10K', '21': '21K', '42': '42K', '15': '15K', '3': '3K' };
+  const normalizedDist = distMap[distKm] || distKm;
+  
   const atletas = await prisma.athlete.findMany({
     where,
     select: {
       id:true, name:true, equipe:true, state:true, gender:true, totalPoints:true,
-      results: { where: { distance: { contains: distKm } }, select: { time:true, overallRank:true } }
+      results: { where: { distance: normalizedDist }, select: { time:true, overallRank:true } }
     }
   });
   return atletas
