@@ -137,4 +137,93 @@ function calcPace(time,distance){
     const pm=Math.floor(s/d/60),ps=Math.round((s/d)%60);
     return pm+':'+(String(ps).padStart(2,'0'));
   }catch{return '0:00';}
+
+
+  // BUSCAR ATLETA POR NOME
+  fastify.get('/athletes/search', async (req,reply) => {
+    const {q, limit=20} = req.query;
+    if (!q || q.length < 2) return reply.code(400).send({error:'Query muito curta'});
+    const athletes = await prisma.athlete.findMany({
+      where: { name: { contains: q, mode: 'insensitive' } },
+      select: { id:true, name:true, gender:true, state:true, totalRaces:true, totalPoints:true },
+      take: parseInt(limit),
+      orderBy: { totalPoints: 'desc' }
+    });
+    return athletes;
+  });
+
+  // PERFIL COMPLETO DO ATLETA
+  fastify.get('/atleta/:id', async (req,reply) => {
+    const {id} = req.params;
+    const athlete = await prisma.athlete.findUnique({
+      where: { id },
+      include: {
+        results: {
+          include: { race: { select: { name:true, date:true, city:true, state:true } } },
+          orderBy: { race: { date: 'desc' } }
+        },
+        user: { select: { id:true } }
+      }
+    });
+    if (!athlete) return reply.code(404).send({error:'Atleta não encontrado'});
+
+    // Calcular melhores tempos por distância
+    const melhoresPorDist = {};
+    for (const r of athlete.results) {
+      const dist = r.distance || 'Geral';
+      if (!r.time || r.time === '00:00:00') continue;
+      if (!melhoresPorDist[dist] || r.time < melhoresPorDist[dist].time) {
+        melhoresPorDist[dist] = { time: r.time, pace: r.pace || '', race: r.race?.name || '' };
+      }
+    }
+
+    // Calcular nível
+    const pts = athlete.totalPoints || 0;
+    let nivel = '🌱 Iniciando';
+    if (pts >= 12000) nivel = '⭐ Elite Mundial';
+    else if (pts >= 7000) nivel = '🔥 Elite Nacional';
+    else if (pts >= 3000) nivel = '💪 Elite Regional';
+    else if (pts >= 1000) nivel = '📈 Sub-Elite';
+    else if (pts >= 100) nivel = '🏃 Ativo';
+
+    return {
+      id: athlete.id,
+      name: athlete.name,
+      gender: athlete.gender,
+      age: athlete.age,
+      state: athlete.state,
+      equipe: athlete.equipe,
+      totalRaces: athlete.results.length,
+      totalPoints: pts,
+      nivel,
+      linkedUserId: athlete.user?.id || null,
+      melhoresPorDist,
+      provas: athlete.results.map(r => ({
+        raceName: r.race?.name || 'Corrida',
+        raceDate: r.race?.date,
+        raceCity: r.race?.city,
+        distance: r.distance,
+        time: r.time,
+        pace: r.pace,
+        overallRank: r.overallRank,
+        genderRank: r.genderRank,
+        ageGroup: r.ageGroup,
+        points: r.points
+      }))
+    };
+  });
+
+  // VINCULAR ATLETA A USUARIO
+  fastify.post('/atleta/:id/vincular', async (req,reply) => {
+    const {id} = req.params;
+    const {userId} = req.body;
+    if (!userId) return reply.code(400).send({error:'userId obrigatório'});
+    try {
+      await prisma.user.update({ where: { id: userId }, data: { athleteId: id } });
+      return { ok: true };
+    } catch(e) {
+      return reply.code(500).send({ error: e.message });
+    }
+  });
+
 }

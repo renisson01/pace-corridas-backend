@@ -21,6 +21,14 @@
     </div>
   </div>
   <div id="status" class="grid grid-cols-3 gap-3 mb-6"></div>
+  <div class="bg-slate-800 rounded-xl p-4 mb-6">
+      <h3 class="text-sm font-bold mb-2">🔍 Buscar Atleta</h3>
+      <div class="flex gap-2">
+        <input id="searchAtleta" placeholder="Nome do atleta..." class="flex-1 bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600" onkeydown="if(event.key==='Enter')buscarAtleta()">
+        <button onclick="buscarAtleta()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-bold">Buscar</button>
+      </div>
+      <div id="searchRes" class="mt-3"></div>
+    </div>
   <div class="flex gap-2 mb-6 border-b border-slate-700 flex-wrap">
     <button onclick="showTab('top5')" id="tab-top5" class="tab px-4 py-2 text-sm font-bold border-b-2 border-blue-500 text-blue-400">🥇 Top 5</button>
     <button onclick="showTab('importar')" id="tab-importar" class="tab px-4 py-2 text-sm font-bold border-b-2 border-transparent text-slate-400">📥 Importar</button>
@@ -62,8 +70,8 @@
   <div id="tab-ranking-c" class="hidden">
     <div class="bg-slate-800 rounded-xl p-4 mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
       <select id="rdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-        <option value="5">5km</option><option value="10" selected>10km</option>
-        <option value="21">21km</option><option value="42">42km</option>
+        <option value="5km">5km</option><option value="10km" selected>10km</option>
+        <option value="21km">21km</option><option value="42km">42km</option>
       </select>
       <select id="rgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
         <option value="">Todos</option><option value="M">Masc</option><option value="F">Fem</option>
@@ -174,11 +182,10 @@ async function buscarRanking(){
   const dist=document.getElementById('rdist').value;
   const gen=document.getElementById('rgen').value;
   const age=document.getElementById('rage').value;
-  const distMap = {'5':'5km','10':'10km','21':'21km','42':'42km'};
-  let url='/ranking/'+(distMap[dist]||'5km');
-  if(gen) url+='?genero='+gen;
+  let url='/rankings/brazil?distance='+(dist||'5km')+'&limit=100';
+  if(gen) url+='&gender='+gen;
+  if(age) url+='&ageGroup='+age;
   const d=await fetch(url).then(r=>r.json());
-  if(Array.isArray(d)) { const arr=d; d={}; d.total=arr.length; d.ranking=arr.map(r=>({rank:r.posicao||1,athlete:r.name,city:r.state||'',gender:r.gender,time:r.melhorTempo||'--',race:''})); }
   const el=document.getElementById('rankres');
   if(!d.total){el.innerHTML='<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem resultados. Importe dados primeiro!</div>';return;}
   el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking '+dist+'km '+(gen?gen==='M'?'Masc':'Fem':'Geral')+(age?' '+age:'')+'</h3><p class="text-slate-400 text-sm">'+d.total+' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Cidade</th><th class="px-3 py-2 text-left">Tempo</th><th class="px-3 py-2 text-left">Corrida</th></tr></thead><tbody>'+d.ranking.map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.rank<=3?'text-yellow-400':'text-slate-400')+'">'+(M[r.rank-1]||r.rank)+'</td><td class="px-3 py-2 font-medium">'+r.athlete+'</td><td class="px-3 py-2 text-center"><span class="'+(r.gender==='F'?'text-pink-400':'text-blue-400')+'">'+r.gender+'</span></td><td class="px-3 py-2 text-slate-400 text-xs">'+(r.city||'')+'</td><td class="px-3 py-2 font-mono font-bold text-green-400">'+r.time+'</td><td class="px-3 py-2 text-xs text-slate-400">'+(r.race||'-')+'</td></tr>').join('')+'</tbody></table></div></div>';
@@ -187,12 +194,32 @@ async function buscarRanking(){
 async function buscarPontos(){
   const gen=document.getElementById('pgen').value;
   const est=document.getElementById('pest').value;
-  let url='/ranking?limit=50';
+  let url='/rankings/points?limit=50';
+  if(gen) url+='&gender='+gen;
+  if(est) url+='&state='+est;
   const d=await fetch(url).then(r=>r.json());
-  if(Array.isArray(d)) { const arr=d; d={}; d.total=arr.length; d.ranking=arr.map(r=>({rank:r.posicao||1,athlete:{name:r.name,gender:r.gender,state:r.state||''},pontos:r.totalPoints||0,corridas:r.totalRaces||0,podios:0,faixas:0})); }
   const el=document.getElementById('pontosres');
   if(!d.total){el.innerHTML='<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem pontuação. Importe resultados primeiro!</div>';return;}
   el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">⭐ Ranking de Pontuação REGENI</h3><p class="text-slate-400 text-sm">'+d.total+' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Estado</th><th class="px-3 py-2 text-right font-bold text-yellow-400">Pontos</th><th class="px-3 py-2 text-center">Corridas</th><th class="px-3 py-2 text-center">Pódios</th><th class="px-3 py-2 text-center">Faixas</th></tr></thead><tbody>'+d.ranking.map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.rank<=3?'text-yellow-400':'text-slate-400')+'">'+(M[r.rank-1]||r.rank)+'</td><td class="px-3 py-2 font-medium">'+r.athlete?.name+'</td><td class="px-3 py-2 text-center"><span class="'+(r.athlete?.gender==='F'?'text-pink-400':'text-blue-400')+'">'+r.athlete?.gender+'</span></td><td class="px-3 py-2 text-slate-400 text-xs">'+(r.athlete?.state||'-')+'</td><td class="px-3 py-2 text-right font-bold text-yellow-400">'+r.pontos+'</td><td class="px-3 py-2 text-center">'+r.corridas+'</td><td class="px-3 py-2 text-center">'+(r.podios>0?'🏆 '+r.podios:'-')+'</td><td class="px-3 py-2 text-center">'+(r.faixas>0?'🏅 '+r.faixas:'-')+'</td></tr>').join('')+'</tbody></table></div></div>';
+}
+
+
+async function buscarAtleta(){
+  const q=document.getElementById('searchAtleta').value.trim();
+  if(!q||q.length<3){alert('Digite pelo menos 3 letras');return;}
+  const el=document.getElementById('searchRes');
+  el.innerHTML='<p class="text-slate-400 text-sm">Buscando...</p>';
+  try{
+    const d=await fetch('/athletes/search?q='+encodeURIComponent(q)+'&limit=20').then(r=>r.json());
+    if(!d.length){el.innerHTML='<p class="text-slate-400 text-sm">Nenhum atleta encontrado</p>';return;}
+    el.innerHTML='<div class="space-y-1 max-h-60 overflow-y-auto">'+d.map(a=>
+      '<a href="/perfil-atleta.html?id='+a.id+'" class="flex items-center justify-between bg-slate-700 rounded-lg px-3 py-2 hover:bg-slate-600 transition-colors">'+
+        '<div><span class="text-sm font-medium">'+a.name+'</span>'+
+        '<span class="text-xs text-slate-400 ml-2">'+(a.gender==='F'?'👩':'👨')+' '+(a.state||'')+'</span></div>'+
+        '<span class="text-xs text-blue-400">Ver perfil →</span>'+
+      '</a>'
+    ).join('')+'</div>';
+  }catch(e){el.innerHTML='<p class="text-red-400 text-sm">Erro na busca</p>';}
 }
 
 init();
