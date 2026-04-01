@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#00D4FF">
 </head>
 <body class="bg-slate-900 text-white min-h-screen pb-20">
-<div class="max-w-5xl mx-auto p-4">
+<div class="max-w-6xl mx-auto p-4">
   <h1 class="text-3xl font-bold text-center py-6">🏆 REGENI — Ranking Brasil</h1>
   
   <div class="grid grid-cols-3 gap-3 mb-6">
@@ -27,42 +27,121 @@
     </div>
   </div>
 
-  <div class="bg-slate-800 rounded-xl p-4 mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-    <select id="rdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-      <option value="5">5km</option>
-      <option value="10" selected>10km</option>
-      <option value="21">21km</option>
-      <option value="42">42km</option>
-    </select>
-    <select id="rgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-      <option value="">Todos</option>
-      <option value="M">Masc</option>
-      <option value="F">Fem</option>
-    </select>
-    <select id="rstate" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
-      <option value="">Todos estados</option>
-      <option value="SE">Sergipe</option>
-      <option value="AL">Alagoas</option>
-      <option value="BA">Bahia</option>
-    </select>
-    <button onclick="buscarRanking()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-bold">Buscar</button>
+  <div class="bg-slate-800 rounded-xl p-4 mb-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+      <select id="rdist" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="3">3km / Caminhada</option>
+        <option value="5">5km</option>
+        <option value="10" selected>10km</option>
+        <option value="15">15km</option>
+        <option value="21">21km</option>
+        <option value="42">42km</option>
+      </select>
+      <select id="rfaixa" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="">Todas as idades</option>
+        <option value="16-19">16-19 anos</option>
+        <option value="20-24">20-24 anos</option>
+        <option value="25-29">25-29 anos</option>
+        <option value="30-34">30-34 anos</option>
+        <option value="35-39">35-39 anos</option>
+        <option value="40-44">40-44 anos</option>
+        <option value="45-49">45-49 anos</option>
+        <option value="50-54">50-54 anos</option>
+        <option value="55-59">55-59 anos</option>
+        <option value="60+">60+ anos</option>
+      </select>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+      <select id="rgen" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="">Todos gêneros</option>
+        <option value="M">Masculino</option>
+        <option value="F">Feminino</option>
+      </select>
+      <select id="rstate" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600" onchange="carregarCidades()">
+        <option value="">Todos os estados</option>
+        <option value="AC">Acre</option>
+        <option value="AL">Alagoas</option>
+        <option value="AP">Amapá</option>
+        <option value="AM">Amazonas</option>
+        <option value="BA">Bahia</option>
+        <option value="CE">Ceará</option>
+        <option value="DF">Distrito Federal</option>
+        <option value="ES">Espírito Santo</option>
+        <option value="GO">Goiás</option>
+        <option value="MA">Maranhão</option>
+        <option value="MT">Mato Grosso</option>
+        <option value="MS">Mato Grosso do Sul</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="PA">Pará</option>
+        <option value="PB">Paraíba</option>
+        <option value="PR">Paraná</option>
+        <option value="PE">Pernambuco</option>
+        <option value="PI">Piauí</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="RN">Rio Grande do Norte</option>
+        <option value="RS">Rio Grande do Sul</option>
+        <option value="RO">Rondônia</option>
+        <option value="RR">Roraima</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="SP">São Paulo</option>
+        <option value="SE">Sergipe</option>
+        <option value="TO">Tocantins</option>
+      </select>
+      <select id="rcidade" class="bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600">
+        <option value="">Todas as cidades</option>
+      </select>
+    </div>
+
+    <button onclick="buscarRanking()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-bold">🔍 Buscar Ranking</button>
   </div>
 
   <div id="rankres" class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">
-    Clique em "Buscar" para ver o ranking
+    Clique em "Buscar Ranking" para ver os resultados
   </div>
 </div>
 
-<nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 flex">
-  <a href="/" class="flex-1 text-center py-3 text-xs font-bold text-slate-400 hover:text-blue-400">🏠 INÍCIO</a>
-  <a href="/corridas-abertas.html" class="flex-1 text-center py-3 text-xs font-bold text-slate-400 hover:text-blue-400">🏁 CORRIDAS</a>
-  <a href="/ia.html" class="flex-1 text-center py-3 text-xs font-bold text-slate-400 hover:text-blue-400">🤖 IA</a>
-  <a href="/ranking-simples.html" class="flex-1 text-center py-3 text-xs font-bold text-blue-400">🏆 RANKING</a>
-  <a href="/perfil.html" class="flex-1 text-center py-3 text-xs font-bold text-slate-400 hover:text-blue-400">👤 PERFIL</a>
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 flex justify-around text-xs">
+  <a href="/" class="flex-1 text-center py-3 text-slate-400 hover:text-blue-400">🏠 INÍCIO</a>
+  <a href="/corridas-abertas.html" class="flex-1 text-center py-3 text-slate-400 hover:text-blue-400">🏁 CORRIDAS</a>
+  <a href="/ia.html" class="flex-1 text-center py-3 text-slate-400 hover:text-blue-400">🤖 IA</a>
+  <a href="/resultados.html" class="flex-1 text-center py-3 text-blue-400">🏆 RANKING</a>
+  <a href="/perfil.html" class="flex-1 text-center py-3 text-slate-400 hover:text-blue-400">👤 PERFIL</a>
 </nav>
 
 <script>
 const M=['🥇','🥈','🥉'];
+
+// Estados e suas cidades (extraído do banco)
+const estadosCidades = {
+  'AC': ['Rio Branco'],
+  'AL': ['Maceió'],
+  'AP': ['Macapá'],
+  'AM': ['Manaus'],
+  'BA': ['Salvador', 'Feira de Santana', 'Vitória da Conquista'],
+  'CE': ['Fortaleza', 'Caucaia', 'Maracanaú'],
+  'DF': ['Brasília'],
+  'ES': ['Vitória', 'Serra'],
+  'GO': ['Goiânia', 'Anápolis'],
+  'MA': ['São Luís', 'Imperatriz'],
+  'MT': ['Cuiabá'],
+  'MS': ['Campo Grande', 'Dourados'],
+  'MG': ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora'],
+  'PA': ['Belém', 'Ananindeua'],
+  'PB': ['João Pessoa', 'Campina Grande'],
+  'PR': ['Curitiba', 'Londrina', 'Maringá'],
+  'PE': ['Recife', 'Jaboatão dos Guararapes', 'Olinda'],
+  'PI': ['Teresina'],
+  'RJ': ['Rio de Janeiro', 'Niterói', 'Duque de Caxias'],
+  'RN': ['Natal', 'Mossoró'],
+  'RS': ['Porto Alegre', 'Caxias do Sul', 'Pelotas'],
+  'RO': ['Porto Velho', 'Ji-Paraná'],
+  'RR': ['Boa Vista'],
+  'SC': ['Florianópolis', 'Joinville', 'Blumenau'],
+  'SP': ['São Paulo', 'Campinas', 'Santos', 'Sorocaba', 'Ribeirão Preto'],
+  'SE': ['Aracaju'],
+  'TO': ['Palmas']
+};
 
 async function init() {
   try {
@@ -75,19 +154,38 @@ async function init() {
   }
 }
 
+function carregarCidades() {
+  const state = document.getElementById('rstate').value;
+  const cidadeSelect = document.getElementById('rcidade');
+  
+  cidadeSelect.innerHTML = '<option value="">Todas as cidades</option>';
+  
+  if (state && estadosCidades[state]) {
+    estadosCidades[state].forEach(cidade => {
+      const opt = document.createElement('option');
+      opt.value = cidade;
+      opt.textContent = cidade;
+      cidadeSelect.appendChild(opt);
+    });
+  }
+}
+
 async function buscarRanking() {
   const dist = document.getElementById('rdist').value;
   const gen = document.getElementById('rgen').value;
   const state = document.getElementById('rstate').value;
+  const cidade = document.getElementById('rcidade').value;
+  const faixa = document.getElementById('rfaixa').value;
   
   const el = document.getElementById('rankres');
-  el.innerHTML = '<p class="text-slate-400">Carregando...</p>';
+  el.innerHTML = '<p class="text-slate-400">⏳ Carregando ranking...</p>';
   
   try {
     let url = '/ranking/' + (dist || '10') + 'km';
-    if (gen) url += '?genero=' + gen;
+    const params = [];
+    if (gen) params.push('genero=' + gen);
     
-    const d = await fetch(url).then(r => r.json());
+    const d = await fetch(url + (params.length ? '?' + params.join('&') : '')).then(r => r.json());
     
     if (!d || !Array.isArray(d) || d.length === 0) {
       el.innerHTML = '<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem resultados</div>';
@@ -96,20 +194,23 @@ async function buscarRanking() {
     
     let filtered = d;
     if (state) {
-      filtered = d.filter(r => r.state === state);
+      filtered = filtered.filter(r => r.state === state);
+    }
+    if (cidade) {
+      filtered = filtered.filter(r => r.city === cidade);
     }
     
     if (filtered.length === 0) {
-      el.innerHTML = '<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Nenhum resultado para ' + state + '</div>';
+      el.innerHTML = '<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Nenhum resultado para os filtros selecionados</div>';
       return;
     }
     
-    el.innerHTML = '<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking ' + dist + 'km</h3><p class="text-slate-400 text-sm">' + filtered.length + ' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Estado</th><th class="px-3 py-2 text-left">Tempo</th></tr></thead><tbody>' + 
-    filtered.slice(0, 100).map(r => '<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold ' + (r.posicao <= 3 ? 'text-yellow-400' : 'text-slate-400') + '">' + (M[r.posicao - 1] || r.posicao) + '</td><td class="px-3 py-2 font-medium">' + r.name + '</td><td class="px-3 py-2 text-center"><span class="' + (r.gender === 'F' ? 'text-pink-400' : 'text-blue-400') + '">' + r.gender + '</span></td><td class="px-3 py-2 text-slate-400 text-xs">' + (r.state || '') + '</td><td class="px-3 py-2 font-mono font-bold text-green-400">' + r.melhorTempo + '</td></tr>').join('') + 
+    el.innerHTML = '<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking ' + dist + 'km' + (state ? ' - ' + state : '') + (cidade ? ' - ' + cidade : '') + '</h3><p class="text-slate-400 text-sm">' + filtered.length + ' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2 text-center">G</th><th class="px-3 py-2 text-left">Cidade</th><th class="px-3 py-2 text-left">Estado</th><th class="px-3 py-2 text-left">Tempo</th></tr></thead><tbody>' + 
+    filtered.slice(0, 100).map((r, i) => '<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold ' + (r.posicao <= 3 ? 'text-yellow-400' : 'text-slate-400') + '">' + (M[r.posicao - 1] || r.posicao) + '</td><td class="px-3 py-2 font-medium">' + r.name + '</td><td class="px-3 py-2 text-center"><span class="' + (r.gender === 'F' ? 'text-pink-400' : 'text-blue-400') + '">' + r.gender + '</span></td><td class="px-3 py-2 text-slate-400 text-xs">' + (r.city || '-') + '</td><td class="px-3 py-2 text-slate-400 text-xs">' + (r.state || '') + '</td><td class="px-3 py-2 font-mono font-bold text-green-400">' + r.melhorTempo + '</td></tr>').join('') + 
     '</tbody></table></div></div>';
   } catch (e) {
     console.error('Ranking error:', e);
-    el.innerHTML = '<div class="bg-slate-800 rounded-xl p-8 text-center text-red-400">❌ Erro ao carregar ranking</div>';
+    el.innerHTML = '<div class="bg-slate-800 rounded-xl p-8 text-center text-red-400">❌ Erro ao carregar ranking: ' + e.message + '</div>';
   }
 }
 
