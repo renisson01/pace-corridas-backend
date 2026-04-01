@@ -334,7 +334,20 @@ function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviar
 function resize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
 function scrollB(){const m=document.getElementById('msgs');setTimeout(()=>m.scrollTop=m.scrollHeight,50);}
 function tradNivel(n){return{iniciante:'Iniciante',intermediario:'Intermediário',avancado:'Avançado',elite:'Elite'}[n]||n;}
-function fmt(t){if(!t)return'';return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');}
+function fmt(t){
+  if(!t) return '';
+  return t
+    .replace(/^#{3}\s+(.+)$/gm,'<div style="font-size:13px;font-weight:800;color:var(--neon);margin:10px 0 4px">$1</div>')
+    .replace(/^#{2}\s+(.+)$/gm,'<div style="font-size:15px;font-weight:800;color:var(--text);margin:12px 0 4px">$1</div>')
+    .replace(/^#{1}\s+(.+)$/gm,'<div style="font-size:17px;font-weight:900;color:var(--text);margin:14px 0 6px">$1</div>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--text)">$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^---+$/gm,'<hr style="border:none;border-top:1px solid var(--border);margin:10px 0">')
+    .replace(/^[\-\*]\s+(.+)$/gm,'<div style="padding:2px 0 2px 12px;border-left:2px solid var(--neon);margin:3px 0;color:var(--muted2)">$1</div>')
+    .replace(/^(\d+)\.\s+(.+)$/gm,'<div style="padding:2px 0 2px 12px;margin:3px 0"><span style="color:var(--neon);font-weight:700">$1.</span> $2</div>')
+    .replace(/`([^`]+)`/g,'<code style="background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:12px;color:#00FF88">$1</code>')
+    .replace(/\n/g,'<br>');
+}
 
 checkAuth();
 
