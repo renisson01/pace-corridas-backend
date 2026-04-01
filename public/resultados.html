@@ -36,10 +36,10 @@
   <!-- Search bar -->
   <div class="bg-slate-800 rounded-xl p-3 mb-3">
     <div class="flex gap-2">
-      <input id="searchInput" type="text" placeholder="🔍 Buscar atleta por nome..." class="flex-1 bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600" onkeyup="if(event.key==='Enter')buscarAtleta()">
+      <input id="searchInput" type="text" placeholder="🔍 Buscar atleta por nome..." class="flex-1 bg-slate-700 rounded-lg px-3 py-2 text-sm border border-slate-600" onkeyup="if(event.key==='Enter')buscarAtleta()" onfocus="document.getElementById('searchRes').classList.remove('hidden')">
       <button onclick="buscarAtleta()" class="bg-blue-600 px-4 py-2 rounded-lg text-sm font-bold">Buscar</button>
     </div>
-    <div id="searchRes" class="hidden mt-2"></div>
+    <div id="searchRes" class="hidden mt-2 max-h-48 overflow-y-auto"></div>
   </div>
 
   <!-- Tabs -->
@@ -310,7 +310,7 @@ async function buscarAtleta(){
   el.innerHTML='<p class="text-slate-400 text-sm py-2">⏳ Buscando...</p>';
 
   try{
-    const d=await fetch('/buscar-atletas?q='+encodeURIComponent(q)).then(r=>r.json());
+    const d=await fetch('/buscar-atletas?nome='+encodeURIComponent(q)).then(r=>r.json());
     if(!d||!d.length){el.innerHTML='<p class="text-slate-400 text-sm py-2">Nenhum atleta encontrado</p>';return;}
 
     el.innerHTML='<div class="max-h-60 overflow-y-auto">'+d.slice(0,20).map(a=>
