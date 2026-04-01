@@ -178,16 +178,39 @@ async function importar(){
   else alert('❌ Erro: '+(d.error||'Tente novamente'));
 }
 
+let rankingCache = null;
+let rankingPage = 1;
+const ITEMS_PER_PAGE = 50;
+
 async function buscarRanking(){
+  rankingPage = 1;
   const dist=document.getElementById('rdist').value;
   const gen=document.getElementById('rgen').value;
-  const age=document.getElementById('rage').value;
+  const state=document.getElementById('rstate')?.value || '';
   let url='/ranking/'+(dist||'5')+'km';
   if(gen && gen !== 'Todos') url+='?genero='+gen;
   const d=await fetch(url).then(r=>r.json());
   const el=document.getElementById('rankres');
   if(!d || !Array.isArray(d) || d.length===0){el.innerHTML='<div class="bg-slate-800 rounded-xl p-8 text-center text-slate-400">📭 Sem resultados. Importe dados primeiro!</div>';return;}
-  el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking '+dist+'km '+(gen && gen !== 'Todos'?gen==='M'?'Masc':'Fem':'Geral')+'</h3><p class="text-slate-400 text-sm">'+d.length+' atletas</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Estado</th><th class="px-3 py-2 text-left">Tempo</th><th class="px-3 py-2 text-left">Nível</th></tr></thead><tbody>'+d.slice(0,100).map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.posicao<=3?'text-yellow-400':'text-slate-400')+'">'+r.posicao+'</td><td class="px-3 py-2 font-medium">'+r.name+'</td><td class="px-3 py-2 text-center"><span class="'+(r.gender==='F'?'text-pink-400':'text-blue-400')+'">'+r.gender+'</span></td><td class="px-3 py-2 text-slate-400 text-xs">'+(r.state||'')+'</td><td class="px-3 py-2 font-mono font-bold text-green-400">'+r.melhorTempo+'</td><td class="px-3 py-2 text-xs">'+r.nivel+'</td></tr>').join('')+'</tbody></table></div></div>';
+  
+  // Filtrar por estado
+  let filtered = d;
+  if(state && state !== '') {
+    filtered = d.filter(r => r.state === state);
+  }
+  
+  rankingCache = filtered;
+  renderRankingPage(dist, gen);
+}
+
+function renderRankingPage(dist, gen) {
+  const start = (rankingPage - 1) * ITEMS_PER_PAGE;
+  const end = start + ITEMS_PER_PAGE;
+  const page = rankingCache.slice(start, end);
+  const hasMore = end < rankingCache.length;
+  const el=document.getElementById('rankres');
+  
+  el.innerHTML='<div class="bg-slate-800 rounded-xl overflow-hidden"><div class="p-4 border-b border-slate-700"><h3 class="font-bold">🇧🇷 Ranking '+dist+'km '+(gen && gen !== 'Todos'?gen==='M'?'Masc':'Fem':'Geral')+'</h3><p class="text-slate-400 text-sm">'+rankingCache.length+' atletas (página '+rankingPage+')</p></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-700"><tr><th class="px-3 py-2 text-left">#</th><th class="px-3 py-2 text-left">Atleta</th><th class="px-3 py-2">G</th><th class="px-3 py-2 text-left">Estado</th><th class="px-3 py-2 text-left">Tempo</th><th class="px-3 py-2 text-left">Nível</th></tr></thead><tbody>'+page.map(r=>'<tr class="border-t border-slate-700"><td class="px-3 py-2 font-bold '+(r.posicao<=3?'text-yellow-400':'text-slate-400')+'">'+r.posicao+'</td><td class="px-3 py-2 font-medium">'+r.name+'</td><td class="px-3 py-2 text-center"><span class="'+(r.gender==='F'?'text-pink-400':'text-blue-400')+'">'+r.gender+'</span></td><td class="px-3 py-2 text-slate-400 text-xs">'+(r.state||'')+'</td><td class="px-3 py-2 font-mono font-bold text-green-400">'+r.melhorTempo+'</td><td class="px-3 py-2 text-xs">'+r.nivel+'</td></tr>').join('')+'</tbody></table></div></div>'+(hasMore?'<div class="p-4 text-center"><button onclick="rankingPage++; renderRankingPage(\\''+dist+'\\', \\''+gen+'\\')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-bold">Ver mais 50 atletas →</button></div>':'<div class="p-4 text-center text-slate-400 text-sm">✅ Fim da lista</div>');
 }
 
 async function buscarPontos(){
