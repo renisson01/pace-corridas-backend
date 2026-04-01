@@ -140,7 +140,7 @@ function calcPace(time,distance){
 
 
   // BUSCAR ATLETA POR NOME
-  fastify.get('/athletes/search', async (req,reply) => {
+  fastify.get('/buscar-atleta', async (req,reply) => {
     const {q, limit=20} = req.query;
     if (!q || q.length < 2) return reply.code(400).send({error:'Query muito curta'});
     const athletes = await prisma.athlete.findMany({
