@@ -3,384 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REGENI — Corrida. Longevidade. Performance.</title>
-<meta name="description" content="A plataforma de corrida e longevidade #1 do Brasil. IA Treinadora, protocolos de redução de idade biológica, e tudo que um corredor precisa.">
+<title>REGENI — Resultados de Corridas de Rua do Brasil</title>
+<meta name="description" content="O maior banco de resultados de corridas de rua do Brasil. Busque seu nome, veja seu ranking, compare seu pace.">
 <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&display=swap');
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#04060b;color:#e2e8f0;font-family:'Space Grotesk',sans-serif;overflow-x:hidden}
-a{text-decoration:none;color:inherit}
-
-/* HERO */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px;position:relative;background:radial-gradient(ellipse at 50% 0%,#1a0f0033 0%,#04060b 70%)}
-.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23F7931A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-.hero-logo{font-size:64px;font-weight:800;color:#00D4FF;letter-spacing:8px;margin-bottom:8px;text-shadow:0 0 60px #00D4FF33}
-.hero-tag{font-size:18px;color:#8899bb;margin-bottom:24px;max-width:500px;line-height:1.5}
-.hero-tag b{color:#00D4FF}
-.hero-stats{display:flex;gap:24px;margin:24px 0;flex-wrap:wrap;justify-content:center}
-.hero-stat{text-align:center}
-.hero-stat .n{font-size:32px;font-weight:800;color:#00D4FF}
-.hero-stat .l{font-size:11px;color:#667788}
-.hero-cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;justify-content:center}
-.btn-main{background:#00D4FF;color:#000;font-weight:800;padding:16px 32px;border-radius:14px;font-size:16px;border:none;cursor:pointer;transition:transform 0.2s}
-.btn-main:hover{transform:scale(1.05)}
-.btn-sec{background:transparent;color:#00D4FF;font-weight:700;padding:16px 32px;border-radius:14px;font-size:16px;border:2px solid #00D4FF;cursor:pointer}
-.scroll-hint{position:absolute;bottom:20px;color:#667788;font-size:12px;animation:bounce 2s infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
-
-/* SECTIONS */
-.sect{padding:60px 16px;max-width:800px;margin:0 auto}
-.sect-title{font-size:28px;font-weight:800;color:#fff;margin-bottom:8px;text-align:center}
-.sect-sub{color:#8899bb;font-size:14px;text-align:center;margin-bottom:32px}
-.sect-divider{width:60px;height:3px;background:#00D4FF;margin:0 auto 32px;border-radius:2px}
-
-/* FEATURE CARDS */
-.features{display:grid;gap:16px}
-.feat{background:#0d1117;border:1px solid #1e2d3d;border-radius:16px;padding:24px;transition:border-color 0.3s}
-.feat:hover{border-color:#00D4FF44}
-.feat-icon{font-size:36px;margin-bottom:12px}
-.feat-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
-.feat-desc{font-size:13px;color:#8899bb;line-height:1.6}
-.feat-tag{display:inline-block;background:#00D4FF22;color:#00D4FF;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:8px}
-
-/* IA SECTION */
-.ia-section{background:linear-gradient(135deg,#0a0f1a,#1a0f00);padding:60px 16px;text-align:center}
-.ia-box{max-width:600px;margin:0 auto}
-.ia-chat{background:#0d1117;border:1px solid #1e2d3d;border-radius:16px;overflow:hidden;margin:24px 0}
-.ia-msg-user{text-align:right;padding:12px 16px}
-.ia-msg-user span{background:#1a3a2a;color:#e2e8f0;padding:10px 14px;border-radius:14px 14px 4px 14px;display:inline-block;max-width:85%;text-align:left;font-size:13px}
-.ia-msg-bot{text-align:left;padding:12px 16px}
-.ia-msg-bot span{background:#0d1117;border:1px solid #1e2d3d;color:#c0ccdd;padding:10px 14px;border-radius:14px 14px 14px 4px;display:inline-block;max-width:90%;text-align:left;font-size:13px;line-height:1.5}
-
-/* COBAIA SECTION */
-.cobaia-section{background:linear-gradient(135deg,#04060b,#0a1a0f);padding:60px 16px}
-.cobaia-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:600px;margin:24px auto 0}
-.cobaia-stat{background:#0d1117;border:1px solid #27AE6044;border-radius:12px;padding:16px;text-align:center}
-.cobaia-stat .v{font-size:28px;font-weight:800;color:#27AE60}
-.cobaia-stat .l{font-size:11px;color:#667788;margin-top:2px}
-
-/* PRICING */
-.pricing{display:grid;gap:16px;max-width:700px;margin:0 auto}
-.plan{background:#0d1117;border:1px solid #1e2d3d;border-radius:20px;padding:28px 20px;position:relative;transition:transform 0.3s}
-.plan:hover{transform:translateY(-4px)}
-.plan-pop{border-color:#00D4FF;background:linear-gradient(135deg,#0d1117,#1a0f00)}
-.plan-pop::before{content:'MAIS POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#00D4FF;color:#000;font-size:10px;font-weight:800;padding:4px 16px;border-radius:20px;letter-spacing:1px}
-.plan-name{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px}
-.plan-desc{font-size:12px;color:#8899bb;margin-bottom:16px}
-.plan-price{font-size:36px;font-weight:800;color:#00D4FF;margin-bottom:4px}
-.plan-price span{font-size:14px;color:#667788;font-weight:400}
-.plan-features{list-style:none;margin:16px 0}
-.plan-features li{font-size:12px;color:#c0ccdd;padding:6px 0;border-bottom:1px solid #0a1020;display:flex;align-items:center;gap:8px}
-.plan-features li::before{content:'✓';color:#27AE60;font-weight:700;font-size:14px}
-.plan-btn{display:block;text-align:center;padding:14px;border-radius:12px;font-weight:800;font-size:14px;margin-top:16px;cursor:pointer;border:none;width:100%}
-.plan-btn-main{background:#00D4FF;color:#000}
-.plan-btn-sec{background:#1e2d3d;color:#00D4FF}
-
-/* COACH SECTION */
-.coach-section{background:linear-gradient(135deg,#04060b,#0f0a1a);padding:60px 16px}
-.coach-highlight{background:#0d1117;border:1px solid #8E44AD44;border-radius:16px;padding:24px;max-width:600px;margin:24px auto 0;text-align:center}
-.coach-big{font-size:48px;font-weight:800;color:#8E44AD}
-.coach-per{font-size:14px;color:#8899bb}
-.coach-small{font-size:12px;color:#556677;margin-top:8px}
-
-/* SOCIAL PROOF */
-.proof{display:grid;gap:12px;max-width:600px;margin:24px auto 0}
-.proof-card{background:#0d1117;border:1px solid #1e2d3d;border-radius:12px;padding:16px}
-.proof-quote{font-size:13px;color:#c0ccdd;line-height:1.5;font-style:italic}
-.proof-name{font-size:11px;color:#00D4FF;font-weight:700;margin-top:8px}
-
-/* FOOTER */
-.footer{background:#0a0f1a;border-top:1px solid #1e2d3d;padding:40px 16px;text-align:center}
-.footer-logo{color:#00D4FF;font-size:24px;font-weight:800;letter-spacing:4px}
-.footer-links{display:flex;justify-content:center;gap:24px;margin:16px 0;flex-wrap:wrap}
-.footer-links a{color:#667788;font-size:12px;font-weight:600}
-.footer-links a:hover{color:#00D4FF}
-.footer-copy{color:#445566;font-size:11px;margin-top:16px}
-
-/* MOBILE */
-@media(max-width:600px){
-  .hero-logo{font-size:42px}
-  .hero-tag{font-size:15px}
-  .hero-stats{gap:16px}
-  .hero-stat .n{font-size:24px}
-  .cobaia-grid{grid-template-columns:1fr 1fr}
-  .sect-title{font-size:22px}
-}
+  * { -webkit-tap-highlight-color: transparent; }
+  body { background: #0a0e17; }
+  .glow { text-shadow: 0 0 30px rgba(0,212,255,0.4); }
+  .card { background: linear-gradient(135deg, #111827 0%, #0f1729 100%); border: 1px solid #1e293b; }
+  .btn-primary { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+  .btn-primary:active { transform: scale(0.97); }
+  .hero-bg { background: radial-gradient(ellipse at 50% 0%, rgba(0,212,255,0.08) 0%, transparent 60%); }
 </style>
-<link rel="apple-touch-icon" href="/regeni-logo-512.svg">
-<link rel="icon" href="/icon-192.png" type="image/png">
-<meta property="og:title" content="REGENI — Corrida & Longevidade">
-<meta property="og:description" content="IA Treinadora, idade biológica, ranking, corridas. Tudo num só app.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://web-production-990e7.up.railway.app">
-<link rel="stylesheet" href="/regeni.css">
 </head>
-<body>
+<body class="text-white min-h-screen">
 
-<!-- ═══════ HERO ═══════ -->
-<div class="hero">
-  <div class="hero-logo">REGENI</div>
-  <div style="color:#667788;font-size:13px;letter-spacing:4px;margin-bottom:16px"></div>
-  <div class="hero-tag">
-    A plataforma que une <b>corrida de rua</b>, <b>inteligência artificial</b> e <b>longevidade</b>. Tudo que um corredor e uma pessoa que busca viver mais precisa — num só lugar.
-  </div>
+<!-- HERO -->
+<div class="hero-bg min-h-screen flex flex-col justify-center items-center text-center px-4 relative">
+  <div class="text-5xl font-black glow tracking-wider mb-2">REGENI</div>
+  <p class="text-slate-400 text-sm mb-6 max-w-md">O maior banco de <span class="text-cyan-400 font-bold">resultados de corridas de rua</span> do Brasil. Busque seu nome, veja seu ranking, compare seu pace.</p>
   
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="n">200+</div><div class="l">CORRIDAS</div></div>
-    <div class="hero-stat"><div class="n">IA</div><div class="l">TREINADORA 24H</div></div>
-    <div class="hero-stat"><div class="n">29.4</div><div class="l">IDADE BIOLÓGICA</div></div>
-    <div class="hero-stat"><div class="n">4.6%</div><div class="l">GORDURA COBAIA</div></div>
+  <div class="grid grid-cols-3 gap-4 mb-8">
+    <div class="text-center">
+      <div class="text-2xl font-black text-cyan-400" id="hRaces">-</div>
+      <div class="text-[10px] text-slate-500 font-semibold uppercase">Corridas</div>
+    </div>
+    <div class="text-center">
+      <div class="text-2xl font-black text-emerald-400" id="hResults">-</div>
+      <div class="text-[10px] text-slate-500 font-semibold uppercase">Resultados</div>
+    </div>
+    <div class="text-center">
+      <div class="text-2xl font-black text-amber-400" id="hAthletes">-</div>
+      <div class="text-[10px] text-slate-500 font-semibold uppercase">Atletas</div>
+    </div>
   </div>
 
-  <div class="hero-cta">
-    <div <div style="font-size:28px;font-weight:900;color:#00D4FF" id="landingDias">840</div><div style="font-size:11px;color:#667788">dias para os Jogos Olímpicos</div><div style="font-size:12px;color:#e2e8f0;margin-top:8px"></div></div>
-<a href="/entrar.html" class="btn-main">COMEÇAR GRÁTIS</a>
-    <a href="/cobaia-resultados.html" class="btn-sec">VER RESULTADOS REAIS</a>
+  <!-- Quick Search -->
+  <div class="w-full max-w-md mb-6">
+    <div class="flex gap-2">
+      <input id="heroSearch" type="text" placeholder="🔍 Buscar seu nome nos resultados..." class="flex-1 bg-slate-800/80 rounded-xl px-4 py-3 text-sm border border-slate-700 focus:border-cyan-500 focus:outline-none" onkeyup="if(event.key==='Enter')heroSearchGo()">
+      <button onclick="heroSearchGo()" class="btn-primary px-5 py-3 rounded-xl font-bold text-sm">Buscar</button>
+    </div>
+    <div id="heroResults" class="hidden mt-2 card rounded-xl p-3 max-h-48 overflow-y-auto text-left"></div>
   </div>
+
+  <div class="flex gap-3">
+    <a href="/resultados.html" class="btn-primary px-6 py-3 rounded-xl font-bold text-sm">🏆 Ver Ranking</a>
+    <a href="/corridas-abertas.html" class="border border-cyan-500 text-cyan-400 px-6 py-3 rounded-xl font-bold text-sm">🏁 Próximas Corridas</a>
+  </div>
+
+  <div class="absolute bottom-6 text-slate-600 text-xs animate-bounce">↓ Descubra mais</div>
+</div>
+
+<!-- O QUE É -->
+<div class="max-w-lg mx-auto px-4 py-12">
+  <h2 class="text-xl font-black text-center mb-2">Por que o REGENI?</h2>
+  <p class="text-slate-400 text-xs text-center mb-8">Tudo que um corredor de rua precisa num só lugar</p>
   
-  <div class="scroll-hint">↓ Descubra mais</div>
-</div>
-
-<!-- ═══════ FEATURES ═══════ -->
-<div class="sect">
-  <div class="sect-title">Tudo que você precisa. Num só app.</div>
-  <div class="sect-sub">Ranking, corridas, GPS, IA, longevidade, exames, comunidade.</div>
-  <div class="sect-divider"></div>
-  
-  <div class="features">
-    <div class="feat">
-      <div class="feat-icon">🤖</div>
-      <div class="feat-title">IA Treinadora Pessoal</div>
-      <div class="feat-desc">Não é um chatbot genérico. Ela sabe seu VDOT, zonas de FC, histórico de treinos, sono, alimentação e até se você tomou medicação. Cada resposta é baseada nos SEUS dados reais.</div>
-      <div class="feat-tag">EXCLUSIVO REGENI</div>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">🧬</div>
-      <div class="feat-title">Idade Biológica</div>
-      <div class="feat-desc">Calculamos sua idade biológica com base em VO2max, composição corporal, sono, treino e biomarcadores. Acompanhe a evolução e reduza sua idade real com protocolos baseados em ciência.</div>
-      <div class="feat-tag">PROTOCOLO COBAIA</div>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">📊</div>
-      <div class="feat-title">Dashboard Completo</div>
-      <div class="feat-desc">Treinos Strava, check-in diário (sono, humor, peso), alimentação, sessões de sauna, exames de sangue — tudo num painel visual com gráficos de evolução.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">🏁</div>
-      <div class="feat-title">Corridas e Ranking</div>
-      <div class="feat-desc">Calendário com 200+ corridas do Brasil. Ranking nacional por distância e faixa etária. Veja onde você está entre os melhores do país.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">📱</div>
-      <div class="feat-title">GPS de Treino</div>
-      <div class="feat-desc">Registre seus treinos com GPS, pace, distância, elevação. Sincronize com Strava automaticamente.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">👥</div>
-      <div class="feat-title">Comunidades e Assessorias</div>
-      <div class="feat-desc">Conecte-se com outros corredores, assessorias esportivas e grupos de treino da sua cidade.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ IA SECTION ═══════ -->
-<div class="ia-section">
-  <div class="ia-box">
-    <div class="sect-title">Conheça a IA Treinadora</div>
-    <div class="sect-sub">Ela não passa treino genérico. Ela te CONHECE.</div>
-    <div class="sect-divider"></div>
-    
-    <div class="ia-chat">
-      <div class="ia-msg-user"><span>O que você sabe sobre mim?</span></div>
-      <div class="ia-msg-bot"><span>Renisson, seu <b style="color:#00D4FF">VDOT é 63.9</b> — topo de 1% dos corredores brasileiros. Você voltou de 45 dias parado e já fez 5km em 17:40 com negative split. Sua idade biológica é <b style="color:#27AE60">25.5 anos</b> (5.5 abaixo da cronológica). Hoje é dia sem Vyvanse — recomendo treino mais intenso pra compensar com dopamina natural. 🏃</span></div>
-      <div class="ia-msg-user"><span>Estou pronto pra treinar?</span></div>
-      <div class="ia-msg-bot"><span>Baseado nos seus dados: dormiu <b>8.2h</b> (ótimo), humor <b>10/10</b>, sem Vyvanse, panturrilha melhorando. <b style="color:#27AE60">Sim, pode treinar</b>. Sugiro intervalos 3x1000m em pace 3:05-3:10 (Z4 VO2max). Isso vai trabalhar sua potência aeróbica sem sobrecarregar — você fez 8km ontem. 💪</span></div>
-    </div>
-    
-    <div style="margin-top:16px;font-size:12px;color:#667788">
-      A IA usa: Jack Daniels Running Formula • Zonas Karvonen • Periodização Bompa<br>
-      + seus dados de Strava, sono, alimentação, medicação e exames
-    </div>
-    
-    <a href="/entrar.html" class="btn-main" style="display:inline-block;margin-top:24px">EXPERIMENTAR A IA — R$ 9,99/mês</a>
-  </div>
-</div>
-
-<!-- ═══════ COBAIA SECTION ═══════ -->
-<div class="cobaia-section">
-  <div style="max-width:600px;margin:0 auto;text-align:center">
-    <div class="sect-title" style="color:#27AE60">Protocolo Cobaia — Prova Viva</div>
-    <div class="sect-sub">O fundador é a cobaia. Dados reais. Equipe médica. Documentação pública.</div>
-    <div class="sect-divider" style="background:#27AE60"></div>
-    
-    <div style="font-size:14px;color:#c0ccdd;line-height:1.7;text-align:left;margin-bottom:24px">
-      Renisson Nascimento Aragão, 31 anos, atleta de elite com 10+ anos de corrida, está documentando publicamente um protocolo de 60 dias de otimização biológica com equipe médica (médico, nutricionista, treinador, fisioterapeuta). Todos os dados são reais, medidos com BodyMetrix™ e exames laboratoriais.
-    </div>
-    
-    <div class="cobaia-grid">
-      <div class="cobaia-stat"><div class="v">25.5</div><div class="l">IDADE BIOLÓGICA (31 cronológica)</div></div>
-      <div class="cobaia-stat"><div class="v">4.6%</div><div class="l">GORDURA (BodyMetrix)</div></div>
-      <div class="cobaia-stat"><div class="v">63.9</div><div class="l">VDOT (top 1% BR)</div></div>
-      <div class="cobaia-stat"><div class="v">3:02</div><div class="l">REGENI 1000m (tiros)</div></div>
-      <div class="cobaia-stat"><div class="v">50.6kg</div><div class="l">MASSA MAGRA</div></div>
-      <div class="cobaia-stat"><div class="v">8.2h</div><div class="l">SONO MÉDIO</div></div>
-    </div>
-    
-    <a href="/cobaia-resultados.html" class="btn-main" style="display:inline-block;margin-top:24px;background:#27AE60;color:#fff">VER TODOS OS DADOS REAIS →</a>
-  </div>
-</div>
-
-<!-- ═══════ PRICING ═══════ -->
-<div class="sect" id="planos">
-  <div class="sect-title">Escolha seu plano</div>
-  <div class="sect-sub">Comece grátis. Evolua quando quiser.</div>
-  <div class="sect-divider"></div>
-  
-  <div class="pricing">
-    <!-- FREE -->
-    <div class="plan">
-      <div class="plan-name">Atleta Free</div>
-      <div class="plan-desc">Tudo pra começar a correr com inteligência</div>
-      <div class="plan-price">R$0 <span>/mês</span></div>
-      <ul class="plan-features">
-        <li>Ranking nacional por distância e faixa etária</li>
-        <li>Calendário com 200+ corridas</li>
-        <li>GPS de treino com pace e elevação</li>
-        <li>Comunidades e assessorias</li>
-        <li>IA Treinadora — 5 mensagens/hora</li>
-        <li>Sincronização Strava</li>
-      </ul>
-      <a href="/entrar.html" class="plan-btn plan-btn-sec">COMEÇAR GRÁTIS</a>
-    </div>
-
-    <!-- PREMIUM -->
-    <div class="plan plan-pop">
-      <div class="plan-name">Premium</div>
-      <div class="plan-desc">IA Treinadora completa + planilhas personalizadas</div>
-      <div class="plan-price">R$ 9,99 <span>/mês</span></div>
-      <ul class="plan-features">
-        <li>Tudo do Free +</li>
-        <li>IA Treinadora — 60 mensagens/hora</li>
-        <li>Planilha semanal personalizada (VDOT + zonas FC)</li>
-        <li>Análise completa do perfil de corredor</li>
-        <li>Chance de pódio por faixa etária</li>
-        <li>Análise de evolução com gráficos</li>
-        <li>IA acompanha sono, alimentação, medicação</li>
-        <li>Garantia 7 dias</li>
-      </ul>
-      <a href="/entrar.html?plan=premium" class="plan-btn plan-btn-main">ASSINAR PREMIUM</a>
-    </div>
-
-    <!-- LONGEVIDADE -->
-    <div class="plan" style="border-color:#27AE6044;background:linear-gradient(135deg,#0d1117,#0a1a0f)">
-      <div class="plan-name" style="color:#27AE60">Longevidade + Performance</div>
-      <div class="plan-desc">Protocolo completo de redução de idade biológica</div>
-      <div class="plan-price" style="color:#27AE60">R$99,90 <span>/mês</span></div>
-      <ul class="plan-features">
-        <li>Tudo do Premium +</li>
-        <li>Dashboard de idade biológica (6 fatores)</li>
-        <li>Protocolos Bryan Johnson / Peter Attia adaptados</li>
-        <li>Painel de exames de sangue (27 biomarcadores)</li>
-        <li>Registro de sauna / recovery / contraste térmico</li>
-        <li>Check-in diário (sono, humor, peso, medicação)</li>
-        <li>Suporte + encaminhamento equipe interdisciplinar</li>
-        <li>Acesso ao Dashboard Cobaia (dados reais do fundador)</li>
-        <li>Protocolos de suplementação baseados em exames</li>
-        <li>Garantia 7 dias</li>
-      </ul>
-      <a href="/entrar.html?plan=longevidade" class="plan-btn plan-btn-main" style="background:#27AE60;color:#fff">QUERO LONGEVIDADE</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ COACH SECTION ═══════ -->
-<div class="coach-section">
-  <div style="max-width:600px;margin:0 auto;text-align:center">
-    <div class="sect-title">Para Treinadores</div>
-    <div class="sect-sub">Gerencie seus atletas com IA e dados reais</div>
-    <div class="sect-divider" style="background:#8E44AD"></div>
-    
-    <div class="coach-highlight">
-      <div style="font-size:12px;color:#667788;margin-bottom:8px">POR ATLETA</div>
-      <div class="coach-big">R$3,99<span style="font-size:16px;color:#8899bb">/mês</span></div>
-      <div class="coach-per">por cada atleta na sua assessoria</div>
-      <div class="coach-small" style="margin-top:12px;color:#556677">Adesão única: R$99,90</div>
-    </div>
-    
-    <div style="text-align:left;margin-top:24px">
-      <div class="feat" style="border-color:#8E44AD44">
-        <div class="feat-title">O que o treinador ganha:</div>
-        <div class="feat-desc">
-          • Painel profissional com todos os dados dos atletas<br>
-          • IA Treinadora que segue sua metodologia<br>
-          • Treinos estruturados com zonas FC e pace<br>
-          • Dados de Strava, sono, alimentação dos atletas<br>
-          • Relatórios de evolução automáticos<br>
-          • Gestão de até 500 atletas<br>
-          • Selo de treinador verificado REGENI
+  <div class="space-y-3">
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">🔍</span>
+        <div>
+          <h3 class="font-bold text-sm">Busque Seu Nome</h3>
+          <p class="text-slate-400 text-xs mt-1">Digite seu nome e veja TODOS os seus resultados em corridas de rua. Tempo, pace, posição, faixa etária.</p>
         </div>
       </div>
     </div>
+
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">🏅</span>
+        <div>
+          <h3 class="font-bold text-sm">Ranking Nacional</h3>
+          <p class="text-slate-400 text-xs mt-1">Veja sua posição no ranking brasileiro por distância (3K a Maratona), gênero, faixa etária, estado e cidade.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">📊</span>
+        <div>
+          <h3 class="font-bold text-sm">Estatísticas Completas</h3>
+          <p class="text-slate-400 text-xs mt-1">Compare seu pace com a mediana nacional. Veja evolução temporal. Descubra como você está entre corredores da sua idade.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">📋</span>
+        <div>
+          <h3 class="font-bold text-sm">Resultados por Prova</h3>
+          <p class="text-slate-400 text-xs mt-1">Acesse o resultado completo de cada corrida. Classificação geral, por gênero, por faixa etária.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">🤖</span>
+        <div>
+          <h3 class="font-bold text-sm">IA Coach</h3>
+          <p class="text-slate-400 text-xs mt-1">Treinador virtual que conhece seus dados. Analisa seus resultados e sugere como melhorar.</p>
+          <span class="inline-block bg-cyan-500/20 text-cyan-400 text-[10px] font-bold px-2 py-0.5 rounded-full mt-1">EM BREVE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DADOS -->
+<div class="bg-slate-800/30 py-12 px-4">
+  <div class="max-w-lg mx-auto text-center">
+    <h2 class="text-xl font-black mb-2">Dados Reais, Atualizados</h2>
+    <p class="text-slate-400 text-xs mb-6">Coletamos resultados de dezenas de cronometradoras em todo o Brasil</p>
     
-    <a href="/entrar.html?role=coach" class="btn-main" style="display:inline-block;margin-top:24px;background:#8E44AD">SOU TREINADOR — QUERO COMEÇAR</a>
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl font-black text-cyan-400" id="sRaces">-</div>
+        <div class="text-xs text-slate-400">Corridas indexadas</div>
+      </div>
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl font-black text-emerald-400" id="sResults">-</div>
+        <div class="text-xs text-slate-400">Resultados no banco</div>
+      </div>
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl font-black text-amber-400" id="sAthletes">-</div>
+        <div class="text-xs text-slate-400">Atletas cadastrados</div>
+      </div>
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl font-black text-pink-400">27</div>
+        <div class="text-xs text-slate-400">Estados cobertos</div>
+      </div>
+    </div>
+
+    <div class="text-slate-500 text-[10px]">
+      Fontes: SportsChrono · Race83 · Central de Resultados · TBH Esportes · e mais
+    </div>
   </div>
 </div>
 
-<!-- ═══════ ESTUDOS ═══════ -->
-<div class="sect">
-  <div class="sect-title">Baseado em Ciência. Não em hype.</div>
-  <div class="sect-sub">Cada protocolo tem referência científica publicada.</div>
-  <div class="sect-divider"></div>
+<!-- CTA FINAL -->
+<div class="py-16 px-4 text-center">
+  <h2 class="text-2xl font-black mb-3 glow">Encontre seus resultados agora</h2>
+  <p class="text-slate-400 text-sm mb-6">É grátis. Sem cadastro. Só buscar.</p>
+  <a href="/resultados.html" class="btn-primary px-8 py-4 rounded-xl font-bold text-lg inline-block">🏆 Acessar Resultados</a>
+</div>
+
+<!-- FOOTER -->
+<footer class="border-t border-slate-800 py-8 px-4 text-center">
+  <div class="text-cyan-400 font-black text-xl tracking-wider mb-3">REGENI</div>
+  <div class="flex justify-center gap-6 text-xs text-slate-500 mb-4">
+    <a href="/resultados.html" class="hover:text-cyan-400">Resultados</a>
+    <a href="/corridas-abertas.html" class="hover:text-cyan-400">Corridas</a>
+    <a href="/ia.html" class="hover:text-cyan-400">IA Coach</a>
+    <a href="/perfil.html" class="hover:text-cyan-400">Perfil</a>
+    <a href="/termos.html" class="hover:text-cyan-400">Termos</a>
+    <a href="/privacidade.html" class="hover:text-cyan-400">Privacidade</a>
+  </div>
+  <p class="text-slate-600 text-[10px]">© 2026 REGENI. Resultados de corridas de rua do Brasil.</p>
+</footer>
+
+<!-- NAV -->
+<nav class="fixed bottom-0 left-0 right-0 bg-[#0a0e17]/95 backdrop-blur-sm border-t border-slate-800 flex text-[9px] font-semibold z-50" style="padding-bottom: max(8px, env(safe-area-inset-bottom))">
+  <a href="/" class="flex-1 text-center py-2 text-cyan-400">🏠<br>Início</a>
+  <a href="/corridas-abertas.html" class="flex-1 text-center py-2 text-slate-500">🏁<br>Corridas</a>
+  <a href="/resultados.html" class="flex-1 text-center py-2 text-slate-500">🏆<br>Resultados</a>
+  <a href="/ia.html" class="flex-1 text-center py-2 text-slate-500">🤖<br>IA Coach</a>
+  <a href="/perfil.html" class="flex-1 text-center py-2 text-slate-500">👤<br>Perfil</a>
+</nav>
+
+<script>
+function animN(id, target) {
+  const el=document.getElementById(id);
+  let cur=0; const step=Math.ceil(target/25);
+  const t=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur.toLocaleString('pt-BR');if(cur>=target)clearInterval(t);},40);
+}
+
+async function init() {
+  try {
+    const s = await fetch('/analytics/overview').then(r=>r.json());
+    animN('hRaces', s.totalRaces||0);
+    animN('hResults', s.totalResults||0);
+    animN('hAthletes', s.totalAthletes||0);
+    animN('sRaces', s.totalRaces||0);
+    animN('sResults', s.totalResults||0);
+    animN('sAthletes', s.totalAthletes||0);
+  } catch(e) {}
+}
+
+function heroSearchGo() {
+  const q = document.getElementById('heroSearch').value.trim();
+  if (!q || q.length < 3) return;
+  const el = document.getElementById('heroResults');
+  el.classList.remove('hidden');
+  el.innerHTML = '<p class="text-slate-400 text-xs">⏳ Buscando...</p>';
   
-  <div class="proof">
-    <div class="proof-card">
-      <div class="proof-quote">"HIIT 3x/semana por 8 semanas reduziu idade biológica em 3.6 anos medida por mRNA."</div>
-      <div class="proof-name">Loma Linda University, Aging Cell 2023</div>
-    </div>
-    <div class="proof-card">
-      <div class="proof-quote">"Sauna 4-7x/semana reduziu mortalidade cardiovascular em 63% e mortalidade geral em 40%."</div>
-      <div class="proof-name">Laukkanen et al., JAMA Internal Medicine 2015</div>
-    </div>
-    <div class="proof-card">
-      <div class="proof-quote">"Cada aumento de 1 MET no VO2max reduz mortalidade por todas as causas em 11-17%."</div>
-      <div class="proof-name">Imboden et al., JACC / ACC Cardiology 2025</div>
-    </div>
-    <div class="proof-card">
-      <div class="proof-quote">"Programa de 8 semanas (dieta + sono + exercício) reduziu idade biológica em 4.6 anos."</div>
-      <div class="proof-name">Fitzgerald et al., Aging Journal 2023</div>
-    </div>
-  </div>
-</div>
+  fetch('/buscar-atletas?nome=' + encodeURIComponent(q))
+    .then(r => r.json())
+    .then(d => {
+      if (!d || !d.length) { el.innerHTML = '<p class="text-slate-400 text-xs">Nenhum atleta encontrado</p>'; return; }
+      el.innerHTML = d.slice(0,10).map(a =>
+        '<a href="/perfil-atleta.html?id='+a.id+'" class="flex justify-between items-center py-2 border-b border-slate-700/50">'
+        +'<div><span class="font-semibold text-xs">'+a.name+'</span>'
+        +(a.equipe?'<span class="text-cyan-600 text-[10px] ml-1">'+a.equipe+'</span>':'')
+        +'<div class="text-slate-500 text-[10px]">'+(a.state||'')+' · '+a.totalRaces+' provas</div></div>'
+        +'<span class="text-cyan-400 text-xs">→</span></a>'
+      ).join('');
+    })
+    .catch(e => { el.innerHTML = '<p class="text-red-400 text-xs">Erro</p>'; });
+}
 
-<!-- ═══════ CTA FINAL ═══════ -->
-<div style="text-align:center;padding:60px 16px;background:linear-gradient(135deg,#1a0f00,#04060b)">
-  <div style="font-size:32px;font-weight:800;color:#00D4FF;margin-bottom:8px">Comece hoje.</div>
-  <div style="color:#8899bb;font-size:14px;margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto">
-    Cada dia sem dados é um dia perdido. Cada treino sem análise é potencial desperdiçado. O REGENI transforma sua rotina em ciência.
-  </div>
-  <a href="/entrar.html" class="btn-main" style="font-size:18px;padding:18px 40px">COMEÇAR GRÁTIS →</a>
-  <div style="margin-top:16px;color:#556677;font-size:12px">Sem cartão de crédito. Cancele quando quiser.</div>
-</div>
-
-<!-- ═══════ FOOTER ═══════ -->
-<div class="footer">
-  <div class="footer-logo">REGENI</div>
-  <div style="color:#667788;font-size:12px;margin-top:4px">Corrida. Longevidade. Performance.</div>
-  <div class="footer-links">
-    <a href="/cobaia-resultados.html">Resultados Cobaia</a>
-    <a href="/corridas-abertas.html">Corridas</a>
-    <a href="/ia.html">IA Treinadora</a>
-    <a href="/exames.html">Exames</a>
-    <a href="/cobaia.html">Dashboard</a>
-  </div>
-  <div class="footer-copy">
-    © 2026 REGENI — Itabaiana/SE<br>
-    Fundador: Renisson Nascimento Aragão<br>
-    <span style="color:#00D4FF">"Os dados provam. O corpo confirma."</span>
-  </div>
-</div>
-
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+init();
+</script>
 </body>
 </html>
