@@ -3,256 +3,321 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meu Resultado — REGENI</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{--verde:#00D4FF;--verde2:#00C853;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--surface:#1C2333;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
-.topbar{position:sticky;top:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(8,11,16,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-.logo{font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:24px;color:var(--verde);text-decoration:none}
-.topbar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.container{max-width:700px;margin:0 auto;padding:24px 16px}
-.tabs{display:flex;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
-.tab{flex:1;padding:12px;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;transition:all 0.2s;border:none;background:none;letter-spacing:0.5px}
-.tab.ativo{background:var(--verde);color:#080B10}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
-.card-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:900;margin-bottom:6px}
-.card-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
-.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;font-family:'Space Grotesk',sans-serif;outline:none;transition:border-color 0.2s}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--verde)}
-.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
-.field textarea{resize:vertical;min-height:80px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn-primary{width:100%;padding:14px;background:var(--verde);color:#080B10;border:none;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:900;cursor:pointer;transition:all 0.2s;margin-top:4px}
-.btn-primary:hover{background:var(--verde2)}
-.btn-primary:disabled{background:var(--surface);color:var(--muted);cursor:not-allowed}
-.result-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
-.result-status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:10px}
-.status-verificado{background:rgba(247,147,26,0.1);color:var(--verde);border:1px solid rgba(247,147,26,0.3)}
-.status-parcial{background:rgba(251,191,36,0.1);color:#FBBF24;border:1px solid rgba(251,191,36,0.3)}
-.status-pendente{background:rgba(100,116,139,0.1);color:var(--muted);border:1px solid var(--border)}
-.status-aprovado{background:rgba(247,147,26,0.15);color:var(--verde);border:1px solid rgba(247,147,26,0.4)}
-.result-nome{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px}
-.result-meta{font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap}
-.verify-resultado{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:16px}
-.verify-score{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:900;color:var(--verde);text-align:center;margin-bottom:4px}
-.verify-msg{text-align:center;font-size:14px;margin-bottom:16px}
-.verify-details{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.verify-item{background:var(--surface);border-radius:8px;padding:10px 12px}
-.verify-item-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
-.verify-item-value{font-size:13px;font-weight:600}
-.info-box{background:rgba(247,147,26,0.05);border:1px solid rgba(247,147,26,0.15);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#94A3B8;line-height:1.6}
-.info-box strong{color:var(--verde)}
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--verde);color:#080B10;padding:12px 24px;border-radius:20px;font-weight:700;font-size:14px;z-index:300;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 0 12px;z-index:100}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;padding:4px 12px}
-.nav-icon{font-size:20px}
-.nav-label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.nav-item.ativo .nav-label{color:var(--verde)}
-.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
-</style>
-<link rel="stylesheet" href="/regeni.css">
+<title>Adicionar Resultado — REGENI</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#00D4FF">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  body { background: #0a0e17; }
+  .card { background: linear-gradient(135deg, #111827 0%, #0f1729 100%); border: 1px solid #1e293b; }
+  .btn-primary { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+  .btn-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+  .tab-active { background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 4px 15px rgba(14,165,233,0.3); }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+  input:focus, select:focus, textarea:focus { border-color: #0ea5e9 !important; outline: none; }
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
 </head>
-<body>
-<div class="topbar">
-  <a href="/" class="logo">REGENI</a>
-  <span class="topbar-title">Meu Resultado</span>
-</div>
-<div class="container">
-  <div class="tabs">
-    <button class="tab ativo" onclick="mudarTab(this,'verificar')">🔗 Verificar Link</button>
-    <button class="tab" onclick="mudarTab(this,'manual')">✏️ Envio Manual</button>
-    <button class="tab" onclick="mudarTab(this,'historico')">📋 Histórico</button>
+<body class="text-white min-h-screen pb-20">
+
+<!-- Header -->
+<header class="sticky top-0 z-40 px-4 py-3 flex items-center gap-3 bg-[#0a0e17]/95 backdrop-blur-sm border-b border-slate-800">
+  <a href="/atleta.html" class="text-cyan-400 text-lg">←</a>
+  <h1 class="font-black text-base flex-1">🏅 Adicionar Resultado</h1>
+</header>
+
+<div class="max-w-lg mx-auto px-3 py-4">
+
+  <!-- Info -->
+  <div class="card rounded-xl p-4 mb-4 border-cyan-500/20">
+    <p class="text-xs text-slate-300 leading-relaxed">
+      <span class="text-cyan-400 font-bold">Como funciona:</span> Registre suas corridas e elas aparecerão no seu perfil público e no ranking nacional. Você pode colar o link oficial ou preencher manualmente.
+    </p>
   </div>
 
-  <!-- TAB: VERIFICAR LINK -->
-  <div id="tab-verificar">
-    <div class="info-box">
-      <strong>Como funciona:</strong> Cole o link da página oficial com seu resultado (chipagem, site da corrida) e nossa IA irá verificar automaticamente se as informações batem. Resultados verificados aparecem no seu perfil!
-    </div>
-    <div class="card">
-      <div class="card-title">🔗 Verificar resultado por link</div>
-      <div class="card-sub">Cole o link da página oficial do seu resultado. Aceitamos: RunningChip, Chip4You, Sympla, Ticket, CBAT e outros.</div>
-      <div class="field">
-        <label>Link do resultado *</label>
-        <input id="vLink" placeholder="https://runningchip.com.br/resultado/...">
-      </div>
-      <div class="row2">
-        <div class="field">
-          <label>Seu nome (como aparece no resultado)</label>
-          <input id="vNome" placeholder="Nome completo">
-        </div>
-        <div class="field">
-          <label>Distância</label>
-          <select id="vDist">
-            <option value="">Selecione</option>
-            <option value="5km">5km</option>
-            <option value="10km">10km</option>
-            <option value="21km">Meia Maratona (21km)</option>
-            <option value="42km">Maratona (42km)</option>
-            <option value="outros">Outra distância</option>
-          </select>
-        </div>
-      </div>
-      <div class="row2">
-        <div class="field">
-          <label>Tempo que fez (ex: 00:48:32)</label>
-          <input id="vTempo" placeholder="HH:MM:SS">
-        </div>
-        <div class="field">
-          <label>Data da prova</label>
-          <input id="vData" type="date">
-        </div>
-      </div>
-      <button class="btn-primary" id="btnVerificar" onclick="verificarLink()">🤖 Verificar com IA</button>
-      <div id="verifyResult"></div>
-    </div>
+  <!-- Tabs -->
+  <div class="flex gap-1.5 mb-4">
+    <button id="btnTab0" onclick="showTab(0)" class="flex-1 py-2.5 rounded-xl text-xs font-bold tab-active">✏️ Manual</button>
+    <button id="btnTab1" onclick="showTab(1)" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800">🔗 Por Link</button>
+    <button id="btnTab2" onclick="showTab(2)" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800">📋 Histórico</button>
   </div>
 
-  <!-- TAB: MANUAL -->
-  <div id="tab-manual" style="display:none">
-    <div class="info-box">
-      <strong>Envio manual:</strong> Não tem o link? Sem problema! Preencha as informações da sua prova e um admin irá revisar e adicionar ao seu perfil em até 24h.
-    </div>
-    <div class="card">
-      <div class="card-title">✏️ Enviar resultado manualmente</div>
-      <div class="field">
-        <label>Nome da prova *</label>
-        <input id="mProva" placeholder="Ex: Corrida das Ruas de Aracaju 2026">
+  <!-- TAB 0: MANUAL -->
+  <div id="tab0">
+    <div class="card rounded-xl p-4 space-y-3">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nome da corrida *</label>
+        <input id="mProva" placeholder="Ex: Corrida das Ruas de Aracaju 2026" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
       </div>
-      <div class="row2">
-        <div class="field">
-          <label>Distância *</label>
-          <select id="mDist">
+      
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Distância *</label>
+          <select id="mDist" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
             <option value="">Selecione</option>
-            <option value="5km">5km</option>
-            <option value="10km">10km</option>
-            <option value="21km">Meia Maratona</option>
-            <option value="42km">Maratona</option>
+            <option value="3K">3km</option>
+            <option value="5K">5km</option>
+            <option value="10K">10km</option>
+            <option value="15K">15km</option>
+            <option value="21K">Meia Maratona</option>
+            <option value="42K">Maratona</option>
             <option value="outros">Outra</option>
           </select>
         </div>
-        <div class="field">
-          <label>Tempo oficial *</label>
-          <input id="mTempo" placeholder="HH:MM:SS">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tempo oficial *</label>
+          <input id="mTempo" placeholder="HH:MM:SS" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700 font-mono">
         </div>
       </div>
-      <div class="row2">
-        <div class="field">
-          <label>Data da prova</label>
-          <input id="mData" type="date">
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Data da corrida *</label>
+          <input id="mData" type="date" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
         </div>
-        <div class="field">
-          <label>Posição geral</label>
-          <input id="mPos" type="number" placeholder="Ex: 42">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Posição geral</label>
+          <input id="mPos" type="number" placeholder="Ex: 42" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
         </div>
       </div>
-      <div class="row2">
-        <div class="field">
-          <label>Cidade</label>
-          <input id="mCidade" placeholder="Aracaju">
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Cidade</label>
+          <input id="mCidade" placeholder="Ex: Aracaju" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
         </div>
-        <div class="field">
-          <label>Estado</label>
-          <select id="mEstado">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Estado</label>
+          <select id="mEstado" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
             <option value="">UF</option>
             <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option>
           </select>
         </div>
       </div>
-      <div class="field">
-        <label>Link do resultado (opcional mas recomendado)</label>
-        <input id="mLink" placeholder="https://...">
+
+      <div>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Link do resultado (opcional)</label>
+        <input id="mLink" placeholder="https://... (ajuda na verificação)" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
       </div>
-      <button class="btn-primary" id="btnManual" onclick="enviarManual()">📋 Enviar para revisão</button>
+
+      <div>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Faixa etária</label>
+        <select id="mFaixa" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
+          <option value="">Selecione</option>
+          <option>16-19</option><option>20-24</option><option>25-29</option><option>30-34</option><option>35-39</option><option>40-44</option><option>45-49</option><option>50-54</option><option>55-59</option><option>60-69</option><option>70+</option>
+        </select>
+      </div>
+
+      <button id="btnManual" onclick="enviarManual()" class="w-full btn-orange py-3 rounded-xl text-sm font-black text-white transition-all active:scale-[0.98]">
+        🏅 Registrar Resultado
+      </button>
     </div>
   </div>
 
-  <!-- TAB: HISTÓRICO -->
-  <div id="tab-historico" style="display:none">
-    <div id="historicoLista"><div class="empty">Carregando...</div></div>
+  <!-- TAB 1: POR LINK -->
+  <div id="tab1" class="hidden">
+    <div class="card rounded-xl p-4 space-y-3">
+      <p class="text-xs text-slate-400">Cole o link da página oficial com seu resultado (chipagem, site da corrida). Aceitamos: RunningChip, Chip4You, Sympla, CBAT e outros.</p>
+      
+      <div>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Link do resultado *</label>
+        <input id="vLink" placeholder="https://runningchip.com.br/resultado/..." class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Seu nome no resultado</label>
+          <input id="vNome" placeholder="Nome completo" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Distância</label>
+          <select id="vDist" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
+            <option value="">Selecione</option>
+            <option value="5K">5km</option><option value="10K">10km</option><option value="21K">Meia</option><option value="42K">Maratona</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tempo (HH:MM:SS)</label>
+          <input id="vTempo" placeholder="00:48:32" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700 font-mono">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Data da prova</label>
+          <input id="vData" type="date" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
+        </div>
+      </div>
+
+      <button id="btnVerificar" onclick="verificarLink()" class="w-full btn-primary py-3 rounded-xl text-sm font-black text-white transition-all active:scale-[0.98]">
+        🤖 Verificar com IA
+      </button>
+      <div id="verifyResult"></div>
+    </div>
   </div>
+
+  <!-- TAB 2: HISTÓRICO -->
+  <div id="tab2" class="hidden">
+    <div id="historicoLista">
+      <div class="text-center text-slate-500 text-xs py-8">Carregando...</div>
+    </div>
+  </div>
+
 </div>
 
-<div class="toast" id="toast"></div>
-<nav class="bottom-nav">
-  <a href="/" class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">Início</span></a>
-  <a href="/corridas-abertas.html" class="nav-item"><span class="nav-icon">🏁</span><span class="nav-label">Corridas</span></a>
-  <a href="/elite.html" class="nav-item"><span class="nav-icon">🏆</span><span class="nav-label">Ranking</span></a>
-  <a href="/comunidades.html" class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">Grupos</span></a>
-  <a href="/loja.html" class="nav-item"><span class="nav-icon">🛒</span><span class="nav-label">Loja</span></a>
+<!-- Toast -->
+<div class="toast bg-emerald-500 text-white px-6 py-3 rounded-full font-bold text-sm" id="toast"></div>
+
+<!-- NAV -->
+<nav class="fixed bottom-0 left-0 right-0 bg-[#0a0e17]/95 backdrop-blur-sm border-t border-slate-800 flex text-[9px] font-semibold z-50" style="padding-bottom: max(8px, env(safe-area-inset-bottom))">
+  <a href="/atleta.html" class="flex-1 text-center py-2 text-slate-500">🏠<br>Início</a>
+  <a href="/corridas-abertas.html" class="flex-1 text-center py-2 text-slate-500">🏁<br>Corridas</a>
+  <a href="/resultados.html" class="flex-1 text-center py-2 text-slate-500">🏆<br>Resultados</a>
+  <a href="/ia.html" class="flex-1 text-center py-2 text-slate-500">🤖<br>IA Coach</a>
+  <a href="/perfil.html" class="flex-1 text-center py-2 text-cyan-400">👤<br>Perfil</a>
 </nav>
 
 <script>
-const token=localStorage.getItem('pace_token');
-function mudarTab(btn,id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
-  btn.classList.add('ativo');
-  ['verificar','manual','historico'].forEach(t=>document.getElementById('tab-'+t).style.display=t===id?'block':'none');
-  if(id==='historico')carregarHistorico();
+const token = localStorage.getItem('pace_token');
+if (!token) location.href = '/entrar.html';
+
+function showTab(n) {
+  for (let i = 0; i < 3; i++) {
+    document.getElementById('tab'+i).classList.toggle('hidden', i !== n);
+    document.getElementById('btnTab'+i).className = 'flex-1 py-2.5 rounded-xl text-xs font-bold ' + (i === n ? 'tab-active' : 'bg-slate-800');
+  }
+  if (n === 2) carregarHistorico();
 }
-async function verificarLink(){
-  if(!token){mostrarToast('⚠️ Faça login primeiro!');return;}
-  const link=document.getElementById('vLink').value.trim();
-  if(!link){mostrarToast('Cole o link do resultado!');return;}
-  const btn=document.getElementById('btnVerificar');
-  btn.disabled=true;btn.textContent='🤖 Verificando com IA...';
-  try{
-    const res=await fetch('/resultados/verificar-link',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({linkResultado:link,nomeAtleta:document.getElementById('vNome').value,distancia:document.getElementById('vDist').value,tempoInformado:document.getElementById('vTempo').value,dataProva:document.getElementById('vData').value})});
-    const d=await res.json();
-    const cor=d.score>=70?'var(--verde)':d.score>=40?'#FBBF24':'#EF4444';
-    document.getElementById('verifyResult').innerHTML=`
-      <div class="verify-resultado">
-        <div class="verify-score" style="color:${cor}">${d.score}<small style="font-size:20px">/100</small></div>
-        <div class="verify-msg">${d.mensagem}</div>
-        <div class="verify-details">
-          <div class="verify-item"><div class="verify-item-label">Site confiável</div><div class="verify-item-value">${d.siteConfiavel?'✅ Sim':'⚠️ Não reconhecido'}</div></div>
-          <div class="verify-item"><div class="verify-item-label">Página acessada</div><div class="verify-item-value">${d.acessoOk?'✅ Sim':'❌ Não'}</div></div>
-          <div class="verify-item"><div class="verify-item-label">Nome encontrado</div><div class="verify-item-value">${d.dadosEncontrados?.nome?'✅ Sim':'❌ Não'}</div></div>
-          <div class="verify-item"><div class="verify-item-label">Tempo</div><div class="verify-item-value">${d.dadosEncontrados?.tempo||'—'}</div></div>
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function enviarManual() {
+  const prova = document.getElementById('mProva').value.trim();
+  const dist = document.getElementById('mDist').value;
+  const tempo = document.getElementById('mTempo').value.trim();
+  const data = document.getElementById('mData').value;
+  
+  if (!prova || !dist || !tempo) { toast('⚠️ Preencha nome, distância e tempo!'); return; }
+  
+  const btn = document.getElementById('btnManual');
+  btn.disabled = true; btn.textContent = '⏳ Enviando...';
+  
+  try {
+    const res = await fetch('/resultados/enviar-manual', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({
+        nomeProva: prova,
+        distancia: dist,
+        tempoInformado: tempo,
+        dataProva: data,
+        posicaoGeral: document.getElementById('mPos').value,
+        cidade: document.getElementById('mCidade').value,
+        estado: document.getElementById('mEstado').value,
+        linkResultado: document.getElementById('mLink').value,
+        faixaEtaria: document.getElementById('mFaixa').value
+      })
+    });
+    const d = await res.json();
+    if (d.success) {
+      toast('✅ Resultado registrado!');
+      // Clear form
+      ['mProva','mTempo','mPos','mCidade','mLink'].forEach(id => document.getElementById(id).value = '');
+      showTab(2);
+    } else {
+      toast('❌ ' + (d.error || 'Erro ao enviar'));
+    }
+  } catch(e) { toast('❌ Erro de conexão'); }
+  finally { btn.disabled = false; btn.textContent = '🏅 Registrar Resultado'; }
+}
+
+async function verificarLink() {
+  const link = document.getElementById('vLink').value.trim();
+  if (!link) { toast('⚠️ Cole o link do resultado!'); return; }
+  
+  const btn = document.getElementById('btnVerificar');
+  btn.disabled = true; btn.textContent = '🤖 Verificando...';
+  
+  try {
+    const res = await fetch('/resultados/verificar-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({
+        linkResultado: link,
+        nomeAtleta: document.getElementById('vNome').value,
+        distancia: document.getElementById('vDist').value,
+        tempoInformado: document.getElementById('vTempo').value,
+        dataProva: document.getElementById('vData').value
+      })
+    });
+    const d = await res.json();
+    const cor = d.score >= 70 ? 'text-emerald-400' : d.score >= 40 ? 'text-amber-400' : 'text-red-400';
+    
+    document.getElementById('verifyResult').innerHTML = `
+      <div class="card rounded-xl p-4 mt-3 text-center">
+        <div class="text-4xl font-black ${cor}">${d.score}<span class="text-lg text-slate-500">/100</span></div>
+        <p class="text-sm text-slate-300 mt-2">${d.mensagem}</p>
+        <div class="grid grid-cols-2 gap-2 mt-3 text-left">
+          <div class="bg-slate-800/50 rounded-lg p-2"><div class="text-[9px] text-slate-500 uppercase">Site</div><div class="text-xs">${d.siteConfiavel ? '✅ Confiável' : '⚠️ Não reconhecido'}</div></div>
+          <div class="bg-slate-800/50 rounded-lg p-2"><div class="text-[9px] text-slate-500 uppercase">Acesso</div><div class="text-xs">${d.acessoOk ? '✅ OK' : '❌ Falhou'}</div></div>
+          <div class="bg-slate-800/50 rounded-lg p-2"><div class="text-[9px] text-slate-500 uppercase">Nome</div><div class="text-xs">${d.dadosEncontrados?.nome ? '✅ Encontrado' : '❌ Não'}</div></div>
+          <div class="bg-slate-800/50 rounded-lg p-2"><div class="text-[9px] text-slate-500 uppercase">Tempo</div><div class="text-xs font-mono">${d.dadosEncontrados?.tempo || '—'}</div></div>
         </div>
-        ${d.analiseIA?`<p style="margin-top:12px;font-size:13px;color:var(--muted);text-align:center">🤖 IA: ${d.analiseIA.resumo}</p>`:''}
-        <p style="margin-top:12px;font-size:12px;color:var(--muted);text-align:center">${d.proximoPasso}</p>
+        <p class="text-[10px] text-slate-500 mt-2">${d.proximoPasso || ''}</p>
       </div>`;
-  }catch(e){mostrarToast('Erro ao verificar. Tente novamente.');}
-  finally{btn.disabled=false;btn.textContent='🤖 Verificar com IA';}
+  } catch(e) { toast('❌ Erro ao verificar'); }
+  finally { btn.disabled = false; btn.textContent = '🤖 Verificar com IA'; }
 }
-async function enviarManual(){
-  if(!token){mostrarToast('⚠️ Faça login primeiro!');return;}
-  const dist=document.getElementById('mDist').value;
-  const tempo=document.getElementById('mTempo').value;
-  if(!dist||!tempo){mostrarToast('Preencha distância e tempo!');return;}
-  const btn=document.getElementById('btnManual');btn.disabled=true;btn.textContent='Enviando...';
-  try{
-    const res=await fetch('/resultados/enviar-manual',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({nomeProva:document.getElementById('mProva').value,distancia:dist,tempoInformado:tempo,dataProva:document.getElementById('mData').value,posicaoGeral:document.getElementById('mPos').value,cidade:document.getElementById('mCidade').value,estado:document.getElementById('mEstado').value,linkResultado:document.getElementById('mLink').value})});
-    const d=await res.json();
-    if(d.success){mostrarToast('✅ Resultado enviado para revisão!');document.querySelectorAll('.tab')[2].click();}
-    else mostrarToast(d.error||'Erro ao enviar');
-  }catch(e){mostrarToast('Erro de conexão');}
-  finally{btn.disabled=false;btn.textContent='📋 Enviar para revisão';}
+
+async function carregarHistorico() {
+  const el = document.getElementById('historicoLista');
+  try {
+    const d = await fetch('/resultados/meus-enviados', { headers: { 'Authorization': 'Bearer ' + token } }).then(r => r.json());
+    if (!d?.length) {
+      el.innerHTML = '<div class="text-center py-12"><div class="text-4xl mb-3">🏃</div><p class="text-slate-400 text-sm font-bold">Nenhum resultado ainda</p><p class="text-slate-500 text-xs mt-1">Use as abas acima para registrar sua primeira corrida!</p></div>';
+      return;
+    }
+    
+    const statusColors = {
+      verificado: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+      aprovado: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+      parcial: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+      pendente_revisao: 'bg-slate-500/10 text-slate-400 border-slate-500/30',
+    };
+    const statusLabels = {
+      verificado: '✅ Verificado',
+      aprovado: '✅ Aprovado',
+      parcial: '⚠️ Parcial',
+      pendente_revisao: '⏳ Em revisão',
+      nao_verificado: '❌ Não verificado'
+    };
+    
+    el.innerHTML = '<div class="space-y-2">' + d.map(r => {
+      const cls = statusColors[r.statusVerificacao] || 'bg-slate-500/10 text-slate-400 border-slate-500/30';
+      const label = statusLabels[r.statusVerificacao] || '⏳ Pendente';
+      const dt = r.dataProva ? new Date(r.dataProva).toLocaleDateString('pt-BR') : '';
+      return `<div class="card rounded-xl p-3">
+        <div class="flex justify-between items-start mb-2">
+          <span class="text-xs font-bold">${r.nomeProva || r.distancia}</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full border ${cls}">${label}</span>
+        </div>
+        <div class="flex gap-3 text-[10px] text-slate-400">
+          <span>⏱️ ${r.tempoInformado}</span>
+          <span>📏 ${r.distancia}</span>
+          ${dt ? '<span>📅 '+dt+'</span>' : ''}
+          ${r.scoreVerificacao ? '<span>Score: '+r.scoreVerificacao+'/100</span>' : ''}
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+  } catch(e) { el.innerHTML = '<div class="text-center text-red-400 text-xs py-8">Erro ao carregar</div>'; }
 }
-async function carregarHistorico(){
-  if(!token){document.getElementById('historicoLista').innerHTML='<div class="empty"><p>Faça login para ver seu histórico</p><br><a href="/entrar.html" style="color:var(--verde);font-weight:700">Entrar →</a></div>';return;}
-  try{
-    const d=await fetch('/resultados/meus-enviados',{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json());
-    if(!d.length){document.getElementById('historicoLista').innerHTML='<div class="empty">Nenhum resultado enviado ainda.<br><br>Use as abas acima para enviar seu primeiro resultado! 🏃</div>';return;}
-    const statusMap={verificado:'status-verificado ✅ Verificado',parcial:'status-parcial ⚠️ Parcial',aprovado:'status-aprovado ✅ Aprovado',pendente_revisao:'status-pendente ⏳ Em revisão',nao_verificado:'status-pendente ❌ Não verificado'};
-    document.getElementById('historicoLista').innerHTML=d.map(r=>{
-      const [cls,...labelParts]=( statusMap[r.statusVerificacao]||'status-pendente ⏳ Pendente').split(' ');
-      return `<div class="result-card"><div class="result-status ${cls}">${labelParts.join(' ')}</div><div class="result-nome">${r.nomeProva||r.distancia}</div><div class="result-meta"><span>⏱️ ${r.tempoInformado}</span><span>📏 ${r.distancia}</span><span>📅 ${new Date(r.dataProva).toLocaleDateString('pt-BR')}</span>${r.scoreVerificacao?`<span>Score: ${r.scoreVerificacao}/100</span>`:''}</div></div>`;
-    }).join('');
-  }catch(e){document.getElementById('historicoLista').innerHTML='<div class="empty">Erro ao carregar histórico.</div>';}
-}
-function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 </script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>
