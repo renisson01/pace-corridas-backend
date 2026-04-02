@@ -79,6 +79,27 @@ export async function verifyRoutes(fastify) {
           atletaId=a.id;
         }
         await prisma.resultadoEnviado.create({data:{userId:u.userId,atletaId,linkOriginal:linkResultado,nomeAtleta:nomeVerif,distancia:distancia||'',tempoInformado:tempoInformado||extraido.tempo||analiseIA?.tempo_encontrado||'',dataProva:dataProva?new Date(dataProva):new Date(),scoreVerificacao:score,statusVerificacao:status,dadosExtraidos:JSON.stringify({...extraido,analiseIA})}}).catch(()=>{});
+        // Auto-import to real Results when verified (score >= 70)
+        if (score >= 70 && atletaId) {
+          const tempo = tempoInformado || extraido.tempo || analiseIA?.tempo_encontrado || '';
+          const dist = distancia || '';
+          if (tempo && dist) {
+            try {
+              // Find or create race
+              const nomeProva = extraido.nomeProva || 'Corrida verificada por link';
+              let race = await prisma.race.findFirst({ where: { name: { contains: nomeProva.slice(0, 15), mode: 'insensitive' } } });
+              if (!race) {
+                race = await prisma.race.create({ data: { name: nomeProva, city: '', state: '', date: dataProva ? new Date(dataProva) : new Date(), distances: dist, organizer: 'Atleta (verificado)', status: 'completed' } });
+              }
+              // Create result (if not duplicate)
+              const exists = await prisma.result.findUnique({ where: { athleteId_raceId: { athleteId: atletaId, raceId: race.id } } });
+              if (!exists) {
+                await prisma.result.create({ data: { athleteId: atletaId, raceId: race.id, time: tempo, distance: dist, points: 0 } });
+                await prisma.athlete.update({ where: { id: atletaId }, data: { totalRaces: { increment: 1 } } });
+              }
+            } catch(e2) { console.log('[VERIFY AUTO-IMPORT]', e2.message); }
+          }
+        }
       } catch(e) { console.log('[VERIFY SAVE]',e.message); }
     }
     return { status, score, mensagem:msg, siteConfiavel, acessoOk, dadosEncontrados:{nome:extraido.encontrouNome||analiseIA?.encontrou_atleta||false,tempo:extraido.tempo||analiseIA?.tempo_encontrado||null,posicao:extraido.posicao||analiseIA?.posicao_encontrada||null}, analiseIA:analiseIA?{resumo:analiseIA.resumo,confianca:analiseIA.confianca}:null, proximoPasso:status==='verificado'?'Resultado salvo! Aparecerá no perfil após aprovação.':'Você pode enviar assim mesmo — um admin irá revisar.' };

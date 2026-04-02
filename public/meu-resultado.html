@@ -59,12 +59,17 @@
             <option value="">Selecione</option>
             <option value="3K">3km</option>
             <option value="5K">5km</option>
+            <option value="7K">7km</option>
             <option value="10K">10km</option>
             <option value="15K">15km</option>
+            <option value="16K">16km</option>
+            <option value="18K">18km</option>
             <option value="21K">Meia Maratona</option>
+            <option value="30K">30km</option>
             <option value="42K">Maratona</option>
-            <option value="outros">Outra</option>
+            <option value="outros">Outra...</option>
           </select>
+          <input id="mDistCustom" placeholder="Ex: 12K" class="hidden w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-orange-500/50 mt-1">
         </div>
         <div>
           <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tempo oficial *</label>
@@ -135,8 +140,9 @@
           <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Distância</label>
           <select id="vDist" class="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-slate-700">
             <option value="">Selecione</option>
-            <option value="5K">5km</option><option value="10K">10km</option><option value="21K">Meia</option><option value="42K">Maratona</option>
+            <option value="3K">3km</option><option value="5K">5km</option><option value="7K">7km</option><option value="10K">10km</option><option value="15K">15km</option><option value="18K">18km</option><option value="21K">Meia</option><option value="30K">30km</option><option value="42K">Maratona</option><option value="outros">Outra...</option>
           </select>
+          <input id="vDistCustom" placeholder="Ex: 12K" class="hidden w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-sm border border-orange-500/50 mt-1">
         </div>
       </div>
 
@@ -318,6 +324,51 @@ async function carregarHistorico() {
     }).join('') + '</div>';
   } catch(e) { el.innerHTML = '<div class="text-center text-red-400 text-xs py-8">Erro ao carregar</div>'; }
 }
+</script>
+
+<script>
+// Custom distance toggle
+document.getElementById('mDist').addEventListener('change', function() {
+  const custom = document.getElementById('mDistCustom');
+  if (this.value === 'outros') { custom.classList.remove('hidden'); custom.focus(); }
+  else { custom.classList.add('hidden'); custom.value = ''; }
+});
+document.getElementById('vDist').addEventListener('change', function() {
+  const custom = document.getElementById('vDistCustom');
+  if (this.value === 'outros') { custom.classList.remove('hidden'); custom.focus(); }
+  else { custom.classList.add('hidden'); custom.value = ''; }
+});
+
+// Override enviarManual to use custom dist
+const _enviarManual = enviarManual;
+enviarManual = async function() {
+  const sel = document.getElementById('mDist');
+  const custom = document.getElementById('mDistCustom');
+  if (sel.value === 'outros' && custom.value) {
+    sel._origValue = sel.value;
+    const opt = document.createElement('option');
+    opt.value = custom.value.toUpperCase();
+    opt.textContent = custom.value;
+    opt.selected = true;
+    sel.append(opt);
+  }
+  await _enviarManual();
+};
+
+// Override verificarLink to use custom dist
+const _verificarLink = verificarLink;
+verificarLink = async function() {
+  const sel = document.getElementById('vDist');
+  const custom = document.getElementById('vDistCustom');
+  if (sel.value === 'outros' && custom.value) {
+    const opt = document.createElement('option');
+    opt.value = custom.value.toUpperCase();
+    opt.textContent = custom.value;
+    opt.selected = true;
+    sel.append(opt);
+  }
+  await _verificarLink();
+};
 </script>
 </body>
 </html>
