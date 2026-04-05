@@ -85,8 +85,12 @@ export async function authRoutes(fastify) {
         }
       });
       if(!user) return reply.code(404).send({ error: 'Usuário não encontrado' });
+      console.log('DEBUG /auth/me - User found:', { id: user.id, name: user.name, athleteId: user.athleteId, hasAthlete: !!user.athlete });
       return { success: true, user };
-    } catch(e) { return reply.code(401).send({ error: 'Token inválido' }); }
+    } catch(e) { 
+      console.log('DEBUG /auth/me - Error:', e.message);
+      return reply.code(401).send({ error: 'Token inválido' }); 
+    }
   });
 
 
