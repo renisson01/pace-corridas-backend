@@ -3,107 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REGENI — Início</title>
+<title>REGENI — Sua Central de Corridas</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
 <style>
-  * { -webkit-tap-highlight-color: transparent; }
-  body { background: #0a0e17; }
-  .glow { text-shadow: 0 0 20px rgba(0,212,255,0.3); }
-  .card { background: linear-gradient(135deg, #111827 0%, #0f1729 100%); border: 1px solid #1e293b; }
-  .btn-primary { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
-  .btn-add { background: linear-gradient(135deg, #f97316, #ea580c); }
+body { background: #04060b; color: #eeeef8; font-family: 'Inter', system-ui, sans-serif; }
+.card { background: #0d1117; border: 1px solid #1e2937; transition: transform 0.2s; }
+.card:hover { transform: translateY(-2px); }
+.hero-grad { background: linear-gradient(135deg, #00D4FF 0%, #FF6D00 100%); }
+.stat-mini { background: rgba(13,17,23,0.6); border: 1px solid rgba(30,41,55,0.3); }
+.result-card { background: linear-gradient(135deg, rgba(0,212,255,0.05) 0%, rgba(255,109,0,0.05) 100%); border: 1px solid rgba(0,212,255,0.2); }
 </style>
 </head>
-<body class="text-white min-h-screen pb-20">
+<body class="pb-16">
 
-<!-- Header -->
-<header class="sticky top-0 z-40 px-4 py-3 flex items-center justify-between bg-[#0a0e17]/95 backdrop-blur-sm border-b border-slate-800">
-  <div>
-    <span class="font-black text-lg text-cyan-400">REGENI</span>
-    <span class="text-slate-400 text-xs ml-2" id="greeting"></span>
-  </div>
-  <div class="flex items-center gap-2">
-    <a href="/meu-resultado.html" class="btn-add px-3 py-1.5 rounded-lg text-xs font-bold text-white">+ Resultado</a>
-    <a href="/perfil.html" class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold text-sm" id="avatar">R</a>
-  </div>
-</header>
-
-<div class="max-w-lg mx-auto px-3 py-4">
-
-  <!-- Stats do banco -->
-  <div class="grid grid-cols-3 gap-2 mb-4">
-    <div class="card rounded-xl p-2.5 text-center">
-      <div class="text-lg font-black text-cyan-400" id="sRaces">-</div>
-      <div class="text-[9px] text-slate-500 font-semibold uppercase">Corridas</div>
+<div class="p-4">
+  <!-- GREETING HEADER -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 id="greeting" class="text-2xl font-black text-white">Bom dia! 👋</h1>
+      <p class="text-slate-400 text-sm">Pronto para sua próxima corrida?</p>
     </div>
-    <div class="card rounded-xl p-2.5 text-center">
-      <div class="text-lg font-black text-emerald-400" id="sResults">-</div>
-      <div class="text-[9px] text-slate-500 font-semibold uppercase">Resultados</div>
+    <div class="w-12 h-12 rounded-full hero-grad flex items-center justify-center text-black font-black text-xl">R</div>
+  </div>
+
+  <!-- STATS OVERVIEW -->
+  <div class="grid grid-cols-3 gap-3 mb-6">
+    <div class="stat-mini rounded-xl p-3 text-center">
+      <p id="statProvas" class="text-xl font-black text-cyan-400">0</p>
+      <p class="text-[9px] text-slate-400 uppercase tracking-wider">Provas</p>
     </div>
-    <div class="card rounded-xl p-2.5 text-center">
-      <div class="text-lg font-black text-amber-400" id="sAthletes">-</div>
-      <div class="text-[9px] text-slate-500 font-semibold uppercase">Atletas</div>
+    <div class="stat-mini rounded-xl p-3 text-center">
+      <p id="statPontos" class="text-xl font-black text-orange-400">0</p>
+      <p class="text-[9px] text-slate-400 uppercase tracking-wider">Pontos</p>
+    </div>
+    <div class="stat-mini rounded-xl p-3 text-center">
+      <p id="statRanking" class="text-xl font-black text-slate-300">—</p>
+      <p class="text-[9px] text-slate-400 uppercase tracking-wider">Ranking</p>
     </div>
   </div>
 
-  <!-- Busca rápida -->
-  <div class="card rounded-xl p-3 mb-4">
-    <div class="flex gap-2">
-      <input id="searchInput" type="text" placeholder="🔍 Buscar atleta por nome..." class="flex-1 bg-slate-800/50 rounded-lg px-3 py-2 text-sm border border-slate-700 focus:border-cyan-500 focus:outline-none" onkeyup="if(event.key==='Enter')buscar()">
-      <button onclick="buscar()" class="btn-primary px-4 py-2 rounded-lg text-sm font-bold">Buscar</button>
-    </div>
-    <div id="searchRes" class="hidden mt-2 max-h-40 overflow-y-auto"></div>
-  </div>
-
-  <!-- CTA: Adicionar resultado -->
-  <a href="/meu-resultado.html" class="block card rounded-xl p-4 mb-4 border-orange-500/30 hover:border-orange-500/50 transition-colors">
-    <div class="flex items-center gap-3">
-      <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-2xl">🏅</div>
-      <div class="flex-1">
-        <h3 class="font-bold text-sm">Adicionar Meu Resultado</h3>
-        <p class="text-slate-400 text-[10px] mt-0.5">Registre suas corridas por link ou manualmente</p>
+  <!-- ADICIONAR RESULTADO CTA -->
+  <a href="/meu-resultado.html" class="block mb-6">
+    <div class="hero-grad rounded-xl p-[2px]">
+      <div class="bg-[#04060b] rounded-xl p-4 text-center">
+        <div class="text-3xl mb-2">📊</div>
+        <h2 class="font-black text-white text-lg mb-1">Adicionar Meu Resultado</h2>
+        <p class="text-sm text-slate-400">Cole o link da corrida ou digite manualmente</p>
       </div>
-      <span class="text-orange-400 text-lg">→</span>
     </div>
   </a>
 
-  <!-- Meus resultados (se logado e tiver) -->
-  <div id="meusResultados" class="hidden mb-4">
-    <h2 class="text-sm font-bold mb-2 text-slate-300">📋 Meus Resultados</h2>
-    <div id="meusResultadosLista"></div>
+  <!-- SEUS ÚLTIMOS RESULTADOS -->
+  <div class="mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-black text-white">🏅 Seus Últimos Resultados</h2>
+      <a href="/perfil.html" class="text-xs text-cyan-400 font-bold">Ver todos →</a>
+    </div>
+    <div id="meusResultados" class="space-y-3">
+      <div class="card rounded-xl p-4 text-center">
+        <p class="text-slate-500 text-sm">Carregando seus resultados...</p>
+      </div>
+    </div>
   </div>
 
-  <!-- Ações rápidas -->
-  <h2 class="text-sm font-bold mb-2 text-slate-300">⚡ Acesso rápido</h2>
-  <div class="grid grid-cols-2 gap-2 mb-4">
-    <a href="/resultados.html" class="card rounded-xl p-3 text-center">
-      <div class="text-2xl mb-1">🏆</div>
-      <div class="text-xs font-bold">Ranking Brasil</div>
-      <div class="text-[9px] text-slate-500">Por distância e estado</div>
-    </a>
-    <a href="/corridas-abertas.html" class="card rounded-xl p-3 text-center">
-      <div class="text-2xl mb-1">🏁</div>
-      <div class="text-xs font-bold">Próximas Corridas</div>
-      <div class="text-[9px] text-slate-500">Inscrições abertas</div>
-    </a>
-    <a href="/perfil-atleta.html" class="card rounded-xl p-3 text-center" id="linkMeuPerfil" style="display:none">
-      <div class="text-2xl mb-1">👤</div>
-      <div class="text-xs font-bold">Meu Perfil Público</div>
-      <div class="text-[9px] text-slate-500">Como outros te veem</div>
-    </a>
-    <a href="/calculadoras.html" class="card rounded-xl p-3 text-center">
-      <div class="text-2xl mb-1">🧮</div>
-      <div class="text-xs font-bold">Calculadoras</div>
-      <div class="text-[9px] text-slate-500">Pace, VDOT, zonas</div>
-    </a>
+  <!-- SEU RANKING POR DISTÂNCIA -->
+  <div class="mb-6">
+    <h2 class="text-lg font-black text-white mb-3">📊 Seu Ranking</h2>
+    <div id="meuRanking" class="grid grid-cols-2 gap-3">
+      <div class="stat-mini rounded-xl p-3 text-center">
+        <p class="text-xs text-slate-400 mb-1">5km</p>
+        <p class="text-lg font-black text-slate-500">—</p>
+      </div>
+      <div class="stat-mini rounded-xl p-3 text-center">
+        <p class="text-xs text-slate-400 mb-1">10km</p>
+        <p class="text-lg font-black text-slate-500">—</p>
+      </div>
+      <div class="stat-mini rounded-xl p-3 text-center">
+        <p class="text-xs text-slate-400 mb-1">21km</p>
+        <p class="text-lg font-black text-slate-500">—</p>
+      </div>
+      <div class="stat-mini rounded-xl p-3 text-center">
+        <p class="text-xs text-slate-400 mb-1">42km</p>
+        <p class="text-lg font-black text-slate-500">—</p>
+      </div>
+    </div>
   </div>
 
-  <!-- Últimas corridas adicionadas -->
-  <h2 class="text-sm font-bold mb-2 text-slate-300">🆕 Últimas corridas indexadas</h2>
-  <div id="ultimasProvas" class="space-y-2 mb-4">
-    <div class="text-center text-slate-500 text-xs py-4">Carregando...</div>
+  <!-- ACESSO RÁPIDO (COMPACTO) -->
+  <div class="mb-6">
+    <h2 class="text-sm font-bold mb-3 text-slate-300">⚡ Acesso Rápido</h2>
+    <div class="grid grid-cols-2 gap-2">
+      <a href="/resultados.html" class="card rounded-xl p-3 text-center">
+        <div class="text-lg mb-1">🏆</div>
+        <div class="text-xs font-bold">Ranking Brasil</div>
+      </a>
+      <a href="/corridas-abertas.html" class="card rounded-xl p-3 text-center">
+        <div class="text-lg mb-1">🏁</div>
+        <div class="text-xs font-bold">Próximas Corridas</div>
+      </a>
+      <a id="linkMeuPerfilPublico" href="#" class="card rounded-xl p-3 text-center" style="display:none">
+        <div class="text-lg mb-1">👤</div>
+        <div class="text-xs font-bold">Meu Perfil Público</div>
+      </a>
+      <a href="/ia.html" class="card rounded-xl p-3 text-center">
+        <div class="text-lg mb-1">🤖</div>
+        <div class="text-xs font-bold">IA Coach</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- STATS SISTEMA -->
+  <div class="mb-4">
+    <h2 class="text-sm font-bold mb-3 text-slate-300">📈 Sistema REGENI</h2>
+    <div class="grid grid-cols-3 gap-2 text-center text-xs">
+      <div class="stat-mini rounded-lg p-2">
+        <p id="totalCorridas" class="font-bold text-cyan-400">456</p>
+        <p class="text-slate-500">Corridas</p>
+      </div>
+      <div class="stat-mini rounded-lg p-2">
+        <p id="totalResultados" class="font-bold text-orange-400">278k</p>
+        <p class="text-slate-500">Resultados</p>
+      </div>
+      <div class="stat-mini rounded-lg p-2">
+        <p id="totalAtletas" class="font-bold text-slate-300">204k</p>
+        <p class="text-slate-500">Atletas</p>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -121,71 +146,163 @@
 const token = localStorage.getItem('pace_token');
 const user = JSON.parse(localStorage.getItem('pace_user') || '{}');
 
-// Redirect to landing if not logged in
-if (!token) { location.href = '/'; }
+// Redirect se não logado
+if (!token) location.href = '/';
 
-// Greeting
+let atletaId = null;
+
+// Greeting dinâmico
 const h = new Date().getHours();
 const periodo = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
-document.getElementById('greeting').textContent = `${periodo}, ${user.name?.split(' ')[0] || 'Atleta'} 👋`;
-document.getElementById('avatar').textContent = (user.name || 'R')[0].toUpperCase();
+document.getElementById('greeting').textContent = `${periodo}, ${user.name?.split(' ')[0] || 'Atleta'}! 👋`;
 
-// Stats
-async function loadStats() {
+async function carregarDados() {
   try {
-    const s = await fetch('/analytics/overview').then(r => r.json());
-    document.getElementById('sRaces').textContent = (s.totalRaces||0).toLocaleString('pt-BR');
-    document.getElementById('sResults').textContent = (s.totalResults||0).toLocaleString('pt-BR');
-    document.getElementById('sAthletes').textContent = (s.totalAthletes||0).toLocaleString('pt-BR');
-  } catch(e) {}
+    // 1. Pegar perfil do user logado
+    const perfilRes = await fetch('/usuarios/perfil', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const perfil = await perfilRes.json();
+    
+    if (perfil.athleteId) {
+      atletaId = perfil.athleteId;
+      
+      // 2. Buscar dados completos do atleta
+      await carregarDadosAtleta(perfil.athleteId);
+      
+      // 3. Mostrar link do perfil público
+      const linkPerfil = document.getElementById('linkMeuPerfilPublico');
+      linkPerfil.href = `/perfil-atleta.html?id=${perfil.athleteId}`;
+      linkPerfil.style.display = 'block';
+    }
+    
+    // 4. Stats do sistema
+    await carregarStatsGerais();
+    
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error);
+  }
 }
 
-// Busca
-async function buscar() {
-  const q = document.getElementById('searchInput').value.trim();
-  if (!q || q.length < 3) return;
-  const el = document.getElementById('searchRes');
-  el.classList.remove('hidden');
-  el.innerHTML = '<p class="text-slate-400 text-xs py-2">⏳ Buscando...</p>';
+async function carregarDadosAtleta(atletaId) {
   try {
-    const d = await fetch('/buscar-atletas?nome=' + encodeURIComponent(q)).then(r => r.json());
-    if (!d?.length) { el.innerHTML = '<p class="text-slate-400 text-xs py-2">Nenhum resultado</p>'; return; }
-    el.innerHTML = d.slice(0,10).map(a =>
-      '<a href="/perfil-atleta.html?id='+a.id+'" class="flex justify-between items-center py-2 border-b border-slate-800/50">'
-      +'<div><span class="font-semibold text-xs">'+a.name+'</span>'
-      +(a.equipe?'<span class="text-cyan-600 text-[10px] ml-1">'+a.equipe+'</span>':'')
-      +'<div class="text-slate-500 text-[10px]">'+(a.state||'')+' · '+a.totalRaces+' provas</div></div>'
-      +'<span class="text-cyan-400 text-xs">→</span></a>'
-    ).join('');
-  } catch(e) { el.innerHTML = '<p class="text-red-400 text-xs">Erro</p>'; }
+    const response = await fetch(`/perfil-atleta/${atletaId}`);
+    const atleta = await response.json();
+    
+    if (atleta.error) return;
+    
+    // Atualizar stats do header
+    document.getElementById('statProvas').textContent = atleta.totalRaces || 0;
+    document.getElementById('statPontos').textContent = atleta.totalPoints || 0;
+    
+    if (atleta.posicaoRanking && atleta.posicaoRanking <= 1000) {
+      document.getElementById('statRanking').textContent = `${atleta.posicaoRanking}°`;
+      document.getElementById('statRanking').className = 'text-xl font-black text-cyan-400';
+    } else if (atleta.posicaoRanking) {
+      document.getElementById('statRanking').textContent = `${Math.floor(atleta.posicaoRanking/1000)}k+`;
+    }
+    
+    // Renderizar últimos resultados
+    renderMeusResultados(atleta.provas || []);
+    
+    // Renderizar ranking por distância (simulado - poderia puxar de API específica)
+    renderMeuRanking(atleta.melhoresPorDist || {});
+    
+  } catch (error) {
+    console.error('Erro ao carregar dados do atleta:', error);
+  }
 }
 
-// Últimas provas
-async function loadProvas() {
+function renderMeusResultados(provas) {
+  const container = document.getElementById('meusResultados');
+  
+  if (!provas || provas.length === 0) {
+    container.innerHTML = `
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl mb-2">🎯</div>
+        <p class="text-white font-bold mb-1">Adicione seu primeiro resultado</p>
+        <p class="text-xs text-slate-400">Para começar a acompanhar sua evolução</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = provas.slice(0, 3).map(prova => {
+    const medalIcon = prova.posicaoGeral <= 3 ? 
+      (prova.posicaoGeral === 1 ? '🥇' : prova.posicaoGeral === 2 ? '🥈' : '🥉') : 
+      `${prova.posicaoGeral}°`;
+    
+    const tempoClass = prova.time < '0:25:00' ? 'text-cyan-400' : 
+                     prova.time < '0:45:00' ? 'text-orange-400' : 'text-slate-300';
+    
+    return `
+      <div class="result-card rounded-xl p-3">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <h3 class="font-bold text-white text-sm leading-tight">${prova.raceName}</h3>
+            <p class="text-xs text-slate-400">${prova.distance} • ${new Date(prova.raceDate).toLocaleDateString('pt-BR')}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-black ${tempoClass} text-lg">${prova.time}</p>
+            <p class="text-xs font-bold text-slate-400">${medalIcon}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderMeuRanking(melhores) {
+  const container = document.getElementById('meuRanking');
+  const distancias = ['5K', '10K', '21K', '42K'];
+  
+  container.innerHTML = distancias.map(dist => {
+    const tempo = melhores[dist];
+    // Posição simulada baseada no tempo (na real puxaria da API de ranking)
+    let posicao = '—';
+    let posClass = 'text-slate-500';
+    
+    if (tempo) {
+      const [min, sec] = tempo.split(':').map(Number);
+      const totalSec = min * 60 + sec;
+      
+      if (dist === '5K' && totalSec < 1200) { posicao = '< 500°'; posClass = 'text-cyan-400'; }
+      else if (dist === '10K' && totalSec < 2400) { posicao = '< 1k°'; posClass = 'text-cyan-400'; }
+      else if (tempo) { posicao = '> 5k°'; posClass = 'text-orange-400'; }
+    }
+    
+    return `
+      <div class="stat-mini rounded-xl p-3 text-center">
+        <p class="text-xs text-slate-400 mb-1">${dist.replace('K', 'km')}</p>
+        <p class="text-lg font-black ${posClass}">${posicao}</p>
+      </div>
+    `;
+  }).join('');
+}
+
+async function carregarStatsGerais() {
   try {
-    const d = await fetch('/provas').then(r => r.json());
-    const el = document.getElementById('ultimasProvas');
-    if (!d?.length) { el.innerHTML = '<div class="text-center text-slate-500 text-xs py-4">Nenhuma prova</div>'; return; }
-    el.innerHTML = d.slice(0, 5).map(p => {
-      const dt = new Date(p.date).toLocaleDateString('pt-BR', {day:'2-digit', month:'short'});
-      return '<a href="/resultados.html" class="card rounded-xl p-3 flex justify-between items-center block">'
-        +'<div><div class="font-bold text-xs">'+p.name+'</div>'
-        +'<div class="text-[10px] text-slate-500">'+(p.city||'')+' · '+dt+'</div></div>'
-        +'<div class="text-right"><div class="text-xs font-bold text-emerald-400">'+p.totalResults+'</div>'
-        +'<div class="text-[9px] text-slate-500">atletas</div></div></a>';
-    }).join('');
-  } catch(e) {}
+    const response = await fetch('/analytics/overview');
+    const stats = await response.json();
+    
+    if (stats.totalCorridas) document.getElementById('totalCorridas').textContent = stats.totalCorridas;
+    if (stats.totalResultados) {
+      const num = stats.totalResultados;
+      document.getElementById('totalResultados').textContent = num > 1000 ? `${Math.floor(num/1000)}k` : num;
+    }
+    if (stats.totalAtletas) {
+      const num = stats.totalAtletas;
+      document.getElementById('totalAtletas').textContent = num > 1000 ? `${Math.floor(num/1000)}k` : num;
+    }
+    
+  } catch (error) {
+    console.error('Erro ao carregar stats gerais:', error);
+  }
 }
 
-// Meu perfil público link
-if (user.athleteId) {
-  const link = document.getElementById('linkMeuPerfil');
-  link.href = '/perfil-atleta.html?id=' + user.athleteId;
-  link.style.display = '';
-}
-
-loadStats();
-loadProvas();
+// Init
+carregarDados();
 </script>
+
 </body>
 </html>

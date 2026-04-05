@@ -2,297 +2,157 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Perfil — REGENI</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>REGENI — Meu Perfil</title>
-
 <style>
-body{background:#04060b;}
-.grad{background:linear-gradient(135deg,#00D4FF,#E8850C);}
-.card-glass{background:rgba(13,17,23,1);border:1px solid rgba(30,45,61,1);}
-::-webkit-scrollbar{display:none;}
+body { background: #04060b; color: #eeeef8; font-family: 'Inter', system-ui, sans-serif; }
+.hero-grad { background: linear-gradient(135deg, #00D4FF 0%, #FF6D00 100%); }
+.card { background: #0d1117; border: 1px solid #1e2937; }
+.pace-good { color: #00D4FF; }
+.pace-ok { color: #FF6D00; }
+.pace-slow { color: #64748B; }
+.medal-gold { color: #FFD700; }
+.medal-silver { color: #C0C0C0; }
+.medal-bronze { color: #CD7F32; }
+.stat-card { background: rgba(13,17,23,0.8); border: 1px solid rgba(30,41,55,0.5); }
 </style>
-<link rel="stylesheet" href="/regeni.css">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
-<body class="text-white min-h-screen pb-24">
+<body class="pb-16">
 
-<header class="sticky top-0 z-40 px-4 py-3 flex items-center justify-between" style="background:rgba(4,6,11,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(30,45,61,1);">
-  <h1 class="font-black text-lg">👤 Meu Perfil</h1>
-  <div class="flex gap-2">
-    <a href="/meu-resultado.html" class="text-xs bg-orange-500/20 border border-orange-500/50 text-orange-400 px-3 py-2 rounded-xl font-bold">+ Resultado</a>
-    <button onclick="sair()" class="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-3 py-2 rounded-xl">Sair</button>
-  </div>
-</header>
-
-<div id="nao-logado" class="hidden px-4 py-20 text-center">
-  <p class="text-5xl mb-4">🔒</p>
-  <p class="font-black text-xl mb-2">Faça login</p>
-  <p class="text-slate-400 text-sm mb-6">Para ver seu perfil, entre na sua conta</p>
-  <a href="/entrar.html" class="inline-block grad text-black font-black px-8 py-4 rounded-2xl">Entrar agora</a>
-</div>
-
-<div id="conteudo" class="hidden">
-
-  <!-- CARD PERFIL -->
-  <div class="px-4 pt-4">
-    <div class="card-glass rounded-3xl p-5">
-      <div class="flex items-start gap-4">
-        <div id="avatar" class="w-20 h-20 rounded-2xl grad flex items-center justify-center text-black font-black text-3xl flex-shrink-0" style="position:relative;cursor:pointer" onclick="document.getElementById('uploadFoto').click()">?
+<!-- HERO CARD -->
+<div class="p-4">
+  <div class="hero-grad rounded-3xl p-[1px]">
+    <div class="bg-[#04060b] rounded-3xl p-6 text-center">
+      <!-- AVATAR -->
+      <div class="relative mx-auto w-24 h-24 mb-4">
+        <div id="avatar" class="w-full h-full rounded-full bg-gradient-to-r from-cyan-400 to-orange-400 flex items-center justify-center text-black font-black text-4xl cursor-pointer" onclick="document.getElementById('uploadFoto').click()">
+          ?
+        </div>
         <input type="file" id="uploadFoto" accept="image/*" style="display:none" onchange="enviarFoto(this)">
-        <div style="position:absolute;bottom:-4px;right:-4px;background:#00D4FF;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid #04060b">📷</div>
+        <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-cyan-400 rounded-full flex items-center justify-center text-black text-xs font-bold border-2 border-[#04060b]">📷</div>
       </div>
-        <div class="flex-1 min-w-0">
-          <h2 id="nome" class="font-black text-xl leading-tight">—</h2>
-          <p id="info-sub" class="text-slate-400 text-sm mt-0.5">—</p>
-          <div id="nivel-badge" class="inline-block mt-2 text-xs font-black px-3 py-1.5 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">🌱 Iniciando</div>
+      
+      <!-- NAME & LEVEL -->
+      <h1 id="nome" class="text-2xl font-black text-white mb-1">Carregando...</h1>
+      <p id="info-sub" class="text-slate-400 text-sm mb-3">—</p>
+      <div id="nivel-badge" class="inline-block px-4 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">🌱 Iniciando</div>
+      
+      <!-- HERO STATS -->
+      <div class="grid grid-cols-3 gap-4 mt-6">
+        <div class="text-center">
+          <p id="hero-provas" class="text-3xl font-black text-cyan-400">0</p>
+          <p class="text-xs text-slate-400 uppercase tracking-wider">Provas</p>
         </div>
-      </div>
-
-      <!-- STATS -->
-      <div class="grid grid-cols-3 gap-3 mt-4">
-        <div class="bg-slate-800/50 rounded-2xl p-3 text-center">
-          <p id="stat-provas" class="font-black text-xl text-orange-400">0</p>
-          <p class="text-xs text-slate-400 mt-0.5">Provas</p>
+        <div class="text-center">
+          <p id="hero-pontos" class="text-3xl font-black text-orange-400">0</p>
+          <p class="text-xs text-slate-400 uppercase tracking-wider">Pontos</p>
         </div>
-        <div class="bg-slate-800/50 rounded-2xl p-3 text-center">
-          <p id="stat-pontos" class="font-black text-xl text-orange-400">0</p>
-          <p class="text-xs text-slate-400 mt-0.5">Pontos</p>
-        </div>
-        <div class="bg-slate-800/50 rounded-2xl p-3 text-center">
-          <p id="stat-posicao" class="font-black text-xl text-orange-400">—</p>
-          <p class="text-xs text-slate-400 mt-0.5">Ranking</p>
+        <div class="text-center">
+          <p id="hero-ranking" class="text-3xl font-black text-slate-300">—</p>
+          <p class="text-xs text-slate-400 uppercase tracking-wider">Posição BR</p>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- TABS -->
-  <div class="px-4 mt-4 flex gap-2 border-b border-slate-800 pb-3">
-    <button onclick="setTab('resultados')" id="tab-resultados" class="tab text-sm font-black text-orange-400 border-b-2 border-orange-400 pb-1 px-2">🏅 Resultados</button>
-    <button onclick="setTab('medalhas')"   id="tab-medalhas"   class="tab text-sm text-slate-500 px-2 pb-1 border-b-2 border-transparent">🥇 Medalhas</button>
-    <button onclick="setTab('editar')"     id="tab-editar"     class="tab text-sm text-slate-500 px-2 pb-1 border-b-2 border-transparent">✏️ Editar</button>
-  </div>
-
-  <!-- RESULTADOS -->
-  <div id="tab-resultados-content" class="px-4 mt-4 space-y-3">
-    <div id="lista-resultados" class="space-y-2">
-      <p class="text-slate-500 text-sm text-center py-6">Carregando resultados...</p>
-    </div>
-    <a href="/meu-resultado.html" class="flex items-center justify-center gap-2 card-glass rounded-2xl py-4 text-sm text-orange-400 font-bold border border-dashed border-orange-500/30 active:scale-95 transition-transform">
-      + Adicionar resultado de corrida
-    </a>
-  </div>
-
-  <!-- MEDALHAS -->
-  <div id="tab-medalhas-content" class="px-4 mt-4 hidden">
-    <p class="text-xs text-slate-500 mb-3 text-center">Conquistas baseadas nos seus resultados</p>
-    <div id="lista-medalhas" class="grid grid-cols-3 gap-3"></div>
-  </div>
-
-  <!-- EDITAR -->
-  <div id="tab-editar-content" class="px-4 mt-4 hidden space-y-3">
-    <div class="card-glass rounded-2xl p-4 space-y-3">
-      <h3 class="font-black text-sm">Dados pessoais</h3>
-      <input id="edit-nome" placeholder="Nome completo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-orange-500">
-      <div class="grid grid-cols-2 gap-3">
-        <select id="edit-genero" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-orange-500">
-          <option value="">Gênero</option>
-          <option value="M">Masculino</option>
-          <option value="F">Feminino</option>
-        </select>
-        <input id="edit-idade" type="number" placeholder="Idade" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-orange-500">
-      </div>
-      <select id="edit-estado" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-orange-500">
-        <option value="">Estado</option>
-        <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
-        <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-        <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
-        <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
-        <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
-        <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
-        <option selected>SE</option><option>SP</option><option>TO</option>
-      </select>
-      <button onclick="salvarPerfil()" class="w-full grad text-black font-black py-3 rounded-2xl text-sm active:scale-95">💾 Salvar</button>
-    </div>
-
-    <div class="card-glass rounded-2xl p-4">
-      <h3 class="font-black text-sm mb-3">Links</h3>
-      <a href="/ia.html" class="flex items-center justify-between py-2 border-b border-slate-800">
-        <span class="text-sm">🏃 Perfil REGENI IA (medidas)</span>
-        <span class="text-slate-400 text-xs">→</span>
-      </a>
-      <a href="/corridas-abertas.html" class="flex items-center justify-between py-2">
-        <span class="text-sm">💜 REGENI Match (parceiros)</span>
-        <span class="text-slate-400 text-xs">→</span>
-      </a>
-    </div>
-  </div>
-
 </div>
 
+<!-- MELHORES TEMPOS -->
+<div class="px-4 mb-6">
+  <h2 class="text-lg font-black text-white mb-3 flex items-center gap-2">
+    ⚡ Meus Melhores Tempos
+  </h2>
+  <div id="melhores-tempos" class="grid grid-cols-2 gap-3">
+    <div class="stat-card rounded-2xl p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">5km</p>
+      <p class="text-xl font-black text-slate-500">—</p>
+    </div>
+    <div class="stat-card rounded-2xl p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">10km</p>
+      <p class="text-xl font-black text-slate-500">—</p>
+    </div>
+    <div class="stat-card rounded-2xl p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">21km</p>
+      <p class="text-xl font-black text-slate-500">—</p>
+    </div>
+    <div class="stat-card rounded-2xl p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">42km</p>
+      <p class="text-xl font-black text-slate-500">—</p>
+    </div>
+  </div>
+</div>
 
+<!-- TABS -->
+<div class="px-4 mb-4">
+  <div class="flex gap-1 bg-slate-900/50 rounded-xl p-1">
+    <button onclick="setTab('resultados')" id="tab-resultados" class="flex-1 px-4 py-2 rounded-lg text-sm font-bold bg-cyan-400 text-black">🏅 Resultados</button>
+    <button onclick="setTab('medalhas')" id="tab-medalhas" class="flex-1 px-4 py-2 rounded-lg text-sm font-bold text-slate-400">🥇 Conquistas</button>
+    <button onclick="setTab('editar')" id="tab-editar" class="flex-1 px-4 py-2 rounded-lg text-sm font-bold text-slate-400">⚙️ Configurar</button>
+  </div>
+</div>
 
-<script>
-const token = localStorage.getItem('pace_token');
-const user = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
+<!-- TAB: RESULTADOS -->
+<div id="tab-resultados-content" class="px-4">
+  <div id="lista-resultados" class="space-y-3 mb-4">
+    <div class="stat-card rounded-2xl p-4 text-center">
+      <p class="text-slate-400">Carregando seus resultados...</p>
+    </div>
+  </div>
+  
+  <!-- CTA ADICIONAR -->
+  <a href="/meu-resultado.html" class="block card rounded-2xl p-4 text-center border-2 border-dashed border-cyan-500/30 hover:border-cyan-400/50 transition-colors">
+    <div class="text-cyan-400 text-lg mb-1">+</div>
+    <p class="font-bold text-cyan-400 text-sm">Adicionar novo resultado</p>
+    <p class="text-xs text-slate-400 mt-1">Cole o link da corrida ou digite manualmente</p>
+  </a>
+</div>
 
-const MEDALHAS_DEF = [
-  { id:'primeira', icon:'🎽', nome:'Primeira Corrida', desc:'Registrou seu primeiro resultado', cond: r => r.length >= 1 },
-  { id:'5provas',  icon:'⭐', nome:'5 Provas',         desc:'Completou 5 corridas',             cond: r => r.length >= 5 },
-  { id:'10provas', icon:'🏆', nome:'Veterano',         desc:'10 provas completadas',             cond: r => r.length >= 10 },
-  { id:'maratona', icon:'🏅', nome:'Maratonista',      desc:'Completou uma maratona (42km)',     cond: r => r.some(x => x.distance?.includes('42')) },
-  { id:'meia',     icon:'🥈', nome:'Meia Maratonista', desc:'Completou uma meia maratona',       cond: r => r.some(x => x.distance?.includes('21')) },
-  { id:'sub5',     icon:'⚡', nome:'Sub 5min/km',      desc:'Pace abaixo de 5min/km',           cond: r => r.some(x => x.pace && x.pace < '5:00') },
-  { id:'podio',    icon:'🥇', nome:'Pódio',            desc:'Top 3 em alguma prova',             cond: r => r.some(x => x.overallRank <= 3) },
-  { id:'multidist',icon:'🗺️', nome:'Explorador',       desc:'Correu 3 distâncias diferentes',   cond: r => new Set(r.map(x=>x.distance)).size >= 3 },
-  { id:'streak',   icon:'🔥', nome:'Dedicado',         desc:'Resultados em anos consecutivos',  cond: r => r.length >= 3 },
-];
+<!-- TAB: MEDALHAS -->
+<div id="tab-medalhas-content" class="px-4 hidden">
+  <div id="lista-medalhas" class="grid grid-cols-3 gap-3">
+    <!-- Medalhas carregadas dinamicamente -->
+  </div>
+</div>
 
-if (!token) {
-  document.getElementById('nao-logado').classList.remove('hidden');
-} else {
-  document.getElementById('conteudo').classList.remove('hidden');
-  carregarPerfil();
-}
-
-async function carregarPerfil() {
-  try {
-    const r = await fetch('/auth/me', { headers:{'Authorization':'Bearer '+token} });
-    const d = await r.json();
-    if (!d.user) { sair(); return; }
-    const u = d.user;
-
-    // Avatar com iniciais
-    const iniciais = u.name?.split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase() || '?';
-    document.getElementById('avatar').textContent = iniciais;
-    document.getElementById('nome').textContent = u.name || 'Atleta';
-    document.getElementById('info-sub').textContent = [u.gender === 'M' ? '👨 Masculino' : u.gender === 'F' ? '👩 Feminino' : '', u.age ? u.age + ' anos' : '', u.state || ''].filter(Boolean).join(' · ');
-
-    // Editar
-    if (u.name) document.getElementById('edit-nome').value = u.name;
-    if (u.gender) document.getElementById('edit-genero').value = u.gender;
-    if (u.age) document.getElementById('edit-idade').value = u.age;
-    if (u.state) document.getElementById('edit-estado').value = u.state;
-
-    // Carregar resultados do atleta
-    await carregarResultados(u.id || u.athleteId);
-  } catch(e) { console.error(e); }
-}
-
-async function carregarResultados(userId) {
-  try {
-    const r = await fetch('/results/me', { headers:{'Authorization':'Bearer '+token} });
-    const resultados = await r.json() || [];
-
-    // Stats
-    const pts = resultados.reduce((s,x)=>s+(x.points||0),0);
-    document.getElementById('stat-provas').textContent = resultados.length;
-    document.getElementById('stat-pontos').textContent = pts.toLocaleString('pt-BR');
-
-    // Nível
-    let nivel = '🌱 Iniciando';
-    if (pts >= 12000) nivel = '⭐ Elite Mundial';
-    else if (pts >= 7000) nivel = '🔥 Elite Nacional';
-    else if (pts >= 3000) nivel = '💪 Elite Regional';
-    else if (pts >= 1000) nivel = '📈 Sub-Elite';
-    else if (pts >= 10) nivel = '🏃 Ativo';
-    document.getElementById('nivel-badge').textContent = nivel;
-
-    // Ranking pessoal
-    try {
-      const token = localStorage.getItem('pace_token');
-      const u = JSON.parse(localStorage.getItem('pace_user') || '{}');
-      const rank = await fetch('/ranking?limit=10000').then(r=>r.json()).catch(()=>[]);
-      if (Array.isArray(rank) && rank.length) {
-        // Buscar por userId ou nome
-        let pos = rank.findIndex(a => a.id === u.id || a.userId === u.id);
-        if (pos === -1) pos = rank.findIndex(a => (a.name||'').toLowerCase() === (u.name||'').toLowerCase());
-        if (pos === -1) pos = rank.findIndex(a => a.totalPoints <= pts);
-        document.getElementById('stat-posicao').textContent = pos >= 0 ? (pos+1)+'º' : rank.length+'º+';
-      }
-    } catch(e) {}
-
-    // Lista de resultados
-    const el = document.getElementById('lista-resultados');
-    if (!resultados.length) {
-      el.innerHTML = `<div class="text-center py-8">
-        <p class="text-4xl mb-2">🏃</p>
-        <p class="text-slate-400 text-sm">Nenhum resultado ainda</p>
-        <p class="text-slate-500 text-xs mt-1">Adicione seu primeiro resultado de corrida!</p>
-      </div>`;
-    } else {
-      el.innerHTML = resultados.map(r => {
-        const data = r.createdAt ? new Date(r.createdAt).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'2-digit'}) : '';
-        const icon = r.distance?.includes('42') ? '🏅' : r.distance?.includes('21') ? '🥈' : '🏃';
-        return `<div class="card-glass rounded-2xl p-4 flex items-center gap-3">
-          <span class="text-2xl">${icon}</span>
-          <div class="flex-1">
-            <p class="font-bold text-sm">${r.race?.name || 'Corrida'}</p>
-            <p class="text-xs text-slate-400">${r.distance||''} · ${data}</p>
-          </div>
-          <div class="text-right">
-            <p class="font-black text-orange-400">${r.time||'—'}</p>
-            ${r.overallRank ? `<p class="text-xs text-slate-400">${r.overallRank}º lugar</p>` : ''}
-          </div>
-        </div>`;
-      }).join('');
-    }
-
-    // Medalhas
-    const conquistadas = MEDALHAS_DEF.map(m => ({...m, conquistada: m.cond(resultados)}));
-    document.getElementById('lista-medalhas').innerHTML = conquistadas.map(m => `
-      <div class="card-glass rounded-2xl p-3 text-center ${m.conquistada ? '' : 'opacity-30'}">
-        <div class="text-3xl mb-1">${m.icon}</div>
-        <p class="text-xs font-black leading-tight">${m.nome}</p>
-        <p class="text-xs text-slate-500 mt-0.5 leading-tight">${m.desc}</p>
-        ${m.conquistada ? '<p class="text-xs text-orange-400 mt-1 font-bold">✅</p>' : '<p class="text-xs text-slate-600 mt-1">🔒</p>'}
-      </div>`).join('');
-
-  } catch(e) {
-    document.getElementById('lista-resultados').innerHTML = '<p class="text-slate-500 text-sm text-center py-4">Erro ao carregar resultados</p>';
-  }
-}
-
-function setTab(tab) {
-  ['resultados','medalhas','editar'].forEach(t => {
-    document.getElementById('tab-'+t).className = 'tab text-sm text-slate-500 px-2 pb-1 border-b-2 border-transparent';
-    document.getElementById('tab-'+t+'-content').classList.add('hidden');
-  });
-  document.getElementById('tab-'+tab).className = 'tab text-sm font-black text-orange-400 border-b-2 border-orange-400 pb-1 px-2';
-  document.getElementById('tab-'+tab+'-content').classList.remove('hidden');
-}
-
-async function salvarPerfil() {
-  try {
-    const r = await fetch('/auth/me', {
-      method: 'PATCH',
-      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body: JSON.stringify({
-        name: document.getElementById('edit-nome').value,
-        gender: document.getElementById('edit-genero').value,
-        age: parseInt(document.getElementById('edit-idade').value) || null,
-        state: document.getElementById('edit-estado').value,
-      })
-    });
-    if (r.ok) {
-      const d = await r.json();
-      if (d.user) localStorage.setItem('pace_user', JSON.stringify(d.user));
-      alert('✅ Perfil salvo!');
-      carregarPerfil();
-    } else { alert('Erro ao salvar'); }
-  } catch { alert('Erro de conexão'); }
-}
-
-function sair() {
-  localStorage.removeItem('pace_token');
-  localStorage.removeItem('pace_user');
-  window.location.href = '/entrar.html';
-}
-</script>
+<!-- TAB: EDITAR -->
+<div id="tab-editar-content" class="px-4 hidden space-y-4">
+  <div class="card rounded-2xl p-4 space-y-3">
+    <h3 class="font-black text-white">Dados Pessoais</h3>
+    <input id="edit-nome" placeholder="Nome completo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-400">
+    <div class="grid grid-cols-2 gap-3">
+      <select id="edit-genero" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-400">
+        <option value="">Gênero</option>
+        <option value="M">Masculino</option>
+        <option value="F">Feminino</option>
+      </select>
+      <input id="edit-idade" type="number" placeholder="Idade" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-400">
+    </div>
+    <select id="edit-estado" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-400">
+      <option value="">Estado</option>
+      <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+      <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+      <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+      <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+      <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+      <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+      <option>SE</option><option>SP</option><option>TO</option>
+    </select>
+    <button onclick="salvarPerfil()" class="w-full hero-grad text-black font-black py-3 rounded-xl">💾 Salvar Alterações</button>
+  </div>
+  
+  <div class="card rounded-2xl p-4 space-y-3">
+    <h3 class="font-black text-white">Links Úteis</h3>
+    <a href="/meu-resultado.html" class="flex items-center justify-between py-2 border-b border-slate-800">
+      <span class="text-sm">📊 Adicionar resultado</span>
+      <span class="text-slate-400 text-xs">→</span>
+    </a>
+    <a href="/ia.html" class="flex items-center justify-between py-2 border-b border-slate-800">
+      <span class="text-sm">🤖 REGENI IA Coach</span>
+      <span class="text-slate-400 text-xs">→</span>
+    </a>
+    <button onclick="sair()" class="w-full text-left py-2 text-red-400 text-sm">🚪 Sair da conta</button>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav class="fixed bottom-0 left-0 right-0 bg-[#0a0e17]/95 backdrop-blur-sm border-t border-slate-800 flex text-[9px] font-semibold z-50" style="padding-bottom: max(8px, env(safe-area-inset-bottom))">
@@ -302,26 +162,235 @@ function sair() {
   <a href="/ia.html" class="flex-1 text-center py-2 text-slate-500">🤖<br>IA Coach</a>
   <a href="/perfil.html" class="flex-1 text-center py-2 text-cyan-400">👤<br>Perfil</a>
 </nav>
+
 <script>
-async function enviarFoto(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var formData = new FormData();
-  formData.append('file', file);
+const token = localStorage.getItem('pace_token');
+const user = localStorage.getItem('pace_user') ? JSON.parse(localStorage.getItem('pace_user')) : null;
+
+let atletaId = null;
+
+async function carregarPerfil() {
+  if (!token || !user) {
+    window.location.href = '/entrar.html';
+    return;
+  }
+
   try {
-    var r = await fetch('/upload/avatar', { method:'POST', headers:{'Authorization':'Bearer '+localStorage.getItem('pace_token')}, body:formData });
-    var d = await r.json();
-    if (d.url) {
-      document.getElementById('avatar').style.backgroundImage = 'url('+d.url+')';
-      document.getElementById('avatar').style.backgroundSize = 'cover';
-      document.getElementById('avatar').textContent = '';
-      localStorage.setItem('pace_avatar', d.url);
+    // 1. Pegar dados básicos do user
+    document.getElementById('nome').textContent = user.name || 'Sem nome';
+    
+    // 2. Buscar perfil completo via /perfil-atleta/:id
+    const response = await fetch('/usuarios/perfil', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const perfil = await response.json();
+    
+    if (perfil.athleteId) {
+      atletaId = perfil.athleteId;
+      // Carregar dados completos do atleta
+      await carregarDadosAtleta(perfil.athleteId);
+    } else {
+      // User sem athleteId linkado
+      document.getElementById('info-sub').textContent = 'Adicione seu primeiro resultado para ativar o perfil';
     }
-  } catch(e) { alert('Erro: '+e.message); }
+
+  } catch (error) {
+    console.error('Erro ao carregar perfil:', error);
+  }
 }
-var savedAvatar = localStorage.getItem('pace_avatar');
-if (savedAvatar) { var av=document.getElementById('avatar'); if(av){av.style.backgroundImage='url('+savedAvatar+')';av.style.backgroundSize='cover';av.textContent='';} }
+
+async function carregarDadosAtleta(atletaId) {
+  try {
+    const response = await fetch(`/perfil-atleta/${atletaId}`);
+    const data = await response.json();
+    
+    if (data.error) {
+      document.getElementById('info-sub').textContent = 'Erro ao carregar dados do atleta';
+      return;
+    }
+
+    // Atualizar hero card
+    document.getElementById('info-sub').textContent = `${data.equipe || ''} • ${data.state || 'Brasil'}`;
+    document.getElementById('hero-provas').textContent = data.totalRaces || 0;
+    document.getElementById('hero-pontos').textContent = data.totalPoints || 0;
+    
+    // Posição no ranking
+    if (data.posicaoRanking && data.posicaoRanking <= 1000) {
+      document.getElementById('hero-ranking').textContent = `${data.posicaoRanking}°`;
+      document.getElementById('hero-ranking').className = 'text-3xl font-black text-cyan-400';
+    } else if (data.posicaoRanking) {
+      document.getElementById('hero-ranking').textContent = `${Math.floor(data.posicaoRanking/1000)}k+`;
+      document.getElementById('hero-ranking').className = 'text-3xl font-black text-slate-400';
+    }
+
+    // Nível
+    if (data.nivel) {
+      const nivelBadge = document.getElementById('nivel-badge');
+      nivelBadge.textContent = data.nivel.label || data.nivel;
+      if (data.nivel.includes('Mundial')) nivelBadge.className = 'inline-block px-4 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30';
+      else if (data.nivel.includes('Nacional')) nivelBadge.className = 'inline-block px-4 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30';
+      else if (data.nivel.includes('Regional')) nivelBadge.className = 'inline-block px-4 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30';
+    }
+
+    // Melhores tempos
+    renderMelhoresTempos(data.melhoresPorDist || {});
+    
+    // Resultados
+    renderResultados(data.provas || []);
+
+  } catch (error) {
+    console.error('Erro ao carregar dados do atleta:', error);
+  }
+}
+
+function renderMelhoresTempos(melhores) {
+  const container = document.getElementById('melhores-tempos');
+  const distancias = ['5K', '10K', '21K', '42K'];
+  
+  container.innerHTML = distancias.map(dist => {
+    const tempo = melhores[dist];
+    const tempoClass = tempo ? (tempo < '0:25:00' ? 'pace-good' : tempo < '0:45:00' ? 'pace-ok' : 'pace-slow') : 'text-slate-500';
+    
+    return `
+      <div class="stat-card rounded-2xl p-4 text-center">
+        <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">${dist.replace('K', 'km')}</p>
+        <p class="text-xl font-black ${tempoClass}">${tempo || '—'}</p>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderResultados(provas) {
+  const container = document.getElementById('lista-resultados');
+  
+  if (!provas || provas.length === 0) {
+    container.innerHTML = `
+      <div class="stat-card rounded-2xl p-6 text-center">
+        <p class="text-slate-400 mb-2">Nenhum resultado ainda</p>
+        <p class="text-xs text-slate-500">Adicione seu primeiro resultado para começar</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = provas.slice(0, 10).map(prova => {
+    const medalIcon = prova.posicaoGeral <= 3 ? 
+      (prova.posicaoGeral === 1 ? '🥇' : prova.posicaoGeral === 2 ? '🥈' : '🥉') : 
+      `${prova.posicaoGeral}°`;
+    
+    const tempoClass = prova.time < '0:25:00' ? 'text-cyan-400' : prova.time < '0:45:00' ? 'text-orange-400' : 'text-slate-300';
+    
+    return `
+      <div class="stat-card rounded-2xl p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <h3 class="font-bold text-white text-sm leading-tight">${prova.raceName}</h3>
+            <p class="text-xs text-slate-400">${prova.distance} • ${new Date(prova.raceDate).toLocaleDateString('pt-BR')}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-black text-lg ${tempoClass}">${prova.time}</p>
+            <p class="text-xs font-bold text-slate-400">${medalIcon}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Tabs
+function setTab(tab) {
+  // Hide all
+  document.querySelectorAll('[id$="-content"]').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.className = 'flex-1 px-4 py-2 rounded-lg text-sm font-bold text-slate-400';
+  });
+  
+  // Show selected
+  document.getElementById(`tab-${tab}-content`).classList.remove('hidden');
+  document.getElementById(`tab-${tab}`).className = 'flex-1 px-4 py-2 rounded-lg text-sm font-bold bg-cyan-400 text-black';
+}
+
+async function salvarPerfil() {
+  const dados = {
+    name: document.getElementById('edit-nome').value,
+    gender: document.getElementById('edit-genero').value,
+    age: parseInt(document.getElementById('edit-idade').value) || null,
+    state: document.getElementById('edit-estado').value
+  };
+  
+  try {
+    const response = await fetch('/usuarios/perfil', {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dados)
+    });
+    
+    if (response.ok) {
+      alert('✅ Perfil salvo!');
+      carregarPerfil();
+    } else {
+      alert('❌ Erro ao salvar perfil');
+    }
+  } catch (error) {
+    alert('❌ Erro de conexão');
+  }
+}
+
+function sair() {
+  localStorage.removeItem('pace_token');
+  localStorage.removeItem('pace_user');
+  window.location.href = '/entrar.html';
+}
+
+async function enviarFoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  try {
+    const response = await fetch('/upload/avatar', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+    
+    const data = await response.json();
+    if (data.url) {
+      const avatar = document.getElementById('avatar');
+      avatar.style.backgroundImage = `url(${data.url})`;
+      avatar.style.backgroundSize = 'cover';
+      avatar.textContent = '';
+      localStorage.setItem('pace_avatar', data.url);
+    }
+  } catch (error) {
+    alert('❌ Erro ao enviar foto');
+  }
+}
+
+// Carregar avatar salvo
+const savedAvatar = localStorage.getItem('pace_avatar');
+if (savedAvatar) {
+  const avatar = document.getElementById('avatar');
+  avatar.style.backgroundImage = `url(${savedAvatar})`;
+  avatar.style.backgroundSize = 'cover';
+  avatar.textContent = '';
+}
+
+// Init
+carregarPerfil();
+
+// Medalhas (simplificado)
+const MEDALHAS_DEF = [
+  { id: 'primeira', icon: '🎽', nome: 'Primeira Corrida', desc: 'Completou a primeira prova' },
+  { id: 'veterano', icon: '🏆', nome: 'Veterano', desc: '10+ provas completadas' },
+  { id: 'maratonista', icon: '🏅', nome: 'Maratonista', desc: 'Completou uma maratona' }
+];
 </script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+
 </body>
 </html>
