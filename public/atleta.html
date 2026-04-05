@@ -158,22 +158,51 @@ document.getElementById('greeting').textContent = `${periodo}, ${user.name?.spli
 
 async function carregarDados() {
   try {
-    // 1. Pegar perfil do user logado
-    const perfilRes = await fetch('/usuarios/perfil', {
+    // 1. Pegar dados do user logado via /auth/me
+    const response = await fetch('/auth/me', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    const perfil = await perfilRes.json();
+    const data = await response.json();
     
-    if (perfil.athleteId) {
-      atletaId = perfil.athleteId;
+    console.log('Response /auth/me (home):', data);
+    
+    if (data.error) {
+      console.error('Erro na API:', data.error);
+      return;
+    }
+    
+    const userData = data.user;
+    if (!userData) {
+      console.error('userData não encontrado na resposta');
+      return;
+    }
+    
+    if (userData.athleteId) {
+      atletaId = userData.athleteId;
+      console.log('athleteId encontrado (home):', atletaId);
       
       // 2. Buscar dados completos do atleta
-      await carregarDadosAtleta(perfil.athleteId);
+      await carregarDadosAtleta(userData.athleteId);
       
       // 3. Mostrar link do perfil público
       const linkPerfil = document.getElementById('linkMeuPerfilPublico');
-      linkPerfil.href = `/perfil-atleta.html?id=${perfil.athleteId}`;
-      linkPerfil.style.display = 'block';
+      if (linkPerfil) {
+        linkPerfil.href = `/perfil-atleta.html?id=${userData.athleteId}`;
+        linkPerfil.style.display = 'block';
+      }
+    } else {
+      console.log('User sem athleteId (home)');
+      // Mostrar mensagem de "adicione primeiro resultado"
+      const container = document.getElementById('meusResultados');
+      if (container) {
+        container.innerHTML = `
+          <div class="card rounded-xl p-4 text-center">
+            <div class="text-3xl mb-2">🎯</div>
+            <p class="text-white font-bold mb-1">Adicione seu primeiro resultado</p>
+            <p class="text-xs text-slate-400">Para começar a acompanhar sua evolução</p>
+          </div>
+        `;
+      }
     }
     
     // 4. Stats do sistema

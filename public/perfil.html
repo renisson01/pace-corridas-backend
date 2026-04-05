@@ -180,12 +180,24 @@ async function carregarPerfil() {
     const response = await fetch('/auth/me', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    const userData = await response.json();
+    const data = await response.json();
     
-    if (userData.error) {
+    console.log('Response /auth/me:', data);
+    
+    if (data.error) {
+      console.error('Erro na API:', data.error);
       window.location.href = '/entrar.html';
       return;
     }
+    
+    const userData = data.user; // A resposta tem {success: true, user: {...}}
+    if (!userData) {
+      console.error('userData não encontrado na resposta');
+      window.location.href = '/entrar.html';
+      return;
+    }
+    
+    console.log('userData:', userData);
     
     // Atualizar nome
     document.getElementById('nome').textContent = userData.name || 'Sem nome';
@@ -197,6 +209,7 @@ async function carregarPerfil() {
       await carregarDadosAtleta(userData.athleteId);
     } else {
       // User sem athleteId linkado
+      console.log('User sem athleteId');
       document.getElementById('info-sub').textContent = 'Adicione seu primeiro resultado para ativar o perfil';
       document.getElementById('hero-provas').textContent = '0';
       document.getElementById('hero-pontos').textContent = '0';
