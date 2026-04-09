@@ -558,6 +558,19 @@ function tempoSec(t){
   return 999999;
 }
 
+// Remove "00:" prefix from sub-1-hour times (00:23:33 → 23:33)
+function formatTime(t){
+  if(!t||t==='—') return t;
+  return t.replace(/^00:/,'');
+}
+
+// Extract km from distance string ("10K" → 10, "21.1km" → 21.1)
+function extrairKm(distStr){
+  if(!distStr) return null;
+  const m=distStr.match(/(\d+(?:\.\d+)?)/);
+  return m?parseFloat(m[1]):null;
+}
+
 function calcPace(t, km){
   const s=tempoSec(t);
   if(s===999999||!km) return '—';
@@ -946,7 +959,9 @@ function renderTable(data, km, showProva=false, limit=50){
     const posClass=pos===1?'p1':pos===2?'p2':pos===3?'p3':'';
     // Campo correto: melhorTempo (ranking) ou tempo (prova)
     const tempo=r.melhorTempo||r.tempo||r.time||'—';
-    const tc=tempo!=='—'?timeClass(tempo,km):'normal';
+    // Usar distância da linha quando disponível (evita pace errado em provas multi-distância)
+    const rowKm=extrairKm(r.distance)||km;
+    const tc=tempo!=='—'?timeClass(tempo,rowKm):'normal';
     const g=r.gender||'';
     // Campo correto: state (backend retorna state não estado)
     const estado=r.state||'';
@@ -963,8 +978,8 @@ function renderTable(data, km, showProva=false, limit=50){
         ${showProva&&provaNome?`<div class="astate">${provaNome}</div>`:''}
       </td>
       <td>${g?`<span class="gtag ${g}">${g}</span>`:''}</td>
-      <td class="text-right"><span class="ttime ${tc}">${tempo}</span></td>
-      <td class="text-right"><span class="pace">${calcPace(tempo,km)}</span></td>
+      <td class="text-right"><span class="ttime ${tc}">${formatTime(tempo)}</span></td>
+      <td class="text-right"><span class="pace">${calcPace(tempo,rowKm)}</span></td>
     </tr>`;
   }).join('');
 
@@ -1055,7 +1070,7 @@ function renderEquipes(){
         <div class="eq-count">
           <div style="font-size:13px;font-weight:700;color:var(--t1)">${e.count}</div>
           <div style="font-size:10px;color:var(--t3)">atletas</div>
-          <div class="eq-best">${e.bestTime!=='99:99:99'?e.bestTime:'—'}</div>
+          <div class="eq-best">${e.bestTime!=='99:99:99'?formatTime(e.bestTime):'—'}</div>
         </div>
       </div>
       <div class="eq-bar"><div class="eq-fill" style="width:${pct}%"></div></div>
@@ -1071,6 +1086,7 @@ async function openAthleteSheet(r, km){
   const body=document.getElementById('sheetBody');
   const tempo=r.melhorTempo||r.tempo||r.time||'—';
   const g=r.gender||'';
+  const sheetKm=extrairKm(r.distance)||km;
 
   // Render imediato com dados disponíveis
   body.innerHTML=`
@@ -1081,8 +1097,8 @@ async function openAthleteSheet(r, km){
       ${r.nivel?`<span class="sh-tag nivel">${r.nivel}</span>`:''}
     </div>
     <div class="sh-grid">
-      <div class="sh-stat"><div class="sh-sv">${tempo}</div><div class="sh-sl">Melhor tempo</div></div>
-      <div class="sh-stat"><div class="sh-sv">${calcPace(tempo,km)}</div><div class="sh-sl">Pace médio</div></div>
+      <div class="sh-stat"><div class="sh-sv">${formatTime(tempo)}</div><div class="sh-sl">Melhor tempo</div></div>
+      <div class="sh-stat"><div class="sh-sv">${calcPace(tempo,sheetKm)}</div><div class="sh-sl">Pace médio</div></div>
       <div class="sh-stat"><div class="sh-sv">#${r.posicao||'—'}</div><div class="sh-sl">Posição</div></div>
       <div class="sh-stat"><div class="sh-sv">${r.totalRaces||r.totalPoints?fmtNum(r.totalPoints||0):'—'}</div><div class="sh-sl">${r.totalPoints?'Pontos':'Corridas'}</div></div>
     </div>
@@ -1106,7 +1122,7 @@ async function openAthleteSheet(r, km){
             <div class="sh-race-name">${p.raceName||'—'}</div>
             <div class="sh-race-sub">${p.distance||''} · ${p.raceCity||''} · ${p.raceDate?new Date(p.raceDate).getFullYear():''}</div>
           </div>
-          <div class="sh-race-time">${p.time||'—'}</div>
+          <div class="sh-race-time">${formatTime(p.time)||'—'}</div>
         </div>`;
       }).join('');
 
