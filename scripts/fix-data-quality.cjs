@@ -72,7 +72,13 @@ async function main() {
   // 7. Normalize distance variants
   const distFixes = {
     '2.5K': '2.5K', '2,5': '2.5K', '2.5': '2.5K',
-    '4km': '4K', '18km': '18K', '24KM': '24K',
+    '3KM': '3K', '4KM': '4K', '5KM': '5K',
+    '4km': '4K', '5km': '5K',
+    '10KM': '10K', '10km': '10K',
+    '15KM': '15K', '15km': '15K',
+    '21KM': '21K', '21km': '21K',
+    '42KM': '42K', '42km': '42K',
+    '18km': '18K', '24KM': '24K', '24km': '24K',
     '28km': '28K', '32km': '32K', '54km': '54K'
   };
   let distFixed = 0;

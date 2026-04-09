@@ -27,7 +27,7 @@ export async function getRankingFor(distance, gender = null) {
       FROM "Athlete" a
       JOIN "Result" r ON a.id = r."athleteId"
       JOIN "Race" race ON race.id = r."raceId"
-      WHERE r.distance = $1
+      WHERE REPLACE(UPPER(r.distance), 'KM', 'K') = $1
         AND r."time" != 'DNS'
         AND r."time" != '00:00:00'
         AND r."time" != ''
