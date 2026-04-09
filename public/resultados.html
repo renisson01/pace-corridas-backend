@@ -2,425 +2,1139 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REGENI - Resultados de Corridas de Rua</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>REGENI — Resultados</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  * { -webkit-tap-highlight-color: transparent; }
-  body { background: #0a0e17; }
-  .glow { text-shadow: 0 0 20px rgba(0,212,255,0.3); }
-  .card { background: linear-gradient(135deg, #111827 0%, #0f1729 100%); border: 1px solid #1e293b; }
-  .gold { color: #ffd700; }
-  .silver { color: #c0c0c0; }
-  .bronze { color: #cd7f32; }
-  .pace-good { color: #22c55e; }
-  .pace-avg { color: #eab308; }
-  .stat-up { color: #22c55e; }
-  .highlight-row { background: rgba(0,212,255,0.05); }
-  .tab-active { background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 4px 15px rgba(14,165,233,0.3); }
-  .btn-primary { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
-  .btn-primary:active { transform: scale(0.98); }
-  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 24px; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --c:#00D4FF;
+  --c2:rgba(0,212,255,0.15);
+  --c3:rgba(0,212,255,0.06);
+  --bg:#07071A;
+  --s1:#0D0D22;
+  --s2:#12122A;
+  --s3:#181834;
+  --s4:#1E1E3A;
+  --t1:#F2F2FF;
+  --t2:#9090B8;
+  --t3:#4A4A78;
+  --b1:rgba(0,212,255,0.18);
+  --b2:rgba(0,212,255,0.08);
+  --b3:rgba(255,255,255,0.04);
+  --green:#00FFA3;
+  --amber:#FFB800;
+  --red:#FF4560;
+  --pink:#FF6BFF;
+  --fn:'Syne',sans-serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --st:env(safe-area-inset-top);
+  --sb:env(safe-area-inset-bottom);
+  --nh:58px;
+}
+
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb);overflow-x:hidden;font-size:15px}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b1);border-radius:4px}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:90;
+  height:calc(52px + var(--st));
+  padding-top:var(--st);
+  display:flex;align-items:center;gap:10px;
+  padding-left:16px;padding-right:16px;
+  background:rgba(7,7,26,0.88);
+  backdrop-filter:blur(24px) saturate(1.4);
+  border-bottom:1px solid var(--b2);
+}
+.topbar-logo{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--c);letter-spacing:1px}
+.topbar-title{font-family:var(--fn);font-size:15px;font-weight:600;color:var(--t2);flex:1}
+.topbar-badge{
+  background:var(--c2);border:1px solid var(--b1);
+  border-radius:20px;padding:3px 10px;
+  font-family:var(--fm);font-size:11px;font-weight:700;color:var(--c);
+}
+
+/* ── MAIN ── */
+.main{
+  padding-top:calc(52px + var(--st) + 14px);
+  padding-bottom:calc(var(--nh) + var(--sb) + 20px);
+  padding-left:14px;padding-right:14px;
+}
+
+/* ── STAT CARDS ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.sc{
+  background:var(--s1);border:1px solid var(--b2);border-radius:14px;
+  padding:12px 10px;text-align:center;position:relative;overflow:hidden;
+}
+.sc::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--c),transparent);
+  opacity:0;transition:opacity 0.4s;
+}
+.sc.loaded::after{opacity:1}
+.sc-val{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--c);line-height:1}
+.sc-val.green{color:var(--green)}
+.sc-val.amber{color:var(--amber)}
+.sc-lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:0.8px;margin-top:4px;font-weight:500}
+
+/* ── SEARCH ── */
+.search-block{position:relative;margin-bottom:12px}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex}
+.search-input{
+  width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:14px;
+  padding:13px 110px 13px 42px;font-size:14px;color:var(--t1);font-family:var(--fb);
+  outline:none;transition:border-color 0.2s,background 0.2s;
+}
+.search-input::placeholder{color:var(--t3)}
+.search-input:focus{border-color:var(--c);background:var(--s2)}
+.search-btn{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  background:var(--c);color:var(--bg);border:none;border-radius:10px;
+  padding:8px 16px;font-size:13px;font-weight:700;font-family:var(--fn);
+  cursor:pointer;transition:opacity 0.2s,transform 0.15s;
+  display:flex;align-items:center;gap:5px;
+}
+.search-btn:active{transform:translateY(-50%) scale(0.96)}
+.search-btn.loading{opacity:0.6;pointer-events:none}
+
+/* SEARCH DROPDOWN */
+.search-dropdown{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:80;
+  background:var(--s2);border:1px solid var(--b1);border-radius:14px;
+  overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5);
+  display:none;
+  max-height:260px;overflow-y:auto;
+}
+.search-dropdown.open{display:block}
+.sd-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;border-bottom:1px solid var(--b2);cursor:pointer;
+  transition:background 0.15s;text-decoration:none;color:inherit;
+}
+.sd-item:last-child{border-bottom:none}
+.sd-item:hover,.sd-item:active{background:var(--c3)}
+.sd-name{font-size:14px;font-weight:500}
+.sd-meta{font-size:11px;color:var(--t3);margin-top:2px}
+.sd-nivel{font-size:11px;color:var(--c);font-family:var(--fm)}
+.sd-arrow{color:var(--t3);font-size:14px}
+.sd-empty{padding:20px;text-align:center;color:var(--t3);font-size:13px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--s1);border-radius:14px;padding:4px}
+.tab{
+  flex:1;padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;
+  font-family:var(--fn);cursor:pointer;border:none;background:transparent;
+  color:var(--t3);transition:all 0.2s;text-align:center;
+}
+.tab.active{background:var(--s3);color:var(--c);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+
+/* ── FILTER PANEL ── */
+.filter-panel{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:14px;margin-bottom:12px}
+.filter-row{display:grid;gap:8px;margin-bottom:8px}
+.filter-row.cols3{grid-template-columns:repeat(3,1fr)}
+.filter-row.cols2{grid-template-columns:repeat(2,1fr)}
+.filter-row.cols1{grid-template-columns:1fr}
+
+.fsel{
+  background:var(--s3);border:1px solid var(--b2);border-radius:10px;
+  padding:9px 28px 9px 10px;font-size:12px;color:var(--t1);font-family:var(--fb);
+  outline:none;width:100%;cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%234A4A78' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  transition:border-color 0.2s;
+}
+.fsel:focus{border-color:var(--c)}
+.fsel option{background:var(--s2)}
+
+.go-btn{
+  width:100%;padding:12px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,#00D4FF,#0090CC);
+  color:var(--bg);font-size:14px;font-weight:800;font-family:var(--fn);
+  cursor:pointer;transition:opacity 0.2s,transform 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.go-btn:active{transform:scale(0.98)}
+.go-btn.loading{opacity:0.6;pointer-events:none}
+.go-btn.loading::after{
+  content:'';width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);
+  border-top-color:var(--bg);border-radius:50%;
+  animation:spin 0.7s linear infinite;display:inline-block;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MINI STATS ── */
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.ms{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:10px 6px;text-align:center}
+.ms-val{font-family:var(--fm);font-size:13px;font-weight:700;line-height:1}
+.ms-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px}
+
+/* ── RESULTS HEADER ── */
+.res-header{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--s2);border:1px solid var(--b2);
+  border-radius:14px 14px 0 0;padding:12px 14px;
+  border-bottom:1px solid var(--b2);
+}
+.res-title{font-family:var(--fn);font-size:14px;font-weight:700}
+.res-count{font-family:var(--fm);font-size:12px;color:var(--c)}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--s2);border:1px solid var(--b2);border-top:none;border-radius:0 0 14px 14px;overflow:hidden}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl thead tr{border-bottom:1px solid var(--b2)}
+.tbl th{
+  padding:9px 8px;text-align:left;color:var(--t3);
+  font-size:10px;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;
+  white-space:nowrap;
+}
+.tbl th:last-child,.tbl td:last-child{text-align:right}
+.tbl td{padding:10px 8px;border-bottom:1px solid var(--b3);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:background 0.1s;cursor:pointer}
+.tbl tbody tr:hover{background:var(--c3)}
+.tbl tbody tr.top3{background:rgba(0,212,255,0.04)}
+
+/* POS */
+.pos{font-family:var(--fm);font-weight:700;font-size:13px;color:var(--t3);white-space:nowrap}
+.pos.p1{font-size:16px}
+.pos.p2{font-size:15px}
+.pos.p3{font-size:14px}
+
+/* ATHLETE NAME */
+.aname{font-weight:500;font-size:13px;line-height:1.3}
+.astate{font-size:10px;color:var(--t3);margin-top:1px}
+.aequipe{font-size:10px;color:var(--c);opacity:0.7;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px}
+
+/* GENDER TAG */
+.gtag{font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px}
+.gtag.M{color:#60A5FA;background:rgba(96,165,250,0.1)}
+.gtag.F{color:#F472B6;background:rgba(244,114,182,0.1)}
+
+/* TIME */
+.ttime{font-family:var(--fm);font-weight:700;font-size:13px;white-space:nowrap}
+.ttime.elite{color:var(--amber)}
+.ttime.fast{color:var(--green)}
+.ttime.good{color:var(--c)}
+.ttime.normal{color:var(--t2)}
+
+/* PACE */
+.pace{font-family:var(--fm);font-size:10px;color:var(--t3);white-space:nowrap}
+
+/* NIVEL */
+.nivel{font-size:9px;white-space:nowrap}
+
+/* MORE BTN */
+.more-btn{
+  width:100%;padding:13px;border:1px solid var(--b1);border-top:none;
+  background:var(--s1);color:var(--c);font-size:13px;font-weight:700;
+  font-family:var(--fn);cursor:pointer;border-radius:0 0 14px 14px;
+  transition:background 0.2s;
+}
+.more-btn:hover{background:var(--c3)}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;background:var(--s2);border:1px solid var(--b2);border-radius:0 0 14px 14px}
+.empty-icon{font-size:40px;opacity:0.25;margin-bottom:12px}
+.empty-txt{color:var(--t3);font-size:14px}
+
+/* LOADING SKELETON */
+.skel-row{
+  display:flex;gap:10px;align-items:center;padding:12px 14px;
+  border-bottom:1px solid var(--b3);
+}
+.skel{
+  border-radius:6px;background:linear-gradient(90deg,var(--s2) 25%,var(--s3) 50%,var(--s2) 75%);
+  background-size:200% 100%;animation:shimmer 1.4s infinite;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* EQUIPES */
+.equipe-card{
+  background:var(--s2);border:1px solid var(--b2);border-radius:14px;
+  margin-bottom:8px;overflow:hidden;
+}
+.eq-header{display:flex;align-items:center;gap:12px;padding:14px}
+.eq-pos{font-family:var(--fm);font-size:16px;font-weight:700;width:28px;flex-shrink:0;text-align:center}
+.eq-name{font-family:var(--fn);font-size:14px;font-weight:700;flex:1}
+.eq-count{font-size:12px;color:var(--t3);text-align:right}
+.eq-best{font-family:var(--fm);font-size:12px;color:var(--green)}
+.eq-bar{height:3px;background:var(--s3)}
+.eq-fill{height:100%;background:linear-gradient(90deg,var(--c),var(--green));transition:width 0.6s ease}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:90;
+  height:calc(var(--nh) + var(--sb));
+  padding-bottom:var(--sb);
+  background:rgba(7,7,26,0.95);backdrop-filter:blur(24px);
+  border-top:1px solid var(--b2);
+  display:flex;align-items:center;
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:6px 0;text-decoration:none;cursor:pointer;
+}
+.nav-item svg{width:22px;height:22px;stroke:var(--t3);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke 0.2s}
+.nav-item span{font-size:9px;font-weight:600;color:var(--t3);letter-spacing:0.5px;text-transform:uppercase;transition:color 0.2s}
+.nav-item.active svg{stroke:var(--c)}
+.nav-item.active span{color:var(--c)}
+
+/* ── ATHLETE SHEET ── */
+.overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-end;
+  opacity:0;pointer-events:none;transition:opacity 0.28s;
+}
+.overlay.open{opacity:1;pointer-events:all}
+.sheet{
+  width:100%;background:var(--s1);border-radius:22px 22px 0 0;
+  padding-bottom:calc(24px + var(--sb));
+  transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.32,0.72,0,1);
+  max-height:82vh;overflow-y:auto;
+}
+.overlay.open .sheet{transform:translateY(0)}
+.sheet-drag{width:36px;height:4px;background:var(--s4);border-radius:2px;margin:12px auto 18px}
+.sheet-body{padding:0 18px}
+.sh-name{font-family:var(--fn);font-size:20px;font-weight:800;margin-bottom:2px}
+.sh-meta{font-size:13px;color:var(--t3);margin-bottom:18px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sh-tag{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600}
+.sh-tag.M{background:rgba(96,165,250,0.12);color:#60A5FA}
+.sh-tag.F{background:rgba(244,114,182,0.12);color:#F472B6}
+.sh-tag.nivel{background:var(--c2);color:var(--c)}
+.sh-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.sh-stat{background:var(--s2);border-radius:12px;padding:12px;border:1px solid var(--b2)}
+.sh-sv{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--c)}
+.sh-sl{font-size:11px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:0.5px}
+.sh-section{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:0.8px;margin:14px 0 8px}
+.sh-race{
+  background:var(--s2);border:1px solid var(--b2);border-radius:12px;
+  padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:10px;
+}
+.sh-race-pos{
+  width:28px;height:28px;border-radius:8px;background:var(--s3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;flex-shrink:0;
+}
+.sh-race-info{flex:1;min-width:0}
+.sh-race-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-race-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.sh-race-time{font-family:var(--fm);font-size:14px;font-weight:700;color:var(--green);flex-shrink:0}
+.sh-close{
+  width:100%;padding:13px;border-radius:12px;border:1px solid var(--b1);
+  background:var(--s3);color:var(--t2);font-size:14px;font-weight:600;
+  font-family:var(--fn);cursor:pointer;margin-top:6px;
+}
+.sh-profile-btn{
+  width:100%;padding:13px;border-radius:12px;border:none;
+  background:var(--c);color:var(--bg);font-size:14px;font-weight:800;
+  font-family:var(--fn);cursor:pointer;margin-bottom:8px;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:calc(var(--nh) + var(--sb) + 14px);left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--s2);border:1px solid var(--b1);border-radius:12px;
+  padding:10px 18px;font-size:13px;font-weight:500;color:var(--t1);
+  white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.25s,transform 0.25s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ANIMATE IN */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp 0.3s ease both}
 </style>
 </head>
-<body class="text-white min-h-screen pb-20">
-<div class="max-w-lg mx-auto px-3 py-2">
+<body>
 
-  <!-- Header -->
-  <div class="text-center py-3">
-    <h1 class="text-xl font-black glow">🏃 Resultados de Corridas de Rua</h1>
-    <p class="text-slate-500 text-[10px] mt-1">O maior banco de resultados do Brasil</p>
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="topbar-logo">RGN</span>
+  <span class="topbar-title">Resultados</span>
+  <span class="topbar-badge" id="topBadge">—</span>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STAT CARDS -->
+  <div class="stats">
+    <div class="sc" id="scCorridas">
+      <div class="sc-val" id="vCorridas">—</div>
+      <div class="sc-lbl">Corridas</div>
+    </div>
+    <div class="sc" id="scResultados">
+      <div class="sc-val green" id="vResultados">—</div>
+      <div class="sc-lbl">Resultados</div>
+    </div>
+    <div class="sc" id="scAtletas">
+      <div class="sc-val amber" id="vAtletas">—</div>
+      <div class="sc-lbl">Atletas</div>
+    </div>
   </div>
 
-  <!-- Stats animados -->
-  <div class="grid grid-cols-3 gap-2 mb-3">
-    <div class="card rounded-xl p-2.5 text-center">
-      <div class="text-lg font-black text-cyan-400" id="totalRaces">-</div>
-      <div class="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">Corridas</div>
+  <!-- SEARCH -->
+  <div class="search-block" id="searchBlock">
+    <div class="search-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     </div>
-    <div class="card rounded-xl p-2.5 text-center">
-      <div class="text-lg font-black text-emerald-400" id="totalResults">-</div>
-      <div class="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">Resultados</div>
-    </div>
-    <div class="card rounded-xl p-2.5 text-center">
-      <div class="text-lg font-black text-amber-400" id="totalAthletes">-</div>
-      <div class="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">Atletas</div>
-    </div>
+    <input class="search-input" id="searchInput" type="text"
+      placeholder="Buscar atleta por nome..."
+      autocomplete="off" autocorrect="off" spellcheck="false"
+      oninput="onSearchInput(this.value)"
+      onkeydown="if(event.key==='Enter'){buscarAtleta();this.blur()}">
+    <button class="search-btn" id="searchBtn" onclick="buscarAtleta()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Buscar
+    </button>
+    <div class="search-dropdown" id="searchDrop"></div>
   </div>
 
-  <!-- Busca -->
-  <div class="card rounded-xl p-3 mb-3">
-    <div class="flex gap-2">
-      <input id="searchInput" type="text" placeholder="🔍 Buscar atleta por nome..." class="flex-1 bg-slate-800/50 rounded-lg px-3 py-2 text-sm border border-slate-700 focus:border-cyan-500 focus:outline-none transition-colors" onkeyup="if(event.key==='Enter')buscarAtleta()">
-      <button onclick="buscarAtleta()" class="btn-primary px-4 py-2 rounded-lg text-sm font-bold">Buscar</button>
-    </div>
-    <div id="searchRes" class="hidden mt-2 max-h-48 overflow-y-auto"></div>
-  </div>
-
-  <!-- Tabs -->
-  <div class="flex gap-1.5 mb-3">
-    <button id="btnTab0" onclick="showTab(0)" class="flex-1 py-2 rounded-xl text-xs font-bold tab-active transition-all">🏅 Ranking</button>
-    <button id="btnTab1" onclick="showTab(1)" class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 transition-all">📋 Por Prova</button>
-    <button id="btnTab2" onclick="showTab(2)" class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 transition-all">🏆 Equipes</button>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" id="t0" onclick="showTab(0)">🏅 Ranking</button>
+    <button class="tab" id="t1" onclick="showTab(1)">📋 Por Prova</button>
+    <button class="tab" id="t2" onclick="showTab(2)">🏆 Equipes</button>
   </div>
 
   <!-- TAB 0: RANKING -->
   <div id="tab0">
-    <div class="card rounded-xl p-3 mb-3">
-      <div class="grid grid-cols-3 gap-1.5 mb-2">
-        <select id="rdist" class="bg-slate-800 rounded-lg px-2 py-2 text-xs border border-slate-700 font-semibold">
-          <option value="3">3K</option>
-          <option value="5">5K</option>
-          <option value="10" selected>10K</option>
-          <option value="15">15K</option>
+    <div class="filter-panel">
+      <div class="filter-row cols3">
+        <select class="fsel" id="rdist">
+          <option value="3">3 km</option>
+          <option value="5">5 km</option>
+          <option value="10" selected>10 km</option>
+          <option value="15">15 km</option>
           <option value="21">Meia</option>
           <option value="42">Maratona</option>
         </select>
-        <select id="rgen" class="bg-slate-800 rounded-lg px-2 py-2 text-xs border border-slate-700">
+        <select class="fsel" id="rgen">
           <option value="">Geral</option>
           <option value="M">♂ Masc</option>
           <option value="F">♀ Fem</option>
         </select>
-        <select id="rfaixa" class="bg-slate-800 rounded-lg px-2 py-2 text-xs border border-slate-700">
+        <select class="fsel" id="rfaixa">
           <option value="">Todas idades</option>
-          <option value="16-19">16-19</option>
-          <option value="20-24">20-24</option>
-          <option value="25-29">25-29</option>
-          <option value="30-34">30-34</option>
-          <option value="35-39">35-39</option>
-          <option value="40-44">40-44</option>
-          <option value="45-49">45-49</option>
-          <option value="50-54">50-54</option>
-          <option value="55-59">55-59</option>
-          <option value="60-69">60-69</option>
+          <option value="16-19">16–19</option>
+          <option value="20-24">20–24</option>
+          <option value="25-29">25–29</option>
+          <option value="30-34">30–34</option>
+          <option value="35-39">35–39</option>
+          <option value="40-44">40–44</option>
+          <option value="45-49">45–49</option>
+          <option value="50-54">50–54</option>
+          <option value="55-59">55–59</option>
+          <option value="60-69">60–69</option>
           <option value="70">70+</option>
         </select>
       </div>
-      <div class="grid grid-cols-2 gap-1.5 mb-2">
-        <select id="rstate" class="bg-slate-800 rounded-lg px-2 py-2 text-xs border border-slate-700" onchange="updateCidades()">
-          <option value="">Todos estados</option>
+      <div class="filter-row cols2">
+        <select class="fsel" id="rstate" onchange="updateCidades()">
+          <option value="">Todos os estados</option>
         </select>
-        <select id="rcidade" class="bg-slate-800 rounded-lg px-2 py-2 text-xs border border-slate-700">
-          <option value="">Todas cidades</option>
+        <select class="fsel" id="rcidade">
+          <option value="">Todas as cidades</option>
         </select>
       </div>
-      <button onclick="buscarRanking()" class="w-full btn-primary py-2.5 rounded-lg text-sm font-bold transition-all">🔍 Buscar</button>
+      <button class="go-btn" id="rankBtn" onclick="buscarRanking()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Buscar Ranking
+      </button>
     </div>
-    <div id="rankres" class="text-center text-slate-500 text-sm py-4">Selecione filtros e toque Buscar</div>
+    <div id="rankRes"></div>
   </div>
 
   <!-- TAB 1: POR PROVA -->
   <div id="tab1" class="hidden">
-    <div class="card rounded-xl p-3 mb-3">
-      <select id="rprova" class="w-full bg-slate-800 rounded-lg px-2 py-2 text-xs border border-slate-700 mb-2">
-        <option value="">Carregando provas...</option>
-      </select>
-      <div class="grid grid-cols-2 gap-1.5 mb-2">
-        <select id="rpgen" class="bg-slate-800 rounded-lg px-2 py-2 text-xs border border-slate-700">
+    <div class="filter-panel">
+      <div class="filter-row cols1" style="margin-bottom:8px">
+        <select class="fsel" id="rprova" onchange="loadDistancias()">
+          <option value="">Carregando provas...</option>
+        </select>
+      </div>
+      <div class="filter-row cols2">
+        <select class="fsel" id="rpgen">
           <option value="">Geral</option>
           <option value="M">♂ Masc</option>
           <option value="F">♀ Fem</option>
         </select>
-        <select id="rpdist" class="bg-slate-800 rounded-lg px-2 py-2 text-xs border border-slate-700">
-          <option value="">Todas dist.</option>
+        <select class="fsel" id="rpdist">
+          <option value="">Todas as distâncias</option>
         </select>
       </div>
-      <button onclick="buscarPorProva()" class="w-full bg-emerald-600 hover:bg-emerald-700 py-2.5 rounded-lg text-sm font-bold transition-all">🔍 Ver Resultados</button>
+      <button class="go-btn" id="provaBtn" onclick="buscarPorProva()" style="background:linear-gradient(135deg,#00FFA3,#00CC7A);color:#07071A">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Ver Resultados
+      </button>
     </div>
-    <div id="provares" class="text-center text-slate-500 text-sm py-4">Selecione uma prova</div>
+    <div id="provaRes"></div>
   </div>
 
   <!-- TAB 2: EQUIPES -->
   <div id="tab2" class="hidden">
-    <div id="equiperes" class="text-center text-slate-500 text-sm py-4">Busque um ranking para ver equipes</div>
+    <div id="equipeRes">
+      <div class="empty" style="border-radius:14px">
+        <div class="empty-icon">🏆</div>
+        <div class="empty-txt">Busque um ranking primeiro<br>para ver o ranking de equipes</div>
+      </div>
+    </div>
   </div>
 
 </div>
 
 <!-- NAV -->
-<nav class="fixed bottom-0 left-0 right-0 bg-[#0a0e17]/95 backdrop-blur-sm border-t border-slate-800 flex text-[9px] font-semibold z-50" style="padding-bottom: max(8px, env(safe-area-inset-bottom))">
-  <a href="/" class="flex-1 text-center py-2 text-slate-500">🏠<br>Início</a>
-  <a href="/corridas-abertas.html" class="flex-1 text-center py-2 text-slate-500">🏁<br>Corridas</a>
-  <a href="/resultados.html" class="flex-1 text-center py-2 text-cyan-400">🏆<br>Resultados</a>
-  <a href="/ia.html" class="flex-1 text-center py-2 text-slate-500">🤖<br>IA Coach</a>
-  <a href="/perfil.html" class="flex-1 text-center py-2 text-slate-500">👤<br>Perfil</a>
+<nav class="nav">
+  <a class="nav-item" href="/">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Início</span>
+  </a>
+  <a class="nav-item" href="/corridas-abertas.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span>Corridas</span>
+  </a>
+  <a class="nav-item active" href="/resultados.html">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span>Resultados</span>
+  </a>
+  <a class="nav-item" href="/ia.html">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 8v4l3 3"/></svg>
+    <span>IA Coach</span>
+  </a>
+  <a class="nav-item" href="/perfil.html">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Perfil</span>
+  </a>
 </nav>
 
+<!-- ATHLETE DETAIL SHEET -->
+<div class="overlay" id="overlay" onclick="closeSheet(event)">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
-const M=['🥇','🥈','🥉'];
-const UFs='AC,AL,AP,AM,BA,CE,DF,ES,GO,MA,MT,MS,MG,PA,PB,PR,PE,PI,RJ,RN,RS,RO,RR,SC,SP,SE,TO'.split(',');
-const UFn={AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins'};
+// ══════════════════════════════════════
+// CONSTANTES E ESTADO
+// ══════════════════════════════════════
+const UFs = 'AC,AL,AP,AM,BA,CE,DF,ES,GO,MA,MT,MS,MG,PA,PB,PR,PE,PI,RJ,RN,RS,RO,RR,SC,SP,SE,TO'.split(',');
+const UFn = {AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins'};
+const MED = ['🥇','🥈','🥉'];
+const DIST_MAP = {'3':'3K','5':'5K','10':'10K','15':'15K','21':'21K','42':'42K'};
 
-let provas=[], allData=[], currentTab=0;
+let allData = [];       // dados do ranking atual
+let currentTab = 0;
+let provasList = [];    // lista de provas
+let shownRows = 50;     // paginação
+let searchTimer = null;
 
-// Pace classification
-function paceClass(tempo, km) {
-  if (!tempo || tempo==='DNS') return '';
-  const p=tempo.split(':').map(Number);
-  const s=p.length===3?p[0]*3600+p[1]*60+p[2]:p[0]*60+p[1];
-  const paceMin = (s/km)/60;
-  if (paceMin < 4.5) return 'text-yellow-400 font-black'; // Elite
-  if (paceMin < 5.5) return 'text-emerald-400'; // Fast
-  if (paceMin < 7) return 'text-cyan-400'; // Good
-  return 'text-slate-300'; // Normal
-}
-
-function calcPace(t, km) {
-  if(!t||t==='DNS')return'-';
+// ══════════════════════════════════════
+// UTILITÁRIOS
+// ══════════════════════════════════════
+function tempoSec(t){
+  if(!t||t==='DNS') return 999999;
   const p=t.split(':').map(Number);
-  let s=0;
-  if(p.length===3)s=p[0]*3600+p[1]*60+p[2];
-  else if(p.length===2)s=p[0]*60+p[1];
-  if(!s||!km)return'-';
-  const ps=s/km; const pm=Math.floor(ps/60); const pp=Math.round(ps%60);
-  return pm+':'+String(pp).padStart(2,'0')+'/km';
+  if(p.length===3) return p[0]*3600+p[1]*60+p[2];
+  if(p.length===2) return p[0]*60+p[1];
+  return 999999;
 }
 
-function velKmh(t, km) {
-  if(!t||t==='DNS')return'-';
-  const p=t.split(':').map(Number);
-  let s=0;
-  if(p.length===3)s=p[0]*3600+p[1]*60+p[2];
-  else if(p.length===2)s=p[0]*60+p[1];
-  if(!s||!km)return'-';
-  return (km/(s/3600)).toFixed(1)+'km/h';
+function calcPace(t, km){
+  const s=tempoSec(t);
+  if(s===999999||!km) return '—';
+  const ps=s/km;
+  return Math.floor(ps/60)+':'+String(Math.round(ps%60)).padStart(2,'0')+'/km';
 }
 
+function timeClass(t, km){
+  const s=tempoSec(t);
+  if(s===999999) return 'normal';
+  const pm=(s/km)/60;
+  if(pm<4.0) return 'elite';
+  if(pm<5.0) return 'fast';
+  if(pm<6.5) return 'good';
+  return 'normal';
+}
+
+function fmtNum(n){
+  if(n>=1000000) return (n/1000000).toFixed(1)+'M';
+  if(n>=1000) return (n/1000).toFixed(0)+'k';
+  return n.toLocaleString('pt-BR');
+}
+
+function animNum(id, target){
+  const el=document.getElementById(id);
+  if(!el) return;
+  let cur=0;
+  const dur=600, fps=30, steps=dur/fps;
+  const step=target/steps;
+  const t=setInterval(()=>{
+    cur=Math.min(cur+step, target);
+    el.textContent=fmtNum(Math.round(cur));
+    if(cur>=target){ el.textContent=fmtNum(target); clearInterval(t); }
+  }, fps);
+}
+
+function showToast(msg, dur=2500){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), dur);
+}
+
+function setLoading(btnId, on){
+  const b=document.getElementById(btnId);
+  if(!b) return;
+  b.classList.toggle('loading', on);
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
 async function init(){
-  try{
-    const s=await fetch('/analytics/overview').then(r=>r.json());
-    animateNumber('totalRaces', s.totalRaces||0);
-    animateNumber('totalResults', s.totalResults||0);
-    animateNumber('totalAthletes', s.totalAthletes||0);
-  }catch(e){}
-
+  // Estados no select
   const sel=document.getElementById('rstate');
-  UFs.forEach(uf=>{const o=document.createElement('option');o.value=uf;o.textContent=UFn[uf];sel.appendChild(o);});
+  UFs.forEach(uf=>{
+    const o=document.createElement('option');
+    o.value=uf; o.textContent=UFn[uf];
+    sel.appendChild(o);
+  });
 
+  // Click fora fecha dropdown
+  document.addEventListener('click', e=>{
+    if(!document.getElementById('searchBlock').contains(e.target)){
+      document.getElementById('searchDrop').classList.remove('open');
+    }
+  });
+
+  // Analytics overview — rota correta: /analytics/overview
   try{
-    provas=await fetch('/provas').then(r=>r.json());
+    const d = await fetch('/analytics/overview').then(r=>r.json());
+    animNum('vCorridas', d.totalRaces||0);
+    animNum('vResultados', d.totalResults||0);
+    animNum('vAtletas', d.totalAthletes||0);
+    document.getElementById('topBadge').textContent = fmtNum(d.totalResults||0);
+    ['scCorridas','scResultados','scAtletas'].forEach(id=>{
+      setTimeout(()=>document.getElementById(id)?.classList.add('loaded'), 800);
+    });
+  }catch(e){ console.warn('Analytics offline:', e.message); }
+
+  // Carregar provas — rota correta: /provas
+  try{
+    provasList = await fetch('/provas').then(r=>r.json());
     const ps=document.getElementById('rprova');
     ps.innerHTML='<option value="">Selecione a prova...</option>';
-    provas.forEach(p=>{
+    provasList.forEach(p=>{
       const d=new Date(p.date);
+      const mes=d.toLocaleDateString('pt-BR',{month:'short',year:'numeric'});
       const o=document.createElement('option');
       o.value=p.id;
-      o.textContent=p.name+' — '+(p.city||'')+ ' ('+d.toLocaleDateString('pt-BR',{month:'short',year:'numeric'})+') '+p.totalResults+' atl.';
+      o.textContent=`${p.name} — ${p.city||''} (${mes}) · ${p.totalResults} atl.`;
+      o.dataset.dist=JSON.stringify(p.distances||[]);
       ps.appendChild(o);
     });
-  }catch(e){}
+  }catch(e){ console.warn('Provas offline:', e.message); }
 
+  // Busca inicial do ranking
   buscarRanking();
 }
 
-function animateNumber(id, target) {
-  const el=document.getElementById(id);
-  let current=0;
-  const step=Math.ceil(target/30);
-  const timer=setInterval(()=>{
-    current=Math.min(current+step,target);
-    el.textContent=current.toLocaleString('pt-BR');
-    if(current>=target)clearInterval(timer);
-  },30);
-}
-
+// ══════════════════════════════════════
+// TABS
+// ══════════════════════════════════════
 function showTab(n){
   currentTab=n;
   for(let i=0;i<3;i++){
-    document.getElementById('tab'+i).classList.toggle('hidden',i!==n);
-    document.getElementById('btnTab'+i).className='flex-1 py-2 rounded-xl text-xs font-bold transition-all '+(i===n?'tab-active':'bg-slate-800');
+    document.getElementById('tab'+i).classList.toggle('hidden', i!==n);
+    document.getElementById('t'+i).classList.toggle('active', i===n);
   }
-  if(n===2 && allData.length) loadEquipes();
+  if(n===2 && allData.length) renderEquipes();
 }
 
+// ══════════════════════════════════════
+// CIDADES (baseado em allData atual)
+// ══════════════════════════════════════
 function updateCidades(){
   const state=document.getElementById('rstate').value;
   const sel=document.getElementById('rcidade');
-  sel.innerHTML='<option value="">Todas cidades</option>';
-  if(!state||!allData.length)return;
-  const cities=[...new Set(allData.filter(r=>r.state===state&&r.city&&r.city!=='').map(r=>r.city))].sort();
-  cities.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
-}
-
-function renderTable(data, opts){
-  if(!data||!data.length)return'<div class="py-8 text-center text-slate-500 text-sm">📭 Sem resultados para estes filtros</div>';
-  const showProva=opts?.showProva||false;
-  const km=opts?.distKm||10;
-
-  let h='<div class="overflow-x-auto"><table class="w-full text-[11px]"><thead><tr class="text-slate-500 border-b border-slate-700/50">';
-  h+='<th class="px-1.5 py-2 text-left w-7">#</th>';
-  h+='<th class="px-1.5 py-2 text-left">Atleta</th>';
-  h+='<th class="px-1.5 py-2 text-center w-5">G</th>';
-  h+='<th class="px-1.5 py-2 text-right">Tempo</th>';
-  h+='<th class="px-1.5 py-2 text-right">Pace</th>';
-  if(showProva)h+='<th class="px-1.5 py-2 text-left">Prova</th>';
-  h+='</tr></thead><tbody>';
-
-  data.slice(0,300).forEach((r,i)=>{
-    const pos=r.posicao||(i+1);
-    const medal=M[pos-1]||pos;
-    const posClass=pos<=3?'font-black text-lg':'text-slate-500';
-    const gcls=r.gender==='F'?'text-pink-400':'text-blue-400';
-    const tempo=r.melhorTempo||r.tempo||'-';
-    const tc=paceClass(tempo,km);
-    const equipeTag=r.equipe?'<div class="text-[9px] text-cyan-600 truncate max-w-[100px]">'+r.equipe+'</div>':'';
-    const stateTag=r.state?'<span class="text-slate-600 text-[9px]"> · '+r.state+'</span>':'';
-    const rowBg=pos<=3?'highlight-row':'';
-
-    h+='<tr class="border-b border-slate-800/50 '+rowBg+'">';
-    h+='<td class="px-1.5 py-2 '+posClass+'">'+medal+'</td>';
-    h+='<td class="px-1.5 py-2"><div class="font-semibold text-[11px] leading-tight">'+r.name+stateTag+'</div>'+equipeTag+'</td>';
-    h+='<td class="px-1.5 py-2 text-center"><span class="'+gcls+' text-[10px]">'+(r.gender||'-')+'</span></td>';
-    h+='<td class="px-1.5 py-2 text-right font-mono font-bold '+tc+'">'+tempo+'</td>';
-    h+='<td class="px-1.5 py-2 text-right text-slate-400 text-[10px]">'+calcPace(tempo,km)+'</td>';
-    if(showProva)h+='<td class="px-1.5 py-2 text-[9px] text-slate-500 max-w-[80px] truncate">'+(r.prova||'-')+'</td>';
-    h+='</tr>';
+  sel.innerHTML='<option value="">Todas as cidades</option>';
+  if(!state||!allData.length) return;
+  // allData vem do ranking — campo city pode não existir em todos os registros
+  const cities=[...new Set(
+    allData.filter(r=>r.state===state&&r.city&&r.city.trim()!=='').map(r=>r.city)
+  )].sort();
+  cities.forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c; o.textContent=c;
+    sel.appendChild(o);
   });
-
-  h+='</tbody></table></div>';
-  if(data.length>300)h+='<p class="text-center text-slate-600 text-[10px] py-2">Mostrando 300 de '+data.length.toLocaleString('pt-BR')+'</p>';
-  return h;
 }
 
-function renderStats(data, km) {
-  if (!data || data.length < 3) return '';
-  const times = data.map(r => {
-    const t = r.melhorTempo || r.tempo;
-    if (!t || t === 'DNS') return null;
-    const p = t.split(':').map(Number);
-    return p.length === 3 ? p[0]*3600+p[1]*60+p[2] : p[0]*60+p[1];
-  }).filter(Boolean);
-  
-  if (times.length < 3) return '';
-  
-  const best = times[0];
-  const median = times[Math.floor(times.length/2)];
-  const total = times.length;
-  const sub60 = times.filter(t => t < 3600).length;
-  const fem = data.filter(r => r.gender === 'F').length;
-  const masc = data.filter(r => r.gender === 'M').length;
-  
-  const fmtT = (s) => {
-    const h=Math.floor(s/3600); const m=Math.floor((s%3600)/60); const ss=s%60;
-    return h>0 ? h+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0') : m+':'+String(ss).padStart(2,'0');
-  };
+// ══════════════════════════════════════
+// DISTÂNCIAS DA PROVA (carregadas do backend)
+// ══════════════════════════════════════
+async function loadDistancias(){
+  const raceId=document.getElementById('rprova').value;
+  const sel=document.getElementById('rpdist');
+  sel.innerHTML='<option value="">Todas as distâncias</option>';
+  if(!raceId) return;
 
-  return `<div class="grid grid-cols-4 gap-1.5 mb-3">
-    <div class="card rounded-lg p-2 text-center"><div class="text-xs font-black text-emerald-400">${fmtT(best)}</div><div class="text-[8px] text-slate-500">Melhor</div></div>
-    <div class="card rounded-lg p-2 text-center"><div class="text-xs font-black text-amber-400">${fmtT(median)}</div><div class="text-[8px] text-slate-500">Mediana</div></div>
-    <div class="card rounded-lg p-2 text-center"><div class="text-xs font-black text-cyan-400">${Math.round(fem/(fem+masc)*100)}%</div><div class="text-[8px] text-slate-500">Fem</div></div>
-    <div class="card rounded-lg p-2 text-center"><div class="text-xs font-black text-slate-300">${total.toLocaleString('pt-BR')}</div><div class="text-[8px] text-slate-500">Total</div></div>
-  </div>`;
+  try{
+    // Rota correta: /corrida/:raceId/distancias
+    const dists=await fetch(`/corrida/${raceId}/distancias`).then(r=>r.json());
+    dists.forEach(d=>{
+      const o=document.createElement('option');
+      o.value=d.distance;
+      o.textContent=`${d.distance} · ${d.total} atletas`;
+      sel.appendChild(o);
+    });
+  }catch(e){
+    // fallback: usar dataset da opção
+    const opt=document.getElementById('rprova').selectedOptions[0];
+    const dists=JSON.parse(opt?.dataset?.dist||'[]');
+    dists.forEach(d=>{
+      const o=document.createElement('option');
+      o.value=d; o.textContent=d;
+      sel.appendChild(o);
+    });
+  }
 }
 
+// ══════════════════════════════════════
+// RANKING — rota correta: /ranking/:dist + /ranking/stats
+// ══════════════════════════════════════
 async function buscarRanking(){
   const dist=document.getElementById('rdist').value;
   const gen=document.getElementById('rgen').value;
   const state=document.getElementById('rstate').value;
   const cidade=document.getElementById('rcidade').value;
   const faixa=document.getElementById('rfaixa').value;
-  const km=parseInt(dist);
+  const km=parseFloat(dist==='21'?'21.1':dist==='42'?'42.2':dist);
 
-  const el=document.getElementById('rankres');
-  el.innerHTML='<div class="py-8 text-center"><div class="inline-block animate-spin text-2xl">🏃</div><p class="text-slate-500 text-sm mt-2">Carregando ranking...</p></div>';
+  const el=document.getElementById('rankRes');
+  el.innerHTML=skeletonRows(6);
+  setLoading('rankBtn', true);
+  shownRows=50;
 
   try{
-    let url='/ranking/'+dist+'km';
-    if(gen)url+='?genero='+gen;
+    // Rota correta: /ranking/:dist + km
+    let url=`/ranking/${dist}km`;
+    if(gen) url+=`?genero=${gen}`;
 
-    const d=await fetch(url).then(r=>r.json());
+    const d=await fetch(url).then(r=>{
+      if(!r.ok) throw new Error('Erro '+r.status);
+      return r.json();
+    });
     allData=d;
+
+    // Filtros client-side
+    let filtered=d;
+    if(state) filtered=filtered.filter(r=>r.state===state);
+    if(cidade) filtered=filtered.filter(r=>r.city===cidade);
+
+    // Filtro de faixa etária — campo faixaEtaria pode ser null, proteger
+    if(faixa) filtered=filtered.filter(r=>
+      r.faixaEtaria && String(r.faixaEtaria).includes(faixa)
+    );
+
+    // Re-numerar posições após filtro
+    filtered=filtered.map((r,i)=>({...r, posicao:i+1}));
+
+    // Atualiza cidades com dados carregados
     updateCidades();
 
-    let filtered=d;
-    if(state)filtered=filtered.filter(r=>r.state===state);
-    if(cidade)filtered=filtered.filter(r=>r.city===cidade);
-    if(faixa)filtered=filtered.filter(r=>r.faixaEtaria&&r.faixaEtaria.includes(faixa));
-    filtered=filtered.map((r,i)=>({...r,posicao:i+1}));
+    const distLabel={'3':'3km','5':'5km','10':'10km','15':'15km','21':'Meia Maratona','42':'Maratona'}[dist]||dist+'km';
+    const genLabel=gen?` · ${gen==='M'?'Masculino':'Feminino'}`:'';
+    const stLabel=state?` · ${UFn[state]}`:'';
+    const titulo=`🇧🇷 Ranking ${distLabel}${genLabel}${stLabel}`;
 
-    const title='Ranking '+dist+'km'+(gen?' ('+({M:'Masculino',F:'Feminino'}[gen])+')':'')+(state?' — '+UFn[state]:'')+(cidade?' — '+cidade:'');
+    el.innerHTML=miniStats(filtered,km)+renderHeader(titulo, filtered.length)+renderTable(filtered,km,true,shownRows)+(filtered.length>shownRows?moreBtn():'');
+    document.getElementById('topBadge').textContent=fmtNum(filtered.length)+' atletas';
 
-    el.innerHTML=renderStats(filtered, km)+'<div class="card rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700/50"><h3 class="font-bold text-sm">🇧🇷 '+title+'</h3><p class="text-slate-500 text-xs">'+filtered.length.toLocaleString('pt-BR')+' atletas classificados</p></div>'+renderTable(filtered,{showProva:true,distKm:km})+'</div>';
+    // Bind more btn
+    bindMoreBtn(()=>{
+      shownRows+=50;
+      el.innerHTML=miniStats(filtered,km)+renderHeader(titulo,filtered.length)+renderTable(filtered,km,true,shownRows)+(filtered.length>shownRows?moreBtn():'');
+      bindMoreBtn(arguments.callee);
+      bindRows(filtered,km);
+    });
+    bindRows(filtered,km);
+
   }catch(e){
-    el.innerHTML='<div class="py-8 text-center text-red-400">❌ '+e.message+'</div>';
+    el.innerHTML=`<div class="empty" style="border-radius:0 0 14px 14px"><div class="empty-icon">⚠️</div><div class="empty-txt">${e.message}</div></div>`;
+  }finally{
+    setLoading('rankBtn', false);
   }
 }
 
+// ══════════════════════════════════════
+// POR PROVA — rota correta: /ranking/prova/:raceId
+// ══════════════════════════════════════
 async function buscarPorProva(){
   const raceId=document.getElementById('rprova').value;
-  if(!raceId){alert('Selecione uma prova!');return;}
+  if(!raceId){ showToast('Selecione uma prova'); return; }
   const gen=document.getElementById('rpgen').value;
   const dist=document.getElementById('rpdist').value;
 
-  const el=document.getElementById('provares');
-  el.innerHTML='<div class="py-8 text-center"><div class="inline-block animate-spin text-2xl">🏃</div></div>';
+  const el=document.getElementById('provaRes');
+  el.innerHTML=skeletonRows(6);
+  setLoading('provaBtn', true);
+  shownRows=50;
 
   try{
-    let url='/ranking/prova/'+raceId;
-    const p=[];
-    if(gen)p.push('genero='+gen);
-    if(dist)p.push('distance='+dist);
-    if(p.length)url+='?'+p.join('&');
+    // Rota correta: /ranking/prova/:raceId
+    let url=`/ranking/prova/${raceId}`;
+    const params=[];
+    if(gen) params.push(`genero=${gen}`);
+    if(dist) params.push(`distance=${encodeURIComponent(dist)}`);
+    if(params.length) url+='?'+params.join('&');
 
-    const d=await fetch(url).then(r=>r.json());
-    const prova=provas.find(pr=>pr.id===raceId);
-    const title=prova?prova.name+(prova.city?' — '+prova.city:''):'Resultados';
+    const d=await fetch(url).then(r=>{
+      if(!r.ok) throw new Error('Erro '+r.status);
+      return r.json();
+    });
 
-    el.innerHTML='<div class="card rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700/50"><h3 class="font-bold text-sm">📋 '+title+'</h3><p class="text-slate-500 text-xs">'+d.length.toLocaleString('pt-BR')+' resultados</p></div>'+renderTable(d,{showProva:false,distKm:10})+'</div>';
+    const prova=provasList.find(p=>p.id===raceId);
+    const titulo=`📋 ${prova?.name||'Resultados'}${prova?.city?` — ${prova.city}`:''}`;
+
+    // Extrair km da distância selecionada ou usar 10 como fallback seguro
+    const distKm=dist ? parseFloat(dist.match(/(\d+(?:\.\d+)?)/)?.[1]||'10') : 10;
+
+    el.innerHTML=miniStats(d,distKm)+renderHeader(titulo,d.length)+renderTable(d,distKm,false,shownRows)+(d.length>shownRows?moreBtn():'');
+
+    bindMoreBtn(()=>{
+      shownRows+=50;
+      el.innerHTML=miniStats(d,distKm)+renderHeader(titulo,d.length)+renderTable(d,distKm,false,shownRows)+(d.length>shownRows?moreBtn():'');
+      bindMoreBtn(arguments.callee);
+      bindRows(d,distKm);
+    });
+    bindRows(d,distKm);
+
   }catch(e){
-    el.innerHTML='<div class="py-8 text-center text-red-400">❌ '+e.message+'</div>';
+    el.innerHTML=`<div class="empty" style="border-radius:0 0 14px 14px"><div class="empty-icon">⚠️</div><div class="empty-txt">${e.message}</div></div>`;
+  }finally{
+    setLoading('provaBtn', false);
   }
 }
 
-async function buscarAtleta(){
-  const q=document.getElementById('searchInput').value.trim();
-  if(!q||q.length<3){alert('Digite pelo menos 3 letras');return;}
+// ══════════════════════════════════════
+// BUSCAR ATLETA — rota correta: /buscar-atletas?nome=
+// ══════════════════════════════════════
+let searchAbort=null;
 
-  const el=document.getElementById('searchRes');
-  el.classList.remove('hidden');
-  el.innerHTML='<p class="text-slate-500 text-sm py-2">⏳ Buscando...</p>';
+function onSearchInput(val){
+  clearTimeout(searchTimer);
+  if(!val||val.length<2){
+    document.getElementById('searchDrop').classList.remove('open');
+    return;
+  }
+  searchTimer=setTimeout(()=>buscarAtleta(val, true), 350);
+}
+
+async function buscarAtleta(q, dropdown=false){
+  const input=document.getElementById('searchInput');
+  q=q||input.value.trim();
+  if(!q||q.length<2){ showToast('Digite pelo menos 2 letras'); return; }
+
+  const drop=document.getElementById('searchDrop');
+
+  if(dropdown){
+    drop.innerHTML='<div class="sd-empty">⏳ Buscando...</div>';
+    drop.classList.add('open');
+  }else{
+    setLoading('searchBtn', true);
+  }
+
+  if(searchAbort) searchAbort.abort();
+  searchAbort=new AbortController();
 
   try{
-    const d=await fetch('/buscar-atletas?nome='+encodeURIComponent(q)).then(r=>r.json());
-    if(!d||!d.length){el.innerHTML='<p class="text-slate-500 text-sm py-2">Nenhum atleta encontrado com "'+q+'"</p>';return;}
+    // Rota correta: /buscar-atletas?nome=
+    const d=await fetch(`/buscar-atletas?nome=${encodeURIComponent(q)}&limit=12`,{signal:searchAbort.signal}).then(r=>r.json());
 
-    el.innerHTML='<div class="divide-y divide-slate-800">'+d.slice(0,15).map(a=>
-      '<a href="/perfil-atleta.html?id='+a.id+'" class="flex justify-between items-center py-2.5 px-1">'
-      +'<div><span class="font-semibold text-sm">'+a.name+'</span>'
-      +(a.equipe?'<span class="text-cyan-600 text-[10px] ml-1">'+a.equipe+'</span>':'')
-      +'<div class="text-slate-500 text-[10px]">'+(a.state||'-')+' · '+a.totalRaces+' provas · '+(a.nivel||'')+'</div></div>'
-      +'<span class="text-cyan-400 text-xs">→</span></a>'
-    ).join('')+'</div>';
+    if(!d||!d.length){
+      drop.innerHTML='<div class="sd-empty">Nenhum atleta encontrado para "<strong>'+q+'"</strong></div>';
+      drop.classList.add('open');
+      return;
+    }
+
+    drop.innerHTML=d.slice(0,12).map(a=>`
+      <a class="sd-item" href="/perfil-atleta.html?id=${a.id}">
+        <div>
+          <div class="sd-name">${a.name}</div>
+          <div class="sd-meta">${a.state||'—'} · ${a.totalRaces||0} provas</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="sd-nivel">${a.nivel||''}</div>
+          <div class="sd-arrow">→</div>
+        </div>
+      </a>`).join('');
+    drop.classList.add('open');
+
   }catch(e){
-    el.innerHTML='<p class="text-red-400 text-sm py-2">Erro: '+e.message+'</p>';
+    if(e.name==='AbortError') return;
+    drop.innerHTML='<div class="sd-empty" style="color:var(--red)">Erro na busca</div>';
+  }finally{
+    setLoading('searchBtn', false);
   }
 }
 
-function loadEquipes(){
-  const el=document.getElementById('equiperes');
-  if(!allData.length){el.innerHTML='<p class="text-slate-500 py-6 text-sm">Busque um ranking primeiro</p>';return;}
-  
+// ══════════════════════════════════════
+// RENDER: MINI STATS
+// ══════════════════════════════════════
+function miniStats(data, km){
+  if(!data||data.length<3) return '';
+  const times=data.map(r=>{
+    const t=r.melhorTempo||r.tempo||r.time;
+    return t&&t!=='DNS'?tempoSec(t):null;
+  }).filter(Boolean);
+  if(times.length<2) return '';
+
+  const best=times[0];
+  const median=times[Math.floor(times.length/2)];
+  const fem=data.filter(r=>r.gender==='F').length;
+  const total=times.length;
+
+  const fmtT=s=>{
+    const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;
+    return h>0?`${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:`${m}:${String(ss).padStart(2,'0')}`;
+  };
+
+  return `<div class="mini-stats fade-up">
+    <div class="ms"><div class="ms-val" style="color:var(--amber)">${fmtT(best)}</div><div class="ms-lbl">Melhor</div></div>
+    <div class="ms"><div class="ms-val" style="color:var(--c)">${fmtT(median)}</div><div class="ms-lbl">Mediana</div></div>
+    <div class="ms"><div class="ms-val" style="color:var(--pink)">${total>0?Math.round(fem/total*100):0}%</div><div class="ms-lbl">Feminino</div></div>
+    <div class="ms"><div class="ms-val" style="color:var(--green)">${fmtNum(total)}</div><div class="ms-lbl">Total</div></div>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+// RENDER: HEADER + TABLE
+// ══════════════════════════════════════
+function renderHeader(titulo, count){
+  return `<div class="res-header fade-up">
+    <div class="res-title">${titulo}</div>
+    <div class="res-count">${fmtNum(count)} atletas</div>
+  </div>`;
+}
+
+function renderTable(data, km, showProva=false, limit=50){
+  if(!data||!data.length) return `<div class="empty"><div class="empty-icon">📭</div><div class="empty-txt">Sem resultados para estes filtros</div></div>`;
+
+  const rows=data.slice(0,limit).map((r,i)=>{
+    const pos=r.posicao||(i+1);
+    const medal=pos<=3?MED[pos-1]:pos;
+    const posClass=pos===1?'p1':pos===2?'p2':pos===3?'p3':'';
+    // Campo correto: melhorTempo (ranking) ou tempo (prova)
+    const tempo=r.melhorTempo||r.tempo||r.time||'—';
+    const tc=tempo!=='—'?timeClass(tempo,km):'normal';
+    const g=r.gender||'';
+    // Campo correto: state (backend retorna state não estado)
+    const estado=r.state||'';
+    // equipe vem do backend como r.equipe
+    const equipe=r.equipe||'';
+    // prova: backend retorna melhorProva (não prova)
+    const provaNome=r.melhorProva||r.prova||'';
+
+    return `<tr class="${pos<=3?'top3':''}" data-idx="${i}">
+      <td><span class="pos ${posClass}">${medal}</span></td>
+      <td>
+        <div class="aname">${r.name||'—'}${estado?`<span style="color:var(--t3);font-size:10px;font-weight:400"> · ${estado}</span>`:''}</div>
+        ${equipe?`<div class="aequipe">${equipe}</div>`:''}
+        ${showProva&&provaNome?`<div class="astate">${provaNome}</div>`:''}
+      </td>
+      <td>${g?`<span class="gtag ${g}">${g}</span>`:''}</td>
+      <td class="text-right"><span class="ttime ${tc}">${tempo}</span></td>
+      <td class="text-right"><span class="pace">${calcPace(tempo,km)}</span></td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="table-wrap fade-up"><table class="tbl">
+    <thead><tr>
+      <th style="width:36px">#</th>
+      <th>Atleta</th>
+      <th style="width:32px">G</th>
+      <th>Tempo</th>
+      <th>Pace</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+function moreBtn(){
+  return `<button class="more-btn" id="moreBtn">Carregar mais →</button>`;
+}
+
+function bindMoreBtn(fn){
+  const btn=document.getElementById('moreBtn');
+  if(btn) btn.onclick=fn;
+}
+
+function bindRows(data, km){
+  document.querySelectorAll('.tbl tbody tr[data-idx]').forEach(tr=>{
+    tr.onclick=()=>{
+      const r=data[parseInt(tr.dataset.idx)];
+      if(r) openAthleteSheet(r, km);
+    };
+  });
+}
+
+// ══════════════════════════════════════
+// SKELETON LOADING
+// ══════════════════════════════════════
+function skeletonRows(n){
+  const rows=Array.from({length:n},()=>`
+    <div class="skel-row">
+      <div class="skel" style="width:24px;height:24px;border-radius:6px;flex-shrink:0"></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+        <div class="skel" style="height:12px;width:60%;border-radius:4px"></div>
+        <div class="skel" style="height:10px;width:35%;border-radius:4px"></div>
+      </div>
+      <div class="skel" style="width:52px;height:14px;border-radius:4px"></div>
+    </div>`).join('');
+  return `<div style="background:var(--s2);border:1px solid var(--b2);border-radius:14px;overflow:hidden">${rows}</div>`;
+}
+
+// ══════════════════════════════════════
+// EQUIPES
+// ══════════════════════════════════════
+function renderEquipes(){
+  const el=document.getElementById('equipeRes');
+  if(!allData.length){
+    el.innerHTML='<div class="empty" style="border-radius:14px"><div class="empty-icon">🏃</div><div class="empty-txt">Busque um ranking primeiro</div></div>';
+    return;
+  }
+
   const map={};
   allData.forEach(r=>{
-    if(r.equipe){
-      if(!map[r.equipe])map[r.equipe]={name:r.equipe,count:0,bestTime:'99:99:99'};
-      map[r.equipe].count++;
-      const t=r.melhorTempo||'99:99:99';
-      if(t<map[r.equipe].bestTime)map[r.equipe].bestTime=t;
-    }
+    if(!r.equipe) return;
+    if(!map[r.equipe]) map[r.equipe]={name:r.equipe,count:0,bestTime:'99:99:99',atletas:[]};
+    map[r.equipe].count++;
+    const t=r.melhorTempo||r.tempo||r.time||'99:99:99';
+    if(tempoSec(t)<tempoSec(map[r.equipe].bestTime)) map[r.equipe].bestTime=t;
+    if(map[r.equipe].atletas.length<3) map[r.equipe].atletas.push(r.name);
   });
+
   const equipes=Object.values(map).sort((a,b)=>b.count-a.count).slice(0,30);
 
-  if(!equipes.length){el.innerHTML='<p class="text-slate-500 py-6 text-sm">Sem equipes neste ranking</p>';return;}
+  if(!equipes.length){
+    el.innerHTML='<div class="empty" style="border-radius:14px"><div class="empty-icon">👥</div><div class="empty-txt">Nenhuma equipe neste ranking</div></div>';
+    return;
+  }
 
-  el.innerHTML='<div class="card rounded-xl overflow-hidden"><div class="p-3 border-b border-slate-700/50"><h3 class="font-bold text-sm">🏆 Top Equipes</h3></div><div class="divide-y divide-slate-800/50">'
-  +equipes.map((e,i)=>'<div class="flex justify-between items-center px-3 py-2.5"><div><span class="'+(i<3?'text-amber-400':'text-slate-500')+' font-bold mr-2 text-xs">'+(M[i]||(i+1))+'</span><span class="font-semibold text-sm">'+e.name+'</span></div><div class="text-right"><div class="text-xs text-slate-400">'+e.count+' atletas</div><div class="text-[10px] text-emerald-400 font-mono">'+e.bestTime+'</div></div></div>').join('')
-  +'</div></div>';
+  const maxCount=equipes[0].count;
+  el.innerHTML=equipes.map((e,i)=>{
+    const pct=Math.round(e.count/maxCount*100);
+    const posColor=i===0?'var(--amber)':i===1?'var(--t2)':i===2?'#CD7F32':'var(--t3)';
+    return `<div class="equipe-card fade-up" style="animation-delay:${i*30}ms">
+      <div class="eq-header">
+        <div class="eq-pos" style="color:${posColor}">${MED[i]||i+1}</div>
+        <div style="flex:1;min-width:0">
+          <div class="eq-name">${e.name}</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:1px">${e.atletas.join(', ')}${e.count>3?` +${e.count-3}`:''}...</div>
+        </div>
+        <div class="eq-count">
+          <div style="font-size:13px;font-weight:700;color:var(--t1)">${e.count}</div>
+          <div style="font-size:10px;color:var(--t3)">atletas</div>
+          <div class="eq-best">${e.bestTime!=='99:99:99'?e.bestTime:'—'}</div>
+        </div>
+      </div>
+      <div class="eq-bar"><div class="eq-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
 }
 
+// ══════════════════════════════════════
+// ATHLETE DETAIL SHEET
+// ══════════════════════════════════════
+async function openAthleteSheet(r, km){
+  const overlay=document.getElementById('overlay');
+  const body=document.getElementById('sheetBody');
+  const tempo=r.melhorTempo||r.tempo||r.time||'—';
+  const g=r.gender||'';
+
+  // Render imediato com dados disponíveis
+  body.innerHTML=`
+    <div class="sh-name">${r.name}</div>
+    <div class="sh-meta">
+      ${g?`<span class="sh-tag ${g}">${g==='M'?'Masculino':'Feminino'}</span>`:''}
+      ${r.state?`<span style="color:var(--t3);font-size:12px">${UFn[r.state]||r.state}</span>`:''}
+      ${r.nivel?`<span class="sh-tag nivel">${r.nivel}</span>`:''}
+    </div>
+    <div class="sh-grid">
+      <div class="sh-stat"><div class="sh-sv">${tempo}</div><div class="sh-sl">Melhor tempo</div></div>
+      <div class="sh-stat"><div class="sh-sv">${calcPace(tempo,km)}</div><div class="sh-sl">Pace médio</div></div>
+      <div class="sh-stat"><div class="sh-sv">#${r.posicao||'—'}</div><div class="sh-sl">Posição</div></div>
+      <div class="sh-stat"><div class="sh-sv">${r.totalRaces||r.totalPoints?fmtNum(r.totalPoints||0):'—'}</div><div class="sh-sl">${r.totalPoints?'Pontos':'Corridas'}</div></div>
+    </div>
+    <div id="sheetProvas"><div class="sh-section">Carregando provas...</div></div>
+    ${r.id?`<button class="sh-profile-btn" onclick="window.location.href='/perfil-atleta.html?id=${r.id}'">Ver perfil completo →</button>`:''}
+    <button class="sh-close" onclick="closeSheet()">Fechar</button>
+  `;
+  overlay.classList.add('open');
+
+  // Buscar provas do atleta se tiver ID — rota correta: /atleta/:id
+  if(r.id){
+    try{
+      const d=await fetch(`/atleta/${r.id}`).then(res=>res.json());
+      const provas=d.provas||[];
+      const provasHtml=provas.slice(0,5).map(p=>{
+        const pos=p.overallRank||'—';
+        const medal=pos<=3?MED[pos-1]:'';
+        return `<div class="sh-race">
+          <div class="sh-race-pos">${medal||'#'+pos}</div>
+          <div class="sh-race-info">
+            <div class="sh-race-name">${p.raceName||'—'}</div>
+            <div class="sh-race-sub">${p.distance||''} · ${p.raceCity||''} · ${p.raceDate?new Date(p.raceDate).getFullYear():''}</div>
+          </div>
+          <div class="sh-race-time">${p.time||'—'}</div>
+        </div>`;
+      }).join('');
+
+      document.getElementById('sheetProvas').innerHTML=
+        provas.length?`<div class="sh-section">Últimas provas</div>${provasHtml}`:'<div class="sh-section" style="color:var(--t3)">Sem provas registradas</div>';
+    }catch(e){
+      document.getElementById('sheetProvas').innerHTML='';
+    }
+  }
+}
+
+function closeSheet(e){
+  if(!e||e.target===document.getElementById('overlay'))
+    document.getElementById('overlay').classList.remove('open');
+}
+
+// ══════════════════════════════════════
+// START
+// ══════════════════════════════════════
+const hidden={display:'none'};
+Object.assign(document.getElementById('tab1').style, hidden);
+Object.assign(document.getElementById('tab2').style, hidden);
+document.getElementById('tab1').classList.add('hidden');
+document.getElementById('tab2').classList.add('hidden');
+
 init();
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
 </body>
 </html>
