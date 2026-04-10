@@ -2,7 +2,14 @@
 
 ← [[00-INDEX]]
 
-> Registro de bugs encontrados e corrigidos, com causa raiz e solução.
+> Registro de bugs encontrados e corrigidos, com causa raiz e solução.  
+> Última atualização: 2026-04-10
+
+---
+
+## 2026-04-10
+
+**Status do dia:** Sem novos bugs registrados. Todos os bugs críticos de ranking e resultados estão resolvidos. Arquivos de diagnóstico/scraper experimentais acumulados na raiz (não comitados) — ver 04-ROADMAP para organização pendente.
 
 ---
 

@@ -3,19 +3,24 @@
 ← [[00-INDEX]]
 
 > Prioridades baseadas no impacto para usuário e viabilidade técnica.  
-> Atualizado em: 2026-04-09
+> Atualizado em: 2026-04-10
 
 ---
 
 ## Status dos módulos atuais
 
+> Verificado em: 2026-04-10  
+> Railway: status não verificado hoje (sem deploy recente)  
+> `resultados.html`: redesenhado em 2026-04-09 (commit `a173bb3`), bugs de tempo/pace corrigidos
+
 | Módulo | Status | Notas |
 |--------|--------|-------|
-| Ranking por distância | ✅ Pronto | Funciona, bugs de exibição corrigidos |
-| Resultados por prova | ✅ Pronto | Multi-distância com pace correto |
+| Ranking por distância | ✅ Pronto | BUG-001 corrigido (mismatch KM/K) |
+| Resultados por prova | ✅ Pronto | BUG-002/003 corrigidos (tempo + pace por linha) |
+| resultados.html UI | ✅ Pronto | Redesenhado completo — "startup level" (04-09) |
 | Auth JWT | ✅ Pronto | Login/register/recovery BIP39 |
 | Corridas abertas | ✅ Pronto | Calendário com scraper |
-| Perfil do atleta | ✅ Pronto | Público + privado logado |
+| Perfil do atleta | ✅ Pronto | BUG-004 corrigido (/auth/me parsing) |
 | GPS / Strava | ✅ Pronto | Sync automático 3h diário |
 | IA Coach (Claude) | ✅ Pronto | Chat + perfil psicológico/biológico |
 | Decision Engine | ✅ Pronto | Plano diário com DecisionLog |
@@ -28,6 +33,13 @@
 | Scraper de resultados | 🔄 Parcial | Agente 7 placeholder — só log |
 | Push notifications | ⏳ Pendente | Agentes 4/6 logam mas não enviam |
 | Email (nodemailer) | ⏳ Pendente | Dependência instalada, não configurada |
+
+### Limpeza pendente (arquivos não comitados na raiz)
+Acumularam-se scripts experimentais não comitados — devem ser movidos para `scripts/` ou descartados:
+- `diagnostico.cjs`, `test-apis.cjs`, `test-sites.cjs` — diagnósticos
+- `import_fast_v2/v3/v4.cjs` — iterações de import
+- `race83-investigar.cjs`, `race83-scraper-api.cjs`, `scraper-race83.cjs` — scrapers Race83
+- `fix-e-scraper-completo.cjs`, `scraper-runnerbrasil.py` — scrapers avulsos
 
 ---
 
