@@ -13,7 +13,7 @@ const https = require('https');
 const { XMLParser } = require('fast-xml-parser');
 const { PrismaClient } = require('@prisma/client');
 
-const DB_URL = process.env.DATABASE_URL || 'postgresql://postgres:esjWowaYBBHymMehTZZiLSPjgkQSfDZW@maglev.proxy.rlwy.net:27005/railway?sslmode=require';
+const DB_URL = process.env.DATABASE_URL || 'postgresql://postgres:sBbOLYIKlSXCXTnLWnYRUTJVAzLUBhhF@caboose.proxy.rlwy.net:31475/railway?sslmode=require';
 const prisma = new PrismaClient({ datasources: { db: { url: DB_URL } } });
 
 const CHIPOWER_BASE = 'https://www.chipower.com.br/resultados/';

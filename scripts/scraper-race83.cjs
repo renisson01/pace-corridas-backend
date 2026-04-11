@@ -1,240 +1,220 @@
 #!/usr/bin/env node
 /**
- * REGENI Scraper — Race83 (.clax XML)
+ * REGENI — Race83 Scraper (Wiclax/CLAX format)
+ * Same XML format as ChipPower but from race83.com.br
  * 
- * USO:
- *   cd ~/pace-corridas-backend
- *   DATABASE_URL="postgresql://postgres:esjWowaYBBHymMehTZZiLSPjgkQSfDZW@maglev.proxy.rlwy.net:27005/railway?sslmode=require" node scripts/scraper-race83.cjs
- * 
- * Ou passe URLs como argumento:
- *   DATABASE_URL=... node scripts/scraper-race83.cjs "https://race83.com.br/resultados/evento/2025/5-MIJP2025/5-MIJP2025.clax"
+ * Usage:
+ *   node scraper-race83.cjs --list
+ *   node scraper-race83.cjs --all
+ *   node scraper-race83.cjs --event "evento/2025/EVENT/EVENT.clax" --dry
  */
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 
-const KNOWN_URLS = [
-  'https://race83.com.br/resultados/evento/2025/5-MIJP2025/5-MIJP2025.clax'
-];
+const https = require('https');
+const { XMLParser } = require('fast-xml-parser');
+const { Client } = require('pg');
+
+const DB_URL = process.env.DATABASE_URL || 'postgresql://postgres:sBbOLYIKlSXCXTnLWnYRUTJVAzLUBhhF@caboose.proxy.rlwy.net:31475/railway';
+const RACE83_BASE = 'https://race83.com.br/resultados/';
+const RACE83_INDEX = 'https://race83.com.br/resultados/';
+const DRY = process.argv.includes('--dry');
+const DELAY = ms => new Promise(r => setTimeout(r, ms));
+
+function fetch(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, { headers: { 'User-Agent': 'REGENI/1.0' }, timeout: 30000 }, res => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location)
+        return fetch(res.headers.location).then(resolve).catch(reject);
+      let d = ''; res.on('data', c => d += c); res.on('end', () => resolve(d)); res.on('error', reject);
+    }).on('error', reject);
+  });
+}
 
 function parseTime(raw) {
-  if (!raw) return 'DNS';
-  // "00h14'56,043" → "00:14:56"
+  if (!raw) return null;
   const m = raw.match(/(\d+)h(\d+)'(\d+)/);
   if (m) return `${m[1].padStart(2,'0')}:${m[2].padStart(2,'0')}:${m[3].padStart(2,'0')}`;
+  const m2 = raw.match(/(\d+):(\d+):(\d+)/);
+  if (m2) return raw.substring(0,8);
   return raw;
 }
 
-function normDist(parcours) {
-  if (!parcours) return '5K';
-  const s = parcours.toUpperCase();
-  if (s.includes('MARATONA') && !s.includes('MEIA')) return '42K';
-  if (s.includes('MEIA')) return '21K';
-  if (s.includes('10K')) return '10K';
-  if (s.includes('5K')) return '5K';
-  if (s.includes('3K')) return '3K';
-  if (s.includes('15K')) return '15K';
-  return '5K';
-}
-
-function distKm(d) { return parseFloat(d) || 5; }
-
-function calcPace(t, km) {
-  if (!t || t === 'DNS' || !km) return null;
+function timeToSec(t) {
+  if (!t) return 999999;
   const p = t.split(':').map(Number);
-  const s = p.length===3 ? p[0]*3600+p[1]*60+p[2] : p.length===2 ? p[0]*60+p[1] : 0;
-  if (!s) return null;
-  const ps = s/km;
-  return Math.floor(ps/60)+':'+String(Math.round(ps%60)).padStart(2,'0');
+  return p.length === 3 ? p[0]*3600+p[1]*60+p[2] : p[0]*60+p[1];
 }
 
-function ageGroup(birthYear) {
-  if (!birthYear) return null;
-  const age = new Date().getFullYear() - birthYear;
-  if (age < 20) return '16-19';
-  if (age < 25) return '20-24';
-  if (age < 30) return '25-29';
-  if (age < 35) return '30-34';
-  if (age < 40) return '35-39';
-  if (age < 45) return '40-44';
-  if (age < 50) return '45-49';
-  if (age < 55) return '50-54';
-  if (age < 60) return '55-59';
-  if (age < 70) return '60-69';
-  return '70+';
+function normDist(raw) {
+  if (!raw) return '';
+  const l = raw.toLowerCase().replace(/\s+/g,'');
+  if (l.includes('42k')||l.includes('maratona')) return '42km';
+  if (l.includes('21k')||l.includes('meia')) return '21km';
+  if (l.includes('15k')) return '15km';
+  if (l.includes('10k')) return '10km';
+  if (l.includes('5k')) return '5km';
+  if (l.includes('3k')) return '3km';
+  const n = raw.match(/([\d.]+)\s*k/i);
+  return n ? n[1]+'km' : raw;
 }
 
-const SKIP_EQUIPES = new Set(['NAO POSSUO','OUTROS','NAO','SEM','NENHUMA','AVULSO','INDIVIDUAL','SEM EQUIPE','NAO TENHO','PARTICULAR','SEM ASSESSORIA','NAO TEM','NAO TENHO ASSESSORIA','NAO TENHO ACESSORIA','SEM ACESSORIA','NENHUM','NAO HA','NAO HA.']);
-
-function cleanEquipe(e) {
-  if (!e) return null;
-  const u = e.trim().toUpperCase();
-  if (SKIP_EQUIPES.has(u) || u.length < 2) return null;
-  return e.trim();
+function calcPace(time, distKm) {
+  if (!time||!distKm) return '';
+  const s = timeToSec(time), km = parseFloat(distKm);
+  if (!km) return '';
+  const ps = s/km, min = Math.floor(ps/60), sec = Math.round(ps%60);
+  return `${min}:${String(sec).padStart(2,'0')}`;
 }
 
-function attr(tag, name) {
-  const m = tag.match(new RegExp(`${name}="([^"]*)"`));
-  return m ? m[1] : null;
+function ageGroup(age) {
+  if (!age||age<0||age>120) return 'Geral';
+  if (age<20) return 'Sub-20';
+  if (age<30) return '20-29';
+  if (age<40) return '30-39';
+  if (age<50) return '40-49';
+  if (age<60) return '50-59';
+  return '60+';
 }
 
-async function scrapeUrl(url) {
-  console.log(`\n📥 Baixando: ${url}`);
-  const res = await fetch(url);
-  if (!res.ok) { console.error(`❌ HTTP ${res.status}`); return 0; }
-  const xml = await res.text();
-  console.log(`   XML: ${(xml.length/1024).toFixed(0)}KB`);
+function parseDate(s) {
+  const months = {janeiro:'01',fevereiro:'02','março':'03',marco:'03',abril:'04',maio:'05',junho:'06',julho:'07',agosto:'08',setembro:'09',outubro:'10',novembro:'11',dezembro:'12'};
+  const m = s?.match(/(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})/);
+  if (m) return `${m[3]}-${months[m[2].toLowerCase()]||'01'}-${m[1].padStart(2,'0')}`;
+  return new Date().toISOString().split('T')[0];
+}
 
-  // Event info
-  const evtName = attr(xml.match(/<Epreuve[^>]*/)?.[0] || '', 'nom') || 'Evento Race83';
-  console.log(`   Evento: ${evtName}`);
+async function listEvents() {
+  console.log('📡 Fetching Race83 event list...');
+  const html = await fetch(RACE83_INDEX);
+  // Extract clax URLs from the page
+  const urls = [...html.matchAll(/(?:href|url|f)=["']?([^"'\s]*\.clax)/gi)]
+    .map(m => m[1].replace(/\\\//g,'/'));
+  
+  // Also try g-live.html?f= pattern
+  const urls2 = [...html.matchAll(/g-live\.html\?f=([^"\\&\s]*)/g)]
+    .map(m => m[1].replace(/\\\//g,'/'));
+  
+  const all = [...new Set([...urls, ...urls2])];
+  return all;
+}
 
-  // Parse athletes from <E> tags inside <Engages>
-  const engStart = xml.indexOf('<Engages>');
-  const engEnd = xml.indexOf('</Engages>');
-  if (engStart < 0) { console.error('   ❌ Sem seção <Engages>'); return 0; }
-  const engSection = xml.slice(engStart, engEnd + 11);
+async function parseClax(path) {
+  const url = path.startsWith('http') ? path : RACE83_BASE + path;
+  console.log(`📡 ${url}`);
+  let xml;
+  try { xml = await fetch(url); } catch(e) { console.log(`  ❌ ${e.message}`); return null; }
+  
+  const doc = new XMLParser({ ignoreAttributes:false, attributeNamePrefix:'' }).parse(xml);
+  const ep = doc.Epreuve;
+  if (!ep) { console.log('  ❌ Invalid CLAX'); return null; }
 
-  const athleteTags = engSection.match(/<E [^>]+\/>/g) || [];
-  console.log(`   Atletas: ${athleteTags.length}`);
+  const name = (ep.nom||'').trim();
+  const dates = ep.dates||'';
+  const org = ep.organisateur||'';
+  const stM = org.match(/(BA|SE|PE|AL|CE|RN|PB|PI|MA|MG|SP|RJ|PR|RS|SC|GO|MT|MS|ES|DF|TO|RO|AC|AM|PA|AP|RR)\s*$/i);
+  const state = stM ? stM[1].toUpperCase() : 'PB';
+  const cityM = org.match(/[-–]\s*([^-–]+?)\s*(?:BA|SE|PE|AL|CE|RN|PB|PI|MA|MG|SP|RJ|PR|RS|SC|GO|MT|MS|ES|DF|TO|RO|AC|AM|PA|AP|RR)\s*$/i);
+  const city = cityM ? cityM[1].trim() : '';
 
-  const athleteMap = {};
-  for (const tag of athleteTags) {
-    const doss = attr(tag, 'd');
-    if (!doss) continue;
-    athleteMap[doss] = {
-      name: (attr(tag, 'n') || '').toUpperCase().trim(),
-      equipe: cleanEquipe(attr(tag, 'c')),
-      birthYear: attr(tag, 'a') ? parseInt(attr(tag, 'a')) : null,
-      gender: attr(tag, 'x') === 'F' ? 'F' : attr(tag, 'x') === 'M' ? 'M' : null,
-      parcours: attr(tag, 'p'),
-      city: attr(tag, 'ip2') || null,
-      state: attr(tag, 'ip3') || 'PB'
-    };
+  const etapes = ep.Etapes?.Etape;
+  const etArr = Array.isArray(etapes) ? etapes : etapes ? [etapes] : [];
+  let engages = [], results = [];
+  for (const et of etArr) {
+    const e = et.Engages?.E; engages.push(...(Array.isArray(e)?e:e?[e]:[]));
+    const r = et.Resultats?.R; results.push(...(Array.isArray(r)?r:r?[r]:[]));
   }
 
-  // Parse results from <R> tags
-  const resultTags = xml.match(/<R d="\d+"[^/]*\/>/g) || [];
-  console.log(`   Resultados: ${resultTags.length}`);
+  const aMap = {};
+  for (const e of engages) aMap[String(e.d)] = { name:(e.n||'').trim(), gender:(e.x||'').toUpperCase()==='F'?'F':'M', year:parseInt(e.a)||null, age:e.a?(new Date().getFullYear()-parseInt(e.a)):null, mod:(e.p||'').trim(), dist:normDist(e.ip1||e.p||'') };
+  const rMap = {};
+  for (const r of results) rMap[String(r.d)] = { time:parseTime(r.t), timeReal:parseTime(r.re) };
 
-  const resultMap = {};
-  for (const tag of resultTags) {
-    const doss = attr(tag, 'd');
-    const time = attr(tag, 't');
-    if (doss && time) resultMap[doss] = { time: parseTime(time) };
-  }
-
-  // Merge: athletes with results
   const merged = [];
-  for (const [doss, ath] of Object.entries(athleteMap)) {
-    if (!ath.name || ath.name.length < 2) continue;
-    const result = resultMap[doss];
-    if (!result || result.time === 'DNS' || result.time === '00:00:00') continue;
-    merged.push({ ...ath, time: result.time, distance: normDist(ath.parcours) });
-  }
-  console.log(`   Atletas com resultado: ${merged.length}`);
-
-  // Distances found
-  const dists = [...new Set(merged.map(m => m.distance))];
-  console.log(`   Distâncias: ${dists.join(', ')}`);
-
-  // Create race
-  const existingRace = await prisma.race.findFirst({
-    where: { name: { contains: evtName.slice(0, 25), mode: 'insensitive' } }
-  });
-
-  let race;
-  if (existingRace) {
-    console.log(`   ℹ️ Corrida já existe: ${existingRace.name}`);
-    race = existingRace;
-  } else {
-    race = await prisma.race.create({
-      data: {
-        name: evtName,
-        city: 'João Pessoa',
-        state: 'PB',
-        date: new Date('2025-08-03'),
-        distances: dists.join(','),
-        organizer: 'Race83',
-        status: 'completed'
-      }
-    });
-    console.log(`   ✅ Corrida criada: ${race.name}`);
+  for (const [d,a] of Object.entries(aMap)) {
+    const r = rMap[d]; if (!r) continue;
+    if (a.mod.toUpperCase().includes('DESCLASS')) continue;
+    merged.push({ ...a, time:r.timeReal||r.time, dist:a.dist });
   }
 
-  // Import
-  let imported = 0, skipped = 0, errors = 0;
-  for (const m of merged) {
-    const km = distKm(m.distance);
-    const pace = calcPace(m.time, km);
-    const age = m.birthYear ? new Date().getFullYear() - m.birthYear : null;
+  const dists = [...new Set(merged.map(r=>r.dist))].filter(d=>d&&d.toUpperCase()!=='TROCA');
+  const grouped = {};
+  for (const dist of dists) {
+    grouped[dist] = merged.filter(r=>r.dist===dist).sort((a,b)=>timeToSec(a.time)-timeToSec(b.time)).map((r,i)=>({...r,rank:i+1}));
+  }
 
-    try {
-      let athlete = await prisma.athlete.findFirst({
-        where: { name: m.name, gender: m.gender || undefined }
-      });
+  return { name, dates, city, state, org, dists, grouped, total:merged.length, source:'race83', url };
+}
 
-      if (!athlete) {
-        athlete = await prisma.athlete.create({
-          data: {
-            name: m.name,
-            gender: m.gender,
-            equipe: m.equipe,
-            state: m.state || 'PB',
-            age: age,
-            totalRaces: 1,
-            totalPoints: 0
-          }
-        });
-      } else {
-        await prisma.athlete.update({
-          where: { id: athlete.id },
-          data: { totalRaces: { increment: 1 } }
-        });
-      }
+async function importEvent(data) {
+  if (!data) return {ok:0,err:0};
+  console.log(`  🏁 ${data.name} | ${data.city} ${data.state} | ${data.total} finishers | ${data.dists.join(', ')}`);
+  if (DRY) return {ok:0,err:0};
 
-      const existing = await prisma.result.findUnique({
-        where: { athleteId_raceId: { athleteId: athlete.id, raceId: race.id } }
-      });
-      if (existing) { skipped++; continue; }
+  const client = new Client({ connectionString: DB_URL });
+  await client.connect();
 
-      await prisma.result.create({
-        data: {
-          athleteId: athlete.id,
-          raceId: race.id,
-          time: m.time,
-          pace: pace,
-          distance: m.distance,
-          ageGroup: ageGroup(m.birthYear),
-          points: 0
-        }
-      });
-      imported++;
+  // Find or create race
+  const raceId = 'race83_' + data.name.replace(/[^a-zA-Z0-9]/g,'').toLowerCase().substring(0,40);
+  await client.query(`INSERT INTO "Race"(id,name,date,city,state,distances,organizer,status,"createdAt","updatedAt") VALUES($1,$2,$3,$4,$5,$6,$7,'completed',NOW(),NOW()) ON CONFLICT(id) DO NOTHING`,
+    [raceId, data.name, parseDate(data.dates), data.city, data.state, data.dists.join(','), data.org||'Race83']);
 
-      if (imported % 200 === 0) console.log(`   ✅ ${imported} importados...`);
-    } catch (e) {
-      if (e.code === 'P2002') { skipped++; continue; }
-      errors++;
-      if (errors < 5) console.error(`   ❌ ${m.name}: ${e.message?.slice(0,80)}`);
+  let ok = 0, err = 0;
+  for (const [dist, results] of Object.entries(data.grouped)) {
+    const distKm = parseFloat(dist)||0;
+    for (const r of results) {
+      try {
+        const aid = 'r83_' + r.name.replace(/[^a-zA-Z0-9]/g,'').toLowerCase().substring(0,40);
+        await client.query(`INSERT INTO "Athlete"(id,name,gender,age,state,"totalRaces","totalPoints","createdAt","updatedAt") VALUES($1,$2,$3,$4,$5,1,0,NOW(),NOW()) ON CONFLICT(id) DO NOTHING`,
+          [aid, r.name, r.gender, r.age||0, data.state]);
+        
+        const rid = raceId + '_' + aid.substring(0,30) + '_' + dist.substring(0,10);
+        await client.query(`INSERT INTO "Result"(id,"raceId","athleteId",time,pace,"overallRank","genderRank","ageGroup",distance,points,"createdAt") VALUES($1,$2,$3,$4,$5,$6,0,$7,$8,0,NOW()) ON CONFLICT DO NOTHING`,
+          [rid, raceId, aid, r.time||'00:00:00', calcPace(r.time,distKm), r.rank||0, ageGroup(r.age), dist]);
+        ok++;
+      } catch(e) { err++; }
     }
+    console.log(`  📏 ${dist}: ${results.length} → ${ok} ok`);
   }
 
-  console.log(`   ✅ FINAL: ${imported} importados | ${skipped} ignorados | ${errors} erros`);
-  return imported;
+  await client.end();
+  return {ok, err};
 }
 
 async function main() {
-  console.log('🏃 REGENI Scraper — Race83\n');
-  const urls = process.argv.slice(2).length > 0 ? process.argv.slice(2) : KNOWN_URLS;
-  let total = 0;
-  for (const url of urls) {
-    total += await scrapeUrl(url);
+  const args = process.argv.slice(2);
+
+  if (args.includes('--list')) {
+    const events = await listEvents();
+    console.log(`\n🏆 ${events.length} events found on Race83:\n`);
+    events.forEach((e, i) => console.log(`  ${i+1}. ${e}`));
+    return;
   }
-  console.log(`\n🏁 TOTAL IMPORTADO: ${total}`);
-  const [races, athletes, results] = await Promise.all([
-    prisma.race.count(), prisma.athlete.count(), prisma.result.count()
-  ]);
-  console.log(`📊 Banco: ${races} corridas, ${athletes} atletas, ${results} resultados`);
-  process.exit(0);
+
+  if (args.includes('--event')) {
+    const path = args[args.indexOf('--event')+1];
+    const data = await parseClax(path);
+    const r = await importEvent(data);
+    console.log(`\n✅ Done: ${r.ok} imported, ${r.err} errors`);
+    return;
+  }
+
+  if (args.includes('--all')) {
+    const events = await listEvents();
+    console.log(`🚀 ${events.length} events\n`);
+    let totalOk=0, totalErr=0;
+    for (const path of events) {
+      try {
+        const data = await parseClax(path);
+        const r = await importEvent(data);
+        totalOk += r.ok; totalErr += r.err;
+      } catch(e) { console.error(`  ❌ ${e.message}`); }
+      await DELAY(500);
+    }
+    console.log(`\n${'='.repeat(50)}`);
+    console.log(`🎉 DONE: ${totalOk} imported, ${totalErr} errors`);
+    return;
+  }
+
+  console.log('Usage:\n  node scraper-race83.cjs --list\n  node scraper-race83.cjs --all [--dry]\n  node scraper-race83.cjs --event "PATH" [--dry]');
 }
 
-main().catch(e => { console.error('FATAL:', e); process.exit(1); });
+main().catch(e => { console.error('💥', e.message); process.exit(1); });

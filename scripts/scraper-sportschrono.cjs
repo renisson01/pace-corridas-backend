@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 /**
- * REGENI Scraper — SportsChrono (via RaceZone JSON)
- * Extrai resultados de https://resultados.racezone.com.br/sportschrono/
- * 
+ * REGENI Scraper — SportsChrono (via RaceZone JSON) — v4 BATCH
  * Usage: DATABASE_URL=... node scripts/scraper-sportschrono.cjs
  */
 const { PrismaClient } = require('@prisma/client');
@@ -10,28 +8,61 @@ const prisma = new PrismaClient();
 
 const BASE = 'https://resultados.racezone.com.br/sportschrono/data';
 
+const UF_MAP = {
+  'SERGIPE': 'SE', 'SÃO PAULO': 'SP', 'SAO PAULO': 'SP', 'RIO DE JANEIRO': 'RJ',
+  'MINAS GERAIS': 'MG', 'BAHIA': 'BA', 'CEARÁ': 'CE', 'CEARA': 'CE',
+  'PERNAMBUCO': 'PE', 'PARANÁ': 'PR', 'PARANA': 'PR', 'SANTA CATARINA': 'SC',
+  'RIO GRANDE DO SUL': 'RS', 'GOIÁS': 'GO', 'GOIAS': 'GO', 'MARANHÃO': 'MA',
+  'MARANHAO': 'MA', 'PARÁ': 'PA', 'PARA': 'PA', 'AMAZONAS': 'AM',
+  'MATO GROSSO': 'MT', 'MATO GROSSO DO SUL': 'MS', 'ALAGOAS': 'AL',
+  'PIAUÍ': 'PI', 'PIAUI': 'PI', 'RIO GRANDE DO NORTE': 'RN', 'PARAÍBA': 'PB',
+  'PARAIBA': 'PB', 'ESPÍRITO SANTO': 'ES', 'ESPIRITO SANTO': 'ES',
+  'TOCANTINS': 'TO', 'RONDÔNIA': 'RO', 'RONDONIA': 'RO', 'ACRE': 'AC',
+  'RORAIMA': 'RR', 'AMAPÁ': 'AP', 'AMAPA': 'AP', 'DISTRITO FEDERAL': 'DF',
+};
+
 async function fetchJSON(url) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} para ${url}`);
   return res.json();
 }
 
+function parsePlace(place) {
+  if (!place) return { city: '', state: 'SE' };
+  const parts = place.split('-').map(s => s.trim());
+  const city = parts[0] || '';
+  const stateRaw = (parts[1] || '').toUpperCase();
+  const state = UF_MAP[stateRaw] || stateRaw.slice(0, 2) || 'SE';
+  return { city, state };
+}
+
+function extractDistance(name) {
+  if (!name) return null;
+  const up = name.toUpperCase();
+  if (/42\s*K|MARAT/.test(up)) return '42K';
+  if (/21\s*K|MEIA/.test(up)) return '21K';
+  if (/15\s*K/.test(up)) return '15K';
+  if (/10\s*K/.test(up)) return '10K';
+  if (/8\s*K/.test(up)) return '8K';
+  if (/5\s*K/.test(up)) return '5K';
+  if (/3\s*K/.test(up)) return '3K';
+  return null;
+}
+
 function formatTime(raw) {
-  if (!raw) return 'DNS';
-  // Format: "0:14:43.039" or "1:23:45.678"
+  if (!raw) return null;
   const parts = raw.split(':');
   if (parts.length === 3) {
     const h = parseInt(parts[0]);
     const m = parseInt(parts[1]);
     const s = Math.floor(parseFloat(parts[2]));
-    if (h > 0) return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    return `00:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }
   return raw;
 }
 
 function calcPace(timeStr, distKm) {
-  if (!timeStr || timeStr === 'DNS' || !distKm) return null;
+  if (!timeStr || !distKm) return null;
   const parts = timeStr.split(':').map(Number);
   let secs = 0;
   if (parts.length === 3) secs = parts[0]*3600 + parts[1]*60 + parts[2];
@@ -43,183 +74,212 @@ function calcPace(timeStr, distKm) {
   return `${pm}:${String(ps).padStart(2,'0')}`;
 }
 
-function normalizeDistance(raw) {
-  if (!raw) return null;
-  const s = raw.toUpperCase().replace(/\s/g, '');
-  if (s.includes('3K') || s === '3KM') return '3K';
-  if (s.includes('5K') || s === '5KM') return '5K';
-  if (s.includes('10K') || s === '10KM') return '10K';
-  if (s.includes('15K') || s === '15KM') return '15K';
-  if (s.includes('21K') || s.includes('MEIA')) return '21K';
-  if (s.includes('42K') || s.includes('MARAT')) return '42K';
-  return raw;
+function distKmValue(distStr) {
+  if (!distStr) return 5;
+  const n = parseFloat(distStr);
+  return isNaN(n) ? 5 : n;
 }
 
-function ageGroup(age) {
-  if (!age) return null;
-  if (age < 20) return '16-19';
-  if (age < 25) return '20-24';
-  if (age < 30) return '25-29';
-  if (age < 35) return '30-34';
-  if (age < 40) return '35-39';
-  if (age < 45) return '40-44';
-  if (age < 50) return '45-49';
-  if (age < 55) return '50-54';
-  if (age < 60) return '55-59';
-  if (age < 70) return '60-69';
-  return '70+';
+// ─── BATCH INSERT via SQL raw ────────────────────────────────────────────────
+
+async function batchUpsertAthletes(athletes) {
+  // athletes: [{ name, gender, state, age }]
+  // Insere em blocos de 500, ignora duplicatas por (name, gender)
+  const CHUNK = 500;
+  for (let i = 0; i < athletes.length; i += CHUNK) {
+    const chunk = athletes.slice(i, i + CHUNK);
+    const values = chunk.map((a, idx) => {
+      const id = `sc_${Date.now()}_${i + idx}`;
+      const name = (a.name || '').replace(/'/g, "''");
+      const gender = a.gender ? `'${a.gender}'` : 'NULL';
+      const state = (a.state || 'SE').replace(/'/g, "''");
+      const age = a.age ? parseInt(a.age) : 'NULL';
+      return `('${id}', '${name}', ${gender}, '${state}', ${age}, 1, 0, NOW(), NOW())`;
+    }).join(',\n');
+
+    await prisma.$executeRawUnsafe(`
+      INSERT INTO "Athlete" (id, name, gender, state, age, "totalRaces", "totalPoints", "createdAt", "updatedAt")
+      VALUES ${values}
+      ON CONFLICT DO NOTHING
+    `);
+  }
 }
 
-async function main() {
-  console.log('🏃 REGENI Scraper — SportsChrono\n');
-
-  // 1. Get all events
-  const events = await fetchJSON(`${BASE}/events.json`);
-  const eventList = Object.entries(events);
-  console.log(`📋 ${eventList.length} eventos encontrados\n`);
-
-  let totalImported = 0;
-
-  for (const [idx, evt] of eventList) {
-    const slug = evt.slug || evt.id || idx;
-    const eventName = evt.name || 'Evento ' + idx;
-    console.log(`\n--- ${eventName} (${slug}) ---`);
+async function batchInsertResults(results) {
+  // results: [{ athleteId, raceId, time, pace, distance, ageGroup, overallRank, genderRank }]
+  const CHUNK = 500;
+  let inserted = 0;
+  for (let i = 0; i < results.length; i += CHUNK) {
+    const chunk = results.slice(i, i + CHUNK);
+    const values = chunk.map((r, idx) => {
+      const id = `scr_${Date.now()}_${i + idx}`;
+      const time = r.time ? `'${r.time}'` : 'NULL';
+      const pace = r.pace ? `'${r.pace}'` : 'NULL';
+      const dist = r.distance ? `'${r.distance}'` : 'NULL';
+      const ag = r.ageGroup ? `'${r.ageGroup.replace(/'/g, "''")}'` : 'NULL';
+      const or_ = r.overallRank || 'NULL';
+      const gr = r.genderRank || 'NULL';
+      return `('${id}', '${r.athleteId}', '${r.raceId}', ${time}, ${pace}, ${dist}, ${ag}, ${or_}, ${gr}, 0, NOW(), NOW())`;
+    }).join(',\n');
 
     try {
-      // Get event details
-      const eventData = await fetchJSON(`${BASE}/${slug}/event.json`);
-      const city = eventData.city || eventData.local || '';
-      const state = eventData.state || 'SE';
-      const dateStr = eventData.date || eventData.startDate || null;
-      const date = dateStr ? new Date(dateStr) : new Date();
+      await prisma.$executeRawUnsafe(`
+        INSERT INTO "Result" (id, "athleteId", "raceId", time, pace, distance, "ageGroup", "overallRank", "genderRank", points, "createdAt", "updatedAt")
+        VALUES ${values}
+        ON CONFLICT DO NOTHING
+      `);
+      inserted += chunk.length;
+      process.stdout.write(`\r  ⏳ Inserindo resultados: ${inserted}/${results.length}...`);
+    } catch (e) {
+      // fallback individual se batch falhar
+      for (const r of chunk) {
+        try {
+          await prisma.$executeRawUnsafe(`
+            INSERT INTO "Result" (id, "athleteId", "raceId", time, pace, distance, "ageGroup", "overallRank", "genderRank", points, "createdAt", "updatedAt")
+            VALUES ('scr_${Date.now()}_fb', '${r.athleteId}', '${r.raceId}', ${r.time ? `'${r.time}'` : 'NULL'}, ${r.pace ? `'${r.pace}'` : 'NULL'}, '${r.distance}', NULL, ${r.overallRank || 'NULL'}, ${r.genderRank || 'NULL'}, 0, NOW(), NOW())
+            ON CONFLICT DO NOTHING
+          `);
+          inserted++;
+        } catch (_) {}
+      }
+    }
+  }
+  return inserted;
+}
 
-      // Get categories/distances
-      const categories = eventData.categories || eventData.cats || {};
+// ─── MAIN ────────────────────────────────────────────────────────────────────
 
-      // Get results
-      let results;
+async function main() {
+  console.log('🏃 REGENI Scraper — SportsChrono v4 BATCH\n');
+
+  const events = await fetchJSON(`${BASE}/events.json`);
+  console.log(`📋 ${events.length} eventos encontrados\n`);
+
+  let totalImported = 0;
+  let totalSkipped = 0;
+
+  for (const evt of events) {
+    const eventId = evt.id;
+    const eventName = evt.name || 'Evento ' + eventId;
+    const { city, state } = parsePlace(evt.place);
+    const dateStr = evt.startDate || null;
+    const date = dateStr ? new Date(dateStr) : new Date();
+
+    console.log(`\n--- ${eventName} (${eventId}) ---`);
+
+    try {
+      // Detalhes do evento
+      const eventData = await fetchJSON(`${BASE}/${eventId}/event.json`);
+      const catMap = {};
+      if (Array.isArray(eventData.categories)) {
+        for (const cat of eventData.categories) {
+          catMap[cat.i] = cat.n;
+        }
+      }
+
+      // Resultados
+      let rawResults;
       try {
-        results = await fetchJSON(`${BASE}/${slug}/results.json`);
+        rawResults = await fetchJSON(`${BASE}/${eventId}/results.json`);
       } catch (e) {
-        console.log(`  ⚠️ Sem resultados: ${e.message}`);
+        console.log(`  ⚠️  Sem resultados: ${e.message}`);
         continue;
       }
 
-      if (!Array.isArray(results) || results.length === 0) {
-        console.log('  ⚠️ Sem resultados');
+      if (!Array.isArray(rawResults) || rawResults.length === 0) {
+        console.log('  ⚠️  Sem resultados');
         continue;
       }
 
-      console.log(`  📊 ${results.length} resultados`);
+      console.log(`  📊 ${rawResults.length} resultados encontrados`);
 
-      // Determine distances from categories
-      const catDistances = {};
-      if (categories) {
-        Object.entries(categories).forEach(([catId, cat]) => {
-          const name = cat.name || cat.nm || '';
-          catDistances[catId] = normalizeDistance(name);
-        });
-      }
+      const distance = extractDistance(eventName) || '5K';
+      const distKm = distKmValue(distance);
 
-      // Create race
-      const distances = [...new Set(Object.values(catDistances).filter(Boolean))].join(',') || '5K';
-      
-      // Check if race already exists
-      const existingRace = await prisma.race.findFirst({
-        where: { name: { contains: eventName.slice(0, 20), mode: 'insensitive' } }
+      // Criar ou reutilizar corrida
+      let race = await prisma.race.findFirst({
+        where: {
+          name: { contains: eventName.slice(0, 30), mode: 'insensitive' },
+          date: date,
+        }
       });
 
-      let race;
-      if (existingRace) {
-        console.log(`  ℹ️ Corrida já existe: ${existingRace.name}`);
-        race = existingRace;
+      if (race) {
+        console.log(`  ℹ️  Corrida já existe: ${race.name}`);
       } else {
         race = await prisma.race.create({
           data: {
             name: eventName,
             city: city || 'Sergipe',
             state: state || 'SE',
-            date: date,
-            distances: distances,
-            organizer: 'SportsChrono',
-            status: 'completed'
+            date,
+            distances: distance,
+            organizer: evt.organizer || 'SportsChrono',
+            status: 'completed',
           }
         });
         console.log(`  ✅ Corrida criada: ${race.name}`);
       }
 
-      // Import results
-      let imported = 0;
-      let skipped = 0;
-
-      for (const r of results) {
+      // ── FASE 1: Preparar dados em memória ──────────────────────────────
+      const validRows = [];
+      for (const r of rawResults) {
         const name = (r.nm || '').trim().toUpperCase();
-        if (!name || name.length < 2) { skipped++; continue; }
-
+        if (!name || name.length < 2) { totalSkipped++; continue; }
         const time = formatTime(r.tn || r.tg);
-        if (r.s === 'DSQ' || r.s === 'DNF') { skipped++; continue; }
-
+        if (!time) { totalSkipped++; continue; }
         const gender = r.g === 'F' ? 'F' : r.g === 'M' ? 'M' : null;
-        const distance = catDistances[r.c] || normalizeDistance(r.c) || '5K';
-        const distKm = parseFloat(distance) || 5;
-        const pace = calcPace(time, distKm);
-        const age = r.a ? parseInt(r.a) : null;
-        const ageGrp = ageGroup(age);
-
-        try {
-          // Find or create athlete
-          let athlete = await prisma.athlete.findFirst({
-            where: { name: name, gender: gender || undefined }
-          });
-
-          if (!athlete) {
-            athlete = await prisma.athlete.create({
-              data: {
-                name: name,
-                gender: gender,
-                state: state || 'SE',
-                age: age,
-                totalRaces: 1,
-                totalPoints: 0
-              }
-            });
-          } else {
-            await prisma.athlete.update({
-              where: { id: athlete.id },
-              data: { totalRaces: { increment: 1 } }
-            });
-          }
-
-          // Check for duplicate result
-          const existing = await prisma.result.findUnique({
-            where: { athleteId_raceId: { athleteId: athlete.id, raceId: race.id } }
-          });
-
-          if (existing) { skipped++; continue; }
-
-          await prisma.result.create({
-            data: {
-              athleteId: athlete.id,
-              raceId: race.id,
-              time: time,
-              pace: pace,
-              distance: distance,
-              ageGroup: ageGrp,
-              overallRank: r.p || null,
-              genderRank: null,
-              points: 0
-            }
-          });
-
-          imported++;
-        } catch (e) {
-          if (e.code === 'P2002') { skipped++; continue; } // Duplicate
-          console.error(`  ❌ ${name}: ${e.message}`);
-        }
+        validRows.push({
+          name, gender, time,
+          pace: calcPace(time, distKm),
+          age: r.a ? parseInt(r.a) : null,
+          state: r.ct?.uf || state || 'SE',
+          ageGroup: catMap[r.c] || null,
+          overallRank: r.n ? parseInt(r.n) : null,
+          genderRank: r.rg ? parseInt(r.rg) : null,
+          distance,
+        });
       }
 
-      console.log(`  ✅ Importados: ${imported} | Ignorados: ${skipped}`);
-      totalImported += imported;
+      console.log(`  🔧 ${validRows.length} válidos para importar`);
+
+      // ── FASE 2: Batch upsert atletas ───────────────────────────────────
+      process.stdout.write('  ⏳ Inserindo atletas...');
+      await batchUpsertAthletes(validRows);
+      console.log(' ✅');
+
+      // ── FASE 3: Buscar IDs dos atletas inseridos ───────────────────────
+      const names = [...new Set(validRows.map(r => r.name))];
+      const CHUNK = 500;
+      const athleteMap = {}; // name → id
+
+      for (let i = 0; i < names.length; i += CHUNK) {
+        const chunk = names.slice(i, i + CHUNK);
+        const found = await prisma.athlete.findMany({
+          where: { name: { in: chunk } },
+          select: { id: true, name: true },
+        });
+        for (const a of found) athleteMap[a.name] = a.id;
+      }
+
+      // ── FASE 4: Montar resultados com athleteId ────────────────────────
+      const resultRows = validRows
+        .filter(r => athleteMap[r.name])
+        .map(r => ({
+          athleteId: athleteMap[r.name],
+          raceId: race.id,
+          time: r.time,
+          pace: r.pace,
+          distance: r.distance,
+          ageGroup: r.ageGroup,
+          overallRank: r.overallRank,
+          genderRank: r.genderRank,
+        }));
+
+      // ── FASE 5: Batch insert resultados ───────────────────────────────
+      const inserted = await batchInsertResults(resultRows);
+      console.log(`\r  ✅ Importados: ${inserted} | Ignorados: ${validRows.length - inserted + totalSkipped}`);
+      totalImported += inserted;
 
     } catch (e) {
       console.error(`  ❌ Erro: ${e.message}`);
@@ -227,13 +287,15 @@ async function main() {
   }
 
   console.log(`\n🏁 TOTAL IMPORTADO: ${totalImported} resultados`);
-  
-  // Final stats
-  const [races, athletes, results] = await Promise.all([
-    prisma.race.count(), prisma.athlete.count(), prisma.result.count()
+
+  const [races, athletes, resultsCount] = await Promise.all([
+    prisma.race.count(),
+    prisma.athlete.count(),
+    prisma.result.count(),
   ]);
-  console.log(`📊 Banco: ${races} corridas, ${athletes} atletas, ${results} resultados`);
-  
+  console.log(`📊 Banco: ${races} corridas | ${athletes} atletas | ${resultsCount} resultados`);
+
+  await prisma.$disconnect();
   process.exit(0);
 }
 
