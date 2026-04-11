@@ -38,6 +38,7 @@ import { gpsRoutes }             from './modules/gps/gps.routes.js';
 import { corridasAbertasRoutes } from './modules/corridas-abertas/corridas.routes.js';
 import { amigoPaceRoutes }       from './modules/amigo-pace/amigo-pace.routes.js';
 import { predictionRoutes } from './modules/prediction/prediction.routes.js';
+import { athleteRoutes }           from './modules/athletes/athlete.routes.js';
 import { integracoesRoutes }    from './modules/integracoes/integracoes.routes.js';
 import { leagueRoutes } from './modules/league/league.routes.js';
 import { organizerRoutes }       from "./modules/organizer/organizer.routes.js";
@@ -137,6 +138,7 @@ app.addHook('onRequest', async (req, reply) => {
 try {
   await app.register(authRoutes);
   await app.register(raceRoutes);
+  await app.register(athleteRoutes);
   await app.register(resultsRoutes);
   await app.register(rankingRoutes);
   await app.register(scraperRoutes);
