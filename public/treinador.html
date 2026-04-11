@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>REGENI — Coach Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root{--bg:#04060b;--bg2:#0a0f1a;--bg3:#111827;--card:#0d1117;--border:#1e2d3d;--green:#00D4FF;--green2:#E8850C;--yellow:#ffd600;--red:#ff1744;--blue:#448aff;--purple:#e040fb;--orange:#ff6d00;--text:#e2e8f0;--muted:#667788;--font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Space Grotesk',sans-serif}
@@ -678,8 +678,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           </div>
           <div class="card">
             <div class="card-header"><div class="card-title">🛡️ Conta</div></div>
-            <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Sessão ativa como <strong style="color:var(--text)" id="perfilEmail">—</strong></div>
-            <button class="btn btn-ghost btn-sm" onclick="logout()">🚪 Sair da conta</button>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:14px">Sessão ativa como <strong style="color:var(--text)" id="perfilEmail">—</strong></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="abrirAlterarSenha()">🔑 Alterar Senha</button>
+              <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="logout()">🚪 Sair da conta</button>
+            </div>
           </div>
         </div>
       </div>
@@ -723,17 +726,39 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   </div>
 </div>
 
+<div class="modal-overlay" id="modalSenha">
+  <div class="modal modal-sm">
+    <div class="modal-header"><div class="modal-title">🔑 Alterar Senha</div><button class="btn-close" onclick="closeModal('modalSenha')">✕</button></div>
+    <div class="modal-body">
+      <div class="field-group"><label>Senha Atual</label><input type="password" id="senhaAtual" placeholder="Digite a senha atual" autocomplete="current-password"></div>
+      <div class="field-group"><label>Nova Senha</label><input type="password" id="senhaNova" placeholder="Mínimo 8 caracteres" autocomplete="new-password" oninput="validarSenhaForca(this.value)"></div>
+      <div id="senhaForcaBar" style="display:none;margin-bottom:12px">
+        <div style="display:flex;gap:4px;margin-bottom:4px">
+          <div id="sf1" style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+          <div id="sf2" style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+          <div id="sf3" style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+          <div id="sf4" style="flex:1;height:4px;border-radius:2px;background:var(--border)"></div>
+        </div>
+        <div id="sfLabel" style="font-size:10px;color:var(--muted)"></div>
+      </div>
+      <div class="field-group"><label>Confirmar Nova Senha</label><input type="password" id="senhaConfirm" placeholder="Repita a nova senha" autocomplete="new-password"></div>
+      <div id="senhaErro" style="display:none;font-size:12px;color:var(--red);margin-bottom:8px"></div>
+      <button class="btn btn-green" style="width:100%;justify-content:center" onclick="salvarNovaSenha()">💾 Salvar Nova Senha</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const API='';
-const token=localStorage.getItem('pace_token');
-const user=JSON.parse(localStorage.getItem('pace_user')||'{}');
+const DEMO_MODE=new URLSearchParams(location.search).get('demo')==='1';
+const token=DEMO_MODE?'demo-token':localStorage.getItem('pace_token');
+const user=DEMO_MODE?{id:'demo-coach',name:'Carlos Silva',email:'carlos@regeni.com.br'}:JSON.parse(localStorage.getItem('pace_user')||'{}');
 if(!token)window.location.href='/entrar.html';
 
 let atletasData=[];
 let semanaOffset=0;
-let mesAtual=new Date();
 let metodologiaSelecionada='polarizado';
 let etapas=[];
 let chartVolume=null,chartEvolKm=null,chartEvolPace=null;
@@ -741,16 +766,136 @@ let chatAtletaId=null;
 let iaConversas=[];
 let modelos=JSON.parse(localStorage.getItem('pace_coach_modelos')||'[]');
 
+// ── DEMO DATA ────────────────────────────────────────────────────────────────
+const DEMO_ATLETAS=[
+  {id:'d1',nome:'Rafael Monteiro',email:'rafael@email.com',cidade:'São Paulo',estado:'SP',genero:'M',idade:32,tempo5k:'18:45',fcMax:192,fcRepouso:52},
+  {id:'d2',nome:'Ana Carolina Lima',email:'ana@email.com',cidade:'São Paulo',estado:'SP',genero:'F',idade:28,tempo5k:'21:10',fcMax:196,fcRepouso:58},
+  {id:'d3',nome:'Bruno Ferreira',email:'bruno@email.com',cidade:'Campinas',estado:'SP',genero:'M',idade:35,tempo5k:'22:30',fcMax:185,fcRepouso:60},
+  {id:'d4',nome:'Juliana Santos',email:'ju@email.com',cidade:'São Paulo',estado:'SP',genero:'F',idade:30,tempo5k:'24:15',fcMax:191,fcRepouso:62},
+  {id:'d5',nome:'Marcos Oliveira',email:'marcos@email.com',cidade:'Santos',estado:'SP',genero:'M',idade:41,tempo5k:'26:00',fcMax:179,fcRepouso:65},
+  {id:'d6',nome:'Fernanda Costa',email:'fe@email.com',cidade:'São Paulo',estado:'SP',genero:'F',idade:26,tempo5k:'19:55',fcMax:198,fcRepouso:55},
+  {id:'d7',nome:'Diego Souza',email:'diego@email.com',cidade:'Guarulhos',estado:'SP',genero:'M',idade:38,tempo5k:'28:40',fcMax:182,fcRepouso:68},
+  {id:'d8',nome:'Patricia Nunes',email:'pati@email.com',cidade:'São Paulo',estado:'SP',genero:'F',idade:33,tempo5k:'31:20',fcMax:188,fcRepouso:70},
+];
+const DEMO_GPS={
+  d1:[
+    {id:'g1',titulo:'Long Run Domingo',iniciadoEm:'2026-04-06T07:00:00Z',distanciaKm:18.4,duracaoSeg:6624,paceMedio:'6:00',caloriasEst:1104,fonte:'strava'},
+    {id:'g2',titulo:'Intervalado 8x400m',iniciadoEm:'2026-04-08T06:30:00Z',distanciaKm:10.2,duracaoSeg:3060,paceMedio:'5:00',caloriasEst:612,fonte:'strava'},
+    {id:'g3',titulo:'Fartlek 40min',iniciadoEm:'2026-04-09T06:15:00Z',distanciaKm:8.1,duracaoSeg:2880,paceMedio:'5:56',caloriasEst:486,fonte:'strava'},
+    {id:'g4',titulo:'CCL 45min',iniciadoEm:'2026-04-05T07:00:00Z',distanciaKm:9.3,duracaoSeg:3240,paceMedio:'5:48',caloriasEst:558,fonte:'garmin'},
+    {id:'g5',titulo:'Tempo Run 20min',iniciadoEm:'2026-04-03T06:30:00Z',distanciaKm:7.8,duracaoSeg:2520,paceMedio:'5:23',caloriasEst:468,fonte:'strava'},
+    {id:'g6',titulo:'Long Run',iniciadoEm:'2026-03-30T07:00:00Z',distanciaKm:20.1,duracaoSeg:7236,paceMedio:'6:00',caloriasEst:1206,fonte:'strava'},
+    {id:'g7',titulo:'5x1000m',iniciadoEm:'2026-03-27T06:00:00Z',distanciaKm:11.4,duracaoSeg:3420,paceMedio:'5:00',caloriasEst:684,fonte:'strava'},
+    {id:'g8',titulo:'Regenerativo',iniciadoEm:'2026-03-25T07:30:00Z',distanciaKm:5.2,duracaoSeg:2340,paceMedio:'7:30',caloriasEst:312,fonte:'garmin'},
+    {id:'g9',titulo:'CCL 50min',iniciadoEm:'2026-03-23T06:00:00Z',distanciaKm:9.8,duracaoSeg:3600,paceMedio:'6:07',caloriasEst:588,fonte:'strava'},
+    {id:'g10',titulo:'Progressivo 45min',iniciadoEm:'2026-03-21T06:30:00Z',distanciaKm:10.5,duracaoSeg:3420,paceMedio:'5:26',caloriasEst:630,fonte:'strava'},
+  ]
+};
+function demoGpsStats(atletaId){
+  const gps=DEMO_GPS[atletaId]||[];
+  const count=gps.length;
+  const km=gps.reduce((s,g)=>s+g.distanciaKm,0);
+  const cal=gps.reduce((s,g)=>s+g.caloriasEst,0);
+  return {_count:count,_sum:{distanciaKm:km,caloriasEst:cal}};
+}
+function demoPaces(atleta){
+  if(!atleta?.tempo5k)return null;
+  return calcPacesLocal(atleta.tempo5k);
+}
+function demoZonas(atleta){
+  if(!atleta?.fcMax)return null;
+  const fcMax=atleta.fcMax,fcRep=atleta.fcRepouso||Math.round(fcMax*0.35);
+  const res=fcMax-fcRep;
+  const z=(a,b)=>({min:Math.round(fcRep+res*a),max:Math.round(fcRep+res*b)});
+  return{Z1:{nome:'Trote / Regenerativo',...z(.50,.64)},Z2:{nome:'CCL — Base Aeróbica',...z(.65,.75)},Z3:{nome:'CCM — Limiar Aeróbico',...z(.76,.84)},Z4:{nome:'CCR — Limiar Anaeróbico',...z(.85,1.00)},Z5:{nome:'VO2max / Sprint',...z(1.01,1.10)}};
+}
+async function handleDemoApi(endpoint,opts){
+  await new Promise(r=>setTimeout(r,200));
+  if(endpoint==='/coach/atletas')return{atletas:DEMO_ATLETAS};
+  if(endpoint==='/coach/dashboard')return{
+    totalAtletas:8,totalTreinosSemana:23,checkinsHoje:7,
+    volumePorDia:[45,62,38,71,55,83,0],
+    gpsResumoPorAtleta:DEMO_ATLETAS.map(a=>({atletaId:a.id,_sum:{distanciaKm:Math.round(15+Math.random()*30)}})),
+    treinosHoje:[
+      {titulo:'CCL 45min — Rafael',horario:'06:00',local:'Ibirapuera',confirmacoes:1},
+      {titulo:'Intervalado 8x400m — Fernanda',horario:'06:30',local:'Pista de Atletismo',confirmacoes:1},
+      {titulo:'Long Run — Bruno',horario:'07:00',local:'Parque das Nações',confirmacoes:1},
+    ],
+    atletasRecentes:DEMO_ATLETAS.slice(0,5),
+  };
+  const mAtleta=endpoint.match(/^\/coach\/atletas\/(d\d+)$/);
+  if(mAtleta){
+    const a=DEMO_ATLETAS.find(x=>x.id===mAtleta[1])||DEMO_ATLETAS[0];
+    return{atleta:{...a,name:a.nome,city:a.cidade,state:a.estado,gender:a.genero,age:a.idade},paces:demoPaces(a),zonas:demoZonas(a),gpsAtividades:DEMO_GPS[a.id]||[],gpsStats:demoGpsStats(a.id)};
+  }
+  const mPlanilha=endpoint.match(/^\/coach\/planilha\/(d\d+)/);
+  if(mPlanilha){
+    const a=DEMO_ATLETAS.find(x=>x.id===mPlanilha[1])||DEMO_ATLETAS[0];
+    const ini=new Date();ini.setDate(ini.getDate()-ini.getDay()+semanaOffset*7);
+    return{atleta:{...a,name:a.nome},semanaInicio:ini.toISOString(),resumo:{kmPlanejado:'65',kmExecutado:'58',aderencia:89,totalTreinos:6,totalAtividades:5},paces:demoPaces(a),zonas:demoZonas(a),treinos:[],gpsAtividades:[]};
+  }
+  if(endpoint==='/coach/perfil')return{nome:'Carlos Silva',especialidade:'Corrida de Rua',cidade:'São Paulo',estado:'SP',instagram:'@carlossilvacoach',bio:'Treinador de corrida de rua com 10 anos de experiência. Especialista em metodologia polarizada.',subscription:{status:'ativo',athleteCount:8,monthlyValue:790}};
+  if(endpoint.startsWith('/coach/metodologia/gerar')&&opts?.method==='POST'){
+    const m=JSON.parse(opts.body||'{}').metodologia||'polarizado';
+    const semanas={
+      polarizado:[
+        {dia:'Segunda',tipo:'CCL 50min',desc:'Corrida em ritmo base aeróbica',zona:'Z2'},
+        {dia:'Terça',tipo:'Intervalado 6x800m',desc:'Tiros em ritmo VO2max',zona:'Z5'},
+        {dia:'Quarta',tipo:'Regenerativo 25min',desc:'Trote muito leve',zona:'Z1'},
+        {dia:'Quinta',tipo:'Long Run 75min',desc:'Corrida longa de base',zona:'Z2'},
+        {dia:'Sexta',tipo:'5x1000m',desc:'Ritmo de limiar anaeróbico',zona:'Z4'},
+        {dia:'Sábado',tipo:'CCL 40min',desc:'Base aeróbica recuperativa',zona:'Z2'},
+        {dia:'Domingo',tipo:'Descanso',desc:'Recuperação total',zona:'',descanso:true},
+      ],
+      lydiard:[
+        {dia:'Segunda',tipo:'Base 60min',desc:'Aeróbico extenso Z2',zona:'Z2'},
+        {dia:'Terça',tipo:'Base 45min',desc:'Aeróbico moderado',zona:'Z2'},
+        {dia:'Quarta',tipo:'Colinas 40min',desc:'Subida progressiva + retorno',zona:'Z3'},
+        {dia:'Quinta',tipo:'Base 70min',desc:'Long aeróbico Z2',zona:'Z2'},
+        {dia:'Sexta',tipo:'Descanso',desc:'',zona:'',descanso:true},
+        {dia:'Sábado',tipo:'Base 50min',desc:'Aeróbico leve',zona:'Z1-Z2'},
+        {dia:'Domingo',tipo:'Long Run 90min',desc:'Longo semanal',zona:'Z2'},
+      ],
+    };
+    return{metodologia:{semanaModelo:semanas[m]||semanas.polarizado}};
+  }
+  if(endpoint==='/ia/chat'&&opts?.method==='POST'){
+    const msg=(JSON.parse(opts.body||'{}').mensagem||'').toLowerCase();
+    let resp='Como treinador, a minha recomendação principal é sempre priorizar a base aeróbica antes de introduzir intensidade. O polarizado 80/20 de Stephen Seiler é cientificamente validado para atletas de todos os níveis. Quer que eu monte uma semana específica para algum atleta?';
+    if(msg.includes('5km')||msg.includes('polarizado'))resp='Para um corredor de 5km em 22min, a semana polarizada ideal é:<br><br><strong style="color:var(--green)">Seg:</strong> CCL 45min (ritmo 6:00-6:20/km)<br><strong style="color:var(--green)">Ter:</strong> 6x800m no ritmo 4:48/km<br><strong style="color:var(--green)">Qua:</strong> Regenerativo 25min (ritmo 7:00+/km)<br><strong style="color:var(--green)">Qui:</strong> Long Run 70min (ritmo 6:00/km)<br><strong style="color:var(--green)">Sex:</strong> Tempo Run 20min (ritmo 5:05/km)<br><strong style="color:var(--green)">Sáb:</strong> CCL 35min fácil<br><strong style="color:var(--muted)">Dom:</strong> Descanso<br><br>Volume: ~55-60km. 80% em Z1-Z2, 20% em Z4-Z5.';
+    else if(msg.includes('overtraining'))resp='Sinais de overtraining para observar:<br><br>• FC de repouso elevada (>5bpm acima do normal)<br>• Queda súbita de performance (>5%)<br>• Humor irritadiço, ansiedade, insônia<br>• Lesões musculares frequentes<br>• Falta de motivação para treinar<br><br><strong>Protocolo:</strong> 3-7 dias de descanso completo, hidratação, nutrição adequada e consulta médica se necessário.';
+    else if(msg.includes('vo2'))resp='Para melhorar VO2max:<br><br>• <strong>4x4 norueguês:</strong> 4 blocos de 4min em 90-95% FCmáx, 3min recuperação<br>• <strong>8x400m:</strong> 400m em pace 5km, 90s recuperação<br>• <strong>10x1min:</strong> 1min forte / 1min fácil<br><br>Frequência: máximo 2x/semana. O VO2max melhora em 4-8 semanas com protocolo consistente.';
+    return{resposta:resp};
+  }
+  if(opts?.method==='POST'&&endpoint==='/coach/treinos')return{id:'demo-treino-'+Date.now(),ok:true};
+  if(opts?.method==='PATCH'&&endpoint==='/coach/perfil')return{ok:true};
+  if(opts?.method==='PATCH'&&endpoint==='/auth/senha')return{ok:true};
+  if(endpoint.startsWith('/coach/atletas/convidar'))throw new Error('Modo demo: função desabilitada');
+  return{};
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 const pageTitles={dashboard:'Dashboard',atletas:'Meus Atletas',planilhas:'Planilhas','criar-treino':'Criar Treino',metodologias:'Metodologias',evolucao:'Evolução','zonas-fc':'Zonas FC & Paces',comparar:'Comparar Atletas',mensagens:'Mensagens','ia-coach':'IA Assistente',biblioteca:'Biblioteca',calendario:'Calendário',perfil:'Meu Perfil'};
 
 window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('pageDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('dataHoje').textContent=new Date().toLocaleDateString('pt-BR');
+  const todayISO=new Date().toISOString().split('T')[0];
+  const treinoDataEl=document.getElementById('treinoData');
+  if(treinoDataEl)treinoDataEl.value=todayISO;
   if(user.name){document.getElementById('sidebarNome').textContent=user.name;document.getElementById('sidebarAvatar').textContent=user.name[0].toUpperCase();}
   if(user.email)document.getElementById('perfilEmail').textContent=user.email;
-  const link=`${location.origin}/entrar.html?coach=${user.id}`;
+  const coachId=user.id||'';
+  const link=`${location.origin}/entrar.html?coach=${coachId}`;
   document.getElementById('linkCadastro').textContent=link;
   document.getElementById('linkModalCadastro').textContent=link;
+  if(DEMO_MODE){
+    const banner=document.createElement('div');
+    banner.style.cssText='position:fixed;top:0;left:224px;right:0;background:#e8850c;color:#000;font-size:11px;font-weight:700;text-align:center;padding:5px;z-index:200;letter-spacing:1px';
+    banner.textContent='⚡ MODO DEMO — dados de exemplo para apresentação';
+    document.body.appendChild(banner);
+    document.querySelector('.main').style.paddingTop='28px';
+  }
   updateSemanaLabel();
   await carregarAtletas();
   carregarDashboard();
@@ -792,6 +937,7 @@ function showToast(msg,type='success'){
 }
 
 async function api(endpoint,opts={}){
+  if(DEMO_MODE)return handleDemoApi(endpoint,opts);
   const res=await fetch(API+endpoint,{headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`,...(opts.headers||{})},...opts});
   if(!res.ok){const e=await res.json().catch(()=>({error:res.statusText}));throw new Error(e.error||res.statusText);}
   return res.json();
@@ -818,7 +964,8 @@ function renderChartVolume(dados){
   const ctx=document.getElementById('chartVolumeSemana')?.getContext('2d');
   if(!ctx)return;
   if(chartVolume)chartVolume.destroy();
-  chartVolume=new Chart(ctx,{type:'bar',data:{labels:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:dados,backgroundColor:'rgba(247,147,26,0.4)',borderColor:'#00D4FF',borderWidth:1,borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#6b6b85',stepSize:1},grid:{color:'rgba(42,42,56,.5)'}},x:{ticks:{color:'#6b6b85'},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
+  const maxVal=Math.max(...dados,1);
+  chartVolume=new Chart(ctx,{type:'bar',data:{labels:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:dados,backgroundColor:dados.map(v=>v===maxVal?'rgba(0,212,255,0.7)':'rgba(0,212,255,0.25)'),borderColor:'#00D4FF',borderWidth:1,borderRadius:6,label:'km'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' km'}}},scales:{y:{beginAtZero:true,ticks:{color:'#667788',font:{size:10}},grid:{color:'rgba(42,42,56,.4)'}},x:{ticks:{color:'#667788',font:{size:11}},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
 }
 
 async function carregarAtletas(){
@@ -1234,9 +1381,9 @@ function renderChartEvolucao(gps){
   const kms=gps.slice(0,10).reverse().map(g=>g.distanciaKm||0);
   const paces=gps.slice(0,10).reverse().map(g=>{if(!g.paceMedio)return null;const[m,s]=g.paceMedio.split(':').map(Number);return parseFloat((m+s/60).toFixed(2));});
   if(chartEvolKm)chartEvolKm.destroy();
-  chartEvolKm=new Chart(ctx1,{type:'bar',data:{labels,datasets:[{data:kms,backgroundColor:'rgba(68,138,255,.4)',borderColor:'#448aff',borderWidth:1,borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#6b6b85'},grid:{color:'rgba(42,42,56,.5)'}},x:{ticks:{color:'#6b6b85'},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
+  chartEvolKm=new Chart(ctx1,{type:'bar',data:{labels,datasets:[{data:kms,backgroundColor:'rgba(68,138,255,.35)',borderColor:'#448aff',borderWidth:1,borderRadius:6,label:'km'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw.toFixed(1)+' km'}}},scales:{y:{beginAtZero:true,ticks:{color:'#667788',font:{size:10}},grid:{color:'rgba(42,42,56,.4)'}},x:{ticks:{color:'#667788',font:{size:10}},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
   if(chartEvolPace)chartEvolPace.destroy();
-  chartEvolPace=new Chart(ctx2,{type:'line',data:{labels,datasets:[{data:paces,borderColor:'#00D4FF',backgroundColor:'rgba(247,147,26,.1)',fill:true,tension:.3,pointBackgroundColor:'#00D4FF',pointRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{reverse:true,ticks:{color:'#6b6b85'},grid:{color:'rgba(42,42,56,.5)'}},x:{ticks:{color:'#6b6b85'},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
+  chartEvolPace=new Chart(ctx2,{type:'line',data:{labels,datasets:[{data:paces,borderColor:'#00D4FF',backgroundColor:'rgba(0,212,255,.08)',fill:true,tension:.35,pointBackgroundColor:'#00D4FF',pointBorderColor:'#04060b',pointBorderWidth:2,pointRadius:5,label:'pace'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{if(!c.raw)return'';const m=Math.floor(c.raw),s=Math.round((c.raw-m)*60);return' '+m+':'+String(s).padStart(2,'0')+'/km';}}}},scales:{y:{reverse:true,ticks:{color:'#667788',font:{size:10},callback:v=>{const m=Math.floor(v),s=Math.round((v-m)*60);return m+':'+String(s).padStart(2,'0');}},grid:{color:'rgba(42,42,56,.4)'}},x:{ticks:{color:'#667788',font:{size:10}},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
 }
 
 async function compararAtletas(){
@@ -1429,6 +1576,49 @@ function copiarLink(){
 }
 
 function logout(){localStorage.removeItem('pace_token');localStorage.removeItem('pace_user');window.location.href='/entrar.html';}
+
+function abrirAlterarSenha(){
+  document.getElementById('senhaAtual').value='';
+  document.getElementById('senhaNova').value='';
+  document.getElementById('senhaConfirm').value='';
+  document.getElementById('senhaErro').style.display='none';
+  document.getElementById('senhaForcaBar').style.display='none';
+  openModal('modalSenha');
+}
+
+function validarSenhaForca(v){
+  const bar=document.getElementById('senhaForcaBar');
+  if(!v){bar.style.display='none';return;}
+  bar.style.display='block';
+  let score=0;
+  if(v.length>=8)score++;
+  if(/[A-Z]/.test(v))score++;
+  if(/[0-9]/.test(v))score++;
+  if(/[^A-Za-z0-9]/.test(v))score++;
+  const cores=['','var(--red)','var(--orange)','var(--yellow)','var(--green)'];
+  const labels=['','Fraca','Razoável','Boa','Forte'];
+  for(let i=1;i<=4;i++){
+    document.getElementById('sf'+i).style.background=i<=score?cores[score]:'var(--border)';
+  }
+  document.getElementById('sfLabel').textContent=labels[score]||'';
+  document.getElementById('sfLabel').style.color=cores[score]||'var(--muted)';
+}
+
+async function salvarNovaSenha(){
+  const atual=document.getElementById('senhaAtual').value;
+  const nova=document.getElementById('senhaNova').value;
+  const confirm=document.getElementById('senhaConfirm').value;
+  const erroEl=document.getElementById('senhaErro');
+  erroEl.style.display='none';
+  if(!atual||!nova||!confirm){erroEl.textContent='Preencha todos os campos.';erroEl.style.display='block';return;}
+  if(nova.length<8){erroEl.textContent='A nova senha deve ter ao menos 8 caracteres.';erroEl.style.display='block';return;}
+  if(nova!==confirm){erroEl.textContent='As senhas não coincidem.';erroEl.style.display='block';return;}
+  try{
+    await api('/auth/senha',{method:'PATCH',body:JSON.stringify({senhaAtual:atual,novaSenha:nova})});
+    closeModal('modalSenha');
+    showToast('Senha alterada com sucesso!');
+  }catch(e){erroEl.textContent=e.message||'Erro ao alterar senha.';erroEl.style.display='block';}
+}
 </script>
 
 <!-- REGENI NAV -->

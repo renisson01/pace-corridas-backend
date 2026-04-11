@@ -109,6 +109,26 @@ export async function authRoutes(fastify) {
   });
 
 
+  // Alterar senha (usuário autenticado — requer senha atual)
+  fastify.patch('/auth/senha', async (req, reply) => {
+    try {
+      const token = req.headers.authorization?.replace('Bearer ','');
+      if(!token) return reply.code(401).send({ error: 'Token necessário' });
+      const payload = jwt.verify(token, JWT_SECRET);
+      const { senhaAtual, novaSenha } = req.body;
+      if(!senhaAtual||!novaSenha) return reply.code(400).send({ error: 'Senha atual e nova senha obrigatórias' });
+      const user = await prisma.user.findUnique({ where: { id: payload.userId } });
+      if(!user) return reply.code(404).send({ error: 'Usuário não encontrado' });
+      const ok = await bcrypt.compare(senhaAtual, user.passwordHash);
+      if(!ok) return reply.code(401).send({ error: 'Senha atual incorreta' });
+      const { valida, erros } = validarSenha(novaSenha);
+      if(!valida) return reply.code(400).send({ error: 'Senha fraca: ' + erros.join(', ') });
+      const passwordHash = await bcrypt.hash(novaSenha, 10);
+      await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+      return { success: true, message: 'Senha alterada com sucesso!' };
+    } catch(e) { return reply.code(401).send({ error: 'Token inválido' }); }
+  });
+
   // Recuperação simples por email (sem BIP39)
   fastify.post('/auth/recover-email', async (req, reply) => {
     try {

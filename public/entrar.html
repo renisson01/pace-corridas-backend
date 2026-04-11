@@ -229,7 +229,7 @@ body{background:#04060b;color:#e2e8f0;font-family:'Space Grotesk',sans-serif}
           <div class="error-msg" id="errLoginSenha">Senha incorreta</div>
         </div>
         <div class="forgot">
-          <a href="javascript:void(0)" onclick="toast('Entre em contato: contato@regeni.com.br')">Esqueci minha senha</a>
+          <a href="javascript:void(0)" onclick="abrirRecuperarSenha()">Esqueci minha senha</a>
         </div>
         <button class="btn-submit btn-main-orange" id="btnLogin" onclick="fazerLogin()">
           <span id="loginTxt">Entrar</span>
@@ -358,6 +358,41 @@ body{background:#04060b;color:#e2e8f0;font-family:'Space Grotesk',sans-serif}
     <button class="btn-go" id="btnComecar" onclick="irParaDashboard()">
       Entrar no App →
     </button>
+  </div>
+</div>
+
+<!-- MODAL RECUPERAR SENHA -->
+<div id="modalRecuperar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)">
+  <div style="background:#0a0f1a;border:1px solid #1e2d3d;border-radius:18px;width:100%;max-width:400px;overflow:hidden">
+    <div style="padding:18px 22px;border-bottom:1px solid #1e2d3d;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:17px;font-weight:700">🔑 Recuperar Senha</div>
+      <button onclick="fecharRecuperarSenha()" style="background:none;border:none;color:#667788;font-size:20px;cursor:pointer;padding:4px;line-height:1">✕</button>
+    </div>
+    <!-- Etapas -->
+    <div id="rec-step1" style="padding:22px">
+      <p style="font-size:13px;color:#8899bb;margin-bottom:16px;line-height:1.6">Use as <strong style="color:#e2e8f0">12 palavras de recuperação</strong> que você recebeu ao criar sua conta para redefinir a senha.</p>
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;color:#667788;text-transform:uppercase;letter-spacing:.5px;font-weight:600;display:block;margin-bottom:5px">Email da conta</label>
+        <input id="recEmail" type="email" placeholder="seu@email.com" autocomplete="email" style="width:100%;background:#111827;border:1px solid #1e2d3d;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;outline:none;transition:border .2s" onfocus="this.style.borderColor='#00D4FF'" onblur="this.style.borderColor='#1e2d3d'">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;color:#667788;text-transform:uppercase;letter-spacing:.5px;font-weight:600;display:block;margin-bottom:5px">12 Palavras de Recuperação</label>
+        <textarea id="recBip39" placeholder="palavra1 palavra2 palavra3 ... palavra12" rows="3" style="width:100%;background:#111827;border:1px solid #1e2d3d;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;outline:none;resize:vertical;font-family:inherit;line-height:1.5;transition:border .2s" onfocus="this.style.borderColor='#00D4FF'" onblur="this.style.borderColor='#1e2d3d'"></textarea>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;color:#667788;text-transform:uppercase;letter-spacing:.5px;font-weight:600;display:block;margin-bottom:5px">Nova Senha</label>
+        <input id="recSenhaNova" type="password" placeholder="Mín. 8 chars, 1 maiúscula, 1 número, 1 especial" autocomplete="new-password" style="width:100%;background:#111827;border:1px solid #1e2d3d;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:13px;outline:none;transition:border .2s" onfocus="this.style.borderColor='#00D4FF'" onblur="this.style.borderColor='#1e2d3d'">
+      </div>
+      <div id="recErro" style="display:none;font-size:12px;color:#ff1744;margin-bottom:10px;padding:8px 12px;background:#ff174410;border-radius:6px"></div>
+      <button onclick="enviarRecuperacao()" id="recBtn" style="width:100%;padding:13px;border-radius:10px;background:#00D4FF;color:#000;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:opacity .2s">Redefinir Senha</button>
+      <p style="font-size:11px;color:#556677;margin-top:12px;text-align:center">Não tem as palavras? <a href="mailto:contato@regeni.com.br" style="color:#00D4FF;text-decoration:none">contato@regeni.com.br</a></p>
+    </div>
+    <div id="rec-step2" style="display:none;padding:28px;text-align:center">
+      <div style="font-size:56px;margin-bottom:14px">✅</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px">Senha redefinida!</div>
+      <p style="font-size:13px;color:#8899bb;margin-bottom:20px">Você já pode entrar com sua nova senha.</p>
+      <button onclick="fecharRecuperarSenha()" style="padding:12px 28px;border-radius:10px;background:#00D4FF;color:#000;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit">Fazer Login →</button>
+    </div>
   </div>
 </div>
 
@@ -665,10 +700,57 @@ function toast(msg, dur) {
 // Enter key
 document.addEventListener('keydown', function(e) {
   if (e.key !== 'Enter') return;
+  const modal = document.getElementById('modalRecuperar');
+  if (modal.style.display === 'flex') { enviarRecuperacao(); return; }
   var panel = document.getElementById('panelLogin');
   if (panel.classList.contains('on')) fazerLogin();
   else fazerCadastro();
 });
+
+// ═══════════════════════════════
+// RECUPERAR SENHA
+// ═══════════════════════════════
+function abrirRecuperarSenha() {
+  const emailLogin = document.getElementById('loginEmail')?.value || '';
+  if (emailLogin) document.getElementById('recEmail').value = emailLogin;
+  document.getElementById('recBip39').value = '';
+  document.getElementById('recSenhaNova').value = '';
+  document.getElementById('recErro').style.display = 'none';
+  document.getElementById('rec-step1').style.display = 'block';
+  document.getElementById('rec-step2').style.display = 'none';
+  const modal = document.getElementById('modalRecuperar');
+  modal.style.display = 'flex';
+}
+
+function fecharRecuperarSenha() {
+  document.getElementById('modalRecuperar').style.display = 'none';
+}
+
+async function enviarRecuperacao() {
+  const email = document.getElementById('recEmail').value.trim().toLowerCase();
+  const bip39 = document.getElementById('recBip39').value.trim().toLowerCase();
+  const novaSenha = document.getElementById('recSenhaNova').value;
+  const erroEl = document.getElementById('recErro');
+  const btn = document.getElementById('recBtn');
+  erroEl.style.display = 'none';
+  if (!email || !bip39 || !novaSenha) { erroEl.textContent = 'Preencha todos os campos.'; erroEl.style.display = 'block'; return; }
+  const words = bip39.split(/\s+/).filter(Boolean);
+  if (words.length !== 12) { erroEl.textContent = 'Digite exatamente 12 palavras de recuperação.'; erroEl.style.display = 'block'; return; }
+  if (novaSenha.length < 8) { erroEl.textContent = 'A nova senha deve ter ao menos 8 caracteres.'; erroEl.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Verificando...';
+  try {
+    const res = await fetch('/auth/recover', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, bip39Words: bip39, novaSenha }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erro ao recuperar senha');
+    document.getElementById('rec-step1').style.display = 'none';
+    document.getElementById('rec-step2').style.display = 'block';
+  } catch (e) {
+    erroEl.textContent = e.message;
+    erroEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Redefinir Senha';
+  }
+}
 </script>
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
