@@ -124,7 +124,8 @@ async function main() {
         const age = (r.data_nascimento&&!r.data_nascimento.startsWith('1920'))
           ? new Date().getFullYear()-new Date(r.data_nascimento).getFullYear() : null;
         distSet.add(dist);
-        validos.push({name,gender,time,pace:calcPace(time,km),age,dist,
+        const birthRaw = (r.data_nascimento && !r.data_nascimento.startsWith('1920') && !r.data_nascimento.startsWith('0001')) ? r.data_nascimento : null;
+        validos.push({name,gender,time,pace:calcPace(time,km),age,birthDate:birthRaw,dist,
           ageGroup:r.ds_categoria||null,rank:r.colocacao?parseInt(r.colocacao):null});
       }
 
@@ -140,9 +141,10 @@ async function main() {
           const id='cr3_'+(Date.now()+i+j).toString(36)+j;
           const g=a.gender?"'"+a.gender+"'":'NULL';
           const ag=a.age?a.age:'NULL';
-          return "('"+id+"','"+esc(a.name)+"',"+g+",'"+state+"',"+ag+",1,0,NOW(),NOW())";
+          const bd=a.birthDate?"'"+a.birthDate+"'":'NULL';
+          return "('"+id+"','"+esc(a.name)+"',"+g+",'"+state+"',"+ag+","+bd+",1,0,NOW(),NOW())";
         }).join(',');
-        await db.query('INSERT INTO "Athlete"(id,name,gender,state,age,"totalRaces","totalPoints","createdAt","updatedAt") VALUES '+vals+' ON CONFLICT DO NOTHING');
+        await db.query('INSERT INTO "Athlete"(id,name,gender,state,age,"birthDate","totalRaces","totalPoints","createdAt","updatedAt") VALUES '+vals+' ON CONFLICT DO NOTHING');
       }
 
       // Buscar IDs dos atletas

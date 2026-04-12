@@ -167,7 +167,7 @@ async function importEvent(data) {
           [aid, r.name, r.gender, r.age||0, data.state]);
         
         const rid = raceId + '_' + aid.substring(0,30) + '_' + dist.substring(0,10);
-        await client.query(`INSERT INTO "Result"(id,"raceId","athleteId",time,pace,"overallRank","genderRank","ageGroup",distance,points,"createdAt") VALUES($1,$2,$3,$4,$5,$6,0,$7,$8,0,NOW()) ON CONFLICT DO NOTHING`,
+        await client.query(`INSERT INTO "Result"(id,"raceId","athleteId",time,pace,"overallRank","genderRank","ageGroup",distance,points,"createdAt") VALUES($1,$2,$3,$4,$5,$6,NULL,$7,$8,0,NOW()) ON CONFLICT DO NOTHING`,
           [rid, raceId, aid, r.time||'00:00:00', calcPace(r.time,distKm), r.rank||0, ageGroup(r.age), dist]);
         ok++;
       } catch(e) { err++; }

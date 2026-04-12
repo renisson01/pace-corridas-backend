@@ -30,6 +30,8 @@ model Athlete {
   state       String?
   gender      String?
   age         Int?
+  birthDate   DateTime?
+  cpf         String?
   totalRaces  Int      @default(0)
   totalPoints Int      @default(0)
   createdAt   DateTime @default(now())
