@@ -57,7 +57,6 @@ function parseClax(xml) {
       ageGroup: eng.ca || null,
       birthYear: eng.a ? parseInt(eng.a) : null,
       birthDate: eng.dn ? eng.dn : null,
-      birthDate: eng.dn ? eng.dn : null,
     });
   }
 
@@ -71,9 +70,12 @@ function normDist(xml) {
   if (km >= 40) return '42K';
   if (km >= 20) return '21K';
   if (km >= 14) return '15K';
-  if (km >= 9) return '10K';
-  if (km >= 6) return '7K';
-  if (km >= 4) return '5K';
+  if (km >= 12) return '12K';
+  if (km >= 9)  return '10K';
+  if (km >= 7.5) return '8K';
+  if (km >= 6.5) return '7K';
+  if (km >= 5.5) return '6K';
+  if (km >= 4)  return '5K';
   return '3K';
 }
 
@@ -122,7 +124,7 @@ async function main() {
       }
 
       const dist = normDist(xml);
-      const distKm = dist === '42K' ? 42 : dist === '21K' ? 21 : dist === '15K' ? 15 : dist === '10K' ? 10 : dist === '7K' ? 7 : 5;
+      const distKm = { '42K':42,'21K':21,'15K':15,'12K':12,'10K':10,'8K':8,'7K':7,'6K':6,'5K':5,'3K':3 }[dist] || 5;
 
       // Verificar se já existe
       const existing = await db.query(
@@ -158,7 +160,6 @@ async function main() {
           const id = 'sc_' + (Date.now() + i + j).toString(36) + j;
           const g = a.gender ? `'${a.gender}'` : 'NULL';
           const age = a.birthYear ? new Date().getFullYear() - a.birthYear : 'NULL';
-          const bd = a.birthDate ? "'"+ a.birthDate +"'" : 'NULL';
           const bd = a.birthDate ? "'"+ a.birthDate +"'" : 'NULL';
           return `('${id}','${esc(a.name)}',${g},'${a.state}',${age},${bd},1,0,NOW(),NOW())`;
         }).join(',');

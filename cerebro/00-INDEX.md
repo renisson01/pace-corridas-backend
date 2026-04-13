@@ -1,6 +1,6 @@
 # REGENI — Mapa Geral
 > Backend do PACE Corridas · v3.0 · Railway + PostgreSQL
-> Última atualização: 2026-04-09
+> Última atualização: 2026-04-13
 
 ---
 
@@ -14,6 +14,7 @@
 
 | Nota | Conteúdo |
 |------|----------|
+| [[CONTEXTO-TECNICO]] | **⭐ Ler primeiro** — Stack, scrapers, regras de ouro, Puppeteer |
 | [[01-ARQUITETURA]] | Stack, boot sequence, módulos, rotas, agentes cron |
 | [[02-BANCO-DE-DADOS]] | Todos os modelos Prisma com campos e relações |
 | [[03-BUGS-RESOLVIDOS]] | Bugs corrigidos com causa raiz e solução |
@@ -70,4 +71,59 @@ npm start            # produção
 npx prisma studio    # GUI banco
 docker compose up -d # PostgreSQL local
 node scripts/XXX.cjs # rodar scraper avulso
+
+# Coleta semanal manual
+node scripts/coleta-semanal.cjs              # todas as fontes
+node scripts/coleta-semanal.cjs --dry-run    # só visualizar
+node scripts/coleta-semanal.cjs --fonte runking
+node scripts/coleta-semanal.cjs --semanas 4  # janela maior
 ```
+
+---
+
+## Sistema de Coleta Semanal
+
+> Cron: **todo domingo 12h** — `crontab -l` para verificar
+> Log: `/tmp/coleta-semanal.log`
+
+### Fontes disponíveis
+
+| Fonte | Script | Região | Status |
+|-------|--------|--------|--------|
+| Central de Resultados | `scraper-central-v3.cjs` | Nordeste | ✅ Ativo |
+| CronusTec | `scraper-cronustec.cjs` | Bahia | ✅ Ativo (manual) |
+| SportsChrono/CLAX | `scraper-sportschrono.cjs` | Sergipe | ✅ Ativo |
+| Contime | `importar-contime.cjs` | Via Central | ✅ Ativo (manual) |
+| **Runking/Chronomax** | `scraper-runking.cjs` | Nacional (SP/RJ/SE) | ✅ **Novo** |
+| Race83/CLAX | `race83-scraper-api.cjs` | Nacional | ✅ Ativo (manual) |
+| RunnerBrasil | `scraper-corridas-brasil.cjs` | Nacional | ✅ Ativo (manual) |
+
+### Fontes pendentes
+
+| Fonte | Script | Região | Bloqueio |
+|-------|--------|--------|---------|
+| **Yescom** | `scraper-yescom.cjs` (stub) | SP, RS, CE | Login obrigatório (ASP.NET). Aguardar resultados Maratona SP 2026 no ChipTiming (`resultado.chiptiming.com.br`) em 24-48h. Solicitar parceria ou credenciais. |
+| ChipTiming | `scraper-chiptiming.cjs` (parcial) | SP | API requer token JWT. Alternativa: aguardar versão pública. |
+| CorridasBR | — | Nacional | Investigar API |
+| Figueiredos | — | RN/Nordeste | Investigar API |
+| O2Corre | — | Salvador/Floripa | Usa Runking (slug: `o2-correbrasil`) — **já coberto pelo scraper-runking** |
+
+### Runking — Empresas cobertas automaticamente
+
+O `scraper-runking.cjs` descobre eventos de **todos** os organizadores na plataforma Runking:
+- Chronomax (SP/RJ)
+- Speed Produções e Eventos (SE)
+- Norte MKT / O2Corre Brasil (nacional)
+- Maratona do Rio (RJ)
+- Vega Sports (SP)
+- Run Sports (SP)
+- Ponto Org (nacional)
+- Letape Brasil
+- De Castilho (RJ)
+- e outros
+
+### Próximos passos para Yescom/Maratona SP
+
+1. Verificar `resultado.chiptiming.com.br/evento/maratona-sp-2026` nas próximas 24-48h
+2. Se disponível: adicionar slug em `scraper-yescom.cjs → EVENTOS_CONHECIDOS`
+3. Para automação completa: solicitar token de API parceiro à Yescom

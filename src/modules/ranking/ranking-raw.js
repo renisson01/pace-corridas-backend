@@ -33,6 +33,14 @@ export async function getRankingFor(distance, gender = null) {
         AND r."time" != ''
         AND a.name IS NOT NULL
         AND a.name != ''
+        AND NOT (r.distance = '3K'  AND r."time" < '00:08:00')
+        AND NOT (r.distance = '5K'  AND r."time" < '00:14:00')
+        AND NOT (r.distance = '7K'  AND r."time" < '00:18:00')
+        AND NOT (r.distance = '8K'  AND r."time" < '00:21:00')
+        AND NOT (r.distance = '10K' AND r."time" < '00:26:00')
+        AND NOT (r.distance = '15K' AND r."time" < '00:41:00')
+        AND NOT (r.distance = '21K' AND r."time" < '01:00:00')
+        AND NOT (r.distance = '42K' AND r."time" < '02:00:00')
         ${genderClause}
       ORDER BY a.id, r."time" ASC
     `;

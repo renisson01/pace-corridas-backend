@@ -59,6 +59,10 @@ export async function rankingRoutes(fastify) {
   fastify.get('/ranking/10km', async (req) => { return await getRankingFor('10K', req.query.genero); });
   fastify.get('/ranking/5km',  async (req) => { return await getRankingFor('5K',  req.query.genero); });
   fastify.get('/ranking/3km',  async (req) => { return await getRankingFor('3K',  req.query.genero); });
+  fastify.get('/ranking/6km',  async (req) => { return await getRankingFor('6K',  req.query.genero); });
+  fastify.get('/ranking/7km',  async (req) => { return await getRankingFor('7K',  req.query.genero); });
+  fastify.get('/ranking/8km',  async (req) => { return await getRankingFor('8K',  req.query.genero); });
+  fastify.get('/ranking/12km', async (req) => { return await getRankingFor('12K', req.query.genero); });
 
   // RANKING POR PROVA
   fastify.get('/ranking/prova/:raceId', async (req) => {

@@ -42,10 +42,17 @@ function extractDistance(name) {
   if (/42\s*K|MARAT/.test(up)) return '42K';
   if (/21\s*K|MEIA/.test(up)) return '21K';
   if (/15\s*K/.test(up)) return '15K';
+  if (/12\s*K/.test(up)) return '12K';
+  if (/11\s*K/.test(up)) return '10K';
   if (/10\s*K/.test(up)) return '10K';
-  if (/8\s*K/.test(up)) return '8K';
-  if (/5\s*K/.test(up)) return '5K';
-  if (/3\s*K/.test(up)) return '3K';
+  if (/9\s*K/.test(up))  return '10K';
+  if (/8\s*K/.test(up))  return '8K';
+  if (/7[,.]5\s*K|7\.5/.test(up)) return '8K';
+  if (/7\s*K/.test(up))  return '7K';
+  if (/6[,.]8\s*K|6\.8/.test(up)) return '7K';
+  if (/6\s*K/.test(up))  return '6K';
+  if (/5\s*K/.test(up))  return '5K';
+  if (/3\s*K/.test(up))  return '3K';
   return null;
 }
 

@@ -31,7 +31,8 @@ function fmtTime(raw) {
 function normDist(d) {
   const n=parseFloat(String(d||5));
   if(n>=40)return'42K';if(n>=20)return'21K';if(n>=14)return'15K';
-  if(n>=9)return'10K';if(n>=7)return'8K';if(n>=4)return'5K';return'3K';
+  if(n>=12)return'12K';if(n>=9)return'10K';if(n>=7.5)return'8K';
+  if(n>=6.5)return'7K';if(n>=5.5)return'6K';if(n>=4)return'5K';return'3K';
 }
 function calcPace(t,km) {
   if(!t||!km)return null;
