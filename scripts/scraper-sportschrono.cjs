@@ -82,9 +82,9 @@ function calcPace(timeStr, distKm) {
 }
 
 function distKmValue(distStr) {
-  if (!distStr) return 5;
+  if (!distStr) return null;
   const n = parseFloat(distStr);
-  return isNaN(n) ? 5 : n;
+  return isNaN(n) ? null : n;
 }
 
 // ─── BATCH INSERT via SQL raw ────────────────────────────────────────────────

@@ -193,7 +193,7 @@ async function calcularPontos(raceId, distance) {
 function calcPace(time,distance){
   if(!time||!distance) return '0:00';
   try{
-    const d=parseFloat(distance.replace('km','').replace(',','.'));
+    const d=parseFloat(String(distance).replace('km','').replace(',','.'));
     const p=time.split(':').map(Number);
     let s=p.length===3?p[0]*3600+p[1]*60+p[2]:p[0]*60+p[1];
     const pm=Math.floor(s/d/60),ps=Math.round((s/d)%60);

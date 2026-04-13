@@ -80,7 +80,9 @@ function normDist(xml) {
 }
 
 function calcPace(time, dist) {
-  const km = parseFloat(dist) || 5;
+  if (!time || !dist) return null;
+  const km = parseFloat(dist);
+  if (!km) return null;
   const [h, m, s] = time.split(':').map(Number);
   const sec = h * 3600 + m * 60 + s;
   if (!sec) return null;
@@ -124,7 +126,7 @@ async function main() {
       }
 
       const dist = normDist(xml);
-      const distKm = { '42K':42,'21K':21,'15K':15,'12K':12,'10K':10,'8K':8,'7K':7,'6K':6,'5K':5,'3K':3 }[dist] || 5;
+      const distKm = { '42K':42,'21K':21,'15K':15,'12K':12,'10K':10,'8K':8,'7K':7,'6K':6,'5K':5,'3K':3 }[dist] || null;
 
       // Verificar se já existe
       const existing = await db.query(

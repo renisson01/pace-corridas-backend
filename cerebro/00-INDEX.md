@@ -20,6 +20,8 @@
 | [[03-BUGS-RESOLVIDOS]] | Bugs corrigidos com causa raiz e solução |
 | [[04-ROADMAP]] | Próximas features por prioridade |
 | [[05-DECISOES]] | Decisões técnicas tomadas e o porquê |
+| [[06-IDENTIDADE-ATLETA]] | **⭐ Sistema de identidade** — deduplicação, CPF, similarity, merge |
+| [[07-OBSIDIAN-PLUGINS]] | Plugins recomendados e fluxo de trabalho com Claude |
 
 ---
 

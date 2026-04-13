@@ -121,7 +121,8 @@ async function main() {
         if (!time) continue;
         const gender = r.ds_genero==='F'?'F':r.ds_genero==='M'?'M':null;
         const dist = normDist(r.distancia);
-        const km = parseFloat(r.distancia)||5;
+        const KM_MAP = {'42K':42,'21K':21,'15K':15,'12K':12,'10K':10,'8K':8,'7K':7,'6K':6,'5K':5,'3K':3};
+        const km = KM_MAP[dist] || null;
         const age = (r.data_nascimento&&!r.data_nascimento.startsWith('1920'))
           ? new Date().getFullYear()-new Date(r.data_nascimento).getFullYear() : null;
         distSet.add(dist);

@@ -95,16 +95,41 @@ async function coletarDados() {
   await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36');
   await page.setViewport({ width: 1280, height: 900 });
 
-  // ── Fase 1: Carregar página para obter cookies de sessão e metadados ──────
-  console.log('[1/4] Carregando página do evento (obtendo sessão)...');
+  // ── Fase 1: Interceptar respostas ANTES de carregar a página ─────────────
+  // A API responde com JSON de atletas — capturamos direto do tráfego de rede
+  const capturedResponses = {}; // listId → [entries]
+  const capturedUrls = new Set();
+
+  page.on('response', async (response) => {
+    const url = response.url();
+    if (!url.includes('admin.chiptiming.com.br') && !url.includes('chiptimingstorage')) return;
+    if (response.status() !== 200) return;
+    const ct = response.headers()['content-type'] || '';
+    if (!ct.includes('json')) return;
+    try {
+      const json = await response.json();
+      const entries = json.entries || json.items || json.data || (Array.isArray(json) ? json : null);
+      if (entries && entries.length > 0) {
+        // Extrair listId da URL (padrão: /results/{listId}/entries)
+        const m = url.match(/results\/(\d+)\/entries/);
+        const listId = m ? m[1] : url;
+        if (!capturedResponses[listId]) capturedResponses[listId] = [];
+        capturedResponses[listId].push({ entries, total: json.totalCount || json.total || entries.length, url });
+        capturedUrls.add(url);
+        process.stdout.write(`\n  Capturado: ${entries.length} entries (${listId})`);
+      }
+    } catch (_) {}
+  });
+
+  // ── Fase 2: Carregar página + metadados ──────────────────────────────────
+  console.log('[1/4] Carregando página do evento...');
   try {
     await page.goto(EVENT_URL, { waitUntil: 'networkidle2', timeout: 60000 });
   } catch (e) {
-    console.log('  Aviso:', e.message.slice(0, 50));
+    console.log('  Aviso:', e.message.slice(0, 60));
   }
-  await DELAY(2000);
+  await DELAY(3000);
 
-  // Extrair metadados do __NEXT_DATA__ (inclui eventCode e listIds)
   const nextData = await page.evaluate(() => {
     const el = document.getElementById('__NEXT_DATA__');
     return el ? JSON.parse(el.textContent) : null;
@@ -118,66 +143,127 @@ async function coletarDados() {
 
   const eventMeta = nextData.props.pageProps.event;
   const resultLists = (nextData.props.pageProps.results || []).filter(l => !l.isFile && l.showLists);
-  const eventCode = eventMeta.code; // ex: 10417
+  const eventCode = eventMeta.code;
 
   console.log(`  Evento: ${eventMeta.officialName} — ${eventMeta.city}/${eventMeta.state}`);
   console.log(`  Data: ${eventMeta.date?.slice(0, 10)} | eventCode: ${eventCode}`);
   console.log(`  Listas: ${resultLists.length}`);
 
-  // ── Fase 2: Fazer fetch das entries usando o contexto do browser ──────────
-  // O browser tem os cookies de sessão — fazemos fetch de dentro do page context
-  console.log(`\n[2/4] Coletando entries via fetch interno (cookies automáticos)...`);
+  // ── Fase 3: Clicar em cada aba/botão de modalidade para disparar API ──────
+  console.log('\n[2/4] Interagindo com UI para disparar chamadas de API...');
 
-  const API_BASE = 'https://admin.chiptiming.com.br/api/v2';
-  const dataMap = {};
-
+  // Estratégia A: clicar em botões/links de seleção de resultado
   for (const lista of resultLists) {
     const listId = String(lista.id);
     const mod = lista.modality.code;
     const tipo = lista.type.code;
-    process.stdout.write(`\n  [${mod} / ${tipo}]`);
+    process.stdout.write(`\n  → ${mod} / ${tipo}:`);
 
-    let allEntries = [];
-    let startPage = 0;
-    let totalCount = null;
+    // Tenta clicar no botão da lista (por data-id, por texto, ou por link)
+    try {
+      const clicked = await page.evaluate((lid) => {
+        // Procura botão ou link com o ID da lista
+        const selectors = [
+          `[data-result-id="${lid}"]`,
+          `[data-id="${lid}"]`,
+          `[href*="${lid}"]`,
+          `button[id="${lid}"]`,
+        ];
+        for (const sel of selectors) {
+          const el = document.querySelector(sel);
+          if (el) { el.click(); return sel; }
+        }
+        return null;
+      }, listId);
 
-    while (true) {
-      const apiUrl = `${API_BASE}/events/${eventCode}/results/${listId}/entries?pageSize=${PAGE_SIZE}&startPage=${startPage}`;
+      if (clicked) {
+        process.stdout.write(` clicou(${clicked})`);
+        await DELAY(2500);
+      } else {
+        // Fallback: navega para URL da lista diretamente
+        const listUrl = `${EVENT_URL}/lista/${listId}`;
+        try {
+          await page.goto(listUrl, { waitUntil: 'networkidle2', timeout: 20000 });
+          await DELAY(2000);
+          // Volta para a página principal
+          await page.goto(EVENT_URL, { waitUntil: 'networkidle2', timeout: 20000 });
+          await DELAY(1500);
+        } catch (_) {}
+        process.stdout.write(' sem-botão');
+      }
+    } catch (e) {
+      process.stdout.write(` err:${e.message.slice(0, 30)}`);
+    }
+  }
 
-      // Fazer fetch de dentro do page context (tem os cookies!)
-      const result = await page.evaluate(async (url) => {
+  // Aguarda para garantir que todas as respostas foram processadas
+  await DELAY(3000);
+
+  // ── Fase 4: Verificar URLs capturadas e tentar paginação ─────────────────
+  console.log(`\n\n[3/4] URLs de API capturadas: ${capturedUrls.size}`);
+  for (const url of capturedUrls) {
+    console.log(`  ${url}`);
+  }
+
+  // Para URLs capturadas, verifica se há mais páginas
+  const dataMap = {};
+  for (const [listId, pages] of Object.entries(capturedResponses)) {
+    let allEntries = pages.flatMap(p => p.entries);
+    const total = pages[0]?.total || allEntries.length;
+
+    // Se tem mais páginas, busca via fetch de dentro do browser
+    if (allEntries.length < total && capturedUrls.size > 0) {
+      const baseUrl = pages[0]?.url?.replace(/startPage=\d+/, '').replace(/&?startPage=\d+/, '') || '';
+      let startPage = 1;
+      while (allEntries.length < total && startPage < 100) {
+        const nextUrl = baseUrl + (baseUrl.includes('?') ? '&' : '?') + `startPage=${startPage}`;
+        const result = await page.evaluate(async (url) => {
+          try {
+            const res = await fetch(url, { credentials: 'include', headers: { 'Accept': 'application/json' } });
+            if (!res.ok) return { error: res.status };
+            return { ok: true, data: await res.json() };
+          } catch (e) { return { error: e.message }; }
+        }, nextUrl);
+        if (result.error || !result.data) break;
+        const more = result.data.entries || result.data.items || (Array.isArray(result.data) ? result.data : []);
+        if (!more.length) break;
+        allEntries = allEntries.concat(more);
+        process.stdout.write(`\r  Paginando ${listId}: ${allEntries.length}/${total}...`);
+        startPage++;
+        await DELAY(500);
+      }
+    }
+
+    dataMap[listId] = { entries: allEntries, total };
+  }
+
+  // Fallback: se nada capturado, tenta URLs construídas com token Bearer
+  if (Object.keys(dataMap).length === 0) {
+    console.log('\n  Interceptação vazia — tentando token Bearer hardcoded...');
+    const TOKEN = 'Bearer JgECf44XYsLdNY57m6K9WbLM62GNJhv6HbJ5AgRE6GfOrr0w4xhEiF3Cok0j8Xrz';
+    for (const lista of resultLists) {
+      const listId = String(lista.id);
+      const mod = lista.modality.code;
+      process.stdout.write(`\n  [${mod}]`);
+      const result = await page.evaluate(async (listId, eventCode, token) => {
+        const url = `https://admin.chiptiming.com.br/api/v2/events/${eventCode}/results/${listId}/entries?pageSize=200&startPage=0`;
         try {
           const res = await fetch(url, {
             credentials: 'include',
-            headers: { 'Accept': 'application/json' },
+            headers: { 'Accept': 'application/json', 'authorization': token },
           });
           if (!res.ok) return { error: res.status };
-          const json = await res.json();
-          return { ok: true, data: json };
-        } catch (e) {
-          return { error: e.message };
-        }
-      }, apiUrl);
-
-      if (result.error) {
-        process.stdout.write(` [erro ${result.error}]`);
-        break;
+          return { ok: true, data: await res.json() };
+        } catch (e) { return { error: e.message }; }
+      }, listId, eventCode, TOKEN);
+      if (result.ok) {
+        const entries = result.data.entries || result.data.items || (Array.isArray(result.data) ? result.data : []);
+        process.stdout.write(` ${entries.length} entries`);
+        if (entries.length) dataMap[listId] = { entries, total: result.data.totalCount || entries.length };
+      } else {
+        process.stdout.write(` erro:${result.error}`);
       }
-
-      const json = result.data;
-      // ChipTiming pode retornar: { entries: [], totalCount: N } ou array direto
-      const entries = json.entries || json.items || json.data || (Array.isArray(json) ? json : []);
-      if (totalCount === null) totalCount = json.totalCount || json.total || entries.length;
-
-      allEntries = allEntries.concat(entries);
-      process.stdout.write(` ${allEntries.length}/${totalCount}`);
-
-      if (!entries.length || allEntries.length >= totalCount) break;
-      startPage++;
-      await DELAY(500);
     }
-
-    dataMap[listId] = { entries: allEntries, total: totalCount };
   }
 
   await browser.close();
