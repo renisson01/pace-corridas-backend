@@ -100,7 +100,6 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .card-footer{display:flex;align-items:center;justify-content:space-between}
 .preco-label{font-size:13px;color:var(--dim)}
 .preco-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:var(--neon)}
-.preco-gratis{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:800;color:var(--neon)}
 .btn-inscrever{background:var(--neon);color:#000;border:none;padding:10px 18px;border-radius:12px;
   font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;letter-spacing:.3px;
   display:flex;align-items:center;gap:6px;text-decoration:none;font-family:'Space Grotesk',sans-serif}
@@ -295,7 +294,6 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="stat-item"><span class="stat-n" id="statTotal">—</span><span class="stat-l">Corridas</span></div>
   <div class="stat-item"><span class="stat-n" id="statEstados">—</span><span class="stat-l">Estados</span></div>
   <div class="stat-item"><span class="stat-n" id="statMes">—</span><span class="stat-l">Este mês</span></div>
-  <div class="stat-item"><span class="stat-n" id="statGratis">—</span><span class="stat-l">Gratuitas</span></div>
 </div>
 
 <!-- LISTA -->
@@ -444,9 +442,9 @@ function criarCard(c, idx) {
   const dists = (c.distancias || '').split(',').filter(d => d.trim()).map(d =>
     `<span class="dist-badge">${d.trim()}</span>`).join('');
 
-  const precoHtml = !c.preco || c.preco === 0
-    ? `<span class="preco-gratis">💚 Gratuita</span>`
-    : `<div><div class="preco-label">A partir de</div><div class="preco-val">R$ ${c.preco.toFixed(2).replace('.',',')}</div></div>`;
+  const precoHtml = c.preco && c.preco > 0
+    ? `<div><div class="preco-label">A partir de</div><div class="preco-val">R$ ${c.preco.toFixed(2).replace('.',',')}</div></div>`
+    : ``;
 
   const imgHtml = c.imageUrl
     ? `<img class="card-img" src="${c.imageUrl}" alt="${c.nome}" onerror="this.parentElement.innerHTML='<div class=\\'card-img-placeholder\\'>🏁</div>'">`
@@ -500,9 +498,9 @@ async function abrirDetalhe(id) {
     const dists = (c.distancias || '').split(',').filter(d => d.trim()).map(d =>
       `<span class="modal-dist">${d.trim()}</span>`).join('');
 
-    const precoHtml = !c.preco || c.preco === 0
-      ? `<div class="info-box-val" style="color:var(--neon)">💚 Gratuita</div>`
-      : `<div class="info-box-val">R$ ${c.preco.toFixed(2).replace('.',',')}</div>`;
+    const precoHtml = c.preco && c.preco > 0
+      ? `<div class="info-box-val">R$ ${c.preco.toFixed(2).replace('.',',')}</div>`
+      : `<div class="info-box-val" style="color:var(--dim)">—</div>`;
 
     const vagasHtml = c.vagasRestantes > 0
       ? `<span style="color:var(--neon);font-weight:700">${c.vagasRestantes} vagas restantes</span>`
@@ -612,16 +610,14 @@ document.getElementById('modalDetalhe').addEventListener('click', e => {
 // ══════════════════════════════════
 async function carregarStats() {
   try {
-    const [all, mesAtual, gratis] = await Promise.all([
+    const [all, mesAtual] = await Promise.all([
       api('/corridas-abertas?limit=1'),
       api(`/corridas-abertas?mes=${new Date().getMonth()+1}&limit=1`),
-      api('/corridas-abertas?limit=1'),
     ]);
     const estats = await api('/corridas-abertas/stats/estados').catch(() => ({ estados: [] }));
     document.getElementById('statTotal').textContent = all.total || '—';
     document.getElementById('statEstados').textContent = estats.estados?.length || '—';
     document.getElementById('statMes').textContent = mesAtual.total || '—';
-    document.getElementById('statGratis').textContent = '—';
   } catch {}
 }
 
