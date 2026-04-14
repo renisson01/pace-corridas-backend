@@ -317,7 +317,7 @@ async function importEvent(db, companySlug, eventSlug, meta, allAthletes) {
     const name = (a.name || '').trim().toUpperCase().replace(/\s+/g, ' ');
     const aid = athleteMap[name];
     if (!aid) continue;
-    const rawTime = a.time || a.finishTime || a.chipTime;
+    const rawTime = a.liquidTime || a.rawTime || a.time || a.finishTime || a.chipTime;
     const time = fmtTime(rawTime);
     if (!time) continue;
     const dist = normDist(a._mod || a.modality || '5K');
