@@ -235,6 +235,75 @@ export async function rankingRoutes(fastify) {
       .sort((a, b) => (extrairKm(b.distance)||0) - (extrairKm(a.distance)||0));
   });
 
+  // RANKING POR CIDADE — GET /api/ranking/city/:city?distance=10K&gender=M
+  fastify.get('/ranking/city/:city', async (req, reply) => {
+    const { city }     = req.params;
+    const { distance, gender, limit = 100 } = req.query;
+
+    if (!distance) return reply.code(400).send({ error: 'Parâmetro distance obrigatório (ex: 5K, 10K, 21K, 42K)' });
+
+    const dist = distance.toUpperCase().replace('KM', 'K');
+
+    const genderClause = gender && gender !== 'all' ? 'AND a.gender = $3' : '';
+    const params = [city, dist];
+    if (gender && gender !== 'all') params.push(gender);
+
+    const sql = `
+      SELECT DISTINCT ON (a.id)
+        a.id, a.name, a.equipe, a.state, a.city, a.gender,
+        a."totalPoints", a."totalRaces",
+        a.club, a.coach, a."photoUrl",
+        r."time" as "melhorTempo",
+        r.pace as "melhorPace",
+        race.name as "raceName",
+        race.date as "raceDate"
+      FROM "Athlete" a
+      JOIN "Result" r  ON a.id = r."athleteId"
+      JOIN "Race" race ON race.id = r."raceId"
+      WHERE LOWER(TRIM(a.city)) = LOWER(TRIM($1))
+        AND REPLACE(UPPER(r.distance), 'KM', 'K') = $2
+        AND r."time" NOT IN ('DNS', '00:00:00', '')
+        AND a.name IS NOT NULL AND a.name != ''
+        AND NOT (r.distance = '3K'  AND r."time" < '00:08:00')
+        AND NOT (r.distance = '5K'  AND r."time" < '00:14:00')
+        AND NOT (r.distance = '10K' AND r."time" < '00:26:00')
+        AND NOT (r.distance = '21K' AND r."time" < '01:00:00')
+        AND NOT (r.distance = '42K' AND r."time" < '02:00:00')
+        ${genderClause}
+      ORDER BY a.id, r."time" ASC
+    `;
+
+    const rows = await prisma.$queryRawUnsafe(sql, ...params);
+    rows.sort((a, b) => a.melhorTempo.localeCompare(b.melhorTempo));
+    const top = rows.slice(0, parseInt(limit));
+
+    return {
+      city,
+      distance: dist,
+      gender:   gender || 'all',
+      total:    top.length,
+      ranking:  top.map((r, i) => ({
+        posicao:     i + 1,
+        id:          r.id,
+        name:        r.name,
+        city:        r.city || city,
+        state:       r.state || null,
+        club:        r.club  || null,
+        coach:       r.coach || null,
+        photoUrl:    r.photoUrl || null,
+        equipe:      r.equipe || null,
+        gender:      r.gender,
+        totalRaces:  r.totalRaces,
+        totalPoints: r.totalPoints,
+        nivel:       nivelAtleta(r.totalPoints).label,
+        melhorTempo: r.melhorTempo,
+        melhorPace:  r.melhorPace || null,
+        prova:       r.raceName  || null,
+        dataProva:   r.raceDate  || null,
+      }))
+    };
+  });
+
   // LISTA DE CORRIDAS
   fastify.get('/corridas', async () => {
     const races = await prisma.race.findMany({

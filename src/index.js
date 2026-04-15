@@ -48,6 +48,8 @@ import { subscriptionRoutes } from './modules/subscription/subscription.routes.j
 import { cobaiaRoutes } from './modules/cobaia/cobaia.routes.js';
 import { bioageRoutes } from './modules/biological/bioage.routes.js';
 import { decisionRoutes } from './modules/decision/decision.routes.js';
+import { perfilRoutes } from './modules/perfil/perfil.routes.js';
+import { manualResultRoutes } from './modules/results/manual.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = Fastify({ logger: false });
@@ -164,6 +166,8 @@ try {
   await app.register(cobaiaRoutes);
   await app.register(bioageRoutes);
   await app.register(decisionRoutes);
+  await app.register(perfilRoutes);
+  await app.register(manualResultRoutes);
   console.log('✅ Todas as rotas registradas (v3.0 REGENI)');
 } catch(e) {
   console.error('❌ ERRO ao registrar rotas:', e.message);

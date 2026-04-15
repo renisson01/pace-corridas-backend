@@ -32,6 +32,11 @@ model Athlete {
   age         Int?
   birthDate   DateTime?
   cpf         String?
+  city        String?
+  club        String?
+  coach       String?
+  photoUrl    String?
+  bio         String?
   totalRaces  Int      @default(0)
   totalPoints Int      @default(0)
   createdAt   DateTime @default(now())
@@ -41,19 +46,22 @@ model Athlete {
 }
 
 model Result {
-  id          String   @id @default(cuid())
-  athleteId   String
-  raceId      String
-  time        String
-  pace        String?
-  overallRank Int?
-  genderRank  Int?
-  ageGroup    String?
-  distance    String?
-  points      Int      @default(0)
-  createdAt   DateTime @default(now())
-  athlete     Athlete  @relation(fields: [athleteId], references: [id])
-  race        Race     @relation(fields: [raceId], references: [id])
+  id              String   @id @default(cuid())
+  athleteId       String
+  raceId          String
+  time            String
+  pace            String?
+  overallRank     Int?
+  genderRank      Int?
+  ageGroup        String?
+  distance        String?
+  points          Int      @default(0)
+  editedByAthlete Boolean  @default(false)
+  originalData    String?
+  source          String?
+  createdAt       DateTime @default(now())
+  athlete         Athlete  @relation(fields: [athleteId], references: [id])
+  race            Race     @relation(fields: [raceId], references: [id])
   @@unique([athleteId, raceId])
 }
 
