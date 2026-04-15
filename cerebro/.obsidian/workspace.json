@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "dd196daf2b4cbfc8",
+        "id": "de9309eef314fca6",
         "type": "tabs",
         "children": [
           {
-            "id": "3125a8eeda5473f5",
+            "id": "2bd898d733016cb0",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -49,7 +49,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#automacao",
+                "query": "tag:#decisoes",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -75,7 +75,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 276.5
   },
   "right": {
     "id": "17c0633477a5c53a",
@@ -186,14 +186,27 @@
       "templates:Inserir modelo": false,
       "command-palette:Abrir paleta de comandos": false,
       "bases:Criar nova base": false,
-      "copilot:Open Copilot Chat": false
+      "copilot:Open Copilot Chat": false,
+      "templater-obsidian:Templater": false,
+      "githobs:Manage a github issue": false,
+      "obsidian-kanban:Create new board": false
     }
   },
-  "active": "3125a8eeda5473f5",
+  "active": "4671e8142e562d4b",
   "lastOpenFiles": [
+    "cerebro/daily/2026-04-15.md",
+    "cerebro/daily/2026-04-14.md",
+    "cerebro/daily",
+    "cerebro",
+    "CONTEXTO-TECNICO.md",
+    "templates/template-daily.md",
+    "scrapers",
+    "templates",
+    "09-SCRAPERS-STATUS.md",
+    "KANBAN.md",
+    "DASHBOARD.md",
     "08-FONTES-RESULTADOS.md",
     "daily/2026-04-14.md",
-    "CONTEXTO-TECNICO.md",
     "daily/coleta-2026-04-13.md",
     "daily/2026-04-13.md",
     "Sem título.canvas",
@@ -212,14 +225,8 @@
     "copilot/copilot-custom-prompts/Explain like I am 5.md",
     "copilot/copilot-custom-prompts/Simplify.md",
     "copilot/copilot-custom-prompts/Summarize.md",
-    "copilot/copilot-custom-prompts/Translate to Chinese.md",
-    "copilot/copilot-custom-prompts/Fix grammar and spelling.md",
     "copilot/copilot-custom-prompts",
     "copilot",
-    "daily/2026-04-11.md",
-    "00-INDEX.md",
-    "05-DECISOES.md",
-    "2026-04-10.md",
     "Sem título",
     "05-DECISOES.md.tmp.679706.1775773457137"
   ]
