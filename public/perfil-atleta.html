@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>REGENI — Perfil do Atleta</title>
+<title>REGENI — Meu Atleta</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--verde:#00D4FF;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
@@ -85,7 +85,7 @@ button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
 
 <div class="topbar">
   <button class="btn-back" onclick="history.back()">←</button>
-  <span class="topbar-title">Perfil do Atleta</span>
+  <span class="topbar-title">Meu Atleta</span>
 </div>
 
 <div id="mainContent">
@@ -225,7 +225,7 @@ function solicitarVinculacao(atletaId, atletaNome) {
   const paceUser = JSON.parse(localStorage.getItem('pace_user')||'{}');
   if (!paceUser.id) {
     toast('⚠️ Faça login primeiro!');
-    setTimeout(()=>location.href='/perfil.html', 1500);
+    setTimeout(()=>location.href='/atleta.html', 1500);
     return;
   }
   // Confirmar vinculação
