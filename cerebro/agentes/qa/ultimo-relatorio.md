@@ -1,9 +1,9 @@
-# 📋 Relatório Completo QA — 16/04/2026, 15:05:31
+# 📋 Relatório Completo QA — 16/04/2026, 15:21:13
 
 ## Início (`undefined`)
 - **URL:** https://web-production-990e7.up.railway.app/
-- **Load:** 2996ms
-- **Screenshot diff:** 🔴 41.5%
+- **Load:** 2776ms
+- **Screenshot diff:** 🔴 41.9%
 
 ### Checks
 - ✅ `text-exists` — "REGENI" encontrado
@@ -13,27 +13,26 @@
 
 ## Resultados (`undefined`)
 - **URL:** https://web-production-990e7.up.railway.app/resultados.html
-- **Load:** 2274ms
+- **Load:** 2219ms
 - **Screenshot diff:** 🔴 99.5%
 
 ### Checks
 - ✅ `text-exists` — "Ranking" encontrado
 - ✅ `element-visible` — nav visível
-- ✅ `api-responds` — /ranking/10km?limit=5 → HTTP 200 (2661ms)
+- ✅ `api-responds` — /ranking/10km?limit=5 → HTTP 200 (2449ms)
 - ✅ `no-console-errors` — Sem erros de console
 
 ## Atleta (`undefined`)
 - **URL:** https://web-production-990e7.up.railway.app/atleta.html
-- **Load:** 3459ms
-- **Screenshot diff:** 🔴 93.9%
+- **Load:** 3256ms
+- **Screenshot diff:** 🔴 99.1%
 
 ### Checks
-- ❌ `element-visible` — nav NÃO encontrado/visível
 - ✅ `no-console-errors` — Sem erros de console
 
 ## Corridas (`undefined`)
 - **URL:** https://web-production-990e7.up.railway.app/corridas-abertas.html
-- **Load:** 2331ms
+- **Load:** 2371ms
 - **Screenshot diff:** ✅ 0.0%
 
 ### Checks
@@ -43,7 +42,7 @@
 - ✅ `no-console-errors` — Sem erros de console
 
 ## APIs
-- ✅ `GET /ranking/10km?limit=3` → HTTP 200 (1471ms)
-- ✅ `GET /ranking/5km?limit=3` → HTTP 200 (1397ms)
-- ✅ `GET /buscar-atletas?q=RENISSON&limit=3` → HTTP 200 (521ms)
+- ✅ `GET /ranking/10km?limit=3` → HTTP 200 (1483ms)
+- ✅ `GET /ranking/5km?limit=3` → HTTP 200 (1817ms)
+- ✅ `GET /buscar-atletas?q=RENISSON&limit=3` → HTTP 200 (555ms)
 - ✅ `GET /corridas-abertas` → HTTP 200 (270ms)

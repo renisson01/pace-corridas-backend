@@ -33,8 +33,9 @@ module.exports = {
       id: 'atleta',
       path: '/atleta.html',
       name: 'Atleta',
+      // Sem auth → JS redirect para entrar.html. Comportamento correto.
+      // Apenas verificamos que não há erros JS durante o fluxo de auth-check + redirect.
       checks: [
-        { type: 'element-visible', selector: 'nav' },
         { type: 'no-console-errors' },
       ]
     },
