@@ -40,6 +40,7 @@ export async function perfilRoutes(fastify) {
       city: user.city,
       state: user.state,
       isPremium: user.isPremium,
+      premiumUntil: user.premiumUntil || null,
       athlete: user.athlete ? {
         id: user.athlete.id,
         name: user.athlete.name,

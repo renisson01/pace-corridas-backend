@@ -267,6 +267,33 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',system-u
     <button onclick="salvarPerfil()" class="btn-salvar">💾 Salvar Perfil</button>
   </div>
 
+  <!-- Card Premium -->
+  <div id="card-premium" class="card rounded-2xl p-4 space-y-3">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <h3 class="font-black text-white">» REGENI Premium</h3>
+      <span id="badge-premium-status" style="display:none" class="rg-badge-premium">ATIVO</span>
+    </div>
+    <div id="premium-nao-ativo">
+      <p style="font-size:12px;color:#a0a0a0;margin-bottom:12px">Desbloqueie o badge <strong style="color:#00ff87">» REGENI</strong> ao lado do seu nome no ranking. Plano mensal, cancele quando quiser.</p>
+      <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:12px">
+        <span style="font-size:28px;font-weight:900;color:#00ff87">R$&nbsp;4,99</span>
+        <span style="font-size:11px;color:#64748b">/mês via Pix</span>
+      </div>
+      <ul style="font-size:11px;color:#a0a0a0;margin-bottom:16px;line-height:1.8;list-style:none;padding:0">
+        <li>✅ Badge <strong style="color:#00ff87">» REGENI</strong> no ranking nacional</li>
+        <li>✅ Perfil destacado nos resultados</li>
+        <li>✅ Suporte prioritário</li>
+      </ul>
+      <button onclick="abrirModalPix()" style="width:100%;background:linear-gradient(135deg,#00ff87,#00cc6a);color:#000;font-weight:800;font-size:14px;padding:14px;border-radius:12px;border:none;cursor:pointer">
+        Pagar R$ 4,99 via Pix
+      </button>
+    </div>
+    <div id="premium-ativo" style="display:none">
+      <p style="font-size:12px;color:#00ff87;font-weight:700">Você é Premium! Badge ativo no ranking.</p>
+      <p id="premium-expiry" style="font-size:11px;color:#64748b;margin-top:4px"></p>
+    </div>
+  </div>
+
   <div class="card rounded-2xl p-4 space-y-3">
     <h3 class="font-black text-white">Links</h3>
     <a href="/ia.html" class="flex items-center justify-between py-2 border-b border-slate-800">
@@ -419,6 +446,45 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',system-u
   </div>
 </div>
 
+<!-- ═══ MODAL: PIX PREMIUM ═══ -->
+<div id="modal-pix" class="modal-overlay" onclick="fecharModalSeOverlay(event,'modal-pix')">
+  <div class="modal-box" style="max-width:360px">
+    <div class="modal-titulo">
+      <span>» REGENI Premium</span>
+      <button onclick="fecharModalPix()" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <div id="pix-loading" style="text-align:center;padding:24px 0">
+      <div style="font-size:32px;margin-bottom:8px">⏳</div>
+      <p style="color:#a0a0a0;font-size:13px">Gerando Pix…</p>
+    </div>
+    <div id="pix-content" style="display:none;text-align:center">
+      <p style="font-size:12px;color:#a0a0a0;margin-bottom:12px">Escaneie o QR Code ou copie o código Pix</p>
+      <div style="background:#fff;border-radius:12px;padding:12px;display:inline-block;margin-bottom:12px">
+        <img id="pix-qr-img" src="" alt="QR Code Pix" style="width:200px;height:200px;display:block">
+      </div>
+      <p style="font-size:11px;color:#64748b;margin-bottom:8px">Ou copie o código:</p>
+      <div style="background:#1e1e1e;border-radius:8px;padding:10px;word-break:break-all;font-size:10px;color:#a0a0a0;margin-bottom:12px;text-align:left;max-height:60px;overflow:hidden" id="pix-codigo"></div>
+      <button onclick="copiarPix()" style="width:100%;background:#1e1e1e;border:1px solid #2a2a2a;color:#00ff87;font-weight:700;font-size:13px;padding:12px;border-radius:10px;cursor:pointer;margin-bottom:16px">
+        📋 Copiar código Pix
+      </button>
+      <div id="pix-status" style="font-size:12px;color:#64748b;text-align:center">
+        ⏳ Aguardando pagamento…
+      </div>
+      <p style="font-size:10px;color:#64748b;margin-top:8px">R$ 4,99 · 30 dias · Cancele quando quiser</p>
+    </div>
+    <div id="pix-sucesso" style="display:none;text-align:center;padding:16px 0">
+      <div style="font-size:48px;margin-bottom:8px">✅</div>
+      <p style="font-weight:800;color:#00ff87;font-size:16px;margin-bottom:4px">Pagamento confirmado!</p>
+      <p style="font-size:12px;color:#a0a0a0">Seu badge » REGENI está ativo.</p>
+    </div>
+    <div id="pix-erro" style="display:none;text-align:center;padding:16px 0">
+      <div style="font-size:48px;margin-bottom:8px">❌</div>
+      <p style="color:#ff4757;font-size:13px" id="pix-erro-msg">Erro ao gerar Pix</p>
+      <button onclick="fecharModalPix()" style="margin-top:12px;background:#1e1e1e;border:1px solid #2a2a2a;color:#a0a0a0;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:12px">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -477,6 +543,9 @@ async function carregarPerfil() {
     const data = await res.json();
 
     document.getElementById('nome').textContent = data.name || 'Sem nome';
+
+    // Premium UI
+    atualizarUIPremium(data.isPremium, data.premiumUntil);
 
     if (data.athlete) {
       _atletaId = data.athlete.id;
@@ -932,6 +1001,101 @@ function sair() {
   localStorage.removeItem('pace_token');
   localStorage.removeItem('pace_user');
   window.location.href = '/entrar.html';
+}
+
+// ─── Premium state ────────────────────────────────────────────────────────────
+function atualizarUIPremium(isPremium, premiumUntil) {
+  if (isPremium) {
+    document.getElementById('badge-premium-status').style.display = 'inline-flex';
+    document.getElementById('premium-nao-ativo').style.display = 'none';
+    document.getElementById('premium-ativo').style.display = 'block';
+    if (premiumUntil) {
+      const d = new Date(premiumUntil);
+      const dias = Math.ceil((d - new Date()) / (1000*60*60*24));
+      document.getElementById('premium-expiry').textContent = `Válido até ${d.toLocaleDateString('pt-BR')} (${dias} dias)`;
+    }
+  } else {
+    document.getElementById('badge-premium-status').style.display = 'none';
+    document.getElementById('premium-nao-ativo').style.display = 'block';
+    document.getElementById('premium-ativo').style.display = 'none';
+  }
+}
+
+// ─── Modal Pix ────────────────────────────────────────────────────────────────
+let _pixPaymentId = null;
+let _pixPollTimer = null;
+let _pixCodigo = '';
+
+async function abrirModalPix() {
+  document.getElementById('modal-pix').classList.add('ativo');
+  document.getElementById('pix-loading').style.display = 'block';
+  document.getElementById('pix-content').style.display = 'none';
+  document.getElementById('pix-sucesso').style.display = 'none';
+  document.getElementById('pix-erro').style.display = 'none';
+
+  try {
+    const res = await fetch('/pagamentos/premium', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      // Já é premium
+      if (data.isPremium) {
+        fecharModalPix();
+        mostrarToast('Você já é Premium! ' + (data.error || ''), 'success');
+        return;
+      }
+      throw new Error(data.error || 'Erro ao criar pagamento');
+    }
+
+    _pixPaymentId = data.paymentId;
+    _pixCodigo = data.qrCode;
+
+    document.getElementById('pix-loading').style.display = 'none';
+    document.getElementById('pix-content').style.display = 'block';
+    document.getElementById('pix-codigo').textContent = data.qrCode;
+
+    if (data.qrCodeBase64) {
+      document.getElementById('pix-qr-img').src = 'data:image/png;base64,' + data.qrCodeBase64;
+    }
+
+    // Polling status a cada 3s
+    _pixPollTimer = setInterval(async () => {
+      try {
+        const s = await fetch('/pagamentos/status?payment_id=' + _pixPaymentId).then(r => r.json());
+        if (s.status === 'approved') {
+          clearInterval(_pixPollTimer);
+          document.getElementById('pix-content').style.display = 'none';
+          document.getElementById('pix-sucesso').style.display = 'block';
+          atualizarUIPremium(true, null);
+          setTimeout(() => fecharModalPix(), 3000);
+        }
+      } catch {}
+    }, 3000);
+
+  } catch (e) {
+    document.getElementById('pix-loading').style.display = 'none';
+    document.getElementById('pix-erro').style.display = 'block';
+    document.getElementById('pix-erro-msg').textContent = e.message;
+  }
+}
+
+function fecharModalPix() {
+  document.getElementById('modal-pix').classList.remove('ativo');
+  if (_pixPollTimer) { clearInterval(_pixPollTimer); _pixPollTimer = null; }
+}
+
+function copiarPix() {
+  if (!_pixCodigo) return;
+  navigator.clipboard.writeText(_pixCodigo).then(() => mostrarToast('Código Pix copiado!', 'success'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = _pixCodigo; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      mostrarToast('Código Pix copiado!', 'success');
+    });
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────

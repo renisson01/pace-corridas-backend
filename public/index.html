@@ -208,7 +208,7 @@ function heroSearchGo() {
       if (!d || !d.length) { el.innerHTML = '<p class="text-slate-400 text-xs p-2">Nenhum atleta encontrado para "' + q + '"</p>'; return; }
       el.innerHTML = d.slice(0,10).map(a =>
         '<a href="/perfil-atleta.html?id='+a.id+'" style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);text-decoration:none;color:inherit">'
-        +'<div><div style="font-size:13px;font-weight:600">'+a.name+'</div>'
+        +'<div><div style="font-size:13px;font-weight:600">'+a.name+(a.isPremium?'<span style="display:inline-flex;align-items:center;background:linear-gradient(135deg,#00ff87,#00cc6a);color:#000;font-size:8px;font-weight:800;padding:1px 5px;border-radius:20px;vertical-align:middle;margin-left:4px">REGENI</span>':'')+'</div>'
         +'<div style="font-size:11px;color:#64748b">'+(a.state||'BR')+' · '+a.totalRaces+' provas'+(a.nivel?' · '+a.nivel:'')+'</div></div>'
         +'<span style="color:#00ff87;font-size:12px">→</span></a>'
       ).join('');

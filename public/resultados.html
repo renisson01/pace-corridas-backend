@@ -59,6 +59,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
   border-bottom:1px solid var(--b2);
 }
 .topbar-logo{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--c);letter-spacing:1px}
+.rg-badge-premium{display:inline-flex;align-items:center;background:linear-gradient(135deg,#00ff87 0%,#00cc6a 100%);color:#000;font-size:8px;font-weight:800;letter-spacing:.3px;padding:1px 5px;border-radius:20px;vertical-align:middle;margin-left:4px;white-space:nowrap;box-shadow:0 0 6px rgba(0,255,135,.35)}
 .topbar-title{font-family:var(--fn);font-size:15px;font-weight:600;color:var(--t2);flex:1}
 .topbar-badge{
   background:var(--c2);border:1px solid var(--b1);
@@ -869,7 +870,7 @@ async function buscarAtleta(q, dropdown=false){
     drop.innerHTML=d.slice(0,12).map(a=>`
       <a class="sd-item" href="/perfil-atleta.html?id=${a.id}">
         <div>
-          <div class="sd-name">${a.name}</div>
+          <div class="sd-name">${a.name}${a.isPremium?'<span class="rg-badge-premium">REGENI</span>':''}</div>
           <div class="sd-meta">${a.state||'—'} · ${a.totalRaces||0} provas</div>
         </div>
         <div style="text-align:right;flex-shrink:0">
@@ -952,7 +953,7 @@ function renderTable(data, km, showProva=false, limit=50){
     return `<tr class="${pos<=3?'top3':''}" data-idx="${i}">
       <td><span class="pos ${posClass}">${medal}</span></td>
       <td>
-        <div class="aname">${r.name||'—'}${estado?`<span style="color:var(--t3);font-size:10px;font-weight:400"> · ${estado}</span>`:''}</div>
+        <div class="aname">${r.name||'—'}${r.isPremium?'<span class="rg-badge-premium">REGENI</span>':''}${estado?`<span style="color:var(--t3);font-size:10px;font-weight:400"> · ${estado}</span>`:''}</div>
         ${equipe?`<div class="aequipe">${equipe}</div>`:''}
         ${showProva&&provaNome?`<div class="astate">${provaNome}</div>`:''}
       </td>

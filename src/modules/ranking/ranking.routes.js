@@ -42,14 +42,16 @@ export async function rankingRoutes(fastify) {
       select: {
         id:true, name:true, equipe:true, state:true, gender:true,
         totalRaces:true, totalPoints:true, age:true,
-        results: { orderBy: { points: 'desc' }, take: 1, include: { race: { select: { name:true } } } }
+        results: { orderBy: { points: 'desc' }, take: 1, include: { race: { select: { name:true } } } },
+        user: { select: { isPremium: true } }
       }
     });
     return atletas.map((a, i) => ({
       posicao: i+1, id:a.id, name:a.name, equipe:a.equipe||null,
       state:a.state||null, gender:a.gender, totalRaces:a.totalRaces,
       totalPoints:a.totalPoints, nivel:nivelAtleta(a.totalPoints).label,
-      melhorProva:a.results[0]?.race?.name||null
+      melhorProva:a.results[0]?.race?.name||null,
+      isPremium: a.user?.isPremium || false
     }));
   });
 
@@ -96,12 +98,13 @@ export async function rankingRoutes(fastify) {
     if (estado) where.state = estado;
     const atletas = await prisma.athlete.findMany({
       where, take: parseInt(limit), orderBy: { totalPoints: 'desc' },
-      select: { id:true, name:true, equipe:true, state:true, gender:true, totalPoints:true, totalRaces:true }
+      select: { id:true, name:true, equipe:true, state:true, gender:true, totalPoints:true, totalRaces:true, user: { select: { isPremium: true } } }
     });
     return atletas.map((a, i) => ({
       posicao: i+1, id:a.id, name:a.name, equipe:a.equipe||null,
       state:a.state||null, gender:a.gender, totalPoints:a.totalPoints,
-      totalRaces:a.totalRaces, nivel:nivelAtleta(a.totalPoints).label
+      totalRaces:a.totalRaces, nivel:nivelAtleta(a.totalPoints).label,
+      isPremium: a.user?.isPremium || false
     }));
   });
 

@@ -296,3 +296,22 @@ input::placeholder, textarea::placeholder { color: var(--muted2); }
 .justify-between { justify-content: space-between; }
 .w-full { width: 100%; }
 .hidden { display: none; }
+
+/* ── Badge Premium ── */
+.rg-badge-premium {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(135deg, #00ff87 0%, #00cc6a 100%);
+  color: #000;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  padding: 2px 6px;
+  border-radius: 20px;
+  vertical-align: middle;
+  margin-left: 4px;
+  white-space: nowrap;
+  box-shadow: 0 0 8px rgba(0,255,135,.4);
+}
+.rg-badge-premium::before { content: '»'; margin-right: 1px; }
