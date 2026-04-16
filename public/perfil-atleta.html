@@ -8,7 +8,7 @@
 <style>
 :root{--verde:#00D4FF;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
 a{text-decoration:none;color:inherit}
 button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
 
@@ -141,7 +141,7 @@ async function carregar() {
 }
 
 function renderPerfil(a) {
-  const iniciais = a.name.split(' ').slice(0,2).map(n=>n[0]).join('');
+  const iniciais = (a.name||'?').split(' ').filter(Boolean).slice(0,2).map(n=>n[0]||'').join('') || '?';
   const nc = nivelCls(a.nivel);
   const paceUser = JSON.parse(localStorage.getItem('pace_user')||'{}');
   const jaVinculado = a.linkedUserId;

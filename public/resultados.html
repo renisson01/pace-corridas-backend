@@ -565,6 +565,12 @@ function calcPace(t, km){
   return Math.floor(ps/60)+':'+String(Math.round(ps%60)).padStart(2,'0')+'/km';
 }
 
+function calcVel(t, km){
+  const s=tempoSec(t);
+  if(s===999999||!km) return '—';
+  return (km/(s/3600)).toFixed(1)+' km/h';
+}
+
 function timeClass(t, km){
   const s=tempoSec(t);
   if(s===999999) return 'normal';
@@ -919,11 +925,14 @@ function miniStats(data, km){
     return h>0?`${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:`${m}:${String(ss).padStart(2,'0')}`;
   };
 
+  // Velocidade média (km/h) com base no tempo mediano
+  const velMedia = km ? (km / (median/3600)).toFixed(1) : null;
+
   return `<div class="mini-stats fade-up">
     <div class="ms"><div class="ms-val" style="color:var(--amber)">${fmtT(best)}</div><div class="ms-lbl">Melhor</div></div>
     <div class="ms"><div class="ms-val" style="color:var(--c)">${fmtT(median)}</div><div class="ms-lbl">Mediana</div></div>
+    <div class="ms"><div class="ms-val" style="color:var(--green)">${velMedia?velMedia+'km/h':'—'}</div><div class="ms-lbl">Vel. Média</div></div>
     <div class="ms"><div class="ms-val" style="color:var(--pink)">${total>0?Math.round(fem/total*100):0}%</div><div class="ms-lbl">Feminino</div></div>
-    <div class="ms"><div class="ms-val" style="color:var(--green)">${fmtNum(total)}</div><div class="ms-lbl">Total</div></div>
   </div>`;
 }
 
@@ -1085,9 +1094,9 @@ async function openAthleteSheet(r, km){
     </div>
     <div class="sh-grid">
       <div class="sh-stat"><div class="sh-sv">${formatTime(tempo)}</div><div class="sh-sl">Melhor tempo</div></div>
-      <div class="sh-stat"><div class="sh-sv">${calcPace(tempo,sheetKm)}</div><div class="sh-sl">Pace médio</div></div>
-      <div class="sh-stat"><div class="sh-sv">#${r.posicao||'—'}</div><div class="sh-sl">Posição</div></div>
-      <div class="sh-stat"><div class="sh-sv">${r.totalRaces||r.totalPoints?fmtNum(r.totalPoints||0):'—'}</div><div class="sh-sl">${r.totalPoints?'Pontos':'Corridas'}</div></div>
+      <div class="sh-stat"><div class="sh-sv" style="color:var(--green)">${calcVel(tempo,sheetKm)}</div><div class="sh-sl">Velocidade</div></div>
+      <div class="sh-stat"><div class="sh-sv" style="color:var(--t2)">${calcPace(tempo,sheetKm)}</div><div class="sh-sl">Pace</div></div>
+      <div class="sh-stat"><div class="sh-sv" style="color:var(--amber)">#${r.posicao||'—'}</div><div class="sh-sl">Posição</div></div>
     </div>
     <div id="sheetProvas"><div class="sh-section">Carregando provas...</div></div>
     ${r.id?`<button class="sh-profile-btn" onclick="window.location.href='/perfil-atleta.html?id=${r.id}'">Ver perfil completo →</button>`:''}
@@ -1103,11 +1112,14 @@ async function openAthleteSheet(r, km){
       const provasHtml=provas.slice(0,5).map(p=>{
         const pos=p.overallRank||'—';
         const medal=pos<=3?MED[pos-1]:'';
+        const pKm=extrairKm(p.distance)||10;
+        const vel=calcVel(p.time,pKm);
         return `<div class="sh-race">
           <div class="sh-race-pos">${medal||'#'+pos}</div>
           <div class="sh-race-info">
             <div class="sh-race-name">${p.raceName||'—'}</div>
             <div class="sh-race-sub">${p.distance||''} · ${p.raceCity||''} · ${p.raceDate?new Date(p.raceDate).getFullYear():''}</div>
+            ${vel!=='—'?`<div style="font-size:10px;color:var(--green);margin-top:2px">⚡ ${vel} · ${calcPace(p.time,pKm)}</div>`:''}
           </div>
           <div class="sh-race-time">${formatTime(p.time)||'—'}</div>
         </div>`;

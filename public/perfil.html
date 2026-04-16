@@ -68,7 +68,7 @@ body { background: #04060b; color: #eeeef8; font-family: 'Inter', system-ui, san
         <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-cyan-400 rounded-full flex items-center justify-center text-black text-xs font-bold border-2 border-[#04060b]">📷</div>
       </div>
       <h1 id="nome" class="text-2xl font-black text-white mb-1">Carregando...</h1>
-      <p id="info-sub" class="text-slate-400 text-sm mb-3">—</p>
+      <p id="info-sub" class="text-slate-400 text-sm mb-3">Carregando perfil...</p>
       <div id="nivel-badge" class="inline-block px-4 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">🌱 Iniciando</div>
       <div class="grid grid-cols-3 gap-4 mt-6">
         <div class="text-center">
@@ -129,6 +129,7 @@ body { background: #04060b; color: #eeeef8; font-family: 'Inter', system-ui, san
     <div class="stat-card rounded-2xl p-4 text-center"><p class="text-xs text-slate-400 uppercase mb-1">Distância Total</p><p id="st-dist" class="text-2xl font-black text-orange-400">—</p></div>
     <div class="stat-card rounded-2xl p-4 text-center"><p class="text-xs text-slate-400 uppercase mb-1">Tempo Total</p><p id="st-tempo" class="text-xl font-black text-slate-300">—</p></div>
     <div class="stat-card rounded-2xl p-4 text-center"><p class="text-xs text-slate-400 uppercase mb-1">Pace Médio</p><p id="st-pace" class="text-2xl font-black text-green-400">—</p></div>
+    <div class="stat-card rounded-2xl p-4 text-center col-span-2"><p class="text-xs text-slate-400 uppercase mb-1">⚡ Velocidade Média</p><p id="st-vel" class="text-2xl font-black" style="color:#4ADE80">—</p></div>
   </div>
 
   <!-- Gráfico evolução -->
@@ -431,8 +432,12 @@ async function carregarPerfil() {
       const a = data.athlete;
 
       // Hero sub
-      const partes = [a.club, a.city ? `${a.city}/${a.state || ''}` : a.state].filter(Boolean);
-      document.getElementById('info-sub').textContent = partes.join(' • ') || (a.state || 'Brasil');
+      const partes = [
+        a.club || null,
+        a.coach ? `👟 ${a.coach}` : null,
+        a.city ? `📍 ${a.city}${a.state ? '/'+a.state : ''}` : a.state || null,
+      ].filter(Boolean);
+      document.getElementById('info-sub').textContent = partes.join(' · ') || (a.state || 'Corredor REGENI');
 
       document.getElementById('hero-provas').textContent = a.totalRaces || 0;
       document.getElementById('hero-pontos').textContent = a.totalPoints || 0;
@@ -444,14 +449,12 @@ async function carregarPerfil() {
       document.getElementById('nivel-badge').textContent = nivel;
 
       // Foto
-      if (a.photoUrl) setAvatar(a.photoUrl);
+      const inicial = (data.name || '?')[0].toUpperCase();
+      document.getElementById('avatar').textContent = inicial;
+      if (a.photoUrl) setAvatar(a.photoUrl, inicial);
       else {
         const av = localStorage.getItem('pace_avatar');
-        if (av) setAvatar(av);
-        else {
-          const el = document.getElementById('avatar');
-          el.textContent = (data.name || '?')[0].toUpperCase();
-        }
+        if (av) setAvatar(av, inicial);
       }
 
       // Preencher tab Configurar
@@ -504,16 +507,33 @@ async function carregarDadosCompletos(id) {
   } catch (e) { console.error(e); }
 }
 
+// ─── Utils ──────────────────────────────────────────────────────────────────
+function tempoSec(t) {
+  if (!t || t === 'DNS') return 0;
+  const p = t.split(':').map(Number);
+  if (p.length === 3) return p[0]*3600 + p[1]*60 + p[2];
+  if (p.length === 2) return p[0]*60 + p[1];
+  return 0;
+}
+function calcVelPerfil(t, km) {
+  const s = tempoSec(t);
+  if (!s || !km) return null;
+  return (km / (s/3600)).toFixed(1) + ' km/h';
+}
+
 // ─── Render: melhores tempos ──────────────────────────────────────────────────
 function renderMelhoresTempos(melhores) {
   const dists = ['5K','10K','21K','42K'];
   const container = document.getElementById('melhores-tempos');
   container.innerHTML = dists.map(d => {
-    const t = melhores[d]?.time || melhores[d] || null;
+    const entry = melhores[d];
+    const t = entry?.time || entry || null;
+    const vel = t ? calcVelPerfil(t, DIST_KM[d]) : null;
     const cls = t ? 'pace-good' : 'text-slate-500';
     return `<div class="stat-card rounded-2xl p-4 text-center">
       <p class="text-xs text-slate-400 uppercase mb-1">${d.replace('K','km')}</p>
       <p class="text-xl font-black ${cls}">${t || '—'}</p>
+      ${vel ? `<p style="font-size:10px;color:#4ADE80;margin-top:3px">⚡ ${vel}</p>` : ''}
     </div>`;
   }).join('');
 }
@@ -592,6 +612,20 @@ function renderStats(provas, melhores) {
     const mm = Math.floor(mediaMin);
     const ss = Math.round((mediaMin - mm) * 60);
     document.getElementById('st-pace').textContent = `${mm}:${String(ss).padStart(2,'0')}`;
+  }
+
+  // Velocidade média (km/h) — baseada em tempo + distância de cada prova
+  const provComVel = provas.filter(p => p.time && p.distance && DIST_KM[p.distance]);
+  if (provComVel.length) {
+    const totalSecs = provComVel.reduce((acc, p) => {
+      const [h,m,s] = p.time.split(':').map(Number);
+      return acc + h*3600 + m*60 + s;
+    }, 0);
+    const totalKm = provComVel.reduce((acc, p) => acc + (DIST_KM[p.distance] || 0), 0);
+    if (totalSecs > 0 && totalKm > 0) {
+      const vel = (totalKm / (totalSecs / 3600)).toFixed(1);
+      document.getElementById('st-vel').textContent = vel + ' km/h';
+    }
   }
 
   // Melhores por distância
@@ -741,7 +775,7 @@ async function salvarPerfil() {
     if (!r.ok) { toast('❌ ' + (d.error || 'Erro ao salvar'), true); return; }
 
     // Atualizar foto na UI se mudou
-    if (atletaDados.photoUrl) setAvatar(atletaDados.photoUrl);
+    if (atletaDados.photoUrl) setAvatar(atletaDados.photoUrl, document.getElementById('nome').textContent[0] || '?');
 
     toast('✅ Perfil salvo!');
     // Atualizar hero sub
@@ -819,9 +853,10 @@ async function editarResultado() {
 }
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
-function setAvatar(url) {
+function setAvatar(url, fallbackInitial) {
   const el = document.getElementById('avatar');
-  el.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`;
+  const initial = fallbackInitial || el.textContent || '?';
+  el.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML='<span style=font-size:2rem;font-weight:900>${initial}</span>'">`;
 }
 
 async function enviarFoto(input) {
@@ -835,7 +870,7 @@ async function enviarFoto(input) {
     });
     const d = await r.json();
     if (d.url) {
-      setAvatar(d.url);
+      setAvatar(d.url, document.getElementById('nome').textContent[0] || '?');
       localStorage.setItem('pace_avatar', d.url);
       document.getElementById('edit-photo').value = d.url;
     }
@@ -850,7 +885,7 @@ function sair() {
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 const savedAvatar = localStorage.getItem('pace_avatar');
-if (savedAvatar) setAvatar(savedAvatar);
+if (savedAvatar) setAvatar(savedAvatar, '?');
 
 carregarPerfil();
 </script>
