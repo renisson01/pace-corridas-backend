@@ -2,23 +2,42 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>REGENI — Resultados de Corridas de Rua do Brasil</title>
 <meta name="description" content="O maior banco de resultados de corridas de rua do Brasil. Busque seu nome, veja seu ranking, compare seu pace.">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
+<meta name="theme-color" content="#00ff87">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  * { -webkit-tap-highlight-color: transparent; }
-  body { background: #0a0e17; }
-  .glow { text-shadow: 0 0 30px rgba(0,212,255,0.4); }
-  .card { background: linear-gradient(135deg, #111827 0%, #0f1729 100%); border: 1px solid #1e293b; }
-  .btn-primary { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
-  .btn-primary:active { transform: scale(0.97); }
-  .hero-bg { background: radial-gradient(ellipse at 50% 0%, rgba(0,212,255,0.08) 0%, transparent 60%); }
+  :root{
+    --bg:#0a0a0a;--surface:#141414;--surface2:#1e1e1e;
+    --border:#2a2a2a;--text:#ffffff;--text2:#a0a0a0;
+    --accent:#00ff87;--accent2:#00cc6a;--danger:#ff4757;--radius:16px;
+  }
+  *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+  body{background:var(--bg);font-family:'Space Grotesk',system-ui,sans-serif}
+  .glow{text-shadow:0 0 30px rgba(0,255,135,0.4)}
+  .card{background:var(--surface);border:1px solid var(--border)}
+  .btn-primary{background:var(--accent);color:#000}
+  .btn-primary:active{transform:scale(0.97)}
+  .hero-bg{background:radial-gradient(ellipse at 50% 0%,rgba(0,255,135,0.07) 0%,transparent 60%)}
+  /* Unified nav */
+  .rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+  .rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+  .rg-nav-item span:first-child{font-size:22px;line-height:1}
+  .rg-nav-item.active,.rg-nav-item:hover{color:var(--accent)}
+  /* Tailwind cyan overrides → accent green */
+  .text-cyan-400{color:var(--accent)!important}
+  .border-cyan-500{border-color:var(--accent)!important}
+  .hover\:text-cyan-400:hover{color:var(--accent)!important}
+  .focus\:border-cyan-500:focus{border-color:var(--accent)!important}
 </style>
 </head>
-<body class="text-white min-h-screen" style="padding-bottom:calc(70px + env(safe-area-inset-bottom))">
+<body class="text-white min-h-screen" style="padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))">
 
 <!-- HERO -->
 <div class="hero-bg pt-14 pb-10 flex flex-col items-center text-center px-4 relative">
@@ -149,21 +168,14 @@
   <p class="text-slate-500 text-xs">REGENI © 2026 · <a href="/termos.html" class="hover:text-cyan-400">Termos</a> · <a href="/privacidade.html" class="hover:text-cyan-400">Privacidade</a></p>
 </footer>
 
-<!-- NAV -->
-<nav style="position:fixed;bottom:0;left:0;right:0;background:#0A0A1A;border-top:1px solid #1a1a2e;display:flex;justify-content:space-around;padding:8px 0;z-index:1000;">
-  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">🔍</span>Resultados
-  </a>
-  <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">🏁</span>Corridas
-  </a>
-  <a href="/perfil-atleta.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">👤</span>Perfil
-  </a>
-  <a href="/" style="text-align:center;text-decoration:none;color:#00D4FF;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">ℹ️</span>Sobre
-  </a>
+<!-- NAV UNIFICADA -->
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item" id="nav-home"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item" id="nav-resultados"><span>🔍</span><span>Resultados</span></a>
+  <a href="/perfil.html" class="rg-nav-item" id="nav-perfil"><span>👤</span><span>Perfil</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item" id="nav-corridas"><span>🏁</span><span>Corridas</span></a>
 </nav>
+<script>(function(){var m={'/' :'nav-home','/resultados.html':'nav-resultados','/perfil.html':'nav-perfil','/corridas-abertas.html':'nav-corridas'};var el=document.getElementById(m[location.pathname]);if(el)el.classList.add('active');})();</script>
 
 <script>
 function animN(id, target) {
@@ -198,7 +210,7 @@ function heroSearchGo() {
         '<a href="/perfil-atleta.html?id='+a.id+'" style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);text-decoration:none;color:inherit">'
         +'<div><div style="font-size:13px;font-weight:600">'+a.name+'</div>'
         +'<div style="font-size:11px;color:#64748b">'+(a.state||'BR')+' · '+a.totalRaces+' provas'+(a.nivel?' · '+a.nivel:'')+'</div></div>'
-        +'<span style="color:#00D4FF;font-size:12px">→</span></a>'
+        +'<span style="color:#00ff87;font-size:12px">→</span></a>'
       ).join('');
     })
     .catch(() => { el.innerHTML = '<p class="text-red-400 text-xs p-2">Erro na busca</p>'; });

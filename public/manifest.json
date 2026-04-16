@@ -1,12 +1,12 @@
 {
-  "name": "REGENI — Performance e Longevidade",
+  "name": "REGENI — Resultados de Corridas de Rua",
   "short_name": "REGENI",
-  "description": "Corrida, IA e Longevidade. Sua jornada de otimização biológica.",
-  "start_url": "/atleta.html",
+  "description": "O maior banco de resultados de corridas de rua do Brasil.",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#04060b",
-  "theme_color": "#00D4FF",
+  "background_color": "#0a0a0a",
+  "theme_color": "#00ff87",
   "icons": [
     {
       "src": "/icon-192.png",

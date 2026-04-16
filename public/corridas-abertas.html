@@ -2,28 +2,35 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>REGENI — Corridas</title>
+<meta name="theme-color" content="#00ff87">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:    #04060b;
-  --bg2:   #0a0f1a;
-  --bg3:   #111827;
-  --card:  #0d1117;
-  --card2: #141d2b;
-  --b:     #1e2d3d;
-  --b2:    #2a3a4d;
-  --neon:  #00D4FF;
+  --bg:    #0a0a0a;
+  --bg2:   #141414;
+  --bg3:   #1e1e1e;
+  --card:  #141414;
+  --card2: #1e1e1e;
+  --b:     #2a2a2a;
+  --b2:    #333333;
+  --neon:  #00ff87;
   --neon2: #E8850C;
   --orange:#ff6b35;
-  --red:   #ff3b5c;
+  --red:   #ff4757;
   --blue:  #4c9eff;
   --yellow:#ffd60a;
-  --text:  #eeeef8;
-  --dim:   #8899bb;
+  --text:  #ffffff;
+  --dim:   #a0a0a0;
   --f: 'Space Grotesk', sans-serif;
   --fd: 'Space Grotesk', sans-serif;
+  /* aliases for unified system */
+  --accent:#00ff87;--surface:#141414;--border:#2a2a2a;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden}
@@ -72,7 +79,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .stat-l{font-size:10px;color:var(--dim);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
 
 /* LISTA */
-.corridas-list{padding:12px 14px 80px}
+.corridas-list{padding:12px 14px 20px}
 
 /* CORRIDA CARD */
 .corrida-card{background:var(--card);border:1.5px solid var(--b);border-radius:18px;
@@ -195,7 +202,6 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </style>
 <link rel="stylesheet" href="/regeni.css">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
@@ -732,32 +738,21 @@ function toast(msg, dur = 2800) {
 init();
 </script>
 
-<!-- REGENI NAV -->
+<!-- NAV UNIFICADA -->
 <style>
-.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
-.pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#00D4FF}
-.pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
-body{padding-bottom:64px!important}
+.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+.rg-nav-item span:first-child{font-size:22px;line-height:1}
+.rg-nav-item.active,.rg-nav-item:hover{color:var(--neon)}
+body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 </style>
-<nav style="position:fixed;bottom:0;left:0;right:0;background:#0A0A1A;border-top:1px solid #1a1a2e;display:flex;justify-content:space-around;padding:8px 0;z-index:1000;">
-  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">🔍</span>Resultados
-  </a>
-  <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#00D4FF;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">🏁</span>Corridas
-  </a>
-  <a href="/perfil-atleta.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">👤</span>Perfil
-  </a>
-  <a href="/" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">ℹ️</span>Sobre
-  </a>
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item" id="nav-home"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item" id="nav-resultados"><span>🔍</span><span>Resultados</span></a>
+  <a href="/perfil.html" class="rg-nav-item" id="nav-perfil"><span>👤</span><span>Perfil</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item" id="nav-corridas"><span>🏁</span><span>Corridas</span></a>
 </nav>
-<script>
-(function(){var p=location.pathname;document.querySelectorAll(".pace-nav a").forEach(function(a){if(p===a.getAttribute("href")||(p==="/exames.html"&&a.classList.contains("n-cobaia"))||(p==="/cobaia-resultados.html"&&a.classList.contains("n-cobaia")))a.classList.add("active");});})();
-</script>
-<!-- /REGENI NAV -->
+<script>(function(){var m={'/' :'nav-home','/resultados.html':'nav-resultados','/perfil.html':'nav-perfil','/corridas-abertas.html':'nav-corridas'};var el=document.getElementById(m[location.pathname]);if(el)el.classList.add('active');})();</script>
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>

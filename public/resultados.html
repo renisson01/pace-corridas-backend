@@ -5,37 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>REGENI — Resultados</title>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
+<meta name="theme-color" content="#00ff87">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
 :root{
-  --c:#00D4FF;
-  --c2:rgba(0,212,255,0.15);
-  --c3:rgba(0,212,255,0.07);
-  --bg:#0a0e17;
-  --s1:#0d1117;
-  --s2:#111827;
-  --s3:#1e293b;
-  --s4:#253342;
-  --t1:#f1f5f9;
-  --t2:#94a3b8;
-  --t3:#475569;
-  --b1:rgba(0,212,255,0.2);
-  --b2:rgba(148,163,184,0.1);
+  --c:#00ff87;
+  --c2:rgba(0,255,135,0.15);
+  --c3:rgba(0,255,135,0.07);
+  --bg:#0a0a0a;
+  --s1:#141414;
+  --s2:#1e1e1e;
+  --s3:#2a2a2a;
+  --s4:#333333;
+  --t1:#ffffff;
+  --t2:#a0a0a0;
+  --t3:#666666;
+  --b1:rgba(0,255,135,0.2);
+  --b2:rgba(255,255,255,0.08);
   --b3:rgba(255,255,255,0.04);
   --green:#34d399;
   --amber:#fbbf24;
-  --red:#f87171;
+  --red:#ff4757;
   --pink:#e879f9;
-  --fn:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  --fb:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  --fm:'SFMono-Regular',Consolas,'Liberation Mono',monospace;
+  --fn:'Space Grotesk',system-ui,sans-serif;
+  --fb:'Space Grotesk',system-ui,sans-serif;
+  --fm:'Space Grotesk',system-ui,sans-serif;
   --st:env(safe-area-inset-top);
   --sb:env(safe-area-inset-bottom);
-  --nh:58px;
+  --nh:64px;
 }
 
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb);overflow-x:hidden;font-size:15px}
@@ -67,7 +69,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 /* ── MAIN ── */
 .main{
   padding-top:calc(52px + var(--st) + 14px);
-  padding-bottom:calc(var(--nh) + var(--sb) + 20px);
+  padding-bottom:calc(64px + var(--sb) + 20px);
   padding-left:14px;padding-right:14px;
 }
 
@@ -157,7 +159,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 
 .go-btn{
   width:100%;padding:12px;border-radius:12px;border:none;
-  background:linear-gradient(135deg,#00D4FF,#0090CC);
+  background:linear-gradient(135deg,#00ff87,#00cc6a);
   color:var(--bg);font-size:14px;font-weight:800;font-family:var(--fn);
   cursor:pointer;transition:opacity 0.2s,transform 0.15s;
   display:flex;align-items:center;justify-content:center;gap:8px;
@@ -201,7 +203,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .tbl tbody tr:last-child td{border-bottom:none}
 .tbl tbody tr{transition:background 0.1s;cursor:pointer}
 .tbl tbody tr:hover{background:var(--c3)}
-.tbl tbody tr.top3{background:rgba(0,212,255,0.04)}
+.tbl tbody tr.top3{background:rgba(0,255,135,0.04)}
 
 /* POS */
 .pos{font-family:var(--fm);font-weight:700;font-size:13px;color:var(--t3);white-space:nowrap}
@@ -270,23 +272,11 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .eq-bar{height:3px;background:var(--s3)}
 .eq-fill{height:100%;background:linear-gradient(90deg,var(--c),var(--green));transition:width 0.6s ease}
 
-/* ── NAV ── */
-.nav{
-  position:fixed;bottom:0;left:0;right:0;z-index:90;
-  height:calc(var(--nh) + var(--sb));
-  padding-bottom:var(--sb);
-  background:rgba(7,7,26,0.95);backdrop-filter:blur(24px);
-  border-top:1px solid var(--b2);
-  display:flex;align-items:center;
-}
-.nav-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  gap:3px;padding:6px 0;text-decoration:none;cursor:pointer;
-}
-.nav-item svg{width:22px;height:22px;stroke:var(--t3);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke 0.2s}
-.nav-item span{font-size:9px;font-weight:600;color:var(--t3);letter-spacing:0.5px;text-transform:uppercase;transition:color 0.2s}
-.nav-item.active svg{stroke:var(--c)}
-.nav-item.active span{color:var(--c)}
+/* ── NAV UNIFICADA ── */
+.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--s3);display:flex;align-items:center;justify-content:space-around;padding-bottom:var(--sb);z-index:1000}
+.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:var(--t3);font-size:10px;font-weight:700;font-family:var(--fn);letter-spacing:.3px;transition:color .2s;padding:4px 0}
+.rg-nav-item span:first-child{font-size:22px;line-height:1}
+.rg-nav-item.active,.rg-nav-item:hover{color:var(--c)}
 
 /* ── ATHLETE SHEET ── */
 .overlay{
@@ -492,21 +482,14 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 
 </div>
 
-<!-- NAV -->
-<nav style="position:fixed;bottom:0;left:0;right:0;background:#0A0A1A;border-top:1px solid #1a1a2e;display:flex;justify-content:space-around;padding:8px 0;z-index:1000;">
-  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#00D4FF;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">🔍</span>Resultados
-  </a>
-  <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">🏁</span>Corridas
-  </a>
-  <a href="/perfil-atleta.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">👤</span>Perfil
-  </a>
-  <a href="/" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
-    <span style="font-size:20px;">ℹ️</span>Sobre
-  </a>
+<!-- NAV UNIFICADA -->
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item" id="nav-home"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item" id="nav-resultados"><span>🔍</span><span>Resultados</span></a>
+  <a href="/perfil.html" class="rg-nav-item" id="nav-perfil"><span>👤</span><span>Perfil</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item" id="nav-corridas"><span>🏁</span><span>Corridas</span></a>
 </nav>
+<script>(function(){var m={'/' :'nav-home','/resultados.html':'nav-resultados','/perfil.html':'nav-perfil','/corridas-abertas.html':'nav-corridas'};var el=document.getElementById(m[location.pathname]);if(el)el.classList.add('active');})();</script>
 
 <!-- ATHLETE DETAIL SHEET -->
 <div class="overlay" id="overlay" onclick="closeSheet(event)">
