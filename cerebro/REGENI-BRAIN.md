@@ -1,5 +1,5 @@
 # REGENI BRAIN v3.0 — Fonte Única de Verdade
-> Última atualização: 14/Abril/2026 04:15
+> Última atualização: 16/Abril/2026
 > CEO: Claude Opus 4.6 | Executor: Claude Code Sonnet | Fundador: Renisson
 > Meta: 10M resultados de corrida de rua | Launch: Quinta 17/Abr
 
@@ -27,13 +27,13 @@ O corredor busca seu nome → vê TODOS os seus resultados, pace, posição, his
 
 ---
 
-## Banco de Dados (14/Abr 04:10)
+## Banco de Dados (16/Abr)
 
 | Métrica | Valor | Tendência |
 |---------|-------|-----------|
-| Corridas | 1.356 | ↑ subindo |
-| Resultados | 521.171 | ↑ subindo rápido |
-| Atletas | 385.178 | ↑ subindo |
+| Corridas | 4.563 | ↑ subindo |
+| Resultados | 2.851.875 | ↑ subindo rápido |
+| Atletas | 1.484.037 | ↑ subindo |
 
 ### Schema Real
 ```
@@ -62,13 +62,13 @@ Result { id, athleteId→Athlete, raceId→Race, time(String), pace(String), dis
 
 ## Scrapers — Estado Atual
 
-### Rodando Agora (madrugada 14/Abr)
-| Scraper | Script | Eventos | PID | Log |
-|---------|--------|---------|-----|-----|
-| **ChipTiming BULK** | scraper-chiptiming-bulk.cjs | 6.699 (2008-2026) | 347336 | /tmp/chiptiming-bulk.log |
-| **Runking Histórico** | scraper-runking-historic.cjs | 425 (Wayback) | 336852 | /tmp/runking-historic-full.log |
-| **CronosChip** | scraper-cronoschip.cjs | 100 (Bahia) | 343587 | /tmp/cronoschip-full.log |
-| **GlobalCrono** | scraper-globalcronometragem.cjs | 74 (SP) | 342218 | /tmp/globalcron-full.log |
+### Status (16/Abr)
+| Scraper | Script | Eventos | Progresso |
+|---------|--------|---------|-----------|
+| **ChipTiming BULK** | scraper-chiptiming-bulk.cjs | 6.699 total | 4.724/6.699 (~70%) |
+| **Runking Histórico** | scraper-runking-historic.cjs | 425 total | 215/425 (~50%) |
+| **CronosChip** | scraper-cronoschip.cjs | 100 (Bahia) | ✅ concluído |
+| **GlobalCrono** | scraper-globalcronometragem.cjs | 74 (SP) | ✅ concluído |
 
 ### Prontos (manual)
 | Script | Fonte | Eventos |
@@ -137,6 +137,22 @@ totalPoints = totalRaces × 21
 
 ---
 
+## Sistema Premium (implementado 16/Abr)
+
+| Item | Detalhe |
+|------|---------|
+| Preço | R$ 4,99/mês via Pix |
+| Endpoint | `POST /pagamentos/premium` |
+| Retorno | `{qrCode, qrCodeBase64, paymentId, externalRef}` |
+| Status check | `GET /pagamentos/status?payment_id=X` |
+| Webhook | `POST /pagamentos/webhook` → seta `isPremium=true`, `premiumUntil+30d` |
+| Badge | `» REGENI` — classe `.rg-badge-premium` em `regeni.css` |
+| UI | Card em `atleta.html` (aba ⚙️ Configurar) + modal Pix com QR + polling 3s |
+| Ranking | Badge visível ao lado do nome em `/ranking/*` e `/buscar-atletas` |
+| **Bloqueio** | `MP_ACCESS_TOKEN` não configurado no Railway — endpoint retorna 503 |
+
+---
+
 ## Feature Futura: Edição pelo Atleta
 
 O corredor pode corrigir seus resultados:
@@ -162,6 +178,8 @@ O corredor pode corrigir seus resultados:
 | Dia | Foco |
 |-----|------|
 | Seg 13 | ✅ Fix scrapers, recálculo pace |
-| Ter 14 | ✅ Dedup, navbar, 4 scrapers bulk |
-| Qua 15 | Limpeza novos dados, mais scrapers, PWA/APK |
+| Ter 14 | ✅ Dedup 222k, navbar, 4 scrapers bulk |
+| Qua 15 | ✅ Unificação visual 4 páginas, perfil→atleta |
+| Qui 16 | ✅ Premium R$4,99 (card+modal Pix+badge), cerebro atualizado |
+| Sex 17 | 🚀 LAUNCH — APK Play Store, MP_ACCESS_TOKEN, dedup pós-scraper |
 | Qui 17 | 🚀 LAUNCH Play Store |

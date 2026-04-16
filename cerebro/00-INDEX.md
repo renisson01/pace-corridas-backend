@@ -1,6 +1,6 @@
 # REGENI — Mapa Geral
 > Backend do PACE Corridas · v3.0 · Railway + PostgreSQL
-> Última atualização: 2026-04-13
+> Última atualização: 2026-04-16
 
 ---
 
@@ -22,6 +22,8 @@
 | [[05-DECISOES]] | Decisões técnicas tomadas e o porquê |
 | [[06-IDENTIDADE-ATLETA]] | **⭐ Sistema de identidade** — deduplicação, CPF, similarity, merge |
 | [[07-OBSIDIAN-PLUGINS]] | Plugins recomendados e fluxo de trabalho com Claude |
+| [[08-FONTES-RESULTADOS]] | Mapa completo de fontes — Tier 1/2/3, volumes, status scraper |
+| [[09-SCRAPERS-STATUS]] | Registro vivo de cada scraper (eventos, status, método) |
 
 ---
 

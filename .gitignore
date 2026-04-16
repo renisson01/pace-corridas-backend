@@ -16,3 +16,9 @@ enrich_*.mjs
 total
 *.sh
 cerebro/.obsidian/
+
+# Temporários
+test-screenshots/
+*.bak
+*.bak2
+*.bak3
