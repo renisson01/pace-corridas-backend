@@ -1,22 +1,22 @@
 # 🎨 AGENTE-QA Dashboard
-> Última execução: 16/04/2026, 15:21:13
-> Saúde geral: 🟢 **100%** (17/17 checks) — 19209ms
+> Última execução: 16/04/2026, 16:30:02
+> Saúde geral: 🟢 **100%** (17/17 checks) — 22346ms
 
 ## Status por Página
 | Página | Load | Checks | Erros JS | Screenshot |
 |--------|------|--------|----------|------------|
-| Início | 2776ms ✅ | 4/4 ✅ | 0 ✅ | 🔴 41.9% |
-| Resultados | 2219ms ✅ | 4/4 ✅ | 0 ✅ | 🔴 99.5% |
-| Atleta | 3256ms ⚠️ | 1/1 ✅ | 0 ✅ | 🔴 99.1% |
-| Corridas | 2371ms ✅ | 4/4 ✅ | 0 ✅ | ✅ 0.0% |
+| Início | 3591ms ⚠️ | 4/4 ✅ | 0 ✅ | 🔴 41.9% |
+| Resultados | 2477ms ✅ | 4/4 ✅ | 0 ✅ | 🔴 99.3% |
+| Atleta | 5229ms 🔴 | 1/1 ✅ | 0 ✅ | 🔴 98.6% |
+| Corridas | 2431ms ✅ | 4/4 ✅ | 0 ✅ | ✅ 0.0% |
 
 ## APIs
 | Endpoint | Status | Tempo |
 |----------|--------|-------|
-| `/ranking/10km?limit=3` | 200 ✅ | 1483ms ✅ |
-| `/ranking/5km?limit=3` | 200 ✅ | 1817ms ✅ |
-| `/buscar-atletas?q=RENISSON&limit=3` | 200 ✅ | 555ms ⚡ |
-| `/corridas-abertas` | 200 ✅ | 270ms ⚡ |
+| `/ranking/10km?limit=3` | 200 ✅ | 1474ms ✅ |
+| `/ranking/5km?limit=3` | 200 ✅ | 1624ms ✅ |
+| `/buscar-atletas?q=RENISSON&limit=3` | 200 ✅ | 612ms ⚡ |
+| `/corridas-abertas` | 200 ✅ | 359ms ⚡ |
 
 ## Bugs Abertos
 - [QA-001] nav NÃO encontrado/visível
