@@ -264,5 +264,74 @@ cron.schedule('0 8 * * 1,4', async () => {
   } catch(e) { log('RESULTADOS-AUTO', 'Erro: ' + e.message); }
 });
 
-log('AGENTS', '✅ Todos os 12 agentes autônomos iniciados');
+// ─── AGENTE 13: Cache Ranking (boot + 1h) ────────────────
+import { Client as PgClient } from 'pg';
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { join } from 'path';
+
+const RANKING_CACHE_DIR = '/tmp/regeni-cache';
+const RANKING_DISTANCES = ['3K','5K','6K','7K','8K','10K','12K','15K','21K','42K'];
+const RANKING_MIN_TIMES = {
+  '3K':'00:08:00','5K':'00:14:00','6K':'00:16:00','7K':'00:18:00','8K':'00:21:00',
+  '10K':'00:26:00','12K':'00:34:00','15K':'00:41:00','21K':'01:00:00','42K':'02:00:00',
+};
+
+function rankingNivel(pts) {
+  const p = Number(pts) || 0;
+  if (p >= 12000) return '⭐ Elite Mundial';
+  if (p >= 7000)  return '🔥 Elite Nacional';
+  if (p >= 3000)  return '💪 Elite Regional';
+  if (p >= 1000)  return '📈 Sub-Elite';
+  return '🌱 Avançado';
+}
+
+async function buildRankingCache() {
+  if (!existsSync(RANKING_CACHE_DIR)) mkdirSync(RANKING_CACHE_DIR, { recursive: true });
+  const client = new PgClient({ connectionString: process.env.DATABASE_URL });
+  try {
+    await client.connect();
+    for (const dist of RANKING_DISTANCES) {
+      const t0 = Date.now();
+      const minTime = RANKING_MIN_TIMES[dist] || '00:00:01';
+      try {
+        const { rows } = await client.query(`
+          SELECT DISTINCT ON (a.id)
+            a.id, a.name, a.equipe, a.state, a.gender, a."totalPoints",
+            r."time" AS "melhorTempo", r."ageGroup",
+            race.name AS "raceName", race.city AS "raceCity"
+          FROM "Athlete" a
+          JOIN "Result" r    ON a.id    = r."athleteId"
+          JOIN "Race"   race ON race.id = r."raceId"
+          WHERE replace(upper(r.distance),'KM','K') = $1
+            AND r."time" NOT IN ('DNS','00:00:00','')
+            AND r."time" >= $2
+            AND a.name IS NOT NULL AND a.name != ''
+          ORDER BY a.id, r."time" ASC`, [dist, minTime]);
+
+        rows.sort((a, b) => a.melhorTempo.localeCompare(b.melhorTempo));
+        const data = rows.slice(0, 5000).map((r, i) => ({
+          posicao: i + 1, id: r.id, name: r.name, equipe: r.equipe || null,
+          state: r.state || null, city: r.raceCity || null, gender: r.gender,
+          totalPoints: Number(r.totalPoints) || 0, nivel: rankingNivel(r.totalPoints),
+          melhorTempo: r.melhorTempo, prova: r.raceName || null, faixaEtaria: r.ageGroup || null,
+        }));
+
+        writeFileSync(
+          join(RANKING_CACHE_DIR, `ranking-${dist}.json`),
+          JSON.stringify({ generatedAt: new Date().toISOString(), distance: dist, count: data.length, data })
+        );
+        log('CACHE-RANKING', `${dist} — ${data.length} atletas em ${Date.now() - t0}ms`);
+      } catch (e) { log('CACHE-RANKING', `Erro ${dist}: ${e.message}`); }
+    }
+  } finally {
+    await client.end().catch(() => {});
+  }
+}
+
+// Roda 30s após o boot e depois a cada 1h
+setTimeout(() => buildRankingCache().catch(e => log('CACHE-RANKING', 'Erro boot: ' + e.message)), 30000);
+cron.schedule('0 * * * *', () => buildRankingCache().catch(e => log('CACHE-RANKING', 'Erro cron: ' + e.message)));
+log('CACHE-RANKING', 'Agente de cache de ranking ativo (boot em 30s + cron 1h)');
+
+log('AGENTS', '✅ Todos os 13 agentes autônomos iniciados');
 export default {};
