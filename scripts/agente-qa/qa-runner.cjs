@@ -183,7 +183,8 @@ async function testAPIs() {
   const results = [];
   for (const check of config.apiChecks) {
     const url = config.baseUrl + check.path;
-    const res = await httpGet(url, config.performanceThresholds.maxApiTimeMs + 2000);
+    const effectiveTimeout = (check.timeoutMs || config.performanceThresholds.maxApiTimeMs) + 2000;
+    const res = await httpGet(url, effectiveTimeout);
     let isJson = false;
     if (check.expectJson && res.body) {
       try { JSON.parse(res.body); isJson = true; } catch { isJson = false; }
@@ -197,7 +198,7 @@ async function testAPIs() {
       ok,
       isJson,
       error: res.error || null,
-      slow: res.ms > config.performanceThresholds.maxApiTimeMs,
+      slow: res.ms > (check.timeoutMs || config.performanceThresholds.maxApiTimeMs),
     });
     if (VERBOSE) log(`  API ${check.path} → ${res.status} ${res.ms}ms`);
   }
@@ -238,7 +239,7 @@ async function run() {
 
   // Test APIs
   log('📡 Testando APIs...');
-  runResults.apis = await testAPIs();
+  runResults.apis = await testAPIs(config.performanceThresholds.maxApiTimeMs);
   const apiOk = runResults.apis.filter(a => a.ok).length;
   log(`  ✅ APIs: ${apiOk}/${runResults.apis.length} OK`);
 

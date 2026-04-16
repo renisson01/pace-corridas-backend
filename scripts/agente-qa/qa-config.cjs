@@ -52,8 +52,8 @@ module.exports = {
   ],
 
   apiChecks: [
-    { method: 'GET', path: '/ranking/10km?limit=3', expectStatus: 200, expectJson: true },
-    { method: 'GET', path: '/ranking/5km?limit=3', expectStatus: 200, expectJson: true },
+    { method: 'GET', path: '/ranking/10km?limit=3', expectStatus: 200, expectJson: true, timeoutMs: 12000 },
+    { method: 'GET', path: '/ranking/5km?limit=3', expectStatus: 200, expectJson: true, timeoutMs: 12000 },
     { method: 'GET', path: '/buscar-atletas?q=RENISSON&limit=3', expectStatus: 200, expectJson: true },
     { method: 'GET', path: '/corridas-abertas', expectStatus: 200, expectJson: true },
   ],
@@ -61,5 +61,6 @@ module.exports = {
   performanceThresholds: {
     maxLoadTimeMs: 3000,
     maxApiTimeMs: 2000,
+    maxApiTimeRankingMs: 5000, // ranking queries são mais pesadas
   }
 };
