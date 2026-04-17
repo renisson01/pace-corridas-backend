@@ -306,6 +306,7 @@ async function buildRankingCache() {
             AND r."time" NOT IN ('DNS','00:00:00','')
             AND r."time" >= $2
             AND a.name IS NOT NULL AND a.name != ''
+            AND (r."flagged" IS NULL OR r."flagged" = false)
           ORDER BY a.id, r."time" ASC`, [dist, minTime]);
 
         rows.sort((a, b) => a.melhorTempo.localeCompare(b.melhorTempo));
