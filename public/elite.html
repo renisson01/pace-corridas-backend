@@ -6,7 +6,7 @@
 <title>REGENI — Resultados & Ranking Brasil</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#00D4FF;--laranja:#FF6D00;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+:root{--verde:#00ff87;--laranja:#FF6D00;--bg:#0a0a0a;--bg2:#141414;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
 a{text-decoration:none;color:inherit}
@@ -39,17 +39,17 @@ button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
 /* Sub-tabs corrida */
 .sub-tabs{display:flex;gap:6px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:10px;overflow-x:auto;scrollbar-width:none}
 .sub-tab{flex-shrink:0;padding:6px 14px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);border:none;background:transparent;border-radius:20px;cursor:pointer;transition:all .2s}
-.sub-tab.sel{background:var(--verde);color:#080B10}
+.sub-tab.sel{background:var(--verde);color:#0a0a0a}
 
 /* Dist tabs */
 .dist-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .dtab{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s}
-.dtab.sel{background:var(--verde);color:#080B10;border-color:var(--verde)}
+.dtab.sel{background:var(--verde);color:#0a0a0a;border-color:var(--verde)}
 
 /* Filtros */
 .filtros-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
 .btn-gen{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s}
-.btn-gen.sel{background:var(--verde);color:#080B10;border-color:var(--verde)}
+.btn-gen.sel{background:var(--verde);color:#0a0a0a;border-color:var(--verde)}
 .input-filtro{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-size:12px;font-family:'Space Grotesk',sans-serif;outline:none;min-width:120px;flex:1}
 .input-filtro:focus{border-color:var(--verde)}
 .sel-faixa{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-size:12px;font-family:'Space Grotesk',sans-serif;outline:none;cursor:pointer}
@@ -62,8 +62,8 @@ button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
 .res-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;cursor:pointer;transition:all .15s;text-decoration:none;color:inherit}
 .res-card:hover{border-color:rgba(247,147,26,.3);background:rgba(247,147,26,.03)}
 .pos-badge{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:900;flex-shrink:0}
-.p1{background:linear-gradient(135deg,#FFD700,#FFA500);color:#080B10}
-.p2{background:linear-gradient(135deg,#C0C0C0,#909090);color:#080B10}
+.p1{background:linear-gradient(135deg,#FFD700,#FFA500);color:#0a0a0a}
+.p2{background:linear-gradient(135deg,#C0C0C0,#909090);color:#0a0a0a}
 .p3{background:linear-gradient(135deg,#CD7F32,#8B5020);color:#fff}
 .pn{background:var(--bg3);color:var(--muted)}
 .res-info{flex:1;min-width:0}
@@ -104,7 +104,7 @@ button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
 </style>
 <link rel="stylesheet" href="/regeni.css">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
+<meta name="theme-color" content="#00ff87">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
@@ -142,7 +142,7 @@ button{cursor:pointer;font-family:'Space Grotesk',sans-serif}
   </div>
 
   <div class="cartaz-wrap" id="cartazWrap" style="display:none">
-    <img id="cartazImg" src="" alt="Cartaz">
+    <img id="cartazImg" alt="Cartaz">
   </div>
 
   <div class="sub-tabs" id="subTabs" style="display:none">
@@ -507,14 +507,14 @@ init();
 
 <!-- REGENI NAV -->
 <style>
-.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#00D4FF}
+.pace-nav a.active{color:#00ff87}
 .pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
 body{padding-bottom:64px!important}
 </style>
 <nav style="position:fixed;bottom:0;left:0;right:0;background:#0A0A1A;border-top:1px solid #1a1a2e;display:flex;justify-content:space-around;padding:8px 0;z-index:1000;">
-  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#00D4FF;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#00ff87;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
     <span style="font-size:20px;">🔍</span>Resultados
   </a>
   <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
@@ -532,5 +532,17 @@ body{padding-bottom:64px!important}
 </script>
 <!-- /REGENI NAV -->
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<style>
+.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+.rg-nav-item span:first-child{font-size:22px;line-height:1}
+.rg-nav-item.active,.rg-nav-item:hover{color:#00ff87}
+</style>
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item"><span>🔍</span><span>Resultados</span></a>
+  <a href="/atleta.html" class="rg-nav-item"><span>👤</span><span>Atleta</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item"><span>🏁</span><span>Corridas</span></a>
+</nav>
 </body>
 </html>

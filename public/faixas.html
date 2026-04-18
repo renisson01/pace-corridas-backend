@@ -7,14 +7,14 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body { background: #0f172a; font-family: 'Segoe UI', sans-serif; }
-  .card { background: #1e293b; border-radius: 16px; border: 1px solid #334155; }
+  .card { background: #2a2a2a; border-radius: 16px; border: 1px solid #334155; }
   .badge-5 { background: #0ea5e9; }
   .badge-10 { background: #8b5cf6; }
   .badge-none { background: #475569; }
 </style>
 <link rel="stylesheet" href="/regeni.css">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
+<meta name="theme-color" content="#00ff87">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
@@ -251,14 +251,14 @@ carregar();
 
 <!-- REGENI NAV -->
 <style>
-.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#00D4FF}
+.pace-nav a.active{color:#00ff87}
 .pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
 body{padding-bottom:64px!important}
 </style>
 <nav style="position:fixed;bottom:0;left:0;right:0;background:#0A0A1A;border-top:1px solid #1a1a2e;display:flex;justify-content:space-around;padding:8px 0;z-index:1000;">
-  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#00D4FF;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#00ff87;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
     <span style="font-size:20px;">🔍</span>Resultados
   </a>
   <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
@@ -276,5 +276,17 @@ body{padding-bottom:64px!important}
 </script>
 <!-- /REGENI NAV -->
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<style>
+.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+.rg-nav-item span:first-child{font-size:22px;line-height:1}
+.rg-nav-item.active,.rg-nav-item:hover{color:#00ff87}
+</style>
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item"><span>🔍</span><span>Resultados</span></a>
+  <a href="/atleta.html" class="rg-nav-item"><span>👤</span><span>Atleta</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item"><span>🏁</span><span>Corridas</span></a>
+</nav>
 </body>
 </html>

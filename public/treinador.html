@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-:root{--bg:#04060b;--bg2:#0a0f1a;--bg3:#111827;--card:#0d1117;--border:#1e2d3d;--green:#00D4FF;--green2:#E8850C;--yellow:#ffd600;--red:#ff1744;--blue:#448aff;--purple:#e040fb;--orange:#ff6d00;--text:#e2e8f0;--muted:#667788;--font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Space Grotesk',sans-serif}
+:root{--bg:#0a0a0a;--bg2:#0a0f1a;--bg3:#1e1e1e;--card:#141414;--border:#2a2a2a;--green:#00ff87;--green2:#E8850C;--yellow:#ffd600;--red:#ff1744;--blue:#448aff;--purple:#e040fb;--orange:#ff6d00;--text:#e2e8f0;--muted:#667788;--font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Space Grotesk',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -201,7 +201,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 </style>
 <link rel="stylesheet" href="/regeni.css">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
+<meta name="theme-color" content="#00ff87">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
@@ -216,7 +216,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
     <span style="font-size:20px;">🏁</span>Corridas
   </a>
-  <a href="/perfil-atleta.html" style="text-align:center;text-decoration:none;color:#00D4FF;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+  <a href="/perfil-atleta.html" style="text-align:center;text-decoration:none;color:#00ff87;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
     <span style="font-size:20px;">👤</span>Perfil
   </a>
   <a href="/" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
@@ -941,7 +941,7 @@ function renderChartVolume(dados){
   if(!ctx)return;
   if(chartVolume)chartVolume.destroy();
   const maxVal=Math.max(...dados,1);
-  chartVolume=new Chart(ctx,{type:'bar',data:{labels:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:dados,backgroundColor:dados.map(v=>v===maxVal?'rgba(0,212,255,0.7)':'rgba(0,212,255,0.25)'),borderColor:'#00D4FF',borderWidth:1,borderRadius:6,label:'km'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' km'}}},scales:{y:{beginAtZero:true,ticks:{color:'#667788',font:{size:10}},grid:{color:'rgba(42,42,56,.4)'}},x:{ticks:{color:'#667788',font:{size:11}},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
+  chartVolume=new Chart(ctx,{type:'bar',data:{labels:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:dados,backgroundColor:dados.map(v=>v===maxVal?'rgba(0,255,135,0.7)':'rgba(0,255,135,0.25)'),borderColor:'#00ff87',borderWidth:1,borderRadius:6,label:'km'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' km'}}},scales:{y:{beginAtZero:true,ticks:{color:'#667788',font:{size:10}},grid:{color:'rgba(42,42,56,.4)'}},x:{ticks:{color:'#667788',font:{size:11}},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
 }
 
 async function carregarAtletas(){
@@ -1359,7 +1359,7 @@ function renderChartEvolucao(gps){
   if(chartEvolKm)chartEvolKm.destroy();
   chartEvolKm=new Chart(ctx1,{type:'bar',data:{labels,datasets:[{data:kms,backgroundColor:'rgba(68,138,255,.35)',borderColor:'#448aff',borderWidth:1,borderRadius:6,label:'km'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw.toFixed(1)+' km'}}},scales:{y:{beginAtZero:true,ticks:{color:'#667788',font:{size:10}},grid:{color:'rgba(42,42,56,.4)'}},x:{ticks:{color:'#667788',font:{size:10}},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
   if(chartEvolPace)chartEvolPace.destroy();
-  chartEvolPace=new Chart(ctx2,{type:'line',data:{labels,datasets:[{data:paces,borderColor:'#00D4FF',backgroundColor:'rgba(0,212,255,.08)',fill:true,tension:.35,pointBackgroundColor:'#00D4FF',pointBorderColor:'#04060b',pointBorderWidth:2,pointRadius:5,label:'pace'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{if(!c.raw)return'';const m=Math.floor(c.raw),s=Math.round((c.raw-m)*60);return' '+m+':'+String(s).padStart(2,'0')+'/km';}}}},scales:{y:{reverse:true,ticks:{color:'#667788',font:{size:10},callback:v=>{const m=Math.floor(v),s=Math.round((v-m)*60);return m+':'+String(s).padStart(2,'0');}},grid:{color:'rgba(42,42,56,.4)'}},x:{ticks:{color:'#667788',font:{size:10}},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
+  chartEvolPace=new Chart(ctx2,{type:'line',data:{labels,datasets:[{data:paces,borderColor:'#00ff87',backgroundColor:'rgba(0,255,135,.08)',fill:true,tension:.35,pointBackgroundColor:'#00ff87',pointBorderColor:'#0a0a0a',pointBorderWidth:2,pointRadius:5,label:'pace'}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{if(!c.raw)return'';const m=Math.floor(c.raw),s=Math.round((c.raw-m)*60);return' '+m+':'+String(s).padStart(2,'0')+'/km';}}}},scales:{y:{reverse:true,ticks:{color:'#667788',font:{size:10},callback:v=>{const m=Math.floor(v),s=Math.round((v-m)*60);return m+':'+String(s).padStart(2,'0');}},grid:{color:'rgba(42,42,56,.4)'}},x:{ticks:{color:'#667788',font:{size:10}},grid:{display:false}}},responsive:true,maintainAspectRatio:false}});
 }
 
 async function compararAtletas(){
@@ -1599,9 +1599,9 @@ async function salvarNovaSenha(){
 
 <!-- REGENI NAV -->
 <style>
-.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#00D4FF}
+.pace-nav a.active{color:#00ff87}
 .pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
 body{padding-bottom:64px!important}
 </style>
@@ -1611,5 +1611,17 @@ body{padding-bottom:64px!important}
 </script>
 <!-- /REGENI NAV -->
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<style>
+.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+.rg-nav-item span:first-child{font-size:22px;line-height:1}
+.rg-nav-item.active,.rg-nav-item:hover{color:#00ff87}
+</style>
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item"><span>🔍</span><span>Resultados</span></a>
+  <a href="/atleta.html" class="rg-nav-item"><span>👤</span><span>Atleta</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item"><span>🏁</span><span>Corridas</span></a>
+</nav>
 </body>
 </html>

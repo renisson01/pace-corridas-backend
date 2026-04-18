@@ -6,7 +6,7 @@
 <title>Comunidades — REGENI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#00D4FF;--verde2:#00C853;--laranja:#FF6D00;--roxo:#7C3AED;--bg:#080B10;--bg2:#0D1117;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+:root{--verde:#00ff87;--verde2:#00C853;--laranja:#FF6D00;--roxo:#7C3AED;--bg:#0a0a0a;--bg2:#141414;--bg3:#161B27;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(8,11,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
@@ -19,7 +19,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .tabs{display:flex;gap:8px;padding:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--border)}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex-shrink:0;padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s}
-.tab.ativo{background:var(--verde);color:#080B10;border-color:var(--verde)}
+.tab.ativo{background:var(--verde);color:#0a0a0a;border-color:var(--verde)}
 .section{padding:16px}
 .sec-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
 .sec-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:900;margin-bottom:14px}
@@ -37,7 +37,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .treino-pill{background:rgba(247,147,26,0.08);border:1px solid rgba(247,147,26,0.15);color:var(--verde);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
 .grupo-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.06);border:1px solid var(--border)}
-.btn-entrar{width:100%;padding:11px;background:var(--verde);color:#080B10;border:none;border-radius:30px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all 0.2s}
+.btn-entrar{width:100%;padding:11px;background:var(--verde);color:#0a0a0a;border:none;border-radius:30px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all 0.2s}
 .btn-entrar:hover{background:var(--verde2)}
 .night-card{background:linear-gradient(135deg,#0A0010,#1A0030);border:1px solid rgba(124,58,237,0.4);border-radius:18px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
 .night-card::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(124,58,237,0.3),transparent 70%);pointer-events:none}
@@ -73,7 +73,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </style>
 <link rel="stylesheet" href="/regeni.css">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
+<meta name="theme-color" content="#00ff87">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
@@ -253,9 +253,9 @@ carregarAssessorias();
 
 <!-- REGENI NAV -->
 <style>
-.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#00D4FF}
+.pace-nav a.active{color:#00ff87}
 .pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
 body{padding-bottom:64px!important}
 </style>
@@ -278,5 +278,17 @@ body{padding-bottom:64px!important}
 </script>
 <!-- /REGENI NAV -->
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<style>
+.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+.rg-nav-item span:first-child{font-size:22px;line-height:1}
+.rg-nav-item.active,.rg-nav-item:hover{color:#00ff87}
+</style>
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item"><span>🔍</span><span>Resultados</span></a>
+  <a href="/atleta.html" class="rg-nav-item"><span>👤</span><span>Atleta</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item"><span>🏁</span><span>Corridas</span></a>
+</nav>
 </body>
 </html>

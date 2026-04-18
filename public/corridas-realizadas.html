@@ -6,7 +6,7 @@
 <title>Corridas Realizadas — REGENI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--verde:#00D4FF;--bg:#080B10;--bg2:#0D1117;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
+:root{--verde:#00ff87;--bg:#0a0a0a;--bg2:#141414;--border:#1F2937;--text:#F1F5F9;--muted:#64748B}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding-bottom:80px}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(8,11,16,0.98);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
@@ -23,7 +23,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .dist-tag{background:rgba(247,147,26,0.1);color:var(--verde);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
 .race-stats{display:flex;gap:16px;font-size:12px;color:var(--muted)}
 .race-stats span{display:flex;align-items:center;gap:4px}
-.btn-ver{display:inline-block;background:var(--verde);color:#080B10;padding:10px 24px;border-radius:24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:900;text-decoration:none;margin-top:10px}
+.btn-ver{display:inline-block;background:var(--verde);color:#0a0a0a;padding:10px 24px;border-radius:24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:900;text-decoration:none;margin-top:10px}
 .empty{text-align:center;padding:60px 20px;color:var(--muted)}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(8,11,16,0.98);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0;z-index:100}
 .bottom-nav a{color:var(--muted);text-decoration:none;font-size:10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
@@ -31,7 +31,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </style>
 <link rel="stylesheet" href="/regeni.css">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
+<meta name="theme-color" content="#00ff87">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
@@ -85,9 +85,9 @@ carregar();
 
 <!-- REGENI NAV -->
 <style>
-.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #1e2d3d;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
+.pace-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,6,11,.97);backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;display:flex;z-index:9999;padding:4px 0 max(4px,env(safe-area-inset-bottom))}
 .pace-nav a{flex:1;text-align:center;padding:6px 0;text-decoration:none;color:#556677;font-size:10px;font-weight:600;font-family:'Space Grotesk',system-ui,sans-serif;transition:color .2s}
-.pace-nav a.active{color:#00D4FF}
+.pace-nav a.active{color:#00ff87}
 .pace-nav a .ni{font-size:20px;display:block;margin-bottom:1px}
 body{padding-bottom:64px!important}
 </style>
@@ -95,7 +95,7 @@ body{padding-bottom:64px!important}
   <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
     <span style="font-size:20px;">🔍</span>Resultados
   </a>
-  <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#00D4FF;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+  <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#00ff87;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
     <span style="font-size:20px;">🏁</span>Corridas
   </a>
   <a href="/perfil-atleta.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
@@ -110,5 +110,17 @@ body{padding-bottom:64px!important}
 </script>
 <!-- /REGENI NAV -->
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
+<style>
+.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+.rg-nav-item span:first-child{font-size:22px;line-height:1}
+.rg-nav-item.active,.rg-nav-item:hover{color:#00ff87}
+</style>
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item"><span>🔍</span><span>Resultados</span></a>
+  <a href="/atleta.html" class="rg-nav-item"><span>👤</span><span>Atleta</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item"><span>🏁</span><span>Corridas</span></a>
+</nav>
 </body>
 </html>

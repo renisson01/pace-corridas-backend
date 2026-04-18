@@ -6,11 +6,11 @@
 <title>Adicionar Resultado — REGENI</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00D4FF">
+<meta name="theme-color" content="#00ff87">
 <style>
   * { -webkit-tap-highlight-color: transparent; }
-  body { background: #0a0e17; }
-  .card { background: linear-gradient(135deg, #111827 0%, #0f1729 100%); border: 1px solid #1e293b; }
+  body { background: #0a0a0a; padding-bottom:calc(80px + env(safe-area-inset-bottom,0px));}
+  .card { background: linear-gradient(135deg, #1e1e1e 0%, #0f1729 100%); border: 1px solid #2a2a2a; }
   .btn-primary { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
   .btn-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
   .tab-active { background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 4px 15px rgba(14,165,233,0.3); }
@@ -23,7 +23,7 @@
 <body class="text-white min-h-screen pb-20">
 
 <!-- Header -->
-<header class="sticky top-0 z-40 px-4 py-3 flex items-center gap-3 bg-[#0a0e17]/95 backdrop-blur-sm border-b border-slate-800">
+<header class="sticky top-0 z-40 px-4 py-3 flex items-center gap-3 bg-[#0a0a0a]/95 backdrop-blur-sm border-b border-slate-800">
   <a href="/atleta.html" class="text-cyan-400 text-lg">←</a>
   <h1 class="font-black text-base flex-1">🏅 Adicionar Resultado</h1>
 </header>
@@ -178,7 +178,7 @@
 
 <!-- NAV -->
 <nav style="position:fixed;bottom:0;left:0;right:0;background:#0A0A1A;border-top:1px solid #1a1a2e;display:flex;justify-content:space-around;padding:8px 0;z-index:1000;">
-  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#00D4FF;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+  <a href="/resultados.html" style="text-align:center;text-decoration:none;color:#00ff87;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
     <span style="font-size:20px;">🔍</span>Resultados
   </a>
   <a href="/corridas-abertas.html" style="text-align:center;text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;">
@@ -377,5 +377,17 @@ verificarLink = async function() {
   await _verificarLink();
 };
 </script>
+<style>
+.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+.rg-nav-item span:first-child{font-size:22px;line-height:1}
+.rg-nav-item.active,.rg-nav-item:hover{color:#00ff87}
+</style>
+<nav class="rg-bottom-nav">
+  <a href="/" class="rg-nav-item"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item"><span>🔍</span><span>Resultados</span></a>
+  <a href="/atleta.html" class="rg-nav-item"><span>👤</span><span>Atleta</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item"><span>🏁</span><span>Corridas</span></a>
+</nav>
 </body>
 </html>
