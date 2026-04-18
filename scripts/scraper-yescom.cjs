@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 /**
  * REGENI — Scraper Yescom
- * www.yescom.com.br — sistema de cronometragem SP, RS, CE
+ * www.yescom.com.br — organizador SP/RS/CE (Maratona SP, Meia Rio, Pampulha, etc.)
  *
- * SITUAÇÃO: O painel de resultados Yescom (/resultados) requer login (ASP.NET WebForms).
- * Este script tenta acessar eventos via URLs públicas conhecidas.
+ * SITUAÇÃO CONFIRMADA (investigação 17/04/2026):
+ *   Yescom NÃO hospeda resultados próprios — embeds iframe do ChipTiming:
+ *     <iframe src="https://resultado.chiptiming.com.br/resultados/{ano}/iframe/{slug}">
  *
- * Para eventos com resultados públicos, a URL é do tipo:
- *   https://resultado.chiptiming.com.br/evento/<slug>  (ChipTiming é braço técnico Yescom)
- *   ou via chippower
+ *   Todos os dados estão na API pública do ChipTiming:
+ *     GET https://resultado.chiptiming.com.br/api/v1/eventos → lista completa
+ *     GET https://resultado.chiptiming.com.br/api/v1/resultados/{ano}/{slug} → resultados paginados
  *
- * USO:
- *   node scripts/scraper-yescom.cjs                    # busca eventos configurados
- *   node scripts/scraper-yescom.cjs --evento <slug>    # evento específico
+ *   USAR: node scripts/scraper-chiptiming-resultado.cjs
+ *   (cobre todos os eventos Yescom automaticamente)
  *
- * NOTA: Para acesso completo, credenciais são necessárias.
- * Entre em contato com Yescom para obter acesso à API parceira.
+ * USO DESTE SCRIPT:
+ *   node scripts/scraper-yescom.cjs  → redireciona para chiptiming-resultado
  */
 const { Client } = require('pg');
 const DB_URL = process.env.DATABASE_URL;
@@ -46,48 +46,22 @@ async function tentarURL(url) {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
   console.log('\n=== REGENI Scraper Yescom ===');
-
-  const db = new Client({ connectionString: DB_URL });
-  await db.connect();
-  console.log('Conectado ao banco!\n');
-
-  let avisos = [];
-
-  for (const ev of EVENTOS_CONHECIDOS) {
-    console.log(`[Yescom] ${ev.nome} (${ev.data})`);
-
-    if (!ev.url) {
-      console.log('  → URL ainda não disponível. Resultados publicados 24-48h após a prova.');
-      avisos.push(ev.nome);
-      continue;
-    }
-
-    const html = await tentarURL(ev.url);
-    if (!html) {
-      console.log('  → URL inacessível. Tente novamente mais tarde.');
-      avisos.push(ev.nome);
-      continue;
-    }
-
-    // TODO: parse HTML quando URL for conhecida
-    console.log(`  → HTML disponível (${html.length} bytes). Parse não implementado para este endpoint.`);
-    await DELAY(1000);
-  }
-
-  if (avisos.length) {
-    console.log('\n⚠ Eventos Yescom pendentes (verificar manualmente):');
-    for (const a of avisos) console.log(`  - ${a}`);
-    console.log('\nPara importar manualmente após resultados publicados:');
-    console.log('  1. Acesse o site do evento e copie os resultados');
-    console.log('  2. Use: node scripts/import-fast.cjs <arquivo>');
-    console.log('\nPara acesso automatizado: solicite credenciais à Yescom ou verifique');
-    console.log('se o evento usa ChipTiming (resultado.chiptiming.com.br).');
-  }
-
-  await db.end();
-  console.log('\nYescom scraper concluído.');
+  console.log('');
+  console.log('Yescom usa ChipTiming para resultados (iframe embed confirmado).');
+  console.log('Use o scraper dedicado:');
+  console.log('');
+  console.log('  node scripts/scraper-chiptiming-resultado.cjs');
+  console.log('');
+  console.log('Esse script cobre todos os eventos Yescom automaticamente via');
+  console.log('resultado.chiptiming.com.br/api/v1 (API pública, sem autenticação).');
+  console.log('');
+  console.log('Exemplos de eventos Yescom disponíveis:');
+  console.log('  30ª Maratona Internacional SP 2026  → slug: 30maratonadesp');
+  console.log('  19ª Meia Maratona de São Paulo 2026 → slug: 19meiamaratonadesaopaulo');
+  console.log('');
+  console.log('Para evento específico:');
+  console.log('  node scripts/scraper-chiptiming-resultado.cjs --evento 30maratonadesp');
 }
 
 main().catch(e => { console.error('FATAL:', e.message); process.exit(1); });
