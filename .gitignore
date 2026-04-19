@@ -15,6 +15,7 @@ debug_*.mjs
 enrich_*.mjs
 total
 *.sh
+!scripts/cron-scrapers.sh
 cerebro/.obsidian/
 
 # Temporários
