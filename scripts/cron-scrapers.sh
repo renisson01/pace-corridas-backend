@@ -53,8 +53,11 @@ run_scraper "ACrono"                scraper-acrono.cjs                1200
 # TriChip (CLAX — rodando manualmente agora, mantido no cron)
 run_scraper "TriChip"               scraper-trichip.cjs               1800
 
-# SMCrono (CLAX — SC/Sul — NOVO)
+# SMCrono (CLAX — SC/Sul)
 run_scraper "SMCrono"               scraper-smcrono.cjs               1200
+
+# RaceZone Universal (MyCrono + SportsChrono + RaceMS — JSON puro)
+run_scraper "RaceZone"              scraper-racezone.cjs              1800
 
 # CronosChip (CLAX)
 run_scraper "CronosChip"            scraper-cronoschip.cjs            1200
