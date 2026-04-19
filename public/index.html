@@ -6,291 +6,174 @@
 <title>REGENI — Resultados de Corridas de Rua do Brasil</title>
 <meta name="description" content="O maior banco de resultados de corridas de rua do Brasil. Busque seu nome, veja seu ranking, compare seu pace.">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#C4933F">
+<meta name="theme-color" content="#00ff87">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/regeni-amanhecer.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{
-  background:var(--bg);color:var(--text);font-family:var(--font-body);
-  min-height:100vh;
-  padding-bottom:calc(56px + env(safe-area-inset-bottom,0px));
-}
-
-/* ── HERO ─── */
-.hero{
-  background:linear-gradient(170deg,#fff8ef 0%,#fdf6ee 50%,var(--bg) 100%);
-  padding:52px 20px 40px;text-align:center;
-}
-.hero-brand{
-  font-family:var(--font-serif);font-size:54px;font-weight:400;
-  color:var(--text);letter-spacing:-1px;line-height:1;margin-bottom:8px;
-}
-.hero-brand em{color:var(--accent);font-style:italic}
-.hero-tagline{
-  font-size:14px;color:var(--text2);max-width:300px;
-  margin:0 auto 28px;line-height:1.65;
-}
-.hero-tagline strong{color:var(--accent);font-weight:600}
-
-/* ── STATS ── */
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}
-.stat-box{text-align:center;padding:6px 4px}
-.stat-val{
-  font-family:var(--font-serif);font-size:28px;font-weight:400;
-  color:var(--accent);line-height:1;
-}
-.stat-lbl{
-  font-size:9px;color:var(--text3);font-weight:600;
-  text-transform:uppercase;letter-spacing:0.8px;margin-top:4px;
-}
-
-/* ── SEARCH ── */
-.search-wrap{position:relative;width:100%;max-width:420px;margin:0 auto 20px}
-.search-row{display:flex;gap:8px}
-.search-inp{
-  flex:1;background:var(--surface);border:1.5px solid var(--border);
-  border-radius:var(--radius-btn);padding:13px 16px;
-  font-size:14px;color:var(--text);font-family:var(--font-body);
-  outline:none;transition:border-color 0.2s;
-}
-.search-inp::placeholder{color:var(--text3)}
-.search-inp:focus{border-color:var(--accent)}
-.search-go{
-  background:var(--accent);color:#fff;border:none;border-radius:var(--radius-btn);
-  padding:13px 18px;font-size:13px;font-weight:700;font-family:var(--font-body);
-  cursor:pointer;transition:opacity 0.2s,transform 0.15s;white-space:nowrap;
-}
-.search-go:active{transform:scale(0.96)}
-.search-results{
-  position:absolute;top:calc(100% + 6px);left:0;right:0;
-  background:var(--surface);border:1.5px solid var(--border);
-  border-radius:var(--radius-card);overflow:hidden;
-  box-shadow:0 12px 32px rgba(0,0,0,0.10);max-height:240px;
-  overflow-y:auto;z-index:50;
-}
-.search-results a{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:12px 16px;border-bottom:1px solid var(--border);
-  text-decoration:none;color:inherit;transition:background 0.15s;
-}
-.search-results a:last-child{border-bottom:none}
-.search-results a:hover{background:var(--surface2)}
-
-/* ── CTAs ── */
-.cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.btn-primary{
-  background:var(--accent);color:#fff;border:none;
-  border-radius:var(--radius-btn);padding:13px 22px;
-  font-size:13px;font-weight:700;font-family:var(--font-body);
-  cursor:pointer;text-decoration:none;display:inline-flex;
-  align-items:center;gap:6px;transition:opacity 0.2s,transform 0.15s;
-}
-.btn-primary:active{transform:scale(0.97)}
-.btn-outline{
-  background:transparent;color:var(--accent);
-  border:1.5px solid var(--accent);border-radius:var(--radius-btn);
-  padding:12px 22px;font-size:13px;font-weight:700;font-family:var(--font-body);
-  cursor:pointer;text-decoration:none;display:inline-flex;
-  align-items:center;gap:6px;transition:all 0.2s;
-}
-.btn-outline:hover{background:var(--badge-bg)}
-
-/* ── SECTION ── */
-.section{max-width:480px;margin:0 auto;padding:32px 20px}
-.section-title{
-  font-family:var(--font-serif);font-size:28px;font-weight:400;
-  color:var(--text);text-align:center;margin-bottom:4px;
-}
-.section-sub{font-size:12px;color:var(--text2);text-align:center;margin-bottom:20px}
-
-/* ── FEATURES ── */
-.feature-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-card);padding:16px;
-  display:flex;align-items:flex-start;gap:14px;margin-bottom:10px;
-}
-.feat-icon{
-  width:40px;height:40px;border-radius:10px;
-  background:var(--badge-bg);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;flex-shrink:0;
-}
-.feat-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
-.feat-desc{font-size:12px;color:var(--text2);line-height:1.6}
-
-/* ── DATA SECTION ── */
-.data-section{
-  background:var(--surface2);
-  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
-  padding:32px 20px;
-}
-.data-inner{max-width:480px;margin:0 auto;text-align:center}
-.data-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
-  margin:0 auto 14px;max-width:400px;
-}
-.data-box{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-card);padding:18px;text-align:center;
-}
-.data-num{
-  font-family:var(--font-serif);font-size:30px;font-weight:400;
-  color:var(--accent);line-height:1;
-}
-.data-lbl{font-size:11px;color:var(--text2);margin-top:5px}
-.data-sources{font-size:11px;color:var(--text3)}
-
-/* ── CTA FINAL ── */
-.cta-final{padding:52px 20px;text-align:center}
-.cta-title{
-  font-family:var(--font-serif);font-size:32px;font-weight:400;
-  color:var(--text);margin-bottom:8px;
-}
-.cta-sub{font-size:14px;color:var(--text2);margin-bottom:24px}
-
-/* ── FOOTER ── */
-footer{
-  border-top:1px solid var(--border);padding:20px;
-  text-align:center;font-size:12px;color:var(--text3);
-}
-footer a{color:var(--text2);text-decoration:none}
-footer a:hover{color:var(--accent)}
+  :root{
+    --bg:#0a0a0a;--surface:#141414;--surface2:#1e1e1e;
+    --border:#2a2a2a;--text:#ffffff;--text2:#a0a0a0;
+    --accent:#00ff87;--accent2:#00cc6a;--danger:#ff4757;--radius:16px;
+  }
+  *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+  body{background:var(--bg);font-family:'Space Grotesk',system-ui,sans-serif}
+  .glow{text-shadow:0 0 30px rgba(0,255,135,0.4)}
+  .card{background:var(--surface);border:1px solid var(--border)}
+  .btn-primary{background:var(--accent);color:#000}
+  .btn-primary:active{transform:scale(0.97)}
+  .hero-bg{background:radial-gradient(ellipse at 50% 0%,rgba(0,255,135,0.07) 0%,transparent 60%)}
+  /* Unified nav */
+  .rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0px);z-index:1000}
+  .rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#555;font-size:10px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:.3px;transition:color .2s;padding:4px 0}
+  .rg-nav-item span:first-child{font-size:22px;line-height:1}
+  .rg-nav-item.active,.rg-nav-item:hover{color:var(--accent)}
+  /* Tailwind cyan overrides → accent green */
+  .text-cyan-400{color:var(--accent)!important}
+  .border-cyan-500{border-color:var(--accent)!important}
+  .hover\:text-cyan-400:hover{color:var(--accent)!important}
+  .focus\:border-cyan-500:focus{border-color:var(--accent)!important}
 </style>
 </head>
-<body>
+<body class="text-white min-h-screen" style="padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))">
 
 <!-- HERO -->
-<div class="hero">
-  <div class="hero-brand">RE<em>GEN</em>I</div>
-  <p class="hero-tagline">O maior banco de <strong>resultados de corridas de rua</strong> do Brasil. Busque seu nome, veja seu ranking, compare seu pace.</p>
-
-  <div class="stats-grid">
-    <div class="stat-box">
-      <div class="stat-val" id="hRaces">–</div>
-      <div class="stat-lbl">Corridas</div>
+<div class="hero-bg pt-14 pb-10 flex flex-col items-center text-center px-4 relative">
+  <div class="text-5xl font-black glow tracking-wider mb-2">REGENI</div>
+  <p class="text-slate-400 text-sm mb-6 max-w-md">O maior banco de <span class="text-cyan-400 font-bold">resultados de corridas de rua</span> do Brasil. Busque seu nome, veja seu ranking, compare seu pace.</p>
+  
+  <div class="grid grid-cols-3 gap-4 mb-8">
+    <div class="text-center">
+      <div class="text-2xl font-black text-cyan-400" id="hRaces">-</div>
+      <div class="text-[10px] text-slate-500 font-semibold uppercase">Corridas</div>
     </div>
-    <div class="stat-box">
-      <div class="stat-val" id="hResults">–</div>
-      <div class="stat-lbl">Resultados</div>
+    <div class="text-center">
+      <div class="text-2xl font-black text-emerald-400" id="hResults">-</div>
+      <div class="text-[10px] text-slate-500 font-semibold uppercase">Resultados</div>
     </div>
-    <div class="stat-box">
-      <div class="stat-val" id="hAthletes">–</div>
-      <div class="stat-lbl">Atletas</div>
+    <div class="text-center">
+      <div class="text-2xl font-black text-amber-400" id="hAthletes">-</div>
+      <div class="text-[10px] text-slate-500 font-semibold uppercase">Atletas</div>
     </div>
   </div>
 
-  <div class="search-wrap">
-    <div class="search-row">
-      <input id="heroSearch" type="text" class="search-inp"
-        placeholder="Buscar seu nome nos resultados..."
-        onkeyup="if(event.key==='Enter')heroSearchGo()">
-      <button class="search-go" onclick="heroSearchGo()">Buscar</button>
+  <!-- Quick Search -->
+  <div class="w-full max-w-md mb-6">
+    <div class="flex gap-2">
+      <input id="heroSearch" type="text" placeholder="🔍 Buscar seu nome nos resultados..." class="flex-1 bg-slate-800/80 rounded-xl px-4 py-3 text-sm border border-slate-700 focus:border-cyan-500 focus:outline-none" onkeyup="if(event.key==='Enter')heroSearchGo()">
+      <button onclick="heroSearchGo()" class="btn-primary px-5 py-3 rounded-xl font-bold text-sm">Buscar</button>
     </div>
-    <div id="heroResults" class="hidden search-results"></div>
+    <div id="heroResults" class="hidden mt-2 card rounded-xl p-3 max-h-48 overflow-y-auto text-left"></div>
   </div>
 
-  <div class="cta-row">
-    <a href="/resultados.html" class="btn-primary">Ver Ranking</a>
-    <a href="/corridas-abertas.html" class="btn-outline">Próximas Corridas</a>
+  <div class="flex gap-3">
+    <a href="/resultados.html" class="btn-primary px-6 py-3 rounded-xl font-bold text-sm">🏆 Ver Ranking</a>
+    <a href="/corridas-abertas.html" class="border border-cyan-500 text-cyan-400 px-6 py-3 rounded-xl font-bold text-sm">🏁 Próximas Corridas</a>
   </div>
+
+  <div class="absolute bottom-6 text-slate-600 text-xs animate-bounce">↓ Descubra mais</div>
 </div>
 
-<!-- FEATURES -->
-<div class="section">
-  <h2 class="section-title">Por que o REGENI?</h2>
-  <p class="section-sub">Tudo que um corredor de rua precisa num só lugar</p>
+<!-- O QUE É -->
+<div class="max-w-lg mx-auto px-4 py-12">
+  <h2 class="text-xl font-black text-center mb-2">Por que o REGENI?</h2>
+  <p class="text-slate-400 text-xs text-center mb-8">Tudo que um corredor de rua precisa num só lugar</p>
+  
+  <div class="space-y-3">
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">🔍</span>
+        <div>
+          <h3 class="font-bold text-sm">Busque Seu Nome</h3>
+          <p class="text-slate-400 text-xs mt-1">Digite seu nome e veja TODOS os seus resultados em corridas de rua. Tempo, pace, posição, faixa etária.</p>
+        </div>
+      </div>
+    </div>
 
-  <div class="feature-card">
-    <div class="feat-icon">🔍</div>
-    <div>
-      <div class="feat-title">Busque Seu Nome</div>
-      <div class="feat-desc">Digite seu nome e veja TODOS os seus resultados em corridas de rua. Tempo, pace, posição, faixa etária.</div>
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">🏅</span>
+        <div>
+          <h3 class="font-bold text-sm">Ranking Nacional</h3>
+          <p class="text-slate-400 text-xs mt-1">Veja sua posição no ranking brasileiro por distância (3K a Maratona), gênero, faixa etária, estado e cidade.</p>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="feature-card">
-    <div class="feat-icon">🏅</div>
-    <div>
-      <div class="feat-title">Ranking Nacional</div>
-      <div class="feat-desc">Veja sua posição no ranking brasileiro por distância (3K a Maratona), gênero, faixa etária, estado e cidade.</div>
+
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">📊</span>
+        <div>
+          <h3 class="font-bold text-sm">Estatísticas Completas</h3>
+          <p class="text-slate-400 text-xs mt-1">Compare seu pace com a mediana nacional. Veja evolução temporal. Descubra como você está entre corredores da sua idade.</p>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="feature-card">
-    <div class="feat-icon">📊</div>
-    <div>
-      <div class="feat-title">Estatísticas Completas</div>
-      <div class="feat-desc">Compare seu pace com a mediana nacional. Veja evolução temporal. Descubra como você está entre corredores da sua idade.</div>
+
+    <div class="card rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">📋</span>
+        <div>
+          <h3 class="font-bold text-sm">Resultados por Prova</h3>
+          <p class="text-slate-400 text-xs mt-1">Acesse o resultado completo de cada corrida. Classificação geral, por gênero, por faixa etária.</p>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="feature-card">
-    <div class="feat-icon">📋</div>
-    <div>
-      <div class="feat-title">Resultados por Prova</div>
-      <div class="feat-desc">Acesse o resultado completo de cada corrida. Classificação geral, por gênero, por faixa etária.</div>
-    </div>
+
   </div>
 </div>
 
 <!-- DADOS -->
-<div class="data-section">
-  <div class="data-inner">
-    <h2 class="section-title" style="margin-bottom:4px">Dados Reais, Atualizados</h2>
-    <p class="section-sub" style="margin-bottom:20px">Coletamos resultados de dezenas de cronometradoras em todo o Brasil</p>
-    <div class="data-grid">
-      <div class="data-box">
-        <div class="data-num" id="sRaces">–</div>
-        <div class="data-lbl">Corridas indexadas</div>
+<div class="bg-slate-800/30 py-12 px-4">
+  <div class="max-w-lg mx-auto text-center">
+    <h2 class="text-xl font-black mb-2">Dados Reais, Atualizados</h2>
+    <p class="text-slate-400 text-xs mb-6">Coletamos resultados de dezenas de cronometradoras em todo o Brasil</p>
+    
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl font-black text-cyan-400" id="sRaces">-</div>
+        <div class="text-xs text-slate-400">Corridas indexadas</div>
       </div>
-      <div class="data-box">
-        <div class="data-num" id="sResults">–</div>
-        <div class="data-lbl">Resultados no banco</div>
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl font-black text-emerald-400" id="sResults">-</div>
+        <div class="text-xs text-slate-400">Resultados no banco</div>
       </div>
-      <div class="data-box">
-        <div class="data-num" id="sAthletes">–</div>
-        <div class="data-lbl">Atletas cadastrados</div>
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl font-black text-amber-400" id="sAthletes">-</div>
+        <div class="text-xs text-slate-400">Atletas cadastrados</div>
       </div>
-      <div class="data-box">
-        <div class="data-num" style="color:var(--text)">27</div>
-        <div class="data-lbl">Estados cobertos</div>
+      <div class="card rounded-xl p-4 text-center">
+        <div class="text-3xl font-black text-pink-400">27</div>
+        <div class="text-xs text-slate-400">Estados cobertos</div>
       </div>
     </div>
-    <div class="data-sources">Fontes: SportsChrono · Race83 · Central de Resultados · TBH Esportes · e mais</div>
+
+    <div class="text-slate-500 text-[10px]">
+      Fontes: SportsChrono · Race83 · Central de Resultados · TBH Esportes · e mais
+    </div>
   </div>
 </div>
 
 <!-- CTA FINAL -->
-<div class="cta-final">
-  <div class="cta-title">Encontre seus resultados agora</div>
-  <p class="cta-sub">É grátis. Sem cadastro. Só buscar.</p>
-  <a href="/resultados.html" class="btn-primary" style="font-size:15px;padding:15px 28px">Acessar Resultados</a>
+<div class="py-16 px-4 text-center">
+  <h2 class="text-2xl font-black mb-3 glow">Encontre seus resultados agora</h2>
+  <p class="text-slate-400 text-sm mb-6">É grátis. Sem cadastro. Só buscar.</p>
+  <a href="/resultados.html" class="btn-primary px-8 py-4 rounded-xl font-bold text-lg inline-block">🏆 Acessar Resultados</a>
 </div>
 
 <!-- FOOTER -->
-<footer>
-  <p>REGENI © 2026 · <a href="/termos.html">Termos</a> · <a href="/privacidade.html">Privacidade</a></p>
+<footer class="border-t border-slate-800 py-6 px-4 text-center">
+  <p class="text-slate-500 text-xs">REGENI © 2026 · <a href="/termos.html" class="hover:text-cyan-400">Termos</a> · <a href="/privacidade.html" class="hover:text-cyan-400">Privacidade</a></p>
 </footer>
 
-<!-- NAV -->
+<!-- NAV UNIFICADA -->
 <nav class="rg-bottom-nav">
-  <a href="/" class="rg-nav-item" id="nav-home">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    Início
-  </a>
-  <a href="/resultados.html" class="rg-nav-item" id="nav-resultados">
-    <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>
-    Resultados
-  </a>
-  <a href="/atleta.html" class="rg-nav-item" id="nav-atleta">
-    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-width="1.8" stroke-linecap="round"/></svg>
-    Atleta
-  </a>
-  <a href="/corridas-abertas.html" class="rg-nav-item" id="nav-corridas">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l4-8 4 4 4-6 4 2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 21h18" stroke-width="1.8" stroke-linecap="round"/></svg>
-    Corridas
-  </a>
+  <a href="/" class="rg-nav-item" id="nav-home"><span>🏠</span><span>Início</span></a>
+  <a href="/resultados.html" class="rg-nav-item" id="nav-resultados"><span>🔍</span><span>Resultados</span></a>
+  <a href="/atleta.html" class="rg-nav-item" id="nav-atleta"><span>👤</span><span>Atleta</span></a>
+  <a href="/corridas-abertas.html" class="rg-nav-item" id="nav-corridas"><span>🏁</span><span>Corridas</span></a>
 </nav>
 <script>(function(){var m={'/' :'nav-home','/resultados.html':'nav-resultados','/atleta.html':'nav-atleta','/corridas-abertas.html':'nav-corridas'};var el=document.getElementById(m[location.pathname]);if(el)el.classList.add('active');})();</script>
 
@@ -318,19 +201,19 @@ function heroSearchGo() {
   if (!q || q.length < 2) return;
   const el = document.getElementById('heroResults');
   el.classList.remove('hidden');
-  el.innerHTML = '<p style="color:var(--text2);font-size:13px;padding:14px 16px">Buscando...</p>';
+  el.innerHTML = '<p class="text-slate-400 text-xs p-2">⏳ Buscando...</p>';
   fetch('/buscar-atletas?nome=' + encodeURIComponent(q) + '&limit=10')
     .then(r => r.json())
     .then(d => {
-      if (!d || !d.length) { el.innerHTML = '<p style="color:var(--text2);font-size:13px;padding:14px 16px">Nenhum atleta encontrado para "' + q + '"</p>'; return; }
+      if (!d || !d.length) { el.innerHTML = '<p class="text-slate-400 text-xs p-2">Nenhum atleta encontrado para "' + q + '"</p>'; return; }
       el.innerHTML = d.slice(0,10).map(a =>
-        '<a href="/perfil-atleta.html?id='+a.id+'">'
-        +'<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+a.name+(a.isPremium?'<span class="rg-badge-premium">REGENI</span>':'')+'</div>'
-        +'<div style="font-size:11px;color:var(--text2);margin-top:2px">'+(a.state||'BR')+' · '+a.totalRaces+' provas'+(a.nivel?' · '+a.nivel:'')+'</div></div>'
-        +'<span style="color:var(--accent);font-size:14px">→</span></a>'
+        '<a href="/perfil-atleta.html?id='+a.id+'" style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);text-decoration:none;color:inherit">'
+        +'<div><div style="font-size:13px;font-weight:600">'+a.name+(a.isPremium?'<span style="display:inline-flex;align-items:center;background:linear-gradient(135deg,#00ff87,#00cc6a);color:#000;font-size:8px;font-weight:800;padding:1px 5px;border-radius:20px;vertical-align:middle;margin-left:4px">REGENI</span>':'')+'</div>'
+        +'<div style="font-size:11px;color:#64748b">'+(a.state||'BR')+' · '+a.totalRaces+' provas'+(a.nivel?' · '+a.nivel:'')+'</div></div>'
+        +'<span style="color:#00ff87;font-size:12px">→</span></a>'
       ).join('');
     })
-    .catch(() => { el.innerHTML = '<p style="color:var(--danger);font-size:13px;padding:14px 16px">Erro na busca</p>'; });
+    .catch(() => { el.innerHTML = '<p class="text-red-400 text-xs p-2">Erro na busca</p>'; });
 }
 
 // Fechar dropdown ao clicar fora
