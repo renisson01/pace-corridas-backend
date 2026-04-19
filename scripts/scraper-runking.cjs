@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 /**
- * REGENI — Scraper Runking/Chronomax
+ * REGENI — Scraper Runking (todas as empresas)
  * Descobre eventos recentes em resultados.runking.com.br e importa resultados.
  *
  * Uso:
- *   node scripts/scraper-runking.cjs               # últimas 2 semanas
- *   node scripts/scraper-runking.cjs --semanas 4   # últimas 4 semanas
- *   node scripts/scraper-runking.cjs --dry-run     # só lista eventos, não importa
+ *   node scripts/scraper-runking.cjs                        # últimas 2 semanas, todas empresas
+ *   node scripts/scraper-runking.cjs --semanas 4            # últimas 4 semanas
+ *   node scripts/scraper-runking.cjs --company chronomax    # só uma empresa
+ *   node scripts/scraper-runking.cjs --dry-run              # só lista eventos, não importa
  *
  * Plataforma: Runking (resultados.runking.com.br)
- * Cronômetros atendidos: Chronomax (SP/RJ), Speed SE, Norte MKT, Maratona do Rio, etc.
+ * Empresas atendidas: 36 (Chronomax, o2-correbrasil, iguana-sports, vega-sports, etc.)
  */
 const { Client } = require('pg');
 const CryptoJS = require('crypto-js');
@@ -21,15 +22,32 @@ if (!DB_URL) { console.error('DATABASE_URL não definida'); process.exit(1); }
 const DELAY = ms => new Promise(r => setTimeout(r, ms));
 const PER_PAGE = 20;
 
+// ─── Lista completa de empresas no Runking ──────────────────────────────────
+const EMPRESAS = [
+  '3a-eventos', '5-oceans', 'a-tribuna', 'balax', 'bee-sports',
+  'beta-sports', 'bex-eventos', 'braves', 'bronkos-race', 'chronomax',
+  'clube-dos-corredores-de-porto-alegre', 'digitime', 'ea-run',
+  'fidalgo-eventos', 'forchip', 'grupo-stc-eventos-ltda',
+  'hp-cronometragem', 'ht-sports', 'iguana-sports', 'kenya', 'krono',
+  'letape-brasil', 'neorace', 'noblu-sport', 'o2-correbrasil',
+  'pepper-sports', 'ponto-org', 'run-sports', 'sagaz-esportes',
+  'sana-sports', 'sportsland', 'vega-sports', 'wtr', 'x3m',
+  'youp', 'zenite-sports',
+];
+
 // ─── Argumentos ────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
 const getArg = n => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : null; };
 const SEMANAS = parseInt(getArg('--semanas') || '2');
 const DRY_RUN = args.includes('--dry-run');
+const COMPANY_FILTER = getArg('--company') || null;
 const CUTOFF = new Date(Date.now() - SEMANAS * 7 * 24 * 3600 * 1000);
 
+const empresasAtivas = COMPANY_FILTER ? [COMPANY_FILTER] : EMPRESAS;
+
 console.log(`\n=== REGENI Scraper Runking ===`);
-console.log(`Buscando eventos das últimas ${SEMANAS} semanas (>= ${CUTOFF.toISOString().slice(0, 10)})`);
+console.log(`Empresas: ${empresasAtivas.length} | Janela: últimas ${SEMANAS} semanas (>= ${CUTOFF.toISOString().slice(0, 10)})`);
+if (COMPANY_FILTER) console.log(`Filtro: ${COMPANY_FILTER}`);
 if (DRY_RUN) console.log('(DRY RUN — sem importação)');
 
 // ─── HTTP helpers ───────────────────────────────────────────────────────────
@@ -83,15 +101,10 @@ function findStats(blocks) {
   return null;
 }
 
-// ─── Descoberta de eventos via RSC ──────────────────────────────────────────
-async function discoverEvents() {
-  console.log('\n[Descoberta] Buscando eventos na listagem Runking...');
-  const { body } = await httpsGet('https://resultados.runking.com.br/chronomax/resultados', { 'RSC': '1' });
-
-  // RSC lines: hex_id:{json}
+// ─── Parse RSC de uma empresa → lista de eventos ────────────────────────────
+function parseRscEvents(body, companySlug) {
   const companyMap = {}; // id → slug
-  const eventList = []; // [{companySlug, eventSlug, name}]
-
+  const eventList = [];
   const lineRe = /^[0-9a-f]+:(\{.+\})$/;
   for (const line of body.split('\n')) {
     const m = line.match(lineRe);
@@ -99,29 +112,50 @@ async function discoverEvents() {
     try {
       const obj = JSON.parse(m[1]);
       if (obj.fantasyName && obj.slug && obj.id && !obj.companysId) {
-        // É uma empresa
         companyMap[obj.id] = obj.slug;
       } else if (obj.companysId && obj.slug && obj.name) {
-        // É um evento
-        eventList.push({
-          companysId: obj.companysId,
-          eventSlug: obj.slug,
-          name: obj.name,
-        });
+        eventList.push({ companysId: obj.companysId, eventSlug: obj.slug, name: obj.name });
       }
     } catch (_) {}
   }
-
-  // Resolver companySlug para cada evento
+  // Se o RSC não retornou companyMap (empresa com só 1 nível), usa o slug direto
   const resolved = [];
   for (const ev of eventList) {
-    const companySlug = companyMap[ev.companysId];
-    if (!companySlug) continue;
-    resolved.push({ companySlug, eventSlug: ev.eventSlug, name: ev.name });
+    const slug = companyMap[ev.companysId] || companySlug;
+    resolved.push({ companySlug: slug, eventSlug: ev.eventSlug, name: ev.name });
+  }
+  return resolved;
+}
+
+// ─── Descoberta de eventos via RSC — todas as empresas ──────────────────────
+async function discoverEvents() {
+  console.log(`\n[Descoberta] Varrendo ${empresasAtivas.length} empresas...`);
+  const allEvents = [];
+  const seen = new Set();
+
+  for (let i = 0; i < empresasAtivas.length; i++) {
+    const slug = empresasAtivas[i];
+    process.stdout.write(`  [${i + 1}/${empresasAtivas.length}] ${slug.padEnd(38)}`);
+    try {
+      await DELAY(400);
+      const { body } = await httpsGet(
+        `https://resultados.runking.com.br/${slug}/resultados`,
+        { 'RSC': '1' }
+      );
+      const events = parseRscEvents(body, slug);
+      let novos = 0;
+      for (const ev of events) {
+        const key = `${ev.companySlug}/${ev.eventSlug}`;
+        if (!seen.has(key)) { seen.add(key); allEvents.push(ev); novos++; }
+      }
+      process.stdout.write(`${events.length} eventos (+${novos} novos)\n`);
+    } catch (e) {
+      process.stdout.write(`ERRO: ${e.message.slice(0, 40)}\n`);
+    }
   }
 
-  console.log(`  → ${resolved.length} eventos descobertos, ${Object.keys(companyMap).length} empresas`);
-  return resolved;
+  console.log(`\n  → ${allEvents.length} eventos totais descobertos`);
+  return allEvents;
 }
 
 // ─── Metadata do evento ─────────────────────────────────────────────────────
@@ -352,7 +386,7 @@ async function main() {
   // 2. Para cada evento: verificar data e importar
   for (const ev of events) {
     const { companySlug, eventSlug, name } = ev;
-    process.stdout.write(`\n[${++totalEvents}/${events.length}] ${name.slice(0, 40).padEnd(40)}`);
+    process.stdout.write(`\n[${++totalEvents}/${events.length}] [${companySlug}] ${name.slice(0, 30).padEnd(30)}`);
 
     try {
       // Checar se já existe no banco
