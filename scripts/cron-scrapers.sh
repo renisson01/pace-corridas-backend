@@ -59,6 +59,12 @@ run_scraper "SMCrono"               scraper-smcrono.cjs               1200
 # RaceZone Universal (MyCrono + SportsChrono + RaceMS — JSON puro)
 run_scraper "RaceZone"              scraper-racezone.cjs              1800
 
+# ChiPower (CLAX — AL/Nordeste, 102 eventos)
+run_scraper "ChiPower"              scraper-chipower.cjs              1200
+
+# CronoCorridas (CLAX — SP/Interior, 57 eventos)
+run_scraper "CronoCorridas"         scraper-cronocorridas.cjs         1200
+
 # CronosChip (CLAX)
 run_scraper "CronosChip"            scraper-cronoschip.cjs            1200
 
