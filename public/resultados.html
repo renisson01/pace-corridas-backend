@@ -5,39 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>REGENI — Resultados</title>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#00ff87">
+<meta name="theme-color" content="#C4933F">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/regeni-amanhecer.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
 :root{
-  --c:#00ff87;
-  --c2:rgba(0,255,135,0.15);
-  --c3:rgba(0,255,135,0.07);
-  --bg:#0a0a0a;
-  --s1:#141414;
-  --s2:#1e1e1e;
-  --s3:#2a2a2a;
-  --s4:#333333;
-  --t1:#ffffff;
-  --t2:#a0a0a0;
-  --t3:#666666;
-  --b1:rgba(0,255,135,0.2);
-  --b2:rgba(255,255,255,0.08);
-  --b3:rgba(255,255,255,0.04);
-  --green:#34d399;
-  --amber:#fbbf24;
-  --red:#ff4757;
-  --pink:#e879f9;
-  --fn:'Space Grotesk',system-ui,sans-serif;
-  --fb:'Space Grotesk',system-ui,sans-serif;
-  --fm:'Space Grotesk',system-ui,sans-serif;
+  --c:#C4933F;
+  --c2:rgba(196,147,63,0.15);
+  --c3:rgba(196,147,63,0.07);
+  --bg:#fafaf8;
+  --s1:#ffffff;
+  --s2:#f5f2ec;
+  --s3:#e8e4dc;
+  --s4:#d4cfc4;
+  --t1:#1a1a1a;
+  --t2:#8a8a8a;
+  --t3:#b5b0a5;
+  --b1:rgba(196,147,63,0.2);
+  --b2:rgba(0,0,0,0.08);
+  --b3:rgba(0,0,0,0.04);
+  --green:#27ae60;
+  --amber:#e67e22;
+  --red:#c0392b;
+  --pink:#8e44ad;
+  --fn:'DM Sans',system-ui,sans-serif;
+  --fb:'DM Sans',system-ui,sans-serif;
+  --fm:'DM Sans',system-ui,sans-serif;
   --st:env(safe-area-inset-top);
   --sb:env(safe-area-inset-bottom);
-  --nh:64px;
+  --nh:56px;
 }
 
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb);overflow-x:hidden;font-size:15px}
@@ -54,13 +55,18 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
   padding-top:var(--st);
   display:flex;align-items:center;gap:10px;
   padding-left:16px;padding-right:16px;
-  background:rgba(7,7,26,0.88);
+  background:rgba(250,250,248,0.94);
   backdrop-filter:blur(24px) saturate(1.4);
+  -webkit-backdrop-filter:blur(24px) saturate(1.4);
   border-bottom:1px solid var(--b2);
 }
-.topbar-logo{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--c);letter-spacing:1px}
-.rg-badge-premium{display:inline-flex;align-items:center;background:linear-gradient(135deg,#00ff87 0%,#00cc6a 100%);color:#000;font-size:8px;font-weight:800;letter-spacing:.3px;padding:1px 5px;border-radius:20px;vertical-align:middle;margin-left:4px;white-space:nowrap;box-shadow:0 0 6px rgba(0,255,135,.35)}
-.topbar-title{font-family:var(--fn);font-size:15px;font-weight:600;color:var(--t2);flex:1}
+.topbar-logo{
+  font-family:'Instrument Serif',Georgia,serif;
+  font-size:20px;font-weight:400;color:var(--c);
+  letter-spacing:-0.3px;font-style:italic;
+}
+.rg-badge-premium{display:inline-flex;align-items:center;background:linear-gradient(135deg,#C4933F 0%,#D4A853 100%);color:#fff;font-size:8px;font-weight:700;letter-spacing:.3px;padding:1px 5px;border-radius:20px;vertical-align:middle;margin-left:4px;white-space:nowrap}
+.topbar-title{font-family:var(--fn);font-size:15px;font-weight:500;color:var(--t2);flex:1}
 .topbar-badge{
   background:var(--c2);border:1px solid var(--b1);
   border-radius:20px;padding:3px 10px;
@@ -70,7 +76,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 /* ── MAIN ── */
 .main{
   padding-top:calc(52px + var(--st) + 14px);
-  padding-bottom:calc(64px + var(--sb) + 20px);
+  padding-bottom:calc(56px + var(--sb) + 20px);
   padding-left:14px;padding-right:14px;
 }
 
@@ -100,10 +106,10 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
   outline:none;transition:border-color 0.2s,background 0.2s;
 }
 .search-input::placeholder{color:var(--t3)}
-.search-input:focus{border-color:var(--c);background:var(--s2)}
+.search-input:focus{border-color:var(--c);background:var(--s1)}
 .search-btn{
   position:absolute;right:6px;top:50%;transform:translateY(-50%);
-  background:var(--c);color:var(--bg);border:none;border-radius:10px;
+  background:var(--c);color:#fff;border:none;border-radius:10px;
   padding:8px 16px;font-size:13px;font-weight:700;font-family:var(--fn);
   cursor:pointer;transition:opacity 0.2s,transform 0.15s;
   display:flex;align-items:center;gap:5px;
@@ -114,10 +120,9 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 /* SEARCH DROPDOWN */
 .search-dropdown{
   position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:80;
-  background:var(--s2);border:1px solid var(--b1);border-radius:14px;
-  overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5);
-  display:none;
-  max-height:260px;overflow-y:auto;
+  background:var(--s1);border:1px solid var(--b1);border-radius:14px;
+  overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.12);
+  display:none;max-height:260px;overflow-y:auto;
 }
 .search-dropdown.open{display:block}
 .sd-item{
@@ -134,13 +139,13 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .sd-empty{padding:20px;text-align:center;color:var(--t3);font-size:13px}
 
 /* ── TABS ── */
-.tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--s1);border-radius:14px;padding:4px}
+.tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--s2);border-radius:14px;padding:4px;border:1px solid var(--b2)}
 .tab{
   flex:1;padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;
   font-family:var(--fn);cursor:pointer;border:none;background:transparent;
   color:var(--t3);transition:all 0.2s;text-align:center;
 }
-.tab.active{background:var(--s3);color:var(--c);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.tab.active{background:var(--s1);color:var(--c);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
 
 /* ── FILTER PANEL ── */
 .filter-panel{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:14px;margin-bottom:12px}
@@ -150,26 +155,25 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .filter-row.cols1{grid-template-columns:1fr}
 
 .fsel{
-  background:var(--s3);border:1px solid var(--b2);border-radius:10px;
+  background:var(--s2);border:1px solid var(--b2);border-radius:10px;
   padding:9px 10px;font-size:12px;color:var(--t1);font-family:var(--fb);
-  outline:none;width:100%;cursor:pointer;
-  transition:border-color 0.2s;
+  outline:none;width:100%;cursor:pointer;transition:border-color 0.2s;
 }
 .fsel:focus{border-color:var(--c)}
-.fsel option{background:var(--s2)}
+.fsel option{background:var(--s1)}
 
 .go-btn{
   width:100%;padding:12px;border-radius:12px;border:none;
-  background:linear-gradient(135deg,#00ff87,#00cc6a);
-  color:var(--bg);font-size:14px;font-weight:800;font-family:var(--fn);
+  background:linear-gradient(135deg,#C4933F,#D4A853);
+  color:#fff;font-size:14px;font-weight:800;font-family:var(--fn);
   cursor:pointer;transition:opacity 0.2s,transform 0.15s;
   display:flex;align-items:center;justify-content:center;gap:8px;
 }
 .go-btn:active{transform:scale(0.98)}
 .go-btn.loading{opacity:0.6;pointer-events:none}
 .go-btn.loading::after{
-  content:'';width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);
-  border-top-color:var(--bg);border-radius:50%;
+  content:'';width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;border-radius:50%;
   animation:spin 0.7s linear infinite;display:inline-block;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -191,9 +195,9 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .res-count{font-family:var(--fm);font-size:12px;color:var(--c)}
 
 /* ── TABLE ── */
-.table-wrap{background:var(--s2);border:1px solid var(--b2);border-top:none;border-radius:0 0 14px 14px;overflow:hidden}
+.table-wrap{background:var(--s1);border:1px solid var(--b2);border-top:none;border-radius:0 0 14px 14px;overflow:hidden}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl thead tr{border-bottom:1px solid var(--b2)}
+.tbl thead tr{border-bottom:1px solid var(--b2);background:var(--s2)}
 .tbl th{
   padding:9px 8px;text-align:left;color:var(--t3);
   font-size:10px;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;
@@ -204,7 +208,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .tbl tbody tr:last-child td{border-bottom:none}
 .tbl tbody tr{transition:background 0.1s;cursor:pointer}
 .tbl tbody tr:hover{background:var(--c3)}
-.tbl tbody tr.top3{background:rgba(0,255,135,0.04)}
+.tbl tbody tr.top3{background:rgba(196,147,63,0.04)}
 
 /* POS */
 .pos{font-family:var(--fm);font-weight:700;font-size:13px;color:var(--t3);white-space:nowrap}
@@ -219,8 +223,8 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 
 /* GENDER TAG */
 .gtag{font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px}
-.gtag.M{color:#60A5FA;background:rgba(96,165,250,0.1)}
-.gtag.F{color:#F472B6;background:rgba(244,114,182,0.1)}
+.gtag.M{color:#2980b9;background:rgba(41,128,185,0.1)}
+.gtag.F{color:#c0392b;background:rgba(192,57,43,0.1)}
 
 /* TIME */
 .ttime{font-family:var(--fm);font-weight:700;font-size:13px;white-space:nowrap}
@@ -238,14 +242,14 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 /* MORE BTN */
 .more-btn{
   width:100%;padding:13px;border:1px solid var(--b1);border-top:none;
-  background:var(--s1);color:var(--c);font-size:13px;font-weight:700;
+  background:var(--s2);color:var(--c);font-size:13px;font-weight:700;
   font-family:var(--fn);cursor:pointer;border-radius:0 0 14px 14px;
   transition:background 0.2s;
 }
 .more-btn:hover{background:var(--c3)}
 
 /* EMPTY */
-.empty{text-align:center;padding:48px 20px;background:var(--s2);border:1px solid var(--b2);border-radius:0 0 14px 14px}
+.empty{text-align:center;padding:48px 20px;background:var(--s1);border:1px solid var(--b2);border-radius:0 0 14px 14px}
 .empty-icon{font-size:40px;opacity:0.25;margin-bottom:12px}
 .empty-txt{color:var(--t3);font-size:14px}
 
@@ -262,7 +266,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 
 /* EQUIPES */
 .equipe-card{
-  background:var(--s2);border:1px solid var(--b2);border-radius:14px;
+  background:var(--s1);border:1px solid var(--b2);border-radius:14px;
   margin-bottom:8px;overflow:hidden;
 }
 .eq-header{display:flex;align-items:center;gap:12px;padding:14px}
@@ -273,16 +277,30 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .eq-bar{height:3px;background:var(--s3)}
 .eq-fill{height:100%;background:linear-gradient(90deg,var(--c),var(--green));transition:width 0.6s ease}
 
-/* ── NAV UNIFICADA ── */
-.rg-bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--s3);display:flex;align-items:center;justify-content:space-around;padding-bottom:var(--sb);z-index:1000}
-.rg-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:var(--t3);font-size:10px;font-weight:700;font-family:var(--fn);letter-spacing:.3px;transition:color .2s;padding:4px 0}
-.rg-nav-item span:first-child{font-size:22px;line-height:1}
+/* ── NAV ── */
+.rg-bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;height:56px;
+  background:#ffffff;border-top:0.5px solid var(--s3);
+  display:flex;align-items:stretch;justify-content:space-around;
+  padding-bottom:var(--sb);z-index:1000;
+}
+.rg-nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;text-decoration:none;
+  color:var(--t3);font-size:9px;font-weight:600;font-family:var(--fn);
+  letter-spacing:.3px;transition:color .2s;padding:6px 0 4px;position:relative;
+}
+.rg-nav-item svg{width:20px;height:20px;stroke:currentColor;flex-shrink:0}
 .rg-nav-item.active,.rg-nav-item:hover{color:var(--c)}
+.rg-nav-item.active::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:24px;height:2px;border-radius:0 0 3px 3px;background:var(--c);
+}
 
 /* ── ATHLETE SHEET ── */
 .overlay{
   position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);
   display:flex;align-items:flex-end;
   opacity:0;pointer-events:none;transition:opacity 0.28s;
 }
@@ -299,8 +317,8 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .sh-name{font-family:var(--fn);font-size:20px;font-weight:800;margin-bottom:2px}
 .sh-meta{font-size:13px;color:var(--t3);margin-bottom:18px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .sh-tag{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600}
-.sh-tag.M{background:rgba(96,165,250,0.12);color:#60A5FA}
-.sh-tag.F{background:rgba(244,114,182,0.12);color:#F472B6}
+.sh-tag.M{background:rgba(41,128,185,0.10);color:#2980b9}
+.sh-tag.F{background:rgba(192,57,43,0.10);color:#c0392b}
 .sh-tag.nivel{background:var(--c2);color:var(--c)}
 .sh-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .sh-stat{background:var(--s2);border-radius:12px;padding:12px;border:1px solid var(--b2)}
@@ -321,22 +339,23 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 .sh-race-sub{font-size:11px;color:var(--t3);margin-top:2px}
 .sh-race-time{font-family:var(--fm);font-size:14px;font-weight:700;color:var(--green);flex-shrink:0}
 .sh-close{
-  width:100%;padding:13px;border-radius:12px;border:1px solid var(--b1);
-  background:var(--s3);color:var(--t2);font-size:14px;font-weight:600;
+  width:100%;padding:13px;border-radius:12px;border:1px solid var(--b2);
+  background:var(--s2);color:var(--t2);font-size:14px;font-weight:600;
   font-family:var(--fn);cursor:pointer;margin-top:6px;
 }
 .sh-profile-btn{
   width:100%;padding:13px;border-radius:12px;border:none;
-  background:var(--c);color:var(--bg);font-size:14px;font-weight:800;
+  background:var(--c);color:#fff;font-size:14px;font-weight:800;
   font-family:var(--fn);cursor:pointer;margin-bottom:8px;
 }
 
 /* TOAST */
 .toast{
   position:fixed;bottom:calc(var(--nh) + var(--sb) + 14px);left:50%;transform:translateX(-50%) translateY(10px);
-  background:var(--s2);border:1px solid var(--b1);border-radius:12px;
+  background:var(--s1);border:1px solid var(--b1);border-radius:12px;
   padding:10px 18px;font-size:13px;font-weight:500;color:var(--t1);
   white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.25s,transform 0.25s;pointer-events:none;
+  box-shadow:0 4px 20px rgba(0,0,0,0.10);
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -392,9 +411,9 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab active" id="t0" onclick="showTab(0)">🏅 Ranking</button>
-    <button class="tab" id="t1" onclick="showTab(1)">📋 Por Prova</button>
-    <button class="tab" id="t2" onclick="showTab(2)">🏆 Equipes</button>
+    <button class="tab active" id="t0" onclick="showTab(0)">Ranking</button>
+    <button class="tab" id="t1" onclick="showTab(1)">Por Prova</button>
+    <button class="tab" id="t2" onclick="showTab(2)">Equipes</button>
   </div>
 
   <!-- TAB 0: RANKING -->
@@ -411,8 +430,8 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
         </select>
         <select class="fsel" id="rgen">
           <option value="">Geral</option>
-          <option value="M">♂ Masc</option>
-          <option value="F">♀ Fem</option>
+          <option value="M">Masc</option>
+          <option value="F">Fem</option>
         </select>
         <select class="fsel" id="rfaixa">
           <option value="">Todas idades</option>
@@ -456,14 +475,14 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
       <div class="filter-row cols2">
         <select class="fsel" id="rpgen">
           <option value="">Geral</option>
-          <option value="M">♂ Masc</option>
-          <option value="F">♀ Fem</option>
+          <option value="M">Masc</option>
+          <option value="F">Fem</option>
         </select>
         <select class="fsel" id="rpdist">
           <option value="">Todas as distâncias</option>
         </select>
       </div>
-      <button class="go-btn" id="provaBtn" onclick="buscarPorProva()" style="background:linear-gradient(135deg,#00FFA3,#00CC7A);color:#07071A">
+      <button class="go-btn" id="provaBtn" onclick="buscarPorProva()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Ver Resultados
       </button>
@@ -483,12 +502,24 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--fb)
 
 </div>
 
-<!-- NAV UNIFICADA -->
+<!-- NAV -->
 <nav class="rg-bottom-nav">
-  <a href="/" class="rg-nav-item" id="nav-home"><span>🏠</span><span>Início</span></a>
-  <a href="/resultados.html" class="rg-nav-item" id="nav-resultados"><span>🔍</span><span>Resultados</span></a>
-  <a href="/atleta.html" class="rg-nav-item" id="nav-atleta"><span>👤</span><span>Atleta</span></a>
-  <a href="/corridas-abertas.html" class="rg-nav-item" id="nav-corridas"><span>🏁</span><span>Corridas</span></a>
+  <a href="/" class="rg-nav-item" id="nav-home">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Início
+  </a>
+  <a href="/resultados.html" class="rg-nav-item" id="nav-resultados">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>
+    Resultados
+  </a>
+  <a href="/atleta.html" class="rg-nav-item" id="nav-atleta">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-width="1.8" stroke-linecap="round"/></svg>
+    Atleta
+  </a>
+  <a href="/corridas-abertas.html" class="rg-nav-item" id="nav-corridas">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l4-8 4 4 4-6 4 2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 21h18" stroke-width="1.8" stroke-linecap="round"/></svg>
+    Corridas
+  </a>
 </nav>
 <script>(function(){var m={'/' :'nav-home','/resultados.html':'nav-resultados','/atleta.html':'nav-atleta','/corridas-abertas.html':'nav-corridas'};var el=document.getElementById(m[location.pathname]);if(el)el.classList.add('active');})();</script>
 
@@ -1006,7 +1037,7 @@ function skeletonRows(n){
       </div>
       <div class="skel" style="width:52px;height:14px;border-radius:4px"></div>
     </div>`).join('');
-  return `<div style="background:var(--s2);border:1px solid var(--b2);border-radius:14px;overflow:hidden">${rows}</div>`;
+  return `<div style="background:var(--s1);border:1px solid var(--b2);border-radius:14px;overflow:hidden">${rows}</div>`;
 }
 
 // ══════════════════════════════════════

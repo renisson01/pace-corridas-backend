@@ -1,0 +1,106 @@
+/* ═══════════════════════════════════════════════════════════
+   REGENI — Design System "Amanhecer"
+   Light mode · Golden (#C4933F) · DM Sans + Instrument Serif
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap');
+
+/* ── TOKENS ──────────────────────────────────────────────── */
+:root {
+  --bg:       #fafaf8;
+  --surface:  #ffffff;
+  --surface2: #f5f2ec;
+  --border:   #e8e4dc;
+  --border2:  #d4cfc4;
+  --text:     #1a1a1a;
+  --text2:    #8a8a8a;
+  --text3:    #b5b0a5;
+  --accent:   #C4933F;
+  --accent2:  #D4A853;
+  --accent3:  #A37B2C;
+  --badge-bg: #faf6ef;
+  --danger:   #c0392b;
+  --success:  #27ae60;
+  --radius-card: 12px;
+  --radius-btn:  10px;
+  --font-body:   'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-serif:  'Instrument Serif', Georgia, serif;
+}
+
+/* ── BOTTOM NAV ──────────────────────────────────────────── */
+.rg-bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 56px;
+  background: #ffffff;
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 1000;
+  backdrop-filter: none;
+}
+.rg-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  text-decoration: none;
+  color: var(--text3);
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  letter-spacing: 0.3px;
+  transition: color 0.2s;
+  padding: 6px 0 4px;
+  position: relative;
+}
+.rg-nav-item svg {
+  width: 20px; height: 20px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+.rg-nav-item.active,
+.rg-nav-item:hover {
+  color: var(--accent);
+}
+.rg-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  border-radius: 0 0 3px 3px;
+  background: var(--accent);
+}
+
+/* ── TYPOGRAPHY HELPERS ──────────────────────────────────── */
+.brand-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.5px;
+}
+
+/* ── PREMIUM BADGE ───────────────────────────────────────── */
+.rg-badge-premium {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #C4933F 0%, #D4A853 100%);
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 1px 5px;
+  border-radius: 20px;
+  vertical-align: middle;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+/* ── HIDDEN UTILITY ──────────────────────────────────────── */
+.hidden { display: none !important; }
