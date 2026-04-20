@@ -1,7 +1,7 @@
 # 📡 Fontes de Resultados — Mapa Completo
 
 > Atualizado: 2026-04-19
-> Total mapeado: 67+ fontes | 15 ativas | em expansão
+> Total mapeado: 72+ fontes | 19 ativas | em expansão
 > Meta: 10M resultados até Dez/2026
 
 **Legenda:** ✅ Scraper ativo no cron | 🆕 Criado, nunca rodou | 🔨 Existe mas incompleto | 🔍 Investigado sem scraper | ❌ Inviável
@@ -27,6 +27,20 @@
 | 13 | **RaceMS** | RaceZone JSON | scraper-racezone.cjs | 9 | em curso | MS |
 | 14 | **ChiPower** 🆕 | CLAX | scraper-chipower.cjs | 102 | 0 (nunca rodou) | AL/NE |
 | 15 | **CronoCorridas** 🆕 | CLAX | scraper-cronocorridas.cjs | 57 | 0 (nunca rodou) | SP/Interior |
+| 16 | **AgitoEsportes** 🆕 | RaceZone JSON | scraper-racezone.cjs | 138 | em curso | MT/Interior |
+| 17 | **ChipMacapá** 🆕 | CLAX Wiclax | scraper-chipmacapa.cjs | 10 | em curso | AP/Macapá |
+| 18 | **ApuracaoDeTempos** 🆕 | HTML/Cheerio | scraper-apuracaodetempos.cjs | ~7 | em curso | SP/MS/variado |
+
+---
+
+## NOVAS FONTES IDENTIFICADAS (19/04/2026)
+
+| Fonte | Site | Tipo | Potencial | Prioridade |
+|-------|------|------|-----------|------------|
+| **Settime** | settime.com.br | WordPress — lista eventos, links pra ApuracaoDeTempos | SP | 🟡 Usa como índice do ApuracaoDeTempos |
+| **Figueiredos Cronometragem** | figueiredos.com.br (?) | A investigar | SP/Interior | 🟡 |
+| **CronoTeam** | cronoteam.com.br (?) | A investigar | variado | 🟡 |
+| **CronometraEventos** | cronometrar.com.br (?) | A investigar | variado | 🔵 |
 
 ---
 
@@ -79,7 +93,7 @@
 | **RaceZone JSON** | SportsChrono, MyCrono, RaceMS | ⭐ Muito fácil — JSON puro sem auth |
 | **ChipTiming REST** | ChipTiming | ⭐ Fácil |
 | **Runking RSC+AES** | 36 empresas | ⭐⭐ Médio |
-| **HTML/Cheerio** | GlobalCronometragem, Central | ⭐⭐ Médio — frágil |
+| **HTML/Cheerio** | GlobalCronometragem, Central, ApuracaoDeTempos | ⭐⭐ Médio — frágil |
 | **Puppeteer** | ChipBrasil | ⭐⭐⭐ Lento |
 | **Laravel API** | CronosCariri | A mapear |
 | **Laravel HTML** | Morro-MT | A implementar |
@@ -104,7 +118,8 @@
 | MS | 🆕 Baixa | RaceMS |
 | RN | 🔍 Baixa | APCrono (pendente) |
 | CE | 🔍 Baixa | CronosCariri (pendente) |
-| MT | 🔍 Baixa | ACrono + Morro-MT (pendente) |
+| MT | ✅ Média | ACrono + AgitoEsportes (138 eventos) |
+| AP | 🆕 Baixa | ChipMacapá (10 eventos Macapá) |
 | GO | ✅ Baixa | ChipBrasil |
 | DF | ✅ Baixa | ChipBrasil |
 | PI | ❌ Zero | — |
