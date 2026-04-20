@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "bash:git *",
+      "bash:node *",
+      "bash:npm *",
+      "bash:curl *",
+      "bash:cat *",
+      "bash:echo *",
+      "bash:grep *",
+      "bash:sed *",
+      "bash:cp *",
+      "bash:mv *",
+      "bash:rm public/*.bak",
+      "bash:chmod *",
+      "bash:crontab *",
+      "bash:tail *",
+      "bash:head *",
+      "bash:wc *",
+      "bash:ps *",
+      "bash:sleep *",
+      "bash:nohup *",
+      "bash:timeout *",
+      "bash:python3 *",
+      "bash:mkdir *",
+      "bash:ls *",
+      "bash:diff *",
+      "bash:source *",
+      "bash:set *",
+      "bash:cd *"
+    ]
+  }
+}

@@ -121,3 +121,24 @@ Static HTML files in `public/` are served by the same Fastify server (no separat
 - All routes follow the Fastify plugin pattern: `export async function xyzRoutes(fastify) { fastify.get(...) }`
 - Brazilian Portuguese is used throughout (variable names, comments, user-facing strings)
 - Database fields use Portuguese names (`nome`, `data`, `cidade`, `estado`, `criadoEm`)
+
+## Permissões Automáticas
+
+O fundador NÃO é programador. Ele não deve precisar aprovar comandos no terminal.
+
+### PERMITIDO SEM PERGUNTAR:
+- git add, commit, push
+- npm install
+- Criar/editar qualquer arquivo em scripts/, public/, cerebro/
+- Rodar scrapers (node scripts/scraper-*.cjs)
+- Rodar testes (node scripts/agente-qa/*)
+- Consultas SQL SELECT
+- curl para APIs externas
+- Criar/editar cron
+
+### PRECISA AUTORIZAÇÃO DO FUNDADOR (via Claude Opus):
+- Editar src/ (código core do servidor)
+- Editar schema.prisma
+- Editar rotas de pagamento
+- DELETE ou DROP em SQL
+- Alterar variáveis de ambiente em produção
