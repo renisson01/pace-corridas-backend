@@ -37,9 +37,12 @@ const DELAY = ms => new Promise(r => setTimeout(r, ms));
 const BASE_URL = 'https://resultados.racezone.com.br';
 
 const EMPRESAS = [
-  { slug: 'mycrono',      organizer: 'MyCrono',      idPrefix: 'myc', state: 'SC' },
+  { slug: 'mycrono',      organizer: 'MyCrono',       idPrefix: 'myc', state: 'SC' },
   { slug: 'sportschrono', organizer: 'SportsChrono',  idPrefix: 'sc',  state: 'SE' },
   { slug: 'racems',       organizer: 'RaceMS',        idPrefix: 'rms', state: 'MS' },
+  // Agito Esportes — RaceZone em host próprio, MT interior
+  { slug: '', organizer: 'AgitoEsportes', idPrefix: 'ago', state: 'MT',
+    baseUrl: 'https://old.agitoesportes.com.br/racetagpro' },
 ];
 
 // ─── HTTP ─────────────────────────────────────────────────────────────────────
@@ -177,7 +180,7 @@ async function importEvent(empresa, evt, eventData, rawResults) {
     const r = rawResults[i];
     const athleteName = (r.nm || '').trim().toUpperCase().replace(/\s+/g,' ');
     if (!athleteName || athleteName.length < 2) continue;
-    const time = fmtTime(r.tn || r.tg); // prefere net time
+    const time = fmtTime(r.tn || r.tg || r.t); // prefere net time; Agito usa 't'
     if (!time) continue;
     const gender = r.g === 'F' ? 'F' : r.g === 'M' ? 'M' : null;
     // Categoria: busca pelo id que aparece em ct ou c
@@ -231,8 +234,8 @@ async function importEvent(empresa, evt, eventData, rawResults) {
     const id = `${idPrefix}r_${Date.now().toString(36)}${Math.random().toString(36).slice(2,5)}`;
     try {
       await db.query(
-        'INSERT INTO "Result"(id,"athleteId","raceId",time,pace,distance,"ageGroup","overallRank","genderRank",points,"createdAt") VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,0,NOW()) ON CONFLICT DO NOTHING',
-        [id, aid, raceId, a.time, a.pace, a.dist, a.ageGroup, a.overallRank, a.genderRank]
+        'INSERT INTO "Result"(id,"athleteId","raceId",time,pace,distance,"ageGroup","overallRank","genderRank",points,"createdAt",source) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,0,NOW(),$10) ON CONFLICT DO NOTHING',
+        [id, aid, raceId, a.time, a.pace, a.dist, a.ageGroup, a.overallRank, a.genderRank, organizer]
       );
       imported++;
     } catch(_) {}
@@ -246,9 +249,11 @@ async function processEmpresa(empresa) {
   console.log(`\n\n${'='.repeat(60)}`);
   console.log(`[${organizer}] https://resultados.racezone.com.br/${slug}`);
 
+  const empresaBaseUrl = empresa.baseUrl || `${BASE_URL}/${slug}`;
+
   let events;
   try {
-    events = await fetchJSON(`${BASE_URL}/${slug}/data/events.json`);
+    events = await fetchJSON(`${empresaBaseUrl}/data/events.json`);
   } catch(e) {
     console.log(`  ERRO ao listar eventos: ${e.message}`);
     return { imported: 0, skipped: 0, errors: 1 };
@@ -283,8 +288,8 @@ async function processEmpresa(empresa) {
 
       // Buscar event.json e results.json
       const [eventData, rawResults] = await Promise.all([
-        fetchJSON(`${BASE_URL}/${slug}/data/${evt.id}/event.json`).catch(() => ({ categories: [] })),
-        fetchJSON(`${BASE_URL}/${slug}/data/${evt.id}/results.json`).catch(() => []),
+        fetchJSON(`${empresaBaseUrl}/data/${evt.id}/event.json`).catch(() => ({ categories: [] })),
+        fetchJSON(`${empresaBaseUrl}/data/${evt.id}/results.json`).catch(() => []),
       ]);
 
       process.stdout.write(` R:${rawResults.length}`);
@@ -320,7 +325,7 @@ async function main() {
   if (DRY_RUN) console.log('(DRY RUN)');
 
   const empresas = COMPANY_FILTER
-    ? EMPRESAS.filter(e => e.slug === COMPANY_FILTER)
+    ? EMPRESAS.filter(e => e.slug === COMPANY_FILTER || e.idPrefix === COMPANY_FILTER || e.organizer.toLowerCase() === COMPANY_FILTER.toLowerCase())
     : EMPRESAS;
 
   if (!empresas.length) {
